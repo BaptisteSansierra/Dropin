@@ -12,20 +12,16 @@ import CoreLocation
 @main
 struct DropinApp: App {
 
+    // MARK: - App states
     @State private var modelContainer: ModelContainer
-
     @State private var appNavigationContext = AppNavigationContext()
-    
     @State private var mapSettings = MapSettings()
-
     @State private var locationManager = LocationManager()
-    
     @State private var placeFactory = PlaceFactory()
     
-    
+    // MARK: - Body
     var body: some Scene {
         WindowGroup {
-            //MainView()
             RootView()
                 .onAppear {
 #if DEBUG

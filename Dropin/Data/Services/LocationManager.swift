@@ -27,7 +27,7 @@ import Contacts
         lastKnownLocation = manager.location?.coordinate
         checkAuthorizationStatus()
         guard let _ = authorized else { return }
-        manager.requestLocation()
+        //manager.requestLocation()
         manager.startMonitoringSignificantLocationChanges()
     }
     
@@ -80,7 +80,7 @@ extension LocationManager {
     func distanceStringTo(_ coords: CLLocationCoordinate2D) -> String? {
         guard let d = distanceTo(coords) else { return nil }
         if d < 900 {
-            return "\(d)m"
+            return "\(Int(d))m"
         } else if d < 10000 {
             return "\(String(format: "%.1f", d / 1000))km"
         }

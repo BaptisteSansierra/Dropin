@@ -43,7 +43,6 @@ import SwiftData
         creationMode = .undefined
     }
     
-    
     #if DEBUG
     static var preview: PlaceFactory {
         let factory = PlaceFactory()

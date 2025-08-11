@@ -87,12 +87,12 @@ struct PlaceAnnotation: MapContent {
     Map {
         PlaceAnnotation(place: SDPlace.l1)
     }
-    .sheet(item: $navigationContext.pinPlace) { place in
-        Text("PLACE: \(place.name)")
-            .presentationDetents([.fraction(0.25)])
-            .presentationDragIndicator(.visible)
-            .presentationCornerRadius(20)
-
-    }
+//    .sheet(item: $navigationContext.pinPlace) { place in
+//        Text("PLACE: \(place.name)")
+//            .presentationDetents([.fraction(0.25)])
+//            .presentationDragIndicator(.visible)
+//            .presentationCornerRadius(20)
+//
+//    }
     .environment(navigationContext)
 }

@@ -10,16 +10,17 @@ import MapKit
 
 struct NewPlaceFixedMap: View {
     
+    // MARK: - State & Bindings
     @State private var position: MapCameraPosition = .automatic
     @State private var cameraDistance: Double = 1000
 
+    // MARK: - private vars
     private let cameraDistanceMax: Double = 100000000
     private let cameraDistanceMin: Double = 1
-    
-    var place: SDPlace
+    private var place: SDPlace
 
+    // MARK: - Body
     var body: some View {
-        
         Map(position: $position, interactionModes: []) {
             Marker(place.name,
                    monogram: Text("NEW"),
@@ -65,20 +66,15 @@ struct NewPlaceFixedMap: View {
             }
         }
         .frame(maxHeight: 250)
-        
-        
-//      TODO: may we have undefined coords ? blur map in case
-//                Map(position: $position, interactionModes: []) { }
-//                    .blur(radius: 5)
-//                    .frame(maxHeight: 250)
-//            }
 
     }
 
+    // MARK: - init
     init(place: SDPlace) {
         self.place = place
     }
 
+    // MARK: - Actions
     private func updateCamera() {
         position = .camera(MapCamera(centerCoordinate: place.coordinates, distance: cameraDistance))
     }

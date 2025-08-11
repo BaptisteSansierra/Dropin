@@ -8,158 +8,36 @@
 import SwiftUI
 import SwiftData
 
-
-//@Observable class TagSelectorOutput {
-//
-//    var selected: [SDTag]
-//
-//    init() {
-//        self.selected = []
-//    }
-//
-//    init(selected: [SDTag]) {
-//        self.selected = selected
-//    }
-//}
-
-
-//@Observable class TagSelectorModelView {
-//    
-//    var tags: [SDTag]
-//    var remainings: [SDTag] {
-//        tags.filter { tag in
-//            return !selected.contains(tag)
-//        }
-//    }
-//    var selected: [SDTag]
-//
-//    init(tags: [SDTag], selected: [SDTag]) {
-//        self.tags = tags
-//        self.selected = selected
-//    }
-//}
-
 struct TagSelectorView: View {
     
-    @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) var modelContext
-    //@Environment(TagSelectorOutput.self) private var output
-    @Environment(PlaceFactory.self) private var placeFactory
-
-    @Query var tags: [SDTag]
-    
+    // MARK: - State & Bindings
     @State private var createdTagName: String = ""
     @State private var createdTagColor: Color
     @State private var isShowingNameWarn = false
+    // DB
+    @Query var tags: [SDTag]
 
+    // MARK: - Dependencies
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var modelContext
+    @Environment(PlaceFactory.self) private var placeFactory
+
+    // MARK: - private vars
     private var remainings: [SDTag] {
         return tags.filter { tag in
             return !placeFactory.place.tags.contains(tag)
         }
     }
 
+    // MARK: - Body
     var body: some View {
         VStack {
-            HStack {
-                ZStack {
-                    Text("Select tags for this place")
-                        .padding()
-                    
-//                    HStack {
-//                        Spacer()
-//                        Button("", systemImage: "xmark.circle") {
-//                            dismiss()
-//                        }
-//                        .padding()
-//                        .tint(.dropinPrimary)
-//                    }
-                }
-            }
-            Divider()
+            headerView
             ScrollView {
-                
-                let hasTags = placeFactory.place.tags.count > 0
-                Text(hasTags ? "Selected tags" : "No tag selected")
-                    .font(.callout)
-                    .foregroundStyle(.gray)
-                    .padding()
-                
-                
-                //if output.selected.count > 0 {
-                if hasTags {
-                    FlowLayout(alignment: .leading) {
-                        ForEach(placeFactory.place.tags) { tag in
-                            TagView(name: tag.name, color: Color(rgba: tag.colorHex))
-                                .onTapGesture {
-                                    guard let index = placeFactory.place.tags.firstIndex(of: tag) else {
-                                        assertionFailure("Couldn't remove tag \(tag.name) from selection")
-                                        return
-                                    }
-                                    placeFactory.place.tags.remove(at: index)
-                                }
-                        }
-                    }
-                    .padding([.bottom, .leading, .trailing])
-                }
-                Divider()
-
-                if remainings.count > 0 {
-                    FlowLayout(alignment: .leading) {
-                        ForEach(remainings) { tag in
-                            TagView(name: tag.name, color: Color(rgba: tag.colorHex))
-                                .onTapGesture {
-                                    placeFactory.place.tags.append(tag)
-                                }
-                        }
-                    }
-                    .padding()
-                    Divider()
-                }
-                
-                HStack() {
-                    ZStack {
-                        ColorPicker("", selection: $createdTagColor, supportsOpacity: false)
-                            .labelsHidden()
-                            .padding()
-                        Circle()
-                            .frame(width: 15, height: 15)
-                            .foregroundStyle(createdTagColor)
-                    }
-                    TextField("New tag", text: $createdTagName)
-                        .autocorrectionDisabled()
-                        .overlay {
-                            if isShowingNameWarn {
-                                ZStack(alignment: .leading) {
-                                    Rectangle().fill(.white)
-                                    Text("Give tag a name")
-                                        .bold()
-                                        .foregroundStyle(.red)
-                                }
-                            }
-                        }
-                    Spacer()
-                    IcoButton(systemImage: "plus").onTapGesture {
-                        guard !createdTagName.isEmpty else {
-                            withAnimation(.linear(duration: 0.5)) {
-                                isShowingNameWarn.toggle()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    withAnimation(.linear(duration: 0.5)) {
-                                        isShowingNameWarn.toggle()
-                                    }
-                                }
-                            }
-                            return
-                        }
-                        let newTag = SDTag(name: createdTagName, colorHex: createdTagColor.hex)
-                        modelContext.insert(newTag)
-                        placeFactory.place.tags.append(newTag)
-                        createdTagName = ""
-                        createdTagColor = Color.random()
-                    }
-                }
+                selectedView
+                remainingView
+                createTagView
             }
-            //.frame(maxHeight: 300)
-            
         }
 //        .onFirstAppear {
 //            output.selected = []
@@ -168,7 +46,108 @@ struct TagSelectorView: View {
 //            }
 //        }
     }
+
+    // MARK: - Subviews
+    private var headerView: some View {
+        Group {
+            HStack {
+                Text("Select tags for this place")
+                    .padding()
+            }
+            Divider()
+        }
+    }
     
+    private var selectedView: some View {
+        Group {
+            let hasTags = placeFactory.place.tags.count > 0
+            Text(hasTags ? "Selected tags" : "No tag selected")
+                .font(.callout)
+                .foregroundStyle(.gray)
+                .padding()
+            
+            if hasTags {
+                FlowLayout(alignment: .leading) {
+                    ForEach(placeFactory.place.tags) { tag in
+                        TagView(name: tag.name, color: Color(rgba: tag.colorHex))
+                            .onTapGesture {
+                                guard let index = placeFactory.place.tags.firstIndex(of: tag) else {
+                                    assertionFailure("Couldn't remove tag \(tag.name) from selection")
+                                    return
+                                }
+                                placeFactory.place.tags.remove(at: index)
+                            }
+                    }
+                }
+                .padding([.bottom, .leading, .trailing])
+            }
+            Divider()
+        }
+    }
+
+    private var remainingView: some View {
+        Group {
+            if remainings.count > 0 {
+                FlowLayout(alignment: .leading) {
+                    ForEach(remainings) { tag in
+                        TagView(name: tag.name, color: Color(rgba: tag.colorHex))
+                            .onTapGesture {
+                                placeFactory.place.tags.append(tag)
+                            }
+                    }
+                }
+                .padding()
+                Divider()
+            }
+        }
+    }
+    
+    private var createTagView: some View {
+        HStack() {
+            ZStack {
+                ColorPicker("", selection: $createdTagColor, supportsOpacity: false)
+                    .labelsHidden()
+                    .padding()
+                Circle()
+                    .frame(width: 15, height: 15)
+                    .foregroundStyle(createdTagColor)
+            }
+            TextField("New tag", text: $createdTagName)
+                .autocorrectionDisabled()
+                .overlay {
+                    if isShowingNameWarn {
+                        ZStack(alignment: .leading) {
+                            Rectangle().fill(.white)
+                            Text("Give tag a name")
+                                .bold()
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+            Spacer()
+            IcoButton(systemImage: "plus").onTapGesture {
+                guard !createdTagName.isEmpty else {
+                    withAnimation(.linear(duration: 0.5)) {
+                        isShowingNameWarn.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            withAnimation(.linear(duration: 0.5)) {
+                                isShowingNameWarn.toggle()
+                            }
+                        }
+                    }
+                    return
+                }
+                let newTag = SDTag(name: createdTagName, colorHex: createdTagColor.hex)
+                modelContext.insert(newTag)
+                placeFactory.place.tags.append(newTag)
+                createdTagName = ""
+                createdTagColor = Color.random()
+            }
+            .padding(.trailing, 15)
+        }
+    }
+
+    // MARK: - init
     init() {
         _tags = Query(sort: [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.creationDate)])
 
@@ -218,7 +197,6 @@ private struct TSVPreview: View {
     var body: some View {
         TagSelectorView()
             .modelContainer(container)
-//            .environment(TagSelectorOutput())
             .environment(PlaceFactory.preview)
     }
 }

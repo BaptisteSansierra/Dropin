@@ -9,45 +9,28 @@ import SwiftUI
 
 struct MainView: View {
     
+    // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext
     @Environment(LocationManager.self) private var locationManager
     @Environment(AppNavigationContext.self) private var navigationContext
 
-    //@State private var showingPlusMenu = false
-
+    // MARK: - Body
     var body: some View {
-        
+        // Bindable
         @Bindable var navigationContext = navigationContext
         
-            TabView {
-                PlacesMapView()
-                    .tabItem {
-                        Label("Map", systemImage: "map")
-                    }
-                PlacesListView()
-                    .tabItem {
-                        Label("List", systemImage: "list.bullet")
-                    }
-            }
-            .accentColor(.dropinSecondary)
-//            .toolbar {
-//                ToolbarItem(placement: .topBarLeading) {
-//                    Button("Menu", systemImage: "line.3.horizontal") {
-//                        showingSideMenu.toggle()
-//                    }
-//                    .tint(.dropinPrimary)
-//                }
-//                ToolbarItem(placement: .topBarTrailing) {
-//                    HStack {
-//                        Button("Add", systemImage: "plus") {
-//                            showingPlusMenu.toggle()
-//                        }
-//                        .tint(.dropinPrimary)
-//                    }
-//                }
-//
-//            }
-        //}
+        // Content
+        TabView {
+            PlacesMapView()
+                .tabItem {
+                    Label("Map", systemImage: "map")
+                }
+            PlacesListView()
+                .tabItem {
+                    Label("List", systemImage: "list.bullet")
+                }
+        }
+        .accentColor(.dropinSecondary)
         .onAppear {
             locationManager.start()
         }

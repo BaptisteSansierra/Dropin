@@ -10,16 +10,19 @@ import SwiftData
 
 struct GroupSelectorView: View {
     
+    // MARK: - State & Bindings
+    @State private var createdGroupName: String = ""
+    @State private var createdGroupColor: Color
+    @State private var isShowingNameWarn = false
+    // DB
+    @Query private var groups: [SDGroup]
+
+    // MARK: - Dependencies
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
     @Environment(PlaceFactory.self) private var placeFactory
     
-    @Query private var groups: [SDGroup]
-    
-    @State private var createdGroupName: String = ""
-    @State private var createdGroupColor: Color
-    @State private var isShowingNameWarn = false
-
+    // MARK: - Body
     var body: some View {
         @Bindable var place = placeFactory.place
         VStack {
@@ -29,24 +32,18 @@ struct GroupSelectorView: View {
             }
             .padding(.top)
             Divider()
-            VStack {
-                if let group = place.group {
-                    GroupView(name: group.name,
-                              color: Color(rgba: group.colorHex),
-                              hasDestructiveBt: true,
-                              destructiveAction: {
-                        place.group = nil
-                    })
-
-                } else {
-                    Text("No group selected")
-                        .font(.callout)
-                        .foregroundStyle(.gray)
-                        .padding()
-                }
-                Divider()
-            }
-            .frame(height: 80)
+            selectionView
+                .frame(height: 80)
+            groupPickerView
+            createGroupView
+            Spacer()
+        }
+    }
+    
+    // MARK: - Subviews
+    private var groupPickerView: some View {
+        VStack {
+            @Bindable var place = placeFactory.place
 
             Picker("Groups", selection: $place.group) {
                 Text("No group").tag(Optional<SDGroup>(nil))
@@ -56,53 +53,79 @@ struct GroupSelectorView: View {
             }
             .pickerStyle(.wheel)
             Divider()
-
-            // Create a group
-            HStack() {
-                ZStack {
-                    ColorPicker("", selection: $createdGroupColor, supportsOpacity: false)
-                        .labelsHidden()
-                        .padding()
-                    Circle()
-                        .frame(width: 15, height: 15)
-                        .foregroundStyle(createdGroupColor)
-                }
-                TextField("New group", text: $createdGroupName)
-                    .autocorrectionDisabled()
-                    .overlay {
-                        if isShowingNameWarn {
-                            ZStack(alignment: .leading) {
-                                Rectangle().fill(.white)
-                                Text("Give group a name")
-                                    .bold()
-                                    .foregroundStyle(.red)
-                            }
-                        }
-                    }
-                Spacer()
-                IcoButton(systemImage: "plus").onTapGesture {
-                    guard !createdGroupName.isEmpty else {
-                        withAnimation(.linear(duration: 0.5)) {
-                            isShowingNameWarn.toggle()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                withAnimation(.linear(duration: 0.5)) {
-                                    isShowingNameWarn.toggle()
-                                }
-                            }
-                        }
-                        return
-                    }
-                    let newGroup = SDGroup(name: createdGroupName, colorHex: createdGroupColor.hex)
-                    modelContext.insert(newGroup)
-                    place.group = newGroup
-                    createdGroupName = ""
-                    createdGroupColor = Color.random()
-                }
-            }
-            Spacer()
         }
     }
     
+    private var selectionView: some View {
+        VStack {
+            @Bindable var place = placeFactory.place
+
+            if let group = place.group {
+                GroupView(name: group.name,
+                          color: Color(rgba: group.colorHex),
+                          hasDestructiveBt: true,
+                          destructiveAction: {
+                    place.group = nil
+                })
+
+            } else {
+                Text("No group selected")
+                    .font(.callout)
+                    .foregroundStyle(.gray)
+                    .padding()
+            }
+            Divider()
+        }
+    }
+    
+    private var createGroupView: some View {
+        HStack() {
+            @Bindable var place = placeFactory.place
+
+            ZStack {
+                ColorPicker("", selection: $createdGroupColor, supportsOpacity: false)
+                    .labelsHidden()
+                    .padding()
+                Circle()
+                    .frame(width: 15, height: 15)
+                    .foregroundStyle(createdGroupColor)
+            }
+            TextField("New group", text: $createdGroupName)
+                .autocorrectionDisabled()
+                .overlay {
+                    if isShowingNameWarn {
+                        ZStack(alignment: .leading) {
+                            Rectangle().fill(.white)
+                            Text("Give group a name")
+                                .bold()
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+            Spacer()
+            IcoButton(systemImage: "plus").onTapGesture {
+                guard !createdGroupName.isEmpty else {
+                    withAnimation(.linear(duration: 0.5)) {
+                        isShowingNameWarn.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            withAnimation(.linear(duration: 0.5)) {
+                                isShowingNameWarn.toggle()
+                            }
+                        }
+                    }
+                    return
+                }
+                let newGroup = SDGroup(name: createdGroupName, colorHex: createdGroupColor.hex)
+                modelContext.insert(newGroup)
+                place.group = newGroup
+                createdGroupName = ""
+                createdGroupColor = Color.random()
+            }
+        }
+
+    }
+    
+    // MARK: - init
     init() {
         _groups = Query(sort: [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.creationDate)])
         _createdGroupColor = State(initialValue: Color.random())

@@ -53,11 +53,19 @@ struct PlaceDetails: View {
         .navigationBarTitleDisplayMode(.large)
         .alert("Delete place '\(place.name)' ?", isPresented: $showingDeleteWarning) {
             Button(role: .destructive) {
-                print("NONONNOONNO")
+                // TODO: delete it
             } label: {
                 Text("Delete")
             }
             Button("Cancel", role: .cancel) { }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(edit ? "Save" : "Edit", systemImage: "pencil.line") {
+                    edit.toggle()
+                }
+                .tint(.dropinPrimary)
+            }
         }
     }
 //    .alert("Delete this place ?", isPresented: $showingDeleteWarning, actions: { place in
