@@ -8,11 +8,15 @@
 import CoreLocation
 import Contacts
 
+/// `LocationManager` owns the current location and CoreLocation authorization status
+/// It also handles location utilities such as address from coordinates and so onj
 @Observable class LocationManager: NSObject {
     
+    // MARK: - observed vars
     var lastKnownLocation: CLLocationCoordinate2D?
     var authorized: Bool?
 
+    // MARK: - not observed vars
     @ObservationIgnored private var manager = CLLocationManager()
     @ObservationIgnored private var started = false
     
@@ -45,7 +49,7 @@ import Contacts
     }
 }
 
-// Conform CLLocationManagerDelegate
+// MARK: - Conform CLLocationManagerDelegate
 extension LocationManager: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -63,7 +67,7 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 }
 
-// Utils
+// MARK: - distance utils
 extension LocationManager {
 
     static func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
@@ -88,7 +92,7 @@ extension LocationManager {
     }
 }
 
-// Address utils
+// MARK: - address utils
 extension LocationManager {
     
     static func lookUpAddress(coords: CLLocationCoordinate2D, completion: @escaping (String?)->() ) {

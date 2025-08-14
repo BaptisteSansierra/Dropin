@@ -28,6 +28,12 @@ final class SDGroup {
     static let g3 = SDGroup(name: "Trekking", colorHex: "FF9999")
     static let g4 = SDGroup(name: "Fishing spot", colorHex: "456699")
     static let g5 = SDGroup(name: "Amusement", colorHex: "DD8855")
-    static let g6 = SDGroup(name: "Voyage voyage", colorHex: "7788CC")
+    static let g6 = SDGroup(name: "Disco", colorHex: "7788CC")
+    static let g7 = SDGroup(name: "Culture", colorHex: "2255DD")
+    static let g8 = SDGroup(name: "Shop", colorHex: "FF6600")
+    static let g9 = SDGroup(name: "Body health", colorHex: "4dd333")
+
+    static let all = [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+    
 #endif
 }

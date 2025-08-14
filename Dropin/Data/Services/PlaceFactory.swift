@@ -7,48 +7,58 @@
 
 import SwiftData
 import CoreLocation
-import SwiftData
 
+/// `PlaceFactory` create temporary places which can be manipulated/edited before being saved or discarded
 @Observable class PlaceFactory {
         
-    enum CreationMode {
+    private enum CreationMode {
         case coords
         case undefined
     }
-    
-    var place: SDPlace
 
-    private var preparing: Bool = false
-    private var creationMode: CreationMode = .undefined
+    // MARK: - observed vars
+    var place: Place
+    var buildingPlace: Bool = false
+
+    // MARK: - not observed vars
+    @ObservationIgnored private var creationMode: CreationMode = .undefined
     
+    // MARK: - init
     init() {
-        place = SDPlace(name: "", latitude: 0, longitude: 0, address: "")
+        place = Place()
     }
 
+    // MARK: - public
     func prepareFromCoords(coords: CLLocationCoordinate2D) {
-        preparing = true
+        buildingPlace = true
         creationMode = .coords
-        place.latitude = coords.latitude
-        place.longitude = coords.longitude
+        place.coordinates = coords
     }
 
     func save(modelContext: ModelContext) {
-        modelContext.insert(place)
+        modelContext.insert(place.toSDPlace())
+        reset()
+    }
+    
+    func discard() {
         reset()
     }
 
-    func reset() {
-        place = SDPlace(name: "", latitude: 0, longitude: 0, address: "")
-        preparing = false
+    // MARK: - private
+    private func reset() {
+        place = Place()
+        buildingPlace = false
         creationMode = .undefined
     }
-    
-    #if DEBUG
+}
+
+#if DEBUG
+/// Previews purpose
+extension PlaceFactory {
     static var preview: PlaceFactory {
         let factory = PlaceFactory()
         factory.prepareFromCoords(coords: DropinApp.locations.barcelona)
         return factory
     }
-    #endif
-
 }
+#endif

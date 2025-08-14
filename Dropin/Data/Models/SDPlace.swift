@@ -27,19 +27,23 @@ final class SDPlace {
          latitude: Double,
          longitude: Double,
          address: String,
+         systemImage: String? = nil,
          tags: [SDTag] = [],
          group: SDGroup? = nil,
-         notes: String? = nil) {
+         notes: String? = nil,
+         phone: String? = nil,
+         url: String? = nil) {
         self.creationDate = Date()
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
-        self.systemImage = "tag"
+        self.systemImage = systemImage ?? "tag"
         self.address = address
         self.tags = tags
         self.group = group
         self.notes = notes
-        self.systemImage = systemImage
+        self.phone = phone
+        self.url = url
     }
     
     func sortedTags() -> [SDTag] {
@@ -58,7 +62,8 @@ final class SDPlace {
                             latitude: 41.40622777528736,
                             longitude: 2.1595467749244204,
                             address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
-                            tags: [SDTag.t9, SDTag.t11],
+                            systemImage: "fork.knife.circle",
+                            tags: [SDTag.t9, SDTag.t11, SDTag.t14],
                             group: SDGroup.g1)
 
     static let l2 = SDPlace(name: "Les Tres a la Cuina",
@@ -68,40 +73,62 @@ final class SDPlace {
                             //latitude: 41.405341,
                             //longitude: 2.159652,
                             address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
-                            tags: [SDTag.t9, SDTag.t10],
-                            group: SDGroup.g1)
+                            systemImage: "fork.knife.circle",
+                            tags: [SDTag.t9, SDTag.t10, SDTag.t14],
+                            group: SDGroup.g1,
+                            notes: "Don't forget your tupper",
+                            phone: "931054947",
+                            url: "http://lestresalacuina.com")
     
     static let l3 = SDPlace(name: "Chiringuito Karamba",
                             latitude: 41.44511384541266,
                             longitude: 2.2495646936392317,
                             address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
+                            systemImage: "fork.knife.circle",
                             tags: [SDTag.t7, SDTag.t8],
                             group: SDGroup.g5)
 
-    static let l4 = SDPlace(name: "Chez oim",
-                            latitude: 41.403383362193004,
-                            longitude: 2.1601241159740505,
-                            address: "Carrer del Torrent d'En Vidalet, 7, Gràcia, 08012 Barcelona",
-                            tags: [SDTag.t1],
-                            group: nil)
+    static let l4 = SDPlace(name: "Continental Bar",
+                            latitude: 41.40626764285292,
+                            longitude: 2.156492157860694,
+                            address: "Carrer de la Providència, 30, /nGràcia, /n08024 Barcelona",
+                            systemImage: "wineglass",
+                            tags: [SDTag.t2],
+                            group: SDGroup.g6)
 
     static let l5 = SDPlace(name: "Bagdad café",
                             latitude: 33.321589923265904,
                             longitude: 44.416811639303546,
                             address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
+                            systemImage: "pianokeys",
                             tags: [SDTag.t2],
                             group: SDGroup.g6)
 
+    static let l6 = SDPlace(name: "El Col·leccionista",
+                            latitude: 41.40602900686343,
+                            longitude: 2.160639939265184,
+                            address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
+                            systemImage: "figure.socialdance",
+                            tags: [SDTag.t12, SDTag.t13],
+                            group: SDGroup.g6)
+
+    static let l7 = SDPlace(name: "Molsa Biosí",
+                            latitude: 41.403067387301924,
+                            longitude: 2.158858952034207,
+                            address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
+                            systemImage: "carrot",
+                            tags: [SDTag.t10, SDTag.t13],
+                            group: SDGroup.g8)
+
+    static let l8 = SDPlace(name: "Sincronia Yoga",
+                            latitude: 41.40068001375675,
+                            longitude: 2.155838283307449,
+                            address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
+                            systemImage: "swirl.circle.righthalf.filled.inverse",
+                            tags: [SDTag.t10],
+                            group: SDGroup.g9)
+
+    static let all = [l1, l2, l3, l4, l5, l6, l7, l8]
     
-//    static let locEx1 = SDPlace(name: "Barcelona",
-//                                   latitude: 41.38879,
-//                                   longitude: 2.15899,
-//                                   address: "Barcelona, SPAIN",
-//                                   tags: [SDTag.t1, SDTag.t2, SDTag.t3, SDTag.t4, SDTag.t5, SDTag.t6, SDTag.t7, SDTag.t8])
-//    static let locEx2 = SDPlace(name: "Badalona",
-//                                   latitude: 41.45004,
-//                                   longitude: 2.24741,
-//                                   address: "Badalona, SPAIN",
-//                                   tags: [SDTag.t1, SDTag.t3, SDTag.t5, SDTag.t7])
     #endif
 }

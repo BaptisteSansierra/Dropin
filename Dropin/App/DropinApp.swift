@@ -14,7 +14,7 @@ struct DropinApp: App {
 
     // MARK: - App states
     @State private var modelContainer: ModelContainer
-    @State private var appNavigationContext = AppNavigationContext()
+    @State private var navigationContext = NavigationContext()
     @State private var mapSettings = MapSettings()
     @State private var locationManager = LocationManager()
     @State private var placeFactory = PlaceFactory()
@@ -31,38 +31,26 @@ struct DropinApp: App {
                 .accentColor(.dropinSecondary)
         }
         .modelContainer(modelContainer)
-        .environment(locationManager)
-        .environment(appNavigationContext)
+        .environment(navigationContext)
         .environment(mapSettings)
+        .environment(locationManager)
         .environment(placeFactory)
     }
     
     private func populateDevelopmentDatabase() {
 #if DEBUG
-        modelContainer.mainContext.insert(SDTag.t1)
-        modelContainer.mainContext.insert(SDTag.t2)
-        modelContainer.mainContext.insert(SDTag.t3)
-        modelContainer.mainContext.insert(SDTag.t4)
-        modelContainer.mainContext.insert(SDTag.t5)
-        modelContainer.mainContext.insert(SDTag.t6)
-        modelContainer.mainContext.insert(SDTag.t7)
-        modelContainer.mainContext.insert(SDTag.t8)
-        modelContainer.mainContext.insert(SDTag.t9)
-        modelContainer.mainContext.insert(SDTag.t10)
-        modelContainer.mainContext.insert(SDTag.t11)
-
-        modelContainer.mainContext.insert(SDGroup.g1)
-        modelContainer.mainContext.insert(SDGroup.g2)
-        modelContainer.mainContext.insert(SDGroup.g3)
-        modelContainer.mainContext.insert(SDGroup.g4)
-        modelContainer.mainContext.insert(SDGroup.g5)
-        modelContainer.mainContext.insert(SDGroup.g6)
-
-        modelContainer.mainContext.insert(SDPlace.l1)
-        modelContainer.mainContext.insert(SDPlace.l2)
-        modelContainer.mainContext.insert(SDPlace.l3)
-        modelContainer.mainContext.insert(SDPlace.l4)
-        modelContainer.mainContext.insert(SDPlace.l5)
+        // Add some tags
+        for item in SDTag.all {
+            modelContainer.mainContext.insert(item)
+        }
+        // some groups
+        for item in SDGroup.all {
+            modelContainer.mainContext.insert(item)
+        }
+        // and some places
+        for item in SDPlace.all {
+            modelContainer.mainContext.insert(item)
+        }
 #endif
     }
     
@@ -78,6 +66,7 @@ struct DropinApp: App {
     }
 }
 
+// MARK: - app icon utils
 extension UIApplication {
     static func setApplicationIconWithoutAlert(_ iconName: String?) {
         guard UIApplication.shared.responds(to: #selector(getter: UIApplication.supportsAlternateIcons)) && UIApplication.shared.supportsAlternateIcons else { return }
@@ -90,7 +79,7 @@ extension UIApplication {
     }
 }
 
-// Constants
+// MARK: - app constants
 extension DropinApp {
     struct defaults {
         static let latitude: Double = 46.232193
@@ -115,6 +104,12 @@ extension DropinApp {
             static let lat: Double = 48.864716
             static let long: Double = 2.349014
         } */
+    }
+    struct ui {
+        struct button {
+            static let height: Double = 40
+            static let width: Double = 200
+        }
     }
     struct userDefaultsKeys {
     }
