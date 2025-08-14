@@ -27,3 +27,8 @@ You can:
 
 - Map marker clustering
 - CloudKit sync
+
+
+| Map View | List View | Place Details |
+|----------|-----------|---------------|
+| ![Map](Screenshots/01.PNG) | ![List](Screenshots/02.PNG) | ![Details](Screenshots/03.PNG) |
