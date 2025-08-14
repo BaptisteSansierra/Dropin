@@ -23,10 +23,15 @@ You can:
 - 📱 **Offline First** — No network required
 
 
+
 ## 🚀 Coming next...
 
 - Map marker clustering
 - CloudKit sync
+
+
+
+## 🖼️ Screenshots
 
 
 | Map View | List View | Place Details |
