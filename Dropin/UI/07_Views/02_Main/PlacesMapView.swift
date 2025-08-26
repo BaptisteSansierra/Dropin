@@ -21,7 +21,7 @@ struct PlacesMapView: View {
     @State private var longPressGestureCanceled = false
     @State private var longPressGestureLocation: CGPoint?
     @State private var longPressTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
-    @State private var movingCamera: Bool = false
+    
     // DB
     @Query var places: [SDPlace]
 
@@ -84,11 +84,11 @@ struct PlacesMapView: View {
                 .mapStyle(mapSettings.selectedMapStyle)
                 .selectionDisabled(false)
                 .onMapCameraChange(frequency: .continuous) { _ in
-                    movingCamera = true
+                    // Cancel long press timer when moving map camera
+                    longPressTimer.upstream.connect().cancel()
                 }
                 .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
                     updateCameraCache(mapCameraUpdateContext)
-                    movingCamera = false
                 }
                 .onFirstAppear {
                     onFirstAppear()
@@ -201,11 +201,6 @@ struct PlacesMapView: View {
     }
     
     private func onLongPressTimerFire(proxy: MapProxy) {
-        
-        // TODO: bugfix : lonPress is sometimes triggered while user is dragging/zooming on map
-        
-        guard !movingCamera else { return }
-
         // We trigger a long press action after 1sec if the user did not start dragging
         guard let longTapGestureDateStart = longPressGestureDateStart else { return }
         guard !longPressGestureCanceled else {
@@ -225,7 +220,7 @@ struct PlacesMapView: View {
         showingLongPressCreateSheet.toggle()
         // Center map on new place
         zoomOnPlace(placeFactory.place)
-        // Cancel timer
+        // Cancel long press timer
         longPressTimer.upstream.connect().cancel()
     }
     
