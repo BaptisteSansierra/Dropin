@@ -34,6 +34,14 @@ struct MainView: View {
         .onAppear {
             locationManager.start()
         }
+        .alert("Create a new place",
+               isPresented: $navigationContext.showingCreatePlaceMenu,
+               actions: {
+            Button("Ok") { }
+        }) {
+            Text("Long press on the map to create a new place!\n\n More ways to be implemented...")
+        }
+        /*
         .confirmationDialog("Save a location", isPresented: $navigationContext.showingCreatePlaceMenu, titleVisibility: .visible) {
             Button("From your current position") {
                 
@@ -61,6 +69,7 @@ struct MainView: View {
                 modelContext.insert(item)
             }
         }
+         */
     }
 }
 
