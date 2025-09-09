@@ -35,7 +35,7 @@ struct PlaceDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(editMode == .edit ? "Cancel" : "Edit") {
+                Button(editMode == .edit ? "common.cancel" : "common.edit") {
                     switch editMode {
                         case .edit:
                             editMode = .cancel
@@ -48,25 +48,25 @@ struct PlaceDetailsView: View {
                 .tint(.dropinPrimary)
             }
         }
-        .alert("Delete place '\(place.name)' ?",
+        .alert("alert.delete_place_title_\(place.name)",
                isPresented: $showingDeleteWarning,
                actions: {
             Button(role: .destructive) {
                 performDelete()
             } label: {
-                Text("Delete")
+                Text("common.delete")
             }
-            Button("Cancel", role: .cancel) { }
+            Button("common.cancel", role: .cancel) { }
         }, message: {
-            Text("This action cannot be undone!\nConfirm place deletion ?")
+            Text("alert.delete_place_msg")
         })
-        .alert("Copied !",
+        .alert("alert.address_copied_title",
                isPresented: $navigationContext.showingAddressToClipboard,
                actions: {
-            Button("Ok", role: .cancel) { }
+            Button("common.ok", role: .cancel) { }
         },
                message: {
-            Text("Address was copied to clipboard")
+            Text("alert.address_copied_body")
         })
         .onChange(of: editMode) { oldValue, newValue in
             switch editMode {
@@ -89,7 +89,7 @@ struct PlaceDetailsView: View {
                 .foregroundStyle(.dropinPrimary)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
-            Text("Apply changes")
+            Text("place_details.apply")
                 .foregroundStyle(.white)
         }
         .padding(.bottom, 5)
@@ -102,7 +102,7 @@ struct PlaceDetailsView: View {
                 .foregroundStyle(.red)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
-            Text("Delete place")
+            Text("common.delete_place")
                 .foregroundStyle(.white)
         }
         .padding(.bottom, 15)

@@ -36,18 +36,18 @@ struct SideMenuContentView: View {
 //                print("ENV  TYPE : \(type(of: env))")
 //                print("ENV : \(env)")
 //            }
-            SideMenuItemView(label: "Places",
+            SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main)
-            SideMenuItemView(label: "Groups",
+            SideMenuItemView(label: "common.groups",
                              systemImage: "folder",
                              context: .groups)
-            SideMenuItemView(label: "Tags",
+            SideMenuItemView(label: "common.tags",
                              systemImage: "tag",
                              context: .tags)
             Spacer()
             HStack {
-                Text("v\(appVersion)(\(appBuild))")
+                Text("_NOTTR_v\(appVersion)(\(appBuild))")
                     .padding()
                     .font(.caption)
                     .fontWeight(.black)

@@ -13,7 +13,7 @@ struct SideMenuItemView: View {
     @Environment(NavigationContext.self) var navigationContext
 
     // MARK: - private vars
-    private var label: String
+    private var label: LocalizedStringKey
     private var systemImage: String
     private var context: NavigationContext.SideMenuContext
     
@@ -44,7 +44,7 @@ struct SideMenuItemView: View {
     }
     
     // MARK: - init
-    init(label: String, systemImage: String, context: NavigationContext.SideMenuContext) {
+    init(label: LocalizedStringKey, systemImage: String, context: NavigationContext.SideMenuContext) {
         self.label = label
         self.systemImage = systemImage
         self.context = context

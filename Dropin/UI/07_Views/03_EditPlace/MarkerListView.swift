@@ -101,7 +101,7 @@ struct MarkerListView: View {
     // MARK: - Subviews
     private var headerView: some View {
         ZStack {
-            Text("Select a marker")
+            Text("markers.select")
                 .padding()
             HStack {
                 Spacer()

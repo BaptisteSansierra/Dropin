@@ -27,7 +27,7 @@ struct GroupSelectorView: View {
         @Bindable var place = place
         VStack {
             HStack {
-                Text("Should this place be in a group ?")
+                Text("group_selector.title")
                     .padding()
             }
             .padding(.top)
@@ -45,8 +45,8 @@ struct GroupSelectorView: View {
         VStack {
             @Bindable var place = place
 
-            Picker("Groups", selection: $place.group) {
-                Text("No group").tag(Optional<SDGroup>(nil))
+            Picker("common.groups", selection: $place.group) {
+                Text("group_selector.none").tag(Optional<SDGroup>(nil))
                 ForEach(groups) { group in
                     Text(group.name).tag(Optional(group))
                 }
@@ -69,7 +69,7 @@ struct GroupSelectorView: View {
                 })
 
             } else {
-                Text("No group selected")
+                Text("group_selector.none_selected")
                     .font(.callout)
                     .foregroundStyle(.gray)
                     .padding()
@@ -90,13 +90,13 @@ struct GroupSelectorView: View {
                     .frame(width: 15, height: 15)
                     .foregroundStyle(createdGroupColor)
             }
-            TextField("New group", text: $createdGroupName)
+            TextField("group_selector.new", text: $createdGroupName)
                 .autocorrectionDisabled()
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
                             Rectangle().fill(.white)
-                            Text("Give group a name")
+                            Text("placeholder.group_name")
                                 .bold()
                                 .foregroundStyle(.red)
                         }

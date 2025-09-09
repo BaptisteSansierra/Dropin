@@ -61,18 +61,18 @@ struct PlacesListView: View {
                 DropinToolbar.Logo()
             }
             .toolbar {
-                Button("Organize by group", systemImage: grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
+                Button("common.organize_by_group", systemImage: grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
                     grouped.toggle()
                 }
                 .tint(.dropinPrimary)
 
-                Menu("Sort", systemImage: "arrow.up.arrow.down") {
-                    Picker("Sort", selection: $sortMode) {
-                        Text("By distance")
+                Menu("common.sort", systemImage: "arrow.up.arrow.down") {
+                    Picker("common.sort", selection: $sortMode) {
+                        Text("common.sort.by_distance")
                             .tag(SortMode.distance)
-                        Text("By name")
+                        Text("common.sort.by_name")
                             .tag(SortMode.alphabetically)
-                        Text("By creation date")
+                        Text("common.sort.by_creation_date")
                             .tag(SortMode.creationDate)
                     }
                     .pickerStyle(.inline)
@@ -109,7 +109,7 @@ struct PlacesListView: View {
                     }
                 }
             }
-            Section("Not grouped") {
+            Section("common.not_grouped") {
                 ForEach(ungroupedSortedPlaces) { place in
                     NavigationLink(value: place) {
                         PlaceRowView(place: place)

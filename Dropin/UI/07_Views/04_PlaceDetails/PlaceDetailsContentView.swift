@@ -62,13 +62,13 @@ struct PlaceDetailsContentView: View {
                                 editEnabled: editMode == .edit)
                 PlaceStringFieldView(field: phone,
                                      showField: $showPhoneField,
-                                     name: "Phone",
+                                     name: "common.phone",
                                      keyboardType: .phonePad,
                                      editEnabled: editMode == .edit)
                     .tag("phone")
                 PlaceStringFieldView(field: url,
                                      showField: $showUrlField,
-                                     name: "URL",
+                                     name: "common.url",
                                      keyboardType: .URL,
                                      editEnabled: editMode == .edit)
                     .tag("url")

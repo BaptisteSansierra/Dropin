@@ -45,7 +45,7 @@ struct TagSelectorView: View {
     private var headerView: some View {
         Group {
             HStack {
-                Text("Select tags for this place")
+                Text("tag_selector.title")
                     .padding()
             }
             Divider()
@@ -55,7 +55,7 @@ struct TagSelectorView: View {
     private var selectedView: some View {
         Group {
             let hasTags = place.tags.count > 0
-            Text(hasTags ? "Selected tags" : "No tag selected")
+            Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
                 .font(.callout)
                 .foregroundStyle(.gray)
                 .padding()
@@ -106,13 +106,13 @@ struct TagSelectorView: View {
                     .frame(width: 15, height: 15)
                     .foregroundStyle(createdTagColor)
             }
-            TextField("New tag", text: $createdTagName)
+            TextField("tag_selector.new", text: $createdTagName)
                 .autocorrectionDisabled()
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
                             Rectangle().fill(.white)
-                            Text("Give tag a name")
+                            Text("placeholder.tag_name")
                                 .bold()
                                 .foregroundStyle(.red)
                         }

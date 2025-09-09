@@ -27,7 +27,7 @@ struct PlaceDetailsSheetView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(editMode == .edit ? "Cancel" : "Edit") {
+                        Button(editMode == .edit ? "common.cancel" : "common.edit") {
                             switch editMode {
                                 case .edit:
                                     editMode = .cancel
@@ -49,13 +49,13 @@ struct PlaceDetailsSheetView: View {
                 footer
             }
         }
-        .alert("Copied !",
+        .alert("alert.address_copied_title",
                isPresented: $navigationContext.showingAddressToClipboard,
                actions: {
-            Button("Ok", role: .cancel) { }
+            Button("common.ok", role: .cancel) { }
         },
                message: {
-            Text("Address was copied to clipboard")
+            Text("alert.address_copied_body")
         })
     }
     
@@ -66,7 +66,7 @@ struct PlaceDetailsSheetView: View {
                 RoundedRectangle(cornerSize: 8)
                     .foregroundStyle(.dropinPrimary)
                     .frame(height: DropinApp.ui.button.height)
-                Text("Go")
+                Text("common.go")
                     .foregroundStyle(.white)
             }
             .padding(.leading, 15)
@@ -76,7 +76,7 @@ struct PlaceDetailsSheetView: View {
                 RoundedRectangle(cornerSize: 8)
                     .foregroundStyle(.dropinPrimary)
                     .frame(height: DropinApp.ui.button.height)
-                Text("Edit")
+                Text("common.edit")
                     .foregroundStyle(.white)
             }
             .padding(.trailing, 15)

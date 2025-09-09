@@ -16,14 +16,14 @@ struct DropinToolbar {
         var body: some ToolbarContent {
             ToolbarItem(placement: .principal) {
                 HStack {
-                    Text("Dr")
+                    Text("_NOTTR_Dr")
                         .font(.title)
                         .fontWeight(.bold)
                         .padding(0)
                         .offset(x: 4, y: 0)
                     DropinLogo(lineWidthMuliplier: 4, pinSizeMuliplier: 1.5)
                         .frame(width: 25, height: 25)
-                    Text("pin")
+                    Text("_NOTTR_pin")
                         .font(.title)
                         .fontWeight(.bold)
                         .padding(0)
@@ -40,7 +40,7 @@ struct DropinToolbar {
         
         var body: some ToolbarContent {
             ToolbarItem(placement: .topBarLeading) {
-                Button("Menu", systemImage: "line.3.horizontal") {
+                Button("", systemImage: "line.3.horizontal") {
                     navigationContext.showingSideMenu.toggle()
                 }
                 .tint(.dropinPrimary)
@@ -56,7 +56,7 @@ struct DropinToolbar {
         var body: some ToolbarContent {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack {
-                    Button("Add", systemImage: "plus") {
+                    Button("", systemImage: "plus") {
                         navigationContext.showingCreatePlaceMenu.toggle()
                     }
                     .tint(.dropinPrimary)

@@ -21,7 +21,7 @@ struct PlaceTagsView: View {
         Group {
             VStack {
                 HStack(alignment: .top) {
-                    Text("Tags")
+                    Text("common.tags")
                         .font(.title3)
                         .foregroundStyle(.gray)
                         .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))

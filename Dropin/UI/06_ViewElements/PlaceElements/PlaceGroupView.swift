@@ -21,7 +21,7 @@ struct PlaceGroupView: View {
         Group {
             VStack {
                 HStack {
-                    Text("Group")
+                    Text("common.group")
                         .font(.title3)
                         .foregroundStyle(.gray)
                         .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))

@@ -21,13 +21,13 @@ struct PlaceNotesView: View {
     var body: some View {
         VStack {
             HStack(alignment: .top) {
-                Text("Notes")
+                Text("common.notes")
                     .font(.title3)
                     .foregroundStyle(.gray)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
                 Spacer()
             }
-            TextField("Add more information here", text: $notes, axis: .vertical)
+            TextField("placeholder.notes", text: $notes, axis: .vertical)
                 .lineLimit(2...6)
                 .padding(.horizontal)
                 .onChange(of: notes) { oldVal, newVal in

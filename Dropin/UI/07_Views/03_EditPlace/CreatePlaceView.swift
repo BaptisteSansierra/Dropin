@@ -72,13 +72,13 @@ struct CreatePlaceView: View {
                                 editEnabled: editEnabled)
                 PlaceStringFieldView(field: phone,
                                      showField: $showPhoneField,
-                                     name: "Phone",
+                                     name: "common.phone",
                                      keyboardType: .phonePad,
                                      editEnabled: editEnabled)
                     .tag("phone")
                 PlaceStringFieldView(field: url,
                                      showField: $showUrlField,
-                                     name: "URL",
+                                     name: "common.url",
                                      keyboardType: .URL,
                                      editEnabled: editEnabled)
                     .tag("url")
@@ -96,7 +96,7 @@ struct CreatePlaceView: View {
             .scrollPosition($scrollPosition)
             Spacer()
             Divider()
-            Button("Save this place") {
+            Button("create_place.save") {
                 placeFactory.save(modelContext: modelContext)
                 dismiss()
             }
@@ -126,10 +126,10 @@ struct CreatePlaceView: View {
     // MARK: - Actions
     private func onFirstAppear(place: Place) {
         // Fetch address from coords
-        place.address = "Fetching address..."
+        place.address = String(localized: "create_place.fetching")
         LocationManager.lookUpAddress(coords: place.coordinates) { address in
             guard let address = address else {
-                place.address = "N/A"
+                place.address = String(localized: "common.na")
                 return
             }
             place.address = address

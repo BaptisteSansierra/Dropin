@@ -14,7 +14,7 @@ struct PlaceStringFieldView: View {
     @Binding private var showField: Bool
 
     // MARK: - private vars
-    private var name: String
+    private var name: LocalizedStringKey
     private var keyboardType: UIKeyboardType
     private var editEnabled: Bool
 
@@ -43,7 +43,7 @@ struct PlaceStringFieldView: View {
     // MARK: - init
     init(field: Binding<String>,
          showField: Binding<Bool>,
-         name: String,
+         name: LocalizedStringKey,
          keyboardType: UIKeyboardType,
          editEnabled: Bool) {
         self._field = field

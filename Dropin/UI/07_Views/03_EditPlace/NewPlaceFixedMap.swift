@@ -23,7 +23,7 @@ struct NewPlaceFixedMap: View {
     var body: some View {
         Map(position: $position, interactionModes: []) {
             Marker(place.name,
-                   monogram: Text("NEW"),
+                   monogram: Text("common.new".uppercased()),
                    coordinate: place.coordinates)
         }
         .onFirstAppear {

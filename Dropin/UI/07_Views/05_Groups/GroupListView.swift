@@ -19,7 +19,7 @@ struct GroupListView: View {
                     Text("\(group.name)")
                 }
             }
-            .navigationTitle("Groups")
+            .navigationTitle("common.groups")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 DropinToolbar.Burger()

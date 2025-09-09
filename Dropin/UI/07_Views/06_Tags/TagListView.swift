@@ -19,7 +19,7 @@ struct TagListView: View {
                     Text("\(tag.name)")
                 }
             }
-            .navigationTitle("Tags")
+            .navigationTitle("common.tags")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 DropinToolbar.Burger()

@@ -49,7 +49,7 @@ struct PlacesMapView: View {
                     // Add a marker at current new temporary place
                     if placeFactory.buildingPlace {
                         Marker(placeFactory.place.name,
-                               monogram: Text("NEW"),
+                               monogram: Text("common.new".uppercased()),
                                coordinate: placeFactory.place.coordinates)
                     }
 
@@ -116,14 +116,14 @@ struct PlacesMapView: View {
                         .presentationDetents([.medium, .large])
                         .presentationCornerRadius(20)
                 }
-                .alert("Location Access not authorized", isPresented: $showAuthLocAlert) {
-                    Button("Open Settings") {
+                .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
+                    Button("common.open_settings") {
                         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                         UIApplication.shared.open(url)
                     }
-                    Button("Cancel") {}
+                    Button("common.cancel") {}
                 } message: {
-                    Text("This app requires location access to function properly.\nPlease enable location permissions in Settings.")
+                    Text("common.loc_auth_required")
                 }
             }
             .toolbar {

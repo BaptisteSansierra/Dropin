@@ -41,7 +41,7 @@ struct PlaceHeaderView: View {
                         .opacity(editEnabled ? 1 : 0)
                 }
                 VStack(alignment: .leading) {
-                    TextField(editEnabled ? "Give place a name" : "N/A", text: $place.name)
+                    TextField(editEnabled ? "placeholder.place_name" : "common.na", text: $place.name)
                         .font(.title)
                         .autocorrectionDisabled()
                         .disabled(!editEnabled)

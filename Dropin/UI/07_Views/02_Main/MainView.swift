@@ -23,23 +23,23 @@ struct MainView: View {
         TabView {
             PlacesMapView()
                 .tabItem {
-                    Label("Map", systemImage: "map")
+                    Label("common.map", systemImage: "map")
                 }
             PlacesListView()
                 .tabItem {
-                    Label("List", systemImage: "list.bullet")
+                    Label("common.list", systemImage: "list.bullet")
                 }
         }
         .accentColor(.dropinSecondary)
         .onAppear {
             locationManager.start()
         }
-        .alert("Create a new place",
+        .alert("common.create_place",
                isPresented: $navigationContext.showingCreatePlaceMenu,
                actions: {
-            Button("Ok") { }
+            Button("common.ok") { }
         }) {
-            Text("Long press on the map to create a new place!\n\n More ways to be implemented...")
+            Text("_TEMP_long_press_instructions")
         }
         /*
         .confirmationDialog("Save a location", isPresented: $navigationContext.showingCreatePlaceMenu, titleVisibility: .visible) {
