@@ -60,6 +60,7 @@ struct PlaceRowView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     List {
         PlaceRowView(place: SDPlace.l1)
@@ -70,3 +71,4 @@ struct PlaceRowView: View {
     .environment(LocationManager())
     .listStyle(.grouped)
 }
+#endif

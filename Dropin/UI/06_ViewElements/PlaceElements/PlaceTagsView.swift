@@ -58,6 +58,7 @@ struct PlaceTagsView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     @Previewable @State var place = Place(sdPlace: SDPlace.l1)
     @Previewable @State var showingTagsSelector = true
@@ -65,3 +66,4 @@ struct PlaceTagsView: View {
                   showingTagsSelector: $showingTagsSelector,
                   editEnabled: true)
 }
+#endif

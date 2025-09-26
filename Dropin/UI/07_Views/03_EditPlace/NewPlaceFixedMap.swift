@@ -80,6 +80,8 @@ struct NewPlaceFixedMap: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NewPlaceFixedMap(place: SDPlace.l1)
 }
+#endif

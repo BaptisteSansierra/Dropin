@@ -73,6 +73,7 @@ struct MainView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     MainView()
         .environment(LocationManager())
@@ -80,3 +81,4 @@ struct MainView: View {
         .environment(PlaceFactory.preview)
 
 }
+#endif

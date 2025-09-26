@@ -120,9 +120,11 @@ struct PlaceDetailsContentView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     @Previewable @State var place: Place = Place(sdPlace: SDPlace.l1)
     @Previewable @State var editMode: PlaceDetailsContentView.EditMode = .none
 
     PlaceDetailsContentView(place: $place, editMode: $editMode)
 }
+#endif

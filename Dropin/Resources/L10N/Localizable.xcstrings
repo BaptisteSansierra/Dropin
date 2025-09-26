@@ -84,9 +84,6 @@
         }
       }
     },
-    "%@" : {
-      "shouldTranslate" : false
-    },
     "%lf - %lf " : {
       "localizations" : {
         "en" : {
@@ -157,7 +154,103 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer le lieu ‘%@’"
+            "value" : "Supprimer le lieu ‘%@’ ?"
+          }
+        }
+      }
+    },
+    "alert.remove_group_body_%@_%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning: Group ‘%1$@’ is used by %2$lld places!\nThis action cannot be undone.\nConfirm group deletion ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attention: Le groupe ‘%1$@’ est associé à %2$lld places!\nCette action est irréversible.\nConfirmer la suppression de ce groupe ?"
+          }
+        }
+      }
+    },
+    "alert.remove_group_empty_body_%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action cannot be undone.\nConfirm group deletion ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette action est irréversible.\nConfirmer la suppression de ce groupe ?"
+          }
+        }
+      }
+    },
+    "alert.remove_group_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete group ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le groupe ?"
+          }
+        }
+      }
+    },
+    "alert.remove_tag_body_%@_%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning: Tag ‘%1$@’ is used by %2$lld places!\nThis action cannot be undone.\nConfirm tag deletion ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attention: Le tag ‘%1$@’ est associé à %2$lld places!\nCette action est irréversible.\nConfirmer la suppression de ce tag ?"
+          }
+        }
+      }
+    },
+    "alert.remove_tag_empty_body_%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action cannot be undone.\nConfirm tag deletion ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette action est irréversible.\nConfirmer la suppression de ce tag ?"
+          }
+        }
+      }
+    },
+    "alert.remove_tag_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete tag ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le tag ?"
           }
         }
       }
@@ -210,6 +303,22 @@
         }
       }
     },
+    "common.delete_group" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete group"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ce groupe"
+          }
+        }
+      }
+    },
     "common.delete_place" : {
       "localizations" : {
         "en" : {
@@ -222,6 +331,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer ce lieu"
+          }
+        }
+      }
+    },
+    "common.delete_tag" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete tag"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ce tag"
           }
         }
       }
@@ -270,6 +395,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Groupe"
+          }
+        }
+      }
+    },
+    "common.group_color" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur du groupe"
+          }
+        }
+      }
+    },
+    "common.group_name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom du groupe"
           }
         }
       }
@@ -386,6 +543,22 @@
         }
       }
     },
+    "common.no_related_places" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No related places"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun lieu apparenté"
+          }
+        }
+      }
+    },
     "common.not_grouped" : {
       "localizations" : {
         "en" : {
@@ -498,6 +671,22 @@
         }
       }
     },
+    "common.related_places" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Related places"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieux associés"
+          }
+        }
+      }
+    },
     "common.sort" : {
       "localizations" : {
         "en" : {
@@ -562,6 +751,38 @@
         }
       }
     },
+    "common.tag_color" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur du tag"
+          }
+        }
+      }
+    },
+    "common.tag_name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom du tag"
+          }
+        }
+      }
+    },
     "common.tags" : {
       "localizations" : {
         "en" : {
@@ -574,6 +795,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tags"
+          }
+        }
+      }
+    },
+    "common.unlink" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlink"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dissocier"
           }
         }
       }
@@ -622,6 +859,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sauver ce lieu"
+          }
+        }
+      }
+    },
+    "group_list_view.num_places_%lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieu"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieux"
+                }
+              }
+            }
           }
         }
       }
@@ -782,6 +1059,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au tag"
+          }
+        }
+      }
+    },
+    "tag_list_view.num_places_%lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieu"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieux"
+                }
+              }
+            }
           }
         }
       }

@@ -70,6 +70,7 @@ struct PlaceBubbleAnnotationView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     @Previewable @State var navigationContext = NavigationContext()
     Map {
@@ -80,3 +81,4 @@ struct PlaceBubbleAnnotationView: View {
 //    }
     .environment(navigationContext)
 }
+#endif

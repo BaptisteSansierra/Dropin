@@ -135,10 +135,11 @@ struct PlaceDetailsView: View {
     }
 }
 
-
+#if DEBUG
 #Preview {
     NavigationStack {
         PlaceDetailsView(place: Place(sdPlace: SDPlace.l1))
             .environment(NavigationContext())
     }
 }
+#endif

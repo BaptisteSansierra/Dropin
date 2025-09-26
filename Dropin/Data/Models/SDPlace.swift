@@ -15,8 +15,8 @@ final class SDPlace {
     var longitude: Double
     var address: String
     var systemImage: String
-    @Relationship(deleteRule: .nullify, inverse: \SDTag.locations) var tags: [SDTag]
-    @Relationship(deleteRule: .nullify, inverse: \SDGroup.locations) var group: SDGroup?
+    @Relationship(deleteRule: .nullify, inverse: \SDTag.places) var tags: [SDTag]
+    @Relationship(deleteRule: .nullify, inverse: \SDGroup.places) var group: SDGroup?
     var notes: String?
     var phone: String?
     var url: String?
@@ -128,7 +128,15 @@ final class SDPlace {
                             tags: [SDTag.t10],
                             group: SDGroup.g9)
 
-    static let all = [l1, l2, l3, l4, l5, l6, l7, l8]
+    static let l9 = SDPlace(name: "Be Laundry Joanic",
+                            latitude: 41.399426209480154,
+                            longitude: 2.154584065083631,
+                            address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
+                            systemImage: "basket",
+                            tags: [SDTag.t13, SDTag.t15, SDTag.t16],
+                            group: SDGroup.g9)
+
+    static let all = [l1, l2, l3, l4, l5, l6, l7, l8, l9]
     
     #endif
 }

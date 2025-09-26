@@ -28,7 +28,7 @@ extension Color {
         green = green < 0 ? 0 : (green > 255 ? 255 : green)
         blue = blue < 0 ? 0 : (blue > 255 ? 255 : blue)
         let hexaStr = String(format: "#%02X%02X%02X", red, green, blue)
-        print("RGB: \(resolved.red) \(resolved.green) \(resolved.blue) => \(hexaStr)")
+        //print("RGB: \(resolved.red) \(resolved.green) \(resolved.blue) => \(hexaStr)")
         return hexaStr
     }
     
