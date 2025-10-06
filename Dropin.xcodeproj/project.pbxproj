@@ -34,6 +34,54 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				XX_legacy/Data/Models/TR_SDGroup.swift,
+				XX_legacy/Data/Models/TR_SDPlace.swift,
+				XX_legacy/Data/Models/TR_SDTag.swift,
+				XX_legacy/Data/Services/LocationManager.swift,
+				XX_legacy/Data/Services/PlaceFactory.swift,
+				XX_legacy/Domain/Model/Place.swift,
+				XX_legacy/UI/01_Contexts/TR_MapSettings.swift,
+				XX_legacy/UI/01_Contexts/TR_NavigationContext.swift,
+				"XX_legacy/UI/02_Extensions/Color+Extension.swift",
+				"XX_legacy/UI/02_Extensions/RoundedRectangle+Extension.swift",
+				"XX_legacy/UI/02_Extensions/SDPlace+Extension.swift",
+				"XX_legacy/UI/02_Extensions/ShapeStyle+Extension.swift",
+				"XX_legacy/UI/02_Extensions/View+Extension.swift",
+				XX_legacy/UI/03_Layout/FlowLayout.swift,
+				XX_legacy/UI/04_MapContents/PlaceAnnotation.swift,
+				XX_legacy/UI/04_MapContents/PlaceBubbleAnnotation.swift,
+				XX_legacy/UI/05_Shapes/Bubble.swift,
+				XX_legacy/UI/06_ViewElements/GroupView.swift,
+				XX_legacy/UI/06_ViewElements/IcoButton.swift,
+				XX_legacy/UI/06_ViewElements/MapIcoButton.swift,
+				XX_legacy/UI/06_ViewElements/MapSettingsOverlay.swift,
+				XX_legacy/UI/06_ViewElements/PlaceElements/PlaceGroupView.swift,
+				XX_legacy/UI/06_ViewElements/PlaceElements/PlaceHeaderView.swift,
+				XX_legacy/UI/06_ViewElements/PlaceElements/PlaceNotesView.swift,
+				XX_legacy/UI/06_ViewElements/PlaceElements/PlaceStringFieldView.swift,
+				XX_legacy/UI/06_ViewElements/PlaceElements/PlaceTagsView.swift,
+				XX_legacy/UI/06_ViewElements/PlaceRowView.swift,
+				XX_legacy/UI/06_ViewElements/TagView.swift,
+				XX_legacy/UI/06_ViewElements/TR_DropinToolbar.swift,
+				XX_legacy/UI/07_Views/01_Root/TR_RootView.swift,
+				XX_legacy/UI/07_Views/01_Root/TR_SideMenuContentView.swift,
+				XX_legacy/UI/07_Views/01_Root/TR_SideMenuItemView.swift,
+				XX_legacy/UI/07_Views/01_Root/TR_SideMenuView.swift,
+				XX_legacy/UI/07_Views/02_Main/TR_MainView.swift,
+				XX_legacy/UI/07_Views/02_Main/TR_PlacesListView.swift,
+				XX_legacy/UI/07_Views/02_Main/TR_PlacesMapView.swift,
+				XX_legacy/UI/07_Views/03_EditPlace/CreatePlaceView.swift,
+				XX_legacy/UI/07_Views/03_EditPlace/GroupSelectorView.swift,
+				XX_legacy/UI/07_Views/03_EditPlace/MarkerListView.swift,
+				XX_legacy/UI/07_Views/03_EditPlace/NewPlaceFixedMap.swift,
+				XX_legacy/UI/07_Views/03_EditPlace/TagSelectorView.swift,
+				XX_legacy/UI/07_Views/04_PlaceDetails/PlaceDetailsContentView.swift,
+				XX_legacy/UI/07_Views/04_PlaceDetails/PlaceDetailsSheetView.swift,
+				XX_legacy/UI/07_Views/04_PlaceDetails/PlaceDetailsView.swift,
+				XX_legacy/UI/07_Views/05_Groups/GroupDetailsView.swift,
+				XX_legacy/UI/07_Views/05_Groups/GroupListView.swift,
+				XX_legacy/UI/07_Views/06_Tags/TagDetailsView.swift,
+				XX_legacy/UI/07_Views/06_Tags/TagListView.swift,
 			);
 			target = 4D42C7392E2BFAFF00B50940 /* Dropin */;
 		};
@@ -407,7 +455,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = Dropin/Resources/Dropin.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Dropin/01_Core/Resources/Dropin.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 20250826102818;
 				DEVELOPMENT_TEAM = HT3SFSF7CQ;
@@ -437,6 +485,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 2.5;
@@ -449,7 +498,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = Dropin/Resources/Dropin.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Dropin/01_Core/Resources/Dropin.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 20250826102818;
 				DEVELOPMENT_TEAM = HT3SFSF7CQ;
@@ -479,6 +528,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 2.5;
