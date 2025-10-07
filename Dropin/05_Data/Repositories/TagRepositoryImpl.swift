@@ -5,6 +5,7 @@
 //  Created by baptiste sansierra on 2/10/25.
 //
 
+import Foundation
 import SwiftData
 
 public final class TagRepositoryImpl: TagRepository {
@@ -16,7 +17,10 @@ public final class TagRepositoryImpl: TagRepository {
     }
     
     func create(_ tag: TagEntity) async throws -> TagEntity {
-        throw AppError.notImplemented
+        let sdTag = TagMapper.toData(tag)
+        modelContext.insert(sdTag)
+        try modelContext.save()
+        return tag
     }
     
     func delete(_ tag: TagEntity) async throws {
@@ -24,6 +28,9 @@ public final class TagRepositoryImpl: TagRepository {
     }
     
     func getAll() async throws -> [TagEntity] {
-        throw AppError.notImplemented
+        let desc = FetchDescriptor<SDTag>(sortBy: [SortDescriptor(\SDTag.name),
+                                                   SortDescriptor(\SDTag.creationDate)])
+        let sdTags = try modelContext.fetch(desc)
+        return sdTags.map { TagMapper.toDomain($0) }
     }
 }

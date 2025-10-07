@@ -9,16 +9,24 @@ import Foundation
 
 public enum TagMapper {
     
-    static func toDomain(_ sdTag: SDTag) -> TagEntity {
+    static func toDomain(_ sdTag: SDTag, skipRelationships: Bool = false) -> TagEntity {
         var places = [PlaceEntity]()
-        if let tagPlaces = sdTag.places {
-            places = tagPlaces.map { PlaceMapper.toDomain($0) }
+        if !skipRelationships {
+            if let tagPlaces = sdTag.places {
+                places = tagPlaces.map { PlaceMapper.toDomain($0, skipRelationships: true) }
+            }
         }
-        return TagEntity(id: sdTag.identifier,
-                         name: sdTag.name,
-                         color: sdTag.color,
-                         places: places,
-                         creationDate: sdTag.creationDate)
+        let tag = TagEntity(id: sdTag.identifier,
+                            name: sdTag.name,
+                            color: sdTag.color,
+                            places: places,
+                            creationDate: sdTag.creationDate)
+        if !skipRelationships {
+            for i in 0..<places.count {
+                places[i].tags.append(tag)
+            }
+        }
+        return tag
     }
     
     static func toData(_ tag: TagEntity) -> SDTag {

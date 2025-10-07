@@ -21,7 +21,6 @@
       }
     },
     "_NOTTR_num %lld" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -256,7 +255,6 @@
       }
     },
     "common.cancel" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -391,7 +389,6 @@
       }
     },
     "common.group" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -475,7 +472,6 @@
       }
     },
     "common.loc_auth_missing" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -492,7 +488,6 @@
       }
     },
     "common.loc_auth_required" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -525,7 +520,6 @@
       }
     },
     "common.na" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -593,7 +587,6 @@
       }
     },
     "common.notes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -626,7 +619,6 @@
       }
     },
     "common.open_settings" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -660,7 +652,6 @@
       }
     },
     "common.phone" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -845,7 +836,6 @@
       }
     },
     "common.url" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -862,7 +852,6 @@
       }
     },
     "create_place.fetching" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -879,7 +868,6 @@
       }
     },
     "create_place.save" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1062,7 +1050,6 @@
       }
     },
     "placeholder.notes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1079,7 +1066,6 @@
       }
     },
     "placeholder.place_name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1096,7 +1082,6 @@
       }
     },
     "placeholder.tag_name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1154,7 +1139,6 @@
       }
     },
     "tag_selector.empty" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1171,7 +1155,6 @@
       }
     },
     "tag_selector.new" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1188,7 +1171,6 @@
       }
     },
     "tag_selector.selected" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1205,7 +1187,6 @@
       }
     },
     "tag_selector.title" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1222,6 +1203,9 @@
       }
     },
     "Tags" : {
+
+    },
+    "To be restored" : {
 
     }
   },

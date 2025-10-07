@@ -48,6 +48,14 @@ final class AppContainer {
                                       createPlace: CreatePlace(repository: placeRepository))
         return CreatePlaceView(viewModel: vm)
     }
+    
+    func createTagSelectorView(place: PlaceEntity) -> TagSelectorView {
+        let vm = TagSelectorViewModel(self,
+                                      place: place,
+                                      getTags: GetTags(repository: tagRepository),
+                                      createTags: CreateTag(repository: tagRepository))
+        return TagSelectorView(viewModel: vm)
+    }
 }
 
 #if DEBUG
@@ -90,11 +98,11 @@ extension AppContainer {  // Mock extension
         return try! mock().mockModelContext!.fetch(FetchDescriptor<SDPlace>()).first!
     }
     
-    static func mockTagExample() -> SDPlace {
+    static func mockTagExample() -> SDTag {
         return try! mock().mockModelContext!.fetch(FetchDescriptor<SDTag>()).first!
     }
     
-    static func mockGroupExample() -> SDPlace {
+    static func mockGroupExample() -> SDGroup {
         return try! mock().mockModelContext!.fetch(FetchDescriptor<SDGroup>()).first!
     }
 }

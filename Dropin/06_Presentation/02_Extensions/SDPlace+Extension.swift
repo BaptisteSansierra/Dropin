@@ -9,6 +9,14 @@ import SwiftUI
 import CoreLocation
 
 extension PlaceEntity {
+    var groupColor: Color {
+        guard let group = self.group else { return .dropinPrimary }
+        return Color(rgba: group.color)
+    }
+}
+
+/*
+extension PlaceEntity {
     
     var groupColorOrDefault: Color {
         guard let gc = groupColor else { return .dropinPrimary }
@@ -24,4 +32,6 @@ extension PlaceEntity {
     }
      */
 }
+
+*/
 

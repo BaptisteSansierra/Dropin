@@ -80,6 +80,8 @@ struct PlacesMapView: View {
                     UserAnnotation()
 
                 }
+                
+// TODO: restore
                 .simultaneousGesture(longPressHackDragGesture)
                 .onReceive(longPressTimer, perform: { time in
                     onLongPressTimerFire(proxy: proxy)
@@ -98,6 +100,7 @@ struct PlacesMapView: View {
                     updateCameraCache(mapCameraUpdateContext)
                 }
                 .onFirstAppear {
+                    // TODO: replace by task
                     onFirstAppear()
                 }
                 .overlay {
@@ -109,18 +112,23 @@ struct PlacesMapView: View {
                 }
                 
 //  TODO: restore
-//                .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
-//                    placeFactory.discard()
-//                }, content: {
-//                    CreatePlaceView()
-//                        //.presentationDetents([.medium, .large])
-//                        .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
-//                })
+                .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
+                    //placeFactory.discard()
+                    viewModel.discardCreation()
+                    Task {
+                        try await viewModel.loadPlaces()
+                    }
+                }, content: {
+                    viewModel.createCreatePlacesMapView()
+                        //.presentationDetents([.medium, .large])
+                        .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+                })
                 
-                .onChange(of: viewModel.pinPlace) {
-                    guard let place = viewModel.pinPlace else { return  }
-                    zoomOnPlace(place)
-                }
+// TODO: restore
+//                .onChange(of: viewModel.pinPlace) {
+//                    guard let place = viewModel.pinPlace else { return  }
+//                    zoomOnPlace(place)
+//                }
                 
 // TODO: restore
 //                .sheet(item: $navigationContext.pinPlace) { sdPlace in
@@ -129,6 +137,7 @@ struct PlacesMapView: View {
 //                        .presentationCornerRadius(20)
 //                }
                 
+// TODO: restore
                 .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
                     Button("common.open_settings") {
                         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }

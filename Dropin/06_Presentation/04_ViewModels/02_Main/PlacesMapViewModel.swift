@@ -47,6 +47,17 @@ import CoreLocation
         return createdPlace
     }
     
+    func discardCreation() {
+        reset()
+    }
+    
+    func createCreatePlacesMapView() -> CreatePlaceView {
+        guard let tmpPlace = tmpPlace else {
+            fatalError("temporary place undefined")
+        }
+        return appContainer.createCreatePlaceView(place: tmpPlace)
+    }
+    
     // MARK: - private
     private func reset() {
         tmpPlace = nil

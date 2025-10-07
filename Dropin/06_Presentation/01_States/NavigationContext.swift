@@ -11,6 +11,7 @@ import SwiftUI
 ///  - current sidebar section
 ///  - showing stuff(dialog, sheet, ...) state boolean
 ///  - ...
+@MainActor
 @Observable class NavigationContext {
     
 //    enum SideMenuContext {

@@ -9,6 +9,9 @@ import SwiftUI
 import SwiftData
 import CoreLocation
 
+// Note:
+// - 'Infer Sendable for Methods and Key Path Literals' set to Yes to avoid SortDescriptor warning (swift6 concurrency) cf. https://stackoverflow.com/questions/79000052/fetchdescriptor-including-sortdescriptor-returns-warning-in-xcode16
+
 @main
 struct DropinApp: App {
     

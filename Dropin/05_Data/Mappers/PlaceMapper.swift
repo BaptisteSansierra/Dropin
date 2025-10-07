@@ -10,23 +10,38 @@ import CoreLocation
 
 public enum PlaceMapper {
     
-    static func toDomain(_ sdPlace: SDPlace) -> PlaceEntity {
-        var groupId: String?
-        if let group = sdPlace.group {
-            groupId = group.identifier
+    static func toDomain(_ sdPlace: SDPlace, skipRelationships: Bool = false) -> PlaceEntity {
+//        var groupId: String?
+//        if let group = sdPlace.group {
+//            groupId = group.identifier
+//        }
+        var group: GroupEntity? = nil
+        var tags = [TagEntity]()
+        if !skipRelationships {
+            tags = sdPlace.tags.map { TagMapper.toDomain($0, skipRelationships: true) }
+            if let sdGroup = sdPlace.group {
+                group = GroupMapper.toDomain(sdGroup, skipRelationships: true)
+            }
         }
-        var place = PlaceEntity(id: sdPlace.identifier,
+        let place = PlaceEntity(id: sdPlace.identifier,
                                 name: sdPlace.name,
                                 coordinates: CLLocationCoordinate2D(latitude: sdPlace.latitude, longitude: sdPlace.longitude),
                                 address: sdPlace.address,
                                 systemImage: sdPlace.systemImage,
-                                tagIds: sdPlace.tags.map {$0.identifier},
-                                groupId: groupId,
+                                tags: tags,
+                                group: group,
                                 notes: sdPlace.notes,
                                 phone: sdPlace.phone,
                                 url: sdPlace.url,
                                 creationDate: sdPlace.creationDate)
-        place.groupColor = sdPlace.group?.color
+        //place.groupColor = sdPlace.group?.color
+        // Relationships were created but not linked, do it manually
+        if !skipRelationships {
+            group?.places.append(place)
+            for i in 0..<tags.count {
+                tags[i].places.append(place)
+            }
+        }
         return place
     }
     
