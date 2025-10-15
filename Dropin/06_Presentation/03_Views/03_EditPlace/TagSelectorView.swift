@@ -1,0 +1,304 @@
+//
+//  TagSelectorView.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 2/8/25.
+//
+
+import SwiftUI
+import SwiftData
+
+struct TagSelectorView: View {
+
+    // MARK: - Properties
+    private let viewModel: TagSelectorViewModel
+
+    // MARK: - State & Bindings
+    @Binding private var place: PlaceUI
+    //@Bindable private var placeController: PlaceController
+    //@Bindable private var place: PlaceEntity
+    @State private var createdTagName: String = ""
+    @State private var createdTagColor: Color
+    @State private var isShowingNameWarn = false
+    //@State var remainings: [TagEntity] = [TagEntity]()
+
+    // MARK: - Dependencies
+    @Environment(\.dismiss) private var dismiss
+
+
+    // MARK: - Init
+    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUI>) {
+        self.viewModel = viewModel
+        self._place = place
+        _createdTagColor = State(initialValue: Color.random())
+    }
+
+    // MARK: - Body
+    var body: some View {
+        VStack {
+            headerView
+            //Text("COUNTER: \(viewModel.counter)")
+            ScrollView {
+                selectedView
+                remainingView
+                createTagView
+            }
+        }
+        .task {
+            Task {
+                do {
+                    print("LOAD AND BUILD FROM")
+                    print(Unmanaged.passUnretained(viewModel).toOpaque())
+
+                    try await viewModel.loadTags()
+                    viewModel.updateData(place)
+                } catch {
+                    assertionFailure("Couldn't load groups")
+                }
+            }
+        }
+    }
+
+    // MARK: - Subviews
+    private var headerView: some View {
+        Group {
+            HStack {
+                Text("tag_selector.title")
+                    .padding()
+            }
+            Divider()
+        }
+    }
+    
+    private var selectedView: some View {
+        Group {
+            let hasTags = place.tags.count > 0
+            Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
+                .font(.callout)
+                .foregroundStyle(.gray)
+                .padding()
+          
+            if hasTags {
+                FlowLayout(alignment: .leading) {
+                    ForEach(place.tags) { tag in
+                        TagView(name: tag.name, color: tag.color)
+                            .onTapGesture {
+                                Task {
+                                    removeTag(tag)
+                                }
+                            }
+                    }
+                }
+                .padding([.bottom, .leading, .trailing])
+            }
+            Divider()
+        }
+//        Group {
+//            let hasTags = viewModel.placeTags.count > 0
+//            Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
+//                .font(.callout)
+//                .foregroundStyle(.gray)
+//                .padding()
+//          
+//            if hasTags {
+//                FlowLayout(alignment: .leading) {
+//                    ForEach(viewModel.placeTags) { tag in
+//                        TagView(name: tag.name, color: tag.color)
+//                            .onTapGesture {
+//                                Task {
+//                                    removeTag(tag)
+//                                }
+//                            }
+//                    }
+//                }
+//                .padding([.bottom, .leading, .trailing])
+//            }
+//            Divider()
+//        }
+    }
+
+    private var remainingView: some View {
+        Group {
+            if viewModel.remainingTags.count > 0 {
+                FlowLayout(alignment: .leading) {
+                    ForEach(viewModel.remainingTags) { tag in
+                        TagView(name: tag.name, color: tag.color)
+                            .onTapGesture {
+                                Task {
+                                    addTag(tag)
+                                }
+                            }
+                    }
+                }
+                .padding()
+                Divider()
+            }
+        }
+    }
+    
+    private var createTagView: some View {
+        HStack() {
+            ZStack {
+                ColorPicker("", selection: $createdTagColor, supportsOpacity: false)
+                    .labelsHidden()
+                    .padding()
+                Circle()
+                    .frame(width: 15, height: 15)
+                    .foregroundStyle(createdTagColor)
+            }
+            TextField("tag_selector.new", text: $createdTagName)
+                .autocorrectionDisabled()
+                .overlay {
+                    if isShowingNameWarn {
+                        ZStack(alignment: .leading) {
+                            Rectangle().fill(.white)
+                            Text("placeholder.tag_name")
+                                .bold()
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+            Spacer()
+            IcoButton(systemImage: "plus").onTapGesture {
+                
+                print("PRINT FOR PLACE: \(place.name)")
+                viewModel.printContent()
+                Task {
+                    try await viewModel.loadTags()
+                    viewModel.updateData(place)
+                }
+                return
+                
+                guard !createdTagName.isEmpty else {
+                    withAnimation(.linear(duration: 0.5)) {
+                        isShowingNameWarn.toggle()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            withAnimation(.linear(duration: 0.5)) {
+                                isShowingNameWarn.toggle()
+                            }
+                        }
+                    }
+                    return
+                }
+                Task {
+                    let newTag = try await viewModel.createTag(name: createdTagName, color: createdTagColor.hex)
+                    addTag(newTag)
+                    createdTagName = ""
+                    createdTagColor = Color.random()
+                }
+            }
+            .padding(.trailing, 15)
+        }
+    }
+    
+    private func addTag(_ tag: TagUI) {
+        place.tags.append(tag)
+        viewModel.updateData(place)
+    }
+
+    private func removeTag(_ tag: TagUI) {
+        guard let index = place.tags.firstIndex(where: { $0.id == tag.id }) else {
+            assertionFailure("Couldn't remove tag \(tag.name) from selection")
+            return
+        }
+        place.tags.remove(at: index)
+        viewModel.updateData(place)
+    }
+}
+
+/*
+import CoreLocation
+import Combine
+
+@MainActor
+class Business {
+    
+    var place: PlaceEntity
+    var placePublisher = PassthroughSubject<PlaceEntity, Never>()
+    var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        self.place = PlaceEntity(coordinates: CLLocationCoordinate2D.zero)
+        placePublisher
+            .sink { place in
+                self.place = place
+            }
+            .store(in: &cancellables)
+    }
+
+    func getView() -> CreatePlaceView {
+        let appContainer = AppContainer.mock()
+        let createPlace = CreatePlace(repository: appContainer.placeRepository)
+        let vm = CreatePlaceViewModel(appContainer, place: place, createPlace: createPlace)
+        return CreatePlaceView(viewModel: vm)
+    }
+
+    func getTagView() -> TagSelectorView {
+        let vm = TagSelectorViewModel(place: place, placePublisher: placePublisher)
+        return TagSelectorView(viewModel: vm)
+    }
+    
+}
+
+#Preview {
+    Business().getView()
+}
+ */
+
+//import CoreLocation
+//
+//#Preview {
+//    
+//    let appContainer = AppContainer.mock()
+//    @State var placeController = PlaceController(place: PlaceEntity(id: "sss", name: "nonname", coordinates: CLLocationCoordinate2D.zero, address: "", systemImage: "", tags: [], creationDate: Date.now))
+//    appContainer.createTagSelectorView(placeController: $placeController)
+//}
+
+//#if DEBUG
+//#Preview {
+//    @Previewable @State var place: PlaceEntity = AppContainer.mockDomainPlaceExample()
+//    AppContainer.mock().createTagSelectorView(place: $place)
+//}
+//#endif
+
+#if DEBUG
+/*
+private struct TSVPreview: View {
+    let container: ModelContainer
+
+    @Query var locations: [SDPlace]
+    @Query var tags: [SDTag]
+
+    init() {
+        print("CREATE TSVPreview")
+        do {
+            let config = ModelConfiguration(isStoredInMemoryOnly: true)
+            container = try ModelContainer(for: SDPlace.self, configurations: config)
+        } catch {
+            fatalError("couldn't create model container")
+        }
+        for item in SDTag.all {
+            container.mainContext.insert(item)
+        }
+        
+        do {
+            try container.mainContext.save()
+        } catch {
+            print("COULDN t save DB")
+        }
+        print(container)
+    }
+    
+    var body: some View {
+        TagSelectorView()
+            .modelContainer(container)
+            .environment(Place(sdPlace: SDPlace.l2))
+    }
+}
+
+#Preview {
+    TSVPreview()
+}
+*/
+#endif
+
