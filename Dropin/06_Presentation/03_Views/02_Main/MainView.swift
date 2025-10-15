@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MainView: View {
     
-    // MARK: - Properties
-    private var viewModel: MainViewModel
+    // MARK: - States & Bindings
+    @State private var viewModel: MainViewModel
 
     // MARK: - Dependencies
     //@Environment(\.modelContext) private var modelContext

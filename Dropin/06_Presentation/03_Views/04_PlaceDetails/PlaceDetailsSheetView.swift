@@ -9,10 +9,8 @@ import SwiftUI
 
 struct PlaceDetailsSheetView: View {
     
-    // MARK: - Properties
-    let viewModel: PlaceDetailsSheetViewModel
-
     // MARK: - State & Bindings
+    @State private var viewModel: PlaceDetailsSheetViewModel
     @Binding private var place: PlaceUI
     @State private var editMode: PlaceEditMode = .none
 

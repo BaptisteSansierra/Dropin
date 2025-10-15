@@ -9,64 +9,10 @@ import SwiftUI
 import CoreLocation
 import SwiftData
 
-/*
-struct CreatePlaceView: View {
-    // MARK: - Properties
-    //private var viewModel: CreatePlaceViewModel
-    private var placeController: PlaceController
-    
-    // MARK: - State & Bindings
-    //@State private var place: PlaceEntity
-    @State private var num: Int = 0
-
-    // MARK: - Init
-    init(viewModel: CreatePlaceViewModel, place: PlaceEntity) {
-        //self.viewModel = viewModel
-        //self._place = State(initialValue: PlaceEntity(coordinates: place.coordinates))
-        self.placeController = PlaceController(place: place)
-    }
-
-    // MARK: - Body
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Name")
-                Spacer()
-                Text(placeController.place.name)
-            }
-            .padding()
-            HStack {
-                Text("Num")
-                Spacer()
-                Text("\(num)")
-            }
-            .padding()
-            Button("Randomize name") {
-                let rando = String(UUID().uuidString.split(separator: "-").first!)
-                print("RANDO: \(rando)")
-                placeController.place.name = rando
-                num += 1
-                print("PLACE name : \(placeController.place.name)")
-            }
-            .padding()
-            Button("Make it pipo") {
-                //place = PlaceEntity(id: "123", name: "pipo", coordinates: place.coordinates, address: "", systemImage: "tag", tags: [], creationDate: Date.now)
-                placeController.place.name = "pipo"
-                num += 1
-                print("PLACE name : \(placeController.place.name)")
-            }
-            .padding()
-        }
-    }
-}
-*/
-
 struct CreatePlaceView: View {
     
-    // MARK: - Properties
-    private var viewModel: CreatePlaceViewModel
-
     // MARK: - State & Bindings
+    @State private var viewModel: CreatePlaceViewModel
     @State private var place: PlaceUI
     @State private var showingMarkerList = false
     @State private var showingTagsSelector = false
@@ -101,14 +47,10 @@ struct CreatePlaceView: View {
                 place.notes = value
             })
     }
-    // DB
-    //@Query var groups: [SDGroup]
-    //@Query var tags: [SDTag]
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    //@Environment(PlaceFactory.self) private var placeFactory
 
     // MARK: - Init
     init(viewModel: CreatePlaceViewModel, place: PlaceUI) {

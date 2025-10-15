@@ -10,7 +10,7 @@ import SwiftUI
 struct RootView: View {
 
     // MARK: - State & Bindings
-    private var viewModel: RootViewModel
+    @State private var viewModel: RootViewModel
 
     // MARK: - Dependencies
     @Environment(NavigationContext.self) var navigationContext
@@ -22,7 +22,6 @@ struct RootView: View {
     
     // MARK: - body
     var body: some View {
-        @Bindable var viewModel = viewModel
         ZStack {
             Group {
                 switch viewModel.currentSideMenuContext {

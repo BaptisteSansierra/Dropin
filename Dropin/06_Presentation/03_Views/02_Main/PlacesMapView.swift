@@ -13,10 +13,8 @@ import MapKit
  
 struct PlacesMapView: View {
     
-    // MARK: - Properties
-    private var viewModel: PlacesMapViewModel
-
     // MARK: - State & Bindings
+    @State private var viewModel: PlacesMapViewModel
     @State private var showingLongPressCreateSheet = false
     @State private var showAuthLocAlert = false
     // Long press behaviour

@@ -9,11 +9,8 @@ import SwiftUI
 
 struct PlaceDetailsView: View {
 
-    // MARK: - Properties
-    private let viewModel: PlaceDetailsViewModel
-    //private var placeOrigin: PlaceEntity?
-
     // MARK: - State & Bindings
+    @State private var viewModel: PlaceDetailsViewModel
     @Binding private var place: PlaceUI
     @State private var placeOrigin: PlaceUI?
     @State private var editMode: PlaceEditMode

@@ -16,10 +16,8 @@ enum PlaceEditMode {
 
 struct PlaceDetailsContentView: View {
 
-    // MARK: - Properties
-    let viewModel: PlaceDetailsContentViewModel
-
     // MARK: - State & Bindings
+    @State private var viewModel: PlaceDetailsContentViewModel
     @Binding private var place: PlaceUI
     @Binding private var editMode: PlaceEditMode
     @State private var showingMarkerList = false
