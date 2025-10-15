@@ -17,7 +17,7 @@ struct CreatePlace {
     }
 
     func execute(_ place: PlaceEntity) async throws {
-        return try await repository.create(place)
+        try await repository.create(place)
     }
 
 //    func execute(coordinates: CLLocationCoordinate2D) async throws {

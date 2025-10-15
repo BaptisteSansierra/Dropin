@@ -9,7 +9,8 @@ import Foundation
 
 @MainActor
 protocol GroupRepository {
-    func create(_ group: GroupEntity) async throws -> GroupEntity
+    func create(_ group: GroupEntity) async throws // -> GroupEntity
     func delete(_ group: GroupEntity) async throws
+    func update(_ group: GroupEntity) async throws
     func getAll() async throws -> [GroupEntity]
 }

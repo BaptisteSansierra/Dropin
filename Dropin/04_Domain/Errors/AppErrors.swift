@@ -9,5 +9,7 @@ import Foundation
 
 enum AppError: Error {
     case notImplemented
+    case sdNotFound(msg: String)
+    case sdDuplicate(msg: String)
 }
 

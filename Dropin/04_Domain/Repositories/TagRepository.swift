@@ -9,7 +9,8 @@ import Foundation
 
 @MainActor
 protocol TagRepository {
-    func create(_ tag: TagEntity) async throws -> TagEntity
+    func create(_ tag: TagEntity) async throws // -> TagEntity
     func delete(_ tag: TagEntity) async throws
+    func update(_ tag: TagEntity) async throws
     func getAll() async throws -> [TagEntity]
 }

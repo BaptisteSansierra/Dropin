@@ -31,6 +31,7 @@ struct DropinApp: App {
                 .environment(locationManager)
                 .environment(navigationContext)
                 .environment(mapSettings)
+                .modelContainer(modelContainer)  // DEBUG Purpose, to be removed
                 .task {
                     locationManager.start()
                 }
@@ -80,6 +81,42 @@ extension UIApplication {
         let imp = UIApplication.shared.method(for: selector)
         let method = unsafeBitCast(imp, to: setAlternateIconNameClosure.self)
         method(UIApplication.shared, selector, iconName as NSString?, { _ in })
+    }
+}
+
+// MARK: - app constants
+extension DropinApp {
+    struct defaults {
+        static let latitude: Double = 46.232193
+        static let longitude: Double = 2.209667
+        static let latitudeSpan: Double = 10
+        static let longitudeSpan: Double = 5
+    }
+    struct locations {
+        static let london = CLLocationCoordinate2D(latitude: 51.5074, longitude: 0.1278)
+        static let barcelona = CLLocationCoordinate2D(latitude: 41.390205, longitude: 2.154007)
+        static let paris = CLLocationCoordinate2D(latitude: 48.864716, longitude: 2.349014)
+        
+        /* struct london {
+            static let lat: Double = 51.5074
+            static let long: Double = 0.1278
+        }
+        struct barcelona {
+            static let lat: Double = 41.390205
+            static let long: Double = 2.154007
+        }
+        struct paris {
+            static let lat: Double = 48.864716
+            static let long: Double = 2.349014
+        } */
+    }
+    struct ui {
+        struct button {
+            static let height: Double = 40
+            static let width: Double = 200
+        }
+    }
+    struct userDefaultsKeys {
     }
 }
 
@@ -142,39 +179,4 @@ struct DropinApp: App {
     }
 }
 
-// MARK: - app constants
-extension DropinApp {
-    struct defaults {
-        static let latitude: Double = 46.232193
-        static let longitude: Double = 2.209667
-        static let latitudeSpan: Double = 10
-        static let longitudeSpan: Double = 5
-    }
-    struct locations {
-        static let london = CLLocationCoordinate2D(latitude: 51.5074, longitude: 0.1278)
-        static let barcelona = CLLocationCoordinate2D(latitude: 41.390205, longitude: 2.154007)
-        static let paris = CLLocationCoordinate2D(latitude: 48.864716, longitude: 2.349014)
-        
-        /* struct london {
-            static let lat: Double = 51.5074
-            static let long: Double = 0.1278
-        }
-        struct barcelona {
-            static let lat: Double = 41.390205
-            static let long: Double = 2.154007
-        }
-        struct paris {
-            static let lat: Double = 48.864716
-            static let long: Double = 2.349014
-        } */
-    }
-    struct ui {
-        struct button {
-            static let height: Double = 40
-            static let width: Double = 200
-        }
-    }
-    struct userDefaultsKeys {
-    }
-}
 #endif

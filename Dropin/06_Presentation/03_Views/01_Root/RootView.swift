@@ -32,7 +32,7 @@ struct RootView: View {
                         Text("Groups")
                         //GroupListView()
                     case .tags:
-                        Text("Tags")
+                        DummyTagView()
                         //TagListView()
                 }
             }

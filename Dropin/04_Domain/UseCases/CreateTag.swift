@@ -15,8 +15,7 @@ struct CreateTag {
         self.repository = repository
     }
     
-    func execute(name: String, color: String) async throws -> TagEntity {
-        let tag = TagEntity(name: name, color: color)
-        return try await repository.create(tag)
+    func execute(_ tag: TagEntity) async throws {
+        try await repository.create(tag)
     }
 }

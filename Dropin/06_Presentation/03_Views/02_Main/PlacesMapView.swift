@@ -25,12 +25,8 @@ struct PlacesMapView: View {
     @State private var longPressGestureLocation: CGPoint?
     @State private var longPressTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
     
-    // DB
-    //@Query var places: [SDPlace]
-
     // MARK: - Dependencies
     @Environment(LocationManager.self) private var locationManager
-    //@Environment(PlaceFactory.self) private var placeFactory
     @Environment(MapSettings.self) private var mapSettings
     @Environment(NavigationContext.self) private var navigationContext
 
@@ -49,12 +45,11 @@ struct PlacesMapView: View {
         @Bindable var mapSettings = mapSettings
         @Bindable var navigationContext = navigationContext
 
-        NavigationStack {
+        NavigationStack(path: $navigationContext.navigationPath) {
             MapReader { proxy in
                 Map(position: $mapSettings.position) {
-                    
                     // Add a marker at current new temporary place
-                    if let tmpPlace = viewModel.tmpPlace {
+                    if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
                         Marker(tmpPlace.name,
                                monogram: Text("common.new".uppercased()),
                                coordinate: tmpPlace.coordinates)
@@ -63,25 +58,27 @@ struct PlacesMapView: View {
                     // TODO:  have a list of PlaceAnnotation + Marker
                     // with 2 ForEach so we get rid of the IF_ELSE
                                         
-                    if let selectedPlace = viewModel.pinPlace {
+                    if let selectedPlaceId = viewModel.selectedPlaceId {
                         ForEach(viewModel.places) { place in
-                            if selectedPlace.name == place.name {
-                                Marker(selectedPlace.name, coordinate: selectedPlace.coordinates)
+                            if place.id == selectedPlaceId.id && !place.databaseDeleted {
+                                // TODO: this marker should be displayed last to avoid overlay
+                                Marker(place.name, coordinate: place.coordinates)
                             } else {
-                                PlaceAnnotation(place: place, pinPlace: $viewModel.pinPlace)
+                                if !place.databaseDeleted {
+                                    PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
+                                }
                             }
                         }
                     } else {
                         ForEach(viewModel.places) { place in
-                            PlaceAnnotation(place: place, pinPlace: $viewModel.pinPlace)
+                            if !place.databaseDeleted {
+                                PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
+                            }
                         }
                     }
                     //.mapItemDetailSelectionAccessory(.callout)
                     UserAnnotation()
-
                 }
-                
-// TODO: restore
                 .simultaneousGesture(longPressHackDragGesture)
                 .onReceive(longPressTimer, perform: { time in
                     onLongPressTimerFire(proxy: proxy)
@@ -110,136 +107,31 @@ struct PlacesMapView: View {
                 .overlay {
                     zoomOnUserOverlay
                 }
-                
-//  TODO: restore
                 .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
-                    //placeFactory.discard()
                     viewModel.discardCreation()
                     Task {
                         try await viewModel.loadPlaces()
                     }
                 }, content: {
-                    viewModel.createCreatePlacesMapView()
+                    viewModel.createCreatePlacesView()
                         //.presentationDetents([.medium, .large])
                         .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
                 })
-                
-// TODO: restore
-//                .onChange(of: viewModel.pinPlace) {
-//                    guard let place = viewModel.pinPlace else { return  }
-//                    zoomOnPlace(place)
-//                }
-                
-// TODO: restore
-//                .sheet(item: $navigationContext.pinPlace) { sdPlace in
-//                    PlaceDetailsSheetView(place: Place(sdPlace: sdPlace))
-//                        .presentationDetents([.medium, .large])
-//                        .presentationCornerRadius(20)
-//                }
-                
-// TODO: restore
-                .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
-                    Button("common.open_settings") {
-                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                        UIApplication.shared.open(url)
-                    }
-                    Button("common.cancel") {}
-                } message: {
-                    Text("common.loc_auth_required")
+                .onChange(of: viewModel.selectedPlaceId) {
+                    zoomOnPin()
                 }
-            }
-            .toolbar {
-                DropinToolbar.Burger()
-                DropinToolbar.Logo()
-                DropinToolbar.AddPlace()
-            }
-            // TODO: to restore
-//            .navigationDestination(for: PlaceEntity.self) { place in
-//                PlaceDetailsView(place: Place(sdPlace: place), editMode: .edit)
-//            }
-            .task {
-                Task {
-                    try await viewModel.loadPlaces()
+                /*
+                .sheet(isPresented: .constant(viewModel.selectedPlaceId != nil),
+                       onDismiss: {
+                    viewModel.selectedPlaceId = nil
+                }) {
+                    createPlaceDetailsSheetView()
+                        .presentationDetents([.medium, .large])
+                        .presentationCornerRadius(20)
                 }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-        }
-
-        
-        // Content
-        /*
-        NavigationStack(path: $navigationContext.navigationPath) {
-            MapReader { proxy in
-                
-                Map(position: $mapSettings.position) {
-                    
-                    // Add a marker at current new temporary place
-                    if placeFactory.buildingPlace {
-                        Marker(placeFactory.place.name,
-                               monogram: Text("common.new".uppercased()),
-                               coordinate: placeFactory.place.coordinates)
-                    }
-
-                    
-                    // TODO:  have a list of PlaceAnnotation + Marker
-                    // with 2 ForEach so we get rid of the IF_ELSE
-                    
-                    if let selectedPlace = navigationContext.pinPlace {
-                        ForEach(places) { place in
-                            if selectedPlace.name == place.name {
-                                Marker(selectedPlace.name, coordinate: selectedPlace.coordinates)
-                            } else {
-                                PlaceAnnotation(place: place)
-                            }
-                        }
-                    } else {
-                        ForEach(places) { place in
-                            PlaceAnnotation(place: place)
-                        }
-                    }
-                    //.mapItemDetailSelectionAccessory(.callout)
-                    UserAnnotation()
-                }
-                .simultaneousGesture(longPressHackDragGesture)
-                .onReceive(longPressTimer, perform: { time in
-                    onLongPressTimerFire(proxy: proxy)
-                })
-                .animation(.easeInOut, value: mapSettings.position)
-                .mapControls {
-                    MapCompass()
-                }
-                .mapStyle(mapSettings.selectedMapStyle)
-                .selectionDisabled(false)
-                .onMapCameraChange(frequency: .continuous) { _ in
-                    // Cancel long press timer when moving map camera
-                    longPressTimer.upstream.connect().cancel()
-                }
-                .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
-                    updateCameraCache(mapCameraUpdateContext)
-                }
-                .onFirstAppear {
-                    onFirstAppear()
-                }
-                .overlay {
-                    MapSettingsOverlay()
-                        .environment(mapSettings)
-                }
-                .overlay {
-                    zoomOnUserOverlay
-                }
-                .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
-                    placeFactory.discard()
-                }, content: {
-                    CreatePlaceView()
-                        //.presentationDetents([.medium, .large])
-                        .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
-                })
-                .onChange(of: navigationContext.pinPlace) {
-                    guard let place = navigationContext.pinPlace else { return  }
-                    zoomOnPlace(Place(sdPlace: place))
-                }
-                .sheet(item: $navigationContext.pinPlace) { sdPlace in
-                    PlaceDetailsSheetView(place: Place(sdPlace: sdPlace))
+                 */
+                .sheet(item: $viewModel.selectedPlaceId) { placeId in
+                    createPlaceDetailsSheetView()
                         .presentationDetents([.medium, .large])
                         .presentationCornerRadius(20)
                 }
@@ -258,14 +150,17 @@ struct PlacesMapView: View {
                 DropinToolbar.Logo()
                 DropinToolbar.AddPlace()
             }
-            .navigationDestination(for: SDPlace.self) { place in
-                PlaceDetailsView(place: Place(sdPlace: place), editMode: .edit)
+            .navigationDestination(for: PlaceEntity.self) { place in
+                createPlaceDetailsView(place)
+            }
+            .task {
+                Task {
+                    try await viewModel.loadPlaces()
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
         }
-        */
     }
-
 
     // MARK: - Subviews
     private var zoomOnUserOverlay: some View {
@@ -359,7 +254,7 @@ struct PlacesMapView: View {
         mapSettings.currentRegionSpan = context.region.span
     }
     
-    private func zoomOnPlace(_ place: PlaceEntity) {
+    private func zoomOnPlace(_ place: PlaceUI) {
         let latitudeDeltaOverSheet = mapSettings.currentRegionSpan.latitudeDelta * (1 - createPlaceSheetDefaultDetent)
         let offset = mapSettings.currentRegionSpan.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
         // Offset the new place coords so it's visible on the map despite the sheet appearing
@@ -370,9 +265,40 @@ struct PlacesMapView: View {
                                                      distance: mapSettings.currentCameraDistance))
         }
     }
+    
+    private func zoomOnPin() {
+        guard let placeId = viewModel.selectedPlaceId else {
+            return
+        }
+        guard let place = viewModel.places.first(where: { $0.id == placeId.id }) else {
+            return
+        }
+        //guard let place = viewModel.pinPlace else { return  }
+        zoomOnPlace(place)
+    }
+    
+    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == place.id }) else {
+            fatalError("couldn't find any place named '\(place.name)' in list")
+        }
+        @Bindable var viewModel = viewModel
+        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .edit)
+    }
+    
+    private func createPlaceDetailsSheetView() -> PlaceDetailsSheetView {
+        guard let placeId = viewModel.selectedPlaceId else {
+            fatalError("selectedPlaceId undefined")
+        }
+        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId.id }) else {
+            fatalError("couldn't find place with id \(placeId)")
+        }
+        @Bindable var viewModel = viewModel
+        return viewModel.createPlaceDetailsSheetView(place: $viewModel.places[index])
+    }
+
 }
 
-
+/*
 #if DEBUG
 #Preview {
     AppContainer.mock().createPlacesMapView()
@@ -381,3 +307,4 @@ struct PlacesMapView: View {
         .environment(NavigationContext())
 }
 #endif
+*/

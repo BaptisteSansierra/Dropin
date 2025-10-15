@@ -34,6 +34,6 @@ import SwiftUI
     /// show/hide the copied to clipboard alert
     var showingAddressToClipboard: Bool = false
 //    
-//    var navigationPath = NavigationPath()
+    var navigationPath = NavigationPath()
 
 }

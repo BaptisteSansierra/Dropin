@@ -15,8 +15,7 @@ struct CreateGroup {
         self.repository = repository
     }
     
-    func execute(name: String, color: String) async throws -> GroupEntity {
-        let group = GroupEntity(name: name, color: color)
+    func execute(_ group: GroupEntity) async throws {
         return try await repository.create(group)
     }
 }

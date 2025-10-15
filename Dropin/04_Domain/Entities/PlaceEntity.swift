@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-struct PlaceEntity: Identifiable {
+struct PlaceEntity: Hashable {
     let id: String
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
@@ -21,9 +21,10 @@ struct PlaceEntity: Identifiable {
     var url: String? = nil
     var creationDate: Date
     // following propertie are not part of the DB model
-    //var groupColor: String?
+    /// When  databaseDeleted is true, domain objects should be ignored
+    var databaseDeleted: Bool = false
 
-    init(id: String, name: String, coordinates: CLLocationCoordinate2D, address: String, systemImage: String, tags: [TagEntity], group: GroupEntity? = nil, notes: String? = nil, phone: String? = nil, url: String? = nil, creationDate: Date) {
+    init(id: String, name: String, coordinates: CLLocationCoordinate2D, address: String, systemImage: String, tags: [TagEntity], group: GroupEntity? = nil, notes: String? = nil, phone: String? = nil, url: String? = nil, creationDate: Date, databaseDeleted: Bool = false) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -35,11 +36,20 @@ struct PlaceEntity: Identifiable {
         self.phone = phone
         self.url = url
         self.creationDate = creationDate
+        self.databaseDeleted = databaseDeleted
     }
     
-    init(coordinates: CLLocationCoordinate2D) {
-        id = UUID().uuidString
-        self.coordinates = coordinates
-        creationDate = Date()
+//    init(coordinates: CLLocationCoordinate2D) {
+//        id = UUID().uuidString
+//        self.coordinates = coordinates
+//        creationDate = Date()
+//    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
