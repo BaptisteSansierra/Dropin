@@ -89,13 +89,13 @@ struct PlaceDetailsContentView: View {
             .scrollPosition($scrollPosition)
         }
         .sheet(isPresented: $showingTagsSelector) {
-            viewModel.createTagSelectorViewModel(place: $place)
+            viewModel.createTagSelectorView(place: $place)
                 .padding(.top, 20)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showingGroupSelector) {
-            viewModel.createGroupSelectorViewModel(place: $place)
+            viewModel.createGroupSelectorView(place: $place)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
         }
@@ -113,7 +113,6 @@ struct PlaceDetailsContentView: View {
     
     // MARK: - init
     init(viewModel: PlaceDetailsContentViewModel, place: Binding<PlaceUI>, editMode: Binding<PlaceEditMode>) {
-        print("CREATE PlaceDetailsContentViewModel")
         self.viewModel = viewModel
         self._place = place
         self._editMode = editMode

@@ -10,25 +10,19 @@ import SwiftData
 
 struct TagSelectorView: View {
 
-    // MARK: - Properties
-    private let viewModel: TagSelectorViewModel
-
     // MARK: - State & Bindings
+    @State private var viewModel: TagSelectorViewModel
     @Binding private var place: PlaceUI
-    //@Bindable private var placeController: PlaceController
-    //@Bindable private var place: PlaceEntity
     @State private var createdTagName: String = ""
     @State private var createdTagColor: Color
     @State private var isShowingNameWarn = false
-    //@State var remainings: [TagEntity] = [TagEntity]()
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
 
-
     // MARK: - Init
     init(viewModel: TagSelectorViewModel, place: Binding<PlaceUI>) {
-        self.viewModel = viewModel
+        self._viewModel = State(initialValue: viewModel)
         self._place = place
         _createdTagColor = State(initialValue: Color.random())
     }
@@ -37,7 +31,6 @@ struct TagSelectorView: View {
     var body: some View {
         VStack {
             headerView
-            //Text("COUNTER: \(viewModel.counter)")
             ScrollView {
                 selectedView
                 remainingView
@@ -47,9 +40,6 @@ struct TagSelectorView: View {
         .task {
             Task {
                 do {
-                    print("LOAD AND BUILD FROM")
-                    print(Unmanaged.passUnretained(viewModel).toOpaque())
-
                     try await viewModel.loadTags()
                     viewModel.updateData(place)
                 } catch {
@@ -72,7 +62,7 @@ struct TagSelectorView: View {
     
     private var selectedView: some View {
         Group {
-            let hasTags = place.tags.count > 0
+            let hasTags = viewModel.placeTags.count > 0
             Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
                 .font(.callout)
                 .foregroundStyle(.gray)
@@ -80,7 +70,7 @@ struct TagSelectorView: View {
           
             if hasTags {
                 FlowLayout(alignment: .leading) {
-                    ForEach(place.tags) { tag in
+                    ForEach(viewModel.placeTags) { tag in
                         TagView(name: tag.name, color: tag.color)
                             .onTapGesture {
                                 Task {
@@ -93,28 +83,6 @@ struct TagSelectorView: View {
             }
             Divider()
         }
-//        Group {
-//            let hasTags = viewModel.placeTags.count > 0
-//            Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
-//                .font(.callout)
-//                .foregroundStyle(.gray)
-//                .padding()
-//          
-//            if hasTags {
-//                FlowLayout(alignment: .leading) {
-//                    ForEach(viewModel.placeTags) { tag in
-//                        TagView(name: tag.name, color: tag.color)
-//                            .onTapGesture {
-//                                Task {
-//                                    removeTag(tag)
-//                                }
-//                            }
-//                    }
-//                }
-//                .padding([.bottom, .leading, .trailing])
-//            }
-//            Divider()
-//        }
     }
 
     private var remainingView: some View {
@@ -160,15 +128,6 @@ struct TagSelectorView: View {
                 }
             Spacer()
             IcoButton(systemImage: "plus").onTapGesture {
-                
-                print("PRINT FOR PLACE: \(place.name)")
-                viewModel.printContent()
-                Task {
-                    try await viewModel.loadTags()
-                    viewModel.updateData(place)
-                }
-                return
-                
                 guard !createdTagName.isEmpty else {
                     withAnimation(.linear(duration: 0.5)) {
                         isShowingNameWarn.toggle()

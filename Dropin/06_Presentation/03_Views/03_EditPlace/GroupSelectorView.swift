@@ -10,10 +10,8 @@ import SwiftData
 
 struct GroupSelectorView: View {
     
-    // MARK: - Properties
-    private let viewModel: GroupSelectorViewModel
-
     // MARK: - State & Bindings
+    @State private var viewModel: GroupSelectorViewModel
     @Binding private var place: PlaceUI
     @State private var createdGroupName: String = ""
     @State private var createdGroupColor: Color
@@ -148,7 +146,7 @@ struct GroupSelectorView: View {
     
     // MARK: - init
     init(viewModel: GroupSelectorViewModel, place: Binding<PlaceUI>) {
-        self.viewModel = viewModel
+        self._viewModel = State(initialValue: viewModel) 
         self._place = place
         _createdGroupColor = State(initialValue: Color.random())
     }

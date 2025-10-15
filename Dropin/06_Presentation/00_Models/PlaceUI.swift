@@ -51,6 +51,21 @@ import CoreLocation
         creationDate = Date()
     }
     
+    func copy() -> PlaceUI {
+        return PlaceUI(id: id,
+                       name: name,
+                       coordinates: coordinates,
+                       address: address,
+                       systemImage: systemImage,
+                       tags: tags,
+                       group: group,
+                       notes: notes,
+                       phone: phone,
+                       url: url,
+                       creationDate: creationDate,
+                       databaseDeleted: databaseDeleted)
+    }
+    
 //    static func == (lhs: PlaceUI, rhs: PlaceUI) -> Bool {
 //        return lhs.id == rhs.id
 //    }

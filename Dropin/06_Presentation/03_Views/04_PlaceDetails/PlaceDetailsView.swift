@@ -11,10 +11,11 @@ struct PlaceDetailsView: View {
 
     // MARK: - Properties
     private let viewModel: PlaceDetailsViewModel
-    private let placeOrigin: PlaceEntity
+    //private var placeOrigin: PlaceEntity?
 
     // MARK: - State & Bindings
     @Binding private var place: PlaceUI
+    @State private var placeOrigin: PlaceUI?
     @State private var editMode: PlaceEditMode
     @State private var showingDeleteWarning = false
 
@@ -37,6 +38,9 @@ struct PlaceDetailsView: View {
         }
         .navigationTitle(place.name)
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            self.placeOrigin = place.copy()
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(editMode == .edit ? "common.cancel" : "common.edit") {
@@ -86,6 +90,8 @@ struct PlaceDetailsView: View {
                         }
                         editMode = .none
                     }
+                case .edit:
+                    placeOrigin = place.copy()
                 default:
                     ()
             }
@@ -123,7 +129,6 @@ struct PlaceDetailsView: View {
     init(viewModel: PlaceDetailsViewModel, place: Binding<PlaceUI>, editMode: PlaceEditMode = .none) {
         self.viewModel = viewModel
         self._place = place
-        self.placeOrigin = PlaceMapper.toDomain(place.wrappedValue)
         self._editMode = State(initialValue: editMode)
     }
     
@@ -133,8 +138,12 @@ struct PlaceDetailsView: View {
     }
     
     private func cancelChanges() {
-        // reload fron origin
-        place = PlaceMapper.toUI(placeOrigin)
+        // reload from origin
+        guard let placeOrigin = placeOrigin else { return }
+        print("Origin name is \(placeOrigin.name)")
+        print("Current name is \(place.name)")
+        place = placeOrigin // PlaceMapper.toUI(placeOrigin)
+        print("After reset - Current name is \(place.name)")
     }
     
     private func onApplyChanges() {

@@ -35,11 +35,11 @@ import SwiftUI
     }
     
     // MARK: UI Childs
-    func createTagSelectorViewModel(place: Binding<PlaceUI>) -> TagSelectorView {
+    func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
         return appContainer.createTagSelectorView(place: place)
     }
     
-    func createGroupSelectorViewModel(place: Binding<PlaceUI>) -> GroupSelectorView {
+    func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
         return appContainer.createGroupSelectorView(place: place)
     }
 }

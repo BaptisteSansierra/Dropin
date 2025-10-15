@@ -157,15 +157,11 @@ struct CreatePlaceView: View {
             Button("create_place.save") {
                 Task {
                     do {
-                        do {
-                            try await viewModel.save(place: place)
-                            dismiss()
-                        } catch {
-                            fatalError("couldn't save place in DB")
-                        }
+                        try await viewModel.save(place: place)
+                        dismiss()
                     } catch {
                         // TODO: handle failure
-                        fatalError("Could not save place")
+                        fatalError("couldn't save place in DB")
                     }
                 }
             }

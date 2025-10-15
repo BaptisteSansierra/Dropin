@@ -28,7 +28,8 @@ struct PlaceTagsView: View {
 
                     if place.tags.count > 0 {
                         FlowLayout(alignment: .leading) {
-                            ForEach(place.tags) { tag in
+                            let sortedTags = place.tags.sorted(by: { $0.name < $1.name && $0.creationDate < $1.creationDate })
+                            ForEach(sortedTags) { tag in
                                 TagView(name: tag.name, color: tag.color)
                             }
                         }
