@@ -9,22 +9,12 @@ import SwiftUI
 
 extension View {
     
+    // Using ViewModifier FirstAppear
     func onFirstAppear(_ action: @escaping () -> ()) -> some View {
         modifier(FirstAppear(action: action))
     }
-}
-
-private struct FirstAppear: ViewModifier {
-
-    let action: () -> ()
     
-    @State private var alreadyHappened = false
-    
-    func body(content: Content) -> some View {
-        content.onAppear {
-            guard !alreadyHappened else { return }
-            alreadyHappened = true
-            action()
-        }
-    }
+//    func toolbarPreference(_ items: [ToolbarPreferenceItem]) -> some View {
+//        modifier(ToolbarPreference(items: items))
+//    }
 }

@@ -124,7 +124,7 @@ struct PlaceDetailsView: View {
 
     // MARK: - init
     init(viewModel: PlaceDetailsViewModel, place: Binding<PlaceUI>, editMode: PlaceEditMode = .none) {
-        self.viewModel = viewModel
+        self._viewModel = State(initialValue: viewModel)
         self._place = place
         self._editMode = State(initialValue: editMode)
     }
@@ -161,13 +161,27 @@ struct PlaceDetailsView: View {
     }
 }
 
-/*
 #if DEBUG
+struct MockPlaceDetailsView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
+
+    var body: some View {
+        mock.appContainer.createPlaceDetailsView(place: $place, editMode: .edit)
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(1)
+    }
+}
+
 #Preview {
     NavigationStack {
-        PlaceDetailsView(place: Place(sdPlace: SDPlace.l1))
+        MockPlaceDetailsView()
             .environment(NavigationContext())
     }
 }
+
 #endif
-*/

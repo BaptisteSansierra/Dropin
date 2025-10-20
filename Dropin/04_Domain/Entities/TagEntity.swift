@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TagEntity {
+struct TagEntity: Hashable {
     let id: String
     var name: String
     var color: String
@@ -16,7 +16,7 @@ struct TagEntity {
     // following propertie are not part of the DB model
     /// When  databaseDeleted is true, domain objects should be ignored
     var databaseDeleted: Bool = false
-
+    
     init(id: String, name: String, color: String, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
         self.id = id
         self.name = name
@@ -31,5 +31,13 @@ struct TagEntity {
         self.name = name
         self.color = color
         creationDate = Date()
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

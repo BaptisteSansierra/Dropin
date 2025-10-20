@@ -50,11 +50,10 @@ struct CreatePlaceView: View {
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
 
     // MARK: - Init
     init(viewModel: CreatePlaceViewModel, place: PlaceUI) {
-        self.viewModel = viewModel
+        self._viewModel = State(initialValue: viewModel)
         self._place = State(initialValue: place)
     }
 
@@ -111,13 +110,7 @@ struct CreatePlaceView: View {
         }
         .task {
             fetchAddress()
-            
-            //let pipo = $placeController
-            //print("PIPO type : \(type(of: pipo))")
         }
-        
-        //// TODOOOO
-        
         .sheet(isPresented: $showingTagsSelector) {
             viewModel.createTagSelectorViewModel(place: $place)
                 .padding(.top, 20)
@@ -154,52 +147,25 @@ struct CreatePlaceView: View {
     }
 }
 
-
 #if DEBUG
-/*
-private struct CLVPreview: View {
+struct MockCreatePlaceView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
 
-    let container: ModelContainer
-    @State private var placeFactory = PlaceFactory.preview
-    
-    init() {
-        print("CREATE TSVPreview")
-        do {
-            let config = ModelConfiguration(isStoredInMemoryOnly: true)
-            container = try ModelContainer(for: SDPlace.self, configurations: config)
-        } catch {
-            fatalError("couldn't create model container")
-        }
-        for item in SDTag.all {
-            container.mainContext.insert(item)
-        }
-        for item in SDGroup.all {
-            container.mainContext.insert(item)
-        }
-        for item in SDPlace.all {
-            container.mainContext.insert(item)
-        }
-        placeFactory.place.name = "My lovely place"
-        placeFactory.place.tags = [SDTag.t4, SDTag.t8, SDTag.t11]
-        placeFactory.place.group = SDGroup.g2
-
-        do {
-            try container.mainContext.save()
-        } catch {
-            print("COULDN t save DB")
-        }
-        print(container)
+    var body: some View {
+        mock.appContainer.createCreatePlaceView(place: place)
     }
     
-    var body: some View {
-        CreatePlaceView()
-            .modelContainer(container)
-            .environment(placeFactory)
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(0)
     }
 }
 
 #Preview {
-    CLVPreview()
+    MockCreatePlaceView()
+        .environment(NavigationContext())
 }
-*/
+
 #endif

@@ -47,6 +47,7 @@ import SwiftUI
         try await createTags.execute(domainTag)
         let tagUI = TagMapper.toUI(domainTag)
         tags.append(tagUI)
+        tags = tags.defaultSorted()
         return tagUI
     }
 

@@ -165,99 +165,28 @@ struct TagSelectorView: View {
     }
 }
 
-/*
-import CoreLocation
-import Combine
-
-@MainActor
-class Business {
-    
-    var place: PlaceEntity
-    var placePublisher = PassthroughSubject<PlaceEntity, Never>()
-    var cancellables = Set<AnyCancellable>()
-    
-    init() {
-        self.place = PlaceEntity(coordinates: CLLocationCoordinate2D.zero)
-        placePublisher
-            .sink { place in
-                self.place = place
-            }
-            .store(in: &cancellables)
-    }
-
-    func getView() -> CreatePlaceView {
-        let appContainer = AppContainer.mock()
-        let createPlace = CreatePlace(repository: appContainer.placeRepository)
-        let vm = CreatePlaceViewModel(appContainer, place: place, createPlace: createPlace)
-        return CreatePlaceView(viewModel: vm)
-    }
-
-    func getTagView() -> TagSelectorView {
-        let vm = TagSelectorViewModel(place: place, placePublisher: placePublisher)
-        return TagSelectorView(viewModel: vm)
-    }
-    
-}
-
-#Preview {
-    Business().getView()
-}
- */
-
-//import CoreLocation
-//
-//#Preview {
-//    
-//    let appContainer = AppContainer.mock()
-//    @State var placeController = PlaceController(place: PlaceEntity(id: "sss", name: "nonname", coordinates: CLLocationCoordinate2D.zero, address: "", systemImage: "", tags: [], creationDate: Date.now))
-//    appContainer.createTagSelectorView(placeController: $placeController)
-//}
-
-//#if DEBUG
-//#Preview {
-//    @Previewable @State var place: PlaceEntity = AppContainer.mockDomainPlaceExample()
-//    AppContainer.mock().createTagSelectorView(place: $place)
-//}
-//#endif
 
 #if DEBUG
-/*
-private struct TSVPreview: View {
-    let container: ModelContainer
+struct MockTagSelectorView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
 
-    @Query var locations: [SDPlace]
-    @Query var tags: [SDTag]
-
-    init() {
-        print("CREATE TSVPreview")
-        do {
-            let config = ModelConfiguration(isStoredInMemoryOnly: true)
-            container = try ModelContainer(for: SDPlace.self, configurations: config)
-        } catch {
-            fatalError("couldn't create model container")
-        }
-        for item in SDTag.all {
-            container.mainContext.insert(item)
-        }
-        
-        do {
-            try container.mainContext.save()
-        } catch {
-            print("COULDN t save DB")
-        }
-        print(container)
+    var body: some View {
+        mock.appContainer.createTagSelectorView(place: $place)
     }
     
-    var body: some View {
-        TagSelectorView()
-            .modelContainer(container)
-            .environment(Place(sdPlace: SDPlace.l2))
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(1)
     }
 }
 
 #Preview {
-    TSVPreview()
+    MockTagSelectorView()
 }
-*/
+
 #endif
+
+
 

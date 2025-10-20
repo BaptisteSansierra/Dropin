@@ -21,7 +21,7 @@ struct SideMenuView: View {
     private var edgeTransition: AnyTransition = .move(edge: .leading)
 
     // MARK: - init
-    init(currentSideMenuContext: Binding<SideMenuContext>/*, showingSideMenu: Binding<Bool>*/ ) {
+    init(currentSideMenuContext: Binding<SideMenuContext>) {
         self._currentSideMenuContext = currentSideMenuContext
         if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
             appVersion = version
@@ -35,20 +35,14 @@ struct SideMenuView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             if navigationContext.showingSideMenu {
-                Color.black
-                    .opacity(0.3)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        navigationContext.showingSideMenu.toggle()
-                    }
                 HStack {
                     ZStack{
                         Rectangle()
                             .fill(.white)
-                            .frame(width: 270)
+                            .frame(width: 300)
                             .shadow(color: .black, radius: 5, x: 0, y: 3)
                         content
-                            .frame(width: 270)
+                            .frame(width: 300)
                             .background(.white)
                     }
                     .background(.clear)
@@ -66,52 +60,82 @@ struct SideMenuView: View {
     
     // MARK: - Subviews
     var content: some View {
-        VStack() {
-            HStack {
-                ZStack(alignment: .center) {
-                    Circle()
-                        .foregroundStyle(.white)
-                        .frame(width: 60, height: 60)
-                    DropinLogo(lineWidthMuliplier: 2, pinSizeMuliplier: 1.5)
-                        .frame(width: 50, height: 50)
-                }
-                .padding(.top, 70)
-                .padding(.leading, 25)
-                .padding(.bottom, 25)
-                Spacer()
-            }
+        VStack(spacing: 0) {
+            header
+                .padding(0)
+            Spacer()
+                .frame(height: 80)
+            
             SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main,
                              currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 20)
+            
             SideMenuItemView(label: "common.groups",
                              systemImage: "folder",
                              context: .groups,
                              currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 20)
+
             SideMenuItemView(label: "common.tags",
                              systemImage: "tag",
                              context: .tags,
                              currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 20)
+
             Spacer()
-            HStack {
-                Text("_NOTTR_v\(appVersion)(\(appBuild))")
-                    .padding()
-                    .font(.caption)
-                    .fontWeight(.black)
-            }
-            .padding(.bottom, 30)
-        }
-        .background {
-            LinearGradient(gradient: Gradient(colors: [.dropinPrimary.darken(factor: 0.1),
-                                                       .dropinPrimary,
-                                                       .dropinPrimary.lighten(factor: 0.1),
-                                                       .dropinPrimary.lighten(factor: 0.2),
-                                                       .dropinPrimary.lighten(factor: 0.9)]),
-                           startPoint: .top,
-                           endPoint: .bottom)
+            
+            Rectangle()
+                .foregroundStyle(.dropinPrimary)
+                .frame(height: 0.5)
+            
+            Text("developed_by")
+                .font(.caption)
+                .fontWeight(.regular)
+                .padding(.top, 20)
+                .padding(.bottom, 10)
+
+            Text("_NOTTR_v\(appVersion)(\(appBuild))")
+                .font(.caption2)
+                .fontWeight(.light)
+                .padding(.bottom, 20)
         }
     }
+        
+    var header: some View {
+        ZStack {
+            Rectangle()
+                .foregroundStyle(.dropinPrimary)
+            VStack {
+                Spacer()
+                    .frame(height: 70)
+                HStack(alignment: .center) {
+                    ZStack(alignment: .center) {
+                        Circle()
+                            .foregroundStyle(.white)
+                            .frame(width: 60, height: 60)
+                        DropinLogo(lineWidthMuliplier: 2, pinSizeMuliplier: 1.5)
+                            .frame(width: 50, height: 50)
+                    }
+                    .padding(.leading, 25)
+                    .padding(.trailing, 25)
+                    
+                    Text("Dropin")
+                        .foregroundStyle(.white)
+                        .font(.largeTitle)
 
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+        .frame(height: 160)
+    }
+    
     // MARK: - Gestures
     private var leftSwipeGesture: some Gesture {
         DragGesture(minimumDistance: 20, coordinateSpace: .global).onEnded { value in
@@ -122,3 +146,28 @@ struct SideMenuView: View {
         }
     }
 }
+
+#if DEBUG
+
+struct MockSideMenuView: View {
+    @State var sideMenuContext: SideMenuContext
+    @State var navigationContext: NavigationContext
+    
+    var body: some View {
+        SideMenuView(currentSideMenuContext: $sideMenuContext)
+            .environment(navigationContext)
+    }
+    
+    init() {
+        self.navigationContext = NavigationContext()
+        self.sideMenuContext = .main
+        
+        self.navigationContext.showingSideMenu = true
+    }
+}
+
+#Preview {
+    MockSideMenuView()
+}
+
+#endif

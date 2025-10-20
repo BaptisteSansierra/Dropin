@@ -43,4 +43,5 @@ extension SDGroup {  // Mock extension
         return [g1, g2, g3, g4, g5, g6, g7, g8, g9, g10]
     }
 }
+
 #endif

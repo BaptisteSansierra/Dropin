@@ -16,6 +16,12 @@ struct CreateTag {
     }
     
     func execute(_ tag: TagEntity) async throws {
+        guard tag.name.count > 0 else {
+            throw DomainError.Tag.missingName
+        }
+        if try await repository.exists(tag) {
+            throw DomainError.Place.alreadyExists
+        }
         try await repository.create(tag)
     }
 }

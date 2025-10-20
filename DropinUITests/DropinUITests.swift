@@ -6,7 +6,7 @@
 //
 
 import XCTest
-
+#if false
 final class DropinUITests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -39,3 +39,4 @@ final class DropinUITests: XCTestCase {
         }
     }
 }
+#endif

@@ -17,11 +17,15 @@ struct CreatePlace {
     }
 
     func execute(_ place: PlaceEntity) async throws {
+        guard place.name.count > 0 else {
+            throw DomainError.Place.missingName
+        }
+        guard place.systemImage.count > 0 else {
+            throw DomainError.Place.missingSysImage
+        }
+        if try await repository.exists(place) {
+            throw DomainError.Place.alreadyExists
+        }
         try await repository.create(place)
     }
-
-//    func execute(coordinates: CLLocationCoordinate2D) async throws {
-//        let place = PlaceEntity(coordinates: coordinates)
-//        return try await repository.create(place)
-//    }
 }

@@ -22,7 +22,7 @@ struct DropinApp: App {
     // MARK: - Properties
     private var appContainer: AppContainer
     private var modelContainer: ModelContainer
-    private var locationManager = LocationManager()
+    private var locationManager = LocationManager()  // TODO: locationManager could be moved on AppContainer ?
 
     // MARK: - Body
     var body: some Scene {
@@ -31,7 +31,7 @@ struct DropinApp: App {
                 .environment(locationManager)
                 .environment(navigationContext)
                 .environment(mapSettings)
-                .modelContainer(modelContainer)  // DEBUG Purpose, to be removed
+                //.modelContainer(modelContainer)  // DEBUG Purpose, to be removed
                 .task {
                     locationManager.start()
                 }
@@ -41,7 +41,7 @@ struct DropinApp: App {
     // MARK: - init
     init() {
         do {
-            modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self)
+            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
@@ -58,12 +58,21 @@ struct DropinApp: App {
             }
             #endif
             // Create app container
-            appContainer = AppContainer(modelContext: modelContainer.mainContext)
+            appContainer = AppContainer(modelContext: modelContainer.mainContext,
+                                        locationManager: locationManager)
+            self.modelContainer = modelContainer
 
         } catch {
             if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-                appContainer = AppContainer.mock()
-                modelContainer = AppContainer.mockModelContainer!
+                let mock = MockContainer()
+                appContainer = mock.appContainer
+                modelContainer = mock.mockModelContainer
+                return
+            }
+            else if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                let mock = MockContainer()
+                appContainer = mock.appContainer
+                modelContainer = mock.mockModelContainer
                 return
             }
             fatalError("Could not create ModelContainer: \(error)")

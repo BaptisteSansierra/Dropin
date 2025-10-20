@@ -11,6 +11,12 @@ struct RootView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: RootViewModel
+    @State private var contentFrameW: CGFloat = .infinity
+    @State private var contentFrameH: CGFloat = .infinity
+    @State private var contentCornerR: CGFloat = 0
+    @State private var contentScale: CGSize = CGSize(width: 1, height: 1)
+    
+    @State private var menuVisible: Bool = false
 
     // MARK: - Dependencies
     @Environment(NavigationContext.self) var navigationContext
@@ -28,11 +34,9 @@ struct RootView: View {
                     case .main:
                         viewModel.createMainView()
                     case .groups:
-                        Text("Groups")
-                        //GroupListView()
+                        viewModel.createGroupListView()
                     case .tags:
-                        DummyTagView()
-                        //TagListView()
+                        viewModel.createTagListView()
                 }
             }
             SideMenuView(currentSideMenuContext: $viewModel.currentSideMenuContext)
@@ -47,8 +51,25 @@ struct RootView: View {
     }
 }
 
-#Preview {
-    AppContainer.mock().createRootView()
-        .environment(NavigationContext())
-        .environment(MapSettings())
+#if DEBUG
+struct MockRootView: View {
+    var mock: MockContainer
+
+    var body: some View {
+        mock.appContainer.createRootView()
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+    }
 }
+
+#Preview {
+    MockRootView()
+        .environment(LocationManager())
+        .environment(MapSettings())
+        .environment(NavigationContext())
+}
+
+#endif

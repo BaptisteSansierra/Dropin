@@ -16,6 +16,15 @@ struct UpdatePlace {
     }
     
     func execute(_ place: PlaceEntity) async throws {
+        guard place.name.count > 0 else {
+            throw DomainError.Place.missingName
+        }
+        guard place.systemImage.count > 0 else {
+            throw DomainError.Place.missingSysImage
+        }
+        if try await !repository.exists(place) {
+            throw DomainError.Place.notFound
+        }
         return try await repository.update(place)
     }
 }

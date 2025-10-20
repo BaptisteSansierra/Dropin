@@ -30,6 +30,14 @@ enum SideMenuContext {
     func createMainView() -> MainView {
         return appContainer.createMainView()
     }
+
+    func createGroupListView() -> GroupListView {
+        return appContainer.createGroupListView()
+    }
+
+    func createTagListView() -> TagListView {
+        return appContainer.createTagListView()
+    }
     
     func switchAppIcon() {
         let icon = ["AppIcon", "AppIcon2", "AppIcon3", "AppIcon4"][Int.random(in: 0...3)]

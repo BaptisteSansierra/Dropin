@@ -152,48 +152,25 @@ struct GroupSelectorView: View {
     }
 }
 
-/*
 
 #if DEBUG
+struct MockGroupSelectorView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
 
-private struct GSVPreview: View {
-    let container: ModelContainer
-
-    @Query var locations: [SDPlace]
-    @Query var tags: [SDTag]
-
-    init() {
-        print("CREATE TSVPreview")
-        do {
-            let config = ModelConfiguration(isStoredInMemoryOnly: true)
-            container = try ModelContainer(for: SDPlace.self, configurations: config)
-        } catch {
-            fatalError("couldn't create model container")
-        }
-        for item in SDGroup.all {
-            container.mainContext.insert(item)
-        }
-
-        do {
-            try container.mainContext.save()
-        } catch {
-            print("COULDN t save DB")
-        }
-        print(container)
+    var body: some View {
+        mock.appContainer.createGroupSelectorView(place: $place)
     }
     
-    var body: some View {
-        GroupSelectorView()
-            .modelContainer(container)
-            .environment(Place(sdPlace: SDPlace.l1))
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(0)
     }
 }
 
 #Preview {
-    GSVPreview()
+    MockGroupSelectorView()
 }
 
 #endif
-
-*/
-

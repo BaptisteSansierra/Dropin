@@ -8,22 +8,20 @@
 import Foundation
 import SwiftData
 import SwiftUI
-import Combine
 
 @MainActor
 final class AppContainer {
     
-    public let placeRepository: PlaceRepository
+    private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
     private let groupRepository: GroupRepository
-#if DEBUG
-    private var mockModelContext: ModelContext?
-#endif
+    private let locationManager: LocationManager
     
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, locationManager: LocationManager) {
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        self.locationManager = locationManager
     }
     
     func createRootView() -> RootView {
@@ -32,15 +30,24 @@ final class AppContainer {
     }
     
     func createMainView() -> MainView {
-        let vm = MainViewModel(self)
+        let vm = MainViewModel(self,
+                               getPlaces: GetPlaces(repository: placeRepository))
         return MainView(viewModel: vm)
     }
 
-    func createPlacesMapView() -> PlacesMapView {
+    func createPlacesMapView(places: Binding<[PlaceUI]>) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     getPlaces: GetPlaces(repository: placeRepository),
                                     createPlace: CreatePlace(repository: placeRepository))
-        return PlacesMapView(viewModel: vm)
+        return PlacesMapView(viewModel: vm, places: places)
+    }
+    
+    func createPlacesListView(places: Binding<[PlaceUI]>) -> PlacesListView {
+        let vm = PlacesListViewModel(self,
+                                     locationManager: locationManager,
+                                     getPlaces: GetPlaces(repository: placeRepository),
+                                     createPlace: CreatePlace(repository: placeRepository))
+        return PlacesListView(viewModel: vm, places: places)
     }
     
     func createCreatePlaceView(place: PlaceUI) -> CreatePlaceView {
@@ -85,7 +92,8 @@ final class AppContainer {
         return PlaceDetailsView(viewModel: vm, place: place, editMode: editMode)
     }
     
-    func createPlaceDetailsContentView(place: Binding<PlaceUI>, editMode: Binding<PlaceEditMode>) -> PlaceDetailsContentView {
+    func createPlaceDetailsContentView(place: Binding<PlaceUI>,
+                                       editMode: Binding<PlaceEditMode>) -> PlaceDetailsContentView {
         let vm = PlaceDetailsContentViewModel(self,
                                               updatePlace: UpdatePlace(repository: placeRepository),
                                               deletePlace: DeletePlace(repository: placeRepository),
@@ -93,51 +101,58 @@ final class AppContainer {
                                               createTags: CreateTag(repository: tagRepository),
                                               getGroups: GetGroups(repository: groupRepository),
                                               createGroup: CreateGroup(repository: groupRepository))
-        return PlaceDetailsContentView(viewModel: vm, place: place, editMode: editMode)
+        return PlaceDetailsContentView(viewModel: vm,
+                                       place: place,
+                                       editMode: editMode)
+    }
+    
+    func createTagListView() -> TagListView {
+        let vm = TagListViewModel(self,
+                                  getTags: GetTags(repository: tagRepository),
+                                  deleteTag: DeleteTag(repository: tagRepository))
+        return TagListView(viewModel: vm)
+    }
+    
+    func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
+        let vm = TagDetailsViewModel(self,
+                                     updateTag: UpdateTag(repository: tagRepository),
+                                     deleteTag: DeleteTag(repository: tagRepository))
+        return TagDetailsView(viewModel: vm, tag: tag)
+    }
+
+    func createGroupListView() -> GroupListView {
+        let vm = GroupListViewModel(self,
+                                  getGroups: GetGroups(repository: groupRepository),
+                                  deleteGroup: DeleteGroup(repository: groupRepository))
+        return GroupListView(viewModel: vm)
+    }
+    
+    func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
+        let vm = GroupDetailsViewModel(self,
+                                     updateGroup: UpdateGroup(repository: groupRepository),
+                                     deleteGroup: DeleteGroup(repository: groupRepository))
+        return GroupDetailsView(viewModel: vm, group: group)
     }
 }
 
 #if DEBUG
-extension AppContainer {  // Mock extension
-    
-    static var mockModelContainer: ModelContainer?
-    static private var mockModelContext: ModelContext?
-    static private var mockAppContainer: AppContainer?
 
-    static func mock() -> AppContainer {
-        if let mockAppContainer = mockAppContainer {
-            return mockAppContainer
-        }
-        do {
-            // Create a mock database
-            let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
-            mockModelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self,
-                                                    configurations: modelConfiguration)
-            mockModelContext = mockModelContainer!.mainContext
-            mockModelContext!.autosaveEnabled = false
-            try insertMockData(modelContext: mockModelContext!)
-            mockAppContainer = AppContainer(modelContext: mockModelContext!)
-            return mockAppContainer!
-        } catch {
-            fatalError("couldn't create mock data \(error)")
-        }
-    }
+extension AppContainer {
     
     static func insertMockData(modelContext: ModelContext) throws {
-        print("POPULATING MOCK")
         let mockGroups = SDGroup.mockGroups()
         let mockTags = SDTag.mockTags()
         let mockPlaces = SDPlace.mockPlaces()
         for item in mockGroups {
-            print(" GROUP -> \(item.name)")
+            //print(" GROUP -> \(item.name)")
             modelContext.insert(item)
         }
         for item in mockTags {
-            print(" TAG -> \(item.name)")
+            //print(" TAG -> \(item.name)")
             modelContext.insert(item)
         }
         for item in mockPlaces {
-            print(" PLACE -> \(item.name)")
+            //print(" PLACE -> \(item.name)")
             modelContext.insert(item)
         }
         
@@ -170,32 +185,6 @@ extension AppContainer {  // Mock extension
 
         try modelContext.save()
     }
-    
-    static func mockPlaceExample() -> SDPlace {
-        do {
-            guard let mockModelContext = mock().mockModelContext else {
-                print("error getting mock context")
-                return SDPlace(identifier: "...", name: "null", latitude: 0, longitude: 0, address: "N/A")
-            }
-            let places = try mockModelContext.fetch(FetchDescriptor<SDPlace>())
-            print("\(places.count) mock places found")
-            return places.first!
-        } catch {
-            print("error getting mock place \(error)")
-            return SDPlace(identifier: "...", name: "null", latitude: 0, longitude: 0, address: "N/A")
-        }
-    }
-
-    static func mockDomainPlaceExample() -> PlaceEntity {
-        return PlaceMapper.toDomain(mockPlaceExample())
-    }
-
-    static func mockTagExample() -> SDTag {
-        return try! mock().mockModelContext!.fetch(FetchDescriptor<SDTag>()).first!
-    }
-    
-    static func mockGroupExample() -> SDGroup {
-        return try! mock().mockModelContext!.fetch(FetchDescriptor<SDGroup>()).first!
-    }
 }
+
 #endif

@@ -59,13 +59,12 @@ struct PlaceTagsView: View {
     }
 }
 
-#if DEBUG
-#Preview {
-    @Previewable @State var place = PlaceMapper.toUI(PlaceMapper.toDomain(AppContainer.mockPlaceExample()))
-    @Previewable @State var showingTagsSelector = true
-    
-    PlaceTagsView(place: $place,
-                  showingTagsSelector: $showingTagsSelector,
-                  editEnabled: true)
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    @Previewable @State var place = AppContainer.mock().mockPlaceUIExample()
+//    @Previewable @State var showingTagsSelector = true
+//    PlaceTagsView(place: $place,
+//                  showingTagsSelector: $showingTagsSelector,
+//                  editEnabled: true)
+//}
+//#endif

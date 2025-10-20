@@ -110,7 +110,9 @@ struct PlaceDetailsContentView: View {
     }
     
     // MARK: - init
-    init(viewModel: PlaceDetailsContentViewModel, place: Binding<PlaceUI>, editMode: Binding<PlaceEditMode>) {
+    init(viewModel: PlaceDetailsContentViewModel,
+         place: Binding<PlaceUI>,
+         editMode: Binding<PlaceEditMode>) {
         self.viewModel = viewModel
         self._place = place
         self._editMode = editMode
@@ -120,13 +122,27 @@ struct PlaceDetailsContentView: View {
     }
 }
 
-/*
-#if DEBUG
-#Preview {
-    @Previewable @State var place: Place = Place(sdPlace: SDPlace.l1)
-    @Previewable @State var editMode: PlaceDetailsContentView.EditMode = .none
 
-    PlaceDetailsContentView(place: $place, editMode: $editMode)
+#if DEBUG
+struct MockPlaceDetailsContentView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
+    @State var editMode: PlaceEditMode = .none
+
+    var body: some View {
+        mock.appContainer.createPlaceDetailsContentView(place: $place, editMode: $editMode)
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(1)
+    }
 }
+
+#Preview {
+    MockPlaceDetailsContentView()
+        .environment(NavigationContext())
+}
+
 #endif
-*/

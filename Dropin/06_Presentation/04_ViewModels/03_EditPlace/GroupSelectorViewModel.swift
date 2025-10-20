@@ -30,6 +30,7 @@ import SwiftUI
         try await createGroup.execute(domainGroup)
         let group = GroupMapper.toUI(domainGroup)
         groups.append(group)
+        groups = groups.defaultSorted()
         return group
     }
 

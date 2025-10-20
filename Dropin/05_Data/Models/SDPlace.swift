@@ -48,18 +48,6 @@ final class SDPlace {
         self.phone = phone
         self.url = url
     }
-    
-    // TODO move into domain
-    
-    //    func sortedTags() -> [SDTag] {
-    //        return tags.sorted { t1, t2 in
-    //            let comparisonResult = t1.name.compare(t2.name)
-    //            if comparisonResult == .orderedSame {
-    //                return t1.creationDate.compare(t2.creationDate) == .orderedAscending
-    //            }
-    //            return comparisonResult == .orderedAscending
-    //        }
-    //    }
 }
 
 #if DEBUG

@@ -90,21 +90,10 @@ struct PlaceAnnotationView: View {
     }
 }
 
-#if DEBUG
-#Preview {
-    //@Previewable @State var navigationContext = NavigationContext()
-    @Previewable @State var selectedPlaceId: PlaceID? = nil
-    Map {
-        PlaceAnnotation(place: PlaceMapper.toUI(PlaceMapper.toDomain(AppContainer.mockPlaceExample())),
-                        selectedPlaceId: $selectedPlaceId )
-    }
-//    .sheet(item: $navigationContext.pinPlace) { place in
-//        Text("PLACE: \(place.name)")
-//            .presentationDetents([.fraction(0.25)])
-//            .presentationDragIndicator(.visible)
-//            .presentationCornerRadius(20)
-//
+//#Preview {
+//    @Previewable @State var selectedPlaceId: PlaceID? = nil
+//    Map {
+//        PlaceAnnotation(place: AppContainer.mock().mockPlaceUIExample(),
+//                        selectedPlaceId: $selectedPlaceId )
 //    }
-//    .environment(navigationContext)
-}
-#endif
+//}

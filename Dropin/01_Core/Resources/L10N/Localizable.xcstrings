@@ -84,16 +84,6 @@
         }
       }
     },
-    "%lld - %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld - %2$@"
-          }
-        }
-      }
-    },
     "alert.address_copied_body" : {
       "localizations" : {
         "en" : {
@@ -159,7 +149,6 @@
       }
     },
     "alert.remove_group_body_%@_%lld" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -176,7 +165,6 @@
       }
     },
     "alert.remove_group_empty_body_%@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -193,7 +181,6 @@
       }
     },
     "alert.remove_group_title" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -210,7 +197,6 @@
       }
     },
     "alert.remove_tag_body_%@_%lld" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -227,7 +213,6 @@
       }
     },
     "alert.remove_tag_empty_body_%@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -244,7 +229,6 @@
       }
     },
     "alert.remove_tag_title" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -309,7 +293,6 @@
       }
     },
     "common.delete_group" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -342,7 +325,6 @@
       }
     },
     "common.delete_tag" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -407,7 +389,6 @@
       }
     },
     "common.group_color" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -424,7 +405,6 @@
       }
     },
     "common.group_name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -457,7 +437,6 @@
       }
     },
     "common.list" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -538,7 +517,7 @@
       }
     },
     "common.new" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -555,7 +534,6 @@
       }
     },
     "common.no_related_places" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -572,7 +550,6 @@
       }
     },
     "common.not_grouped" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -637,7 +614,6 @@
       }
     },
     "common.organize_by_group" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -686,7 +662,6 @@
       }
     },
     "common.related_places" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -703,7 +678,6 @@
       }
     },
     "common.sort" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -720,7 +694,6 @@
       }
     },
     "common.sort.by_creation_date" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -737,7 +710,6 @@
       }
     },
     "common.sort.by_distance" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -754,7 +726,6 @@
       }
     },
     "common.sort.by_name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -771,7 +742,6 @@
       }
     },
     "common.tag_color" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -788,7 +758,6 @@
       }
     },
     "common.tag_name" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -821,7 +790,6 @@
       }
     },
     "common.unlink" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -885,8 +853,26 @@
         }
       }
     },
+    "developed_by" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Developed by Baptiste Sansierra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développé par Baptiste Sansierra"
+          }
+        }
+      }
+    },
+    "Dropin" : {
+      "shouldTranslate" : false
+    },
     "group_list_view.num_places_%lld" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -990,12 +976,6 @@
         }
       }
     },
-    "Groups" : {
-
-    },
-    "LIST" : {
-
-    },
     "markers.select" : {
       "localizations" : {
         "en" : {
@@ -1008,6 +988,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sélectionner un marqueur"
+          }
+        }
+      }
+    },
+    "navigate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directions"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire"
+          }
+        }
+      }
+    },
+    "navigate_link_apple" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go with Apple map"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple map"
+          }
+        }
+      }
+    },
+    "navigate_link_google" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go with Google map"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google map"
+          }
+        }
+      }
+    },
+    "navigate_link_waze" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go with Waze"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waze"
           }
         }
       }
@@ -1093,7 +1137,6 @@
       }
     },
     "tag_list_view.num_places_%lld" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {

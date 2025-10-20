@@ -13,6 +13,7 @@ struct PlaceDetailsSheetView: View {
     @State private var viewModel: PlaceDetailsSheetViewModel
     @Binding private var place: PlaceUI
     @State private var editMode: PlaceEditMode = .none
+    @State private var showingNavigationDialog: Bool = false
 
     // MARK: - Dependencies
     @Environment(\.dismiss) var dismiss
@@ -27,21 +28,23 @@ struct PlaceDetailsSheetView: View {
             //PlaceDetailsContentView(place: $place, editMode: $editMode)
                 .navigationTitle(place.name)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(editMode == .edit ? "common.cancel" : "common.edit") {
-                            switch editMode {
-                                case .edit:
-                                    editMode = .cancel
-                                case .none:
-                                    editMode = .edit
-                                default:
-                                    ()
-                            }
-                        }
-                        .tint(.dropinPrimary)
-                    }
-                }
+            
+//                .toolbar {
+//                    ToolbarItem(placement: .topBarTrailing) {
+//                        Button(editMode == .edit ? "common.cancel" : "common.edit") {
+//                            switch editMode {
+//                                case .edit:
+//                                    editMode = .cancel
+//                                case .none:
+//                                    editMode = .edit
+//                                default:
+//                                    ()
+//                            }
+//                        }
+//                        .tint(.dropinPrimary)
+//                    }
+//                }
+            
             // Footer
             ZStack(alignment: .center) {
                 Rectangle()
@@ -51,6 +54,19 @@ struct PlaceDetailsSheetView: View {
                 footer
             }
         }
+        .confirmationDialog("navigate",
+                            isPresented: $showingNavigationDialog,
+                            actions: {
+            Button("navigate_link_google") {
+                routeThrowGoogle()
+            }
+            Button("navigate_link_apple") {
+                routeThrowApple()
+            }
+            Button("navigate_link_waze") {
+                routeThrowWaze()
+            }
+        })
         .alert("alert.address_copied_title",
                isPresented: $navigationContext.showingAddressToClipboard,
                actions: {
@@ -94,12 +110,54 @@ struct PlaceDetailsSheetView: View {
     
     // MARK: - Actions
     private func onPressGo() {
-        print("TODO : open MAP")
-        // TODO
+        showingNavigationDialog.toggle()
     }
     
     private func onPressEdit() {
         dismiss()
         navigationContext.navigationPath.append(PlaceMapper.toDomain(place))
     }
+    
+    private func routeThrowGoogle() {
+        //guard let url = URL(string: "comgooglemaps://?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
+        guard let url = URL(string:"comgooglemaps://?daddr=\(place.address)") else { return }
+        UIApplication.shared.open(url)
+    }
+
+    private func routeThrowApple() {
+        //guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
+        guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.address)") else { return }
+        UIApplication.shared.open(url)
+    }
+
+    private func routeThrowWaze() {
+        guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude)-\(place.coordinates.longitude)&navigate=yes") else { return }
+        //guard let url = URL(string:"https://www.waze.com/ul?ll=\(place.address)") else { return }
+        UIApplication.shared.open(url)
+    }
 }
+
+#if DEBUG
+struct MockPlaceDetailsSheetView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
+
+    var body: some View {
+        mock.appContainer.createPlaceDetailsSheetView(place: $place)
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(1)
+    }
+}
+
+#Preview {
+    NavigationStack {
+        MockPlaceDetailsSheetView()
+            .environment(NavigationContext())
+    }
+}
+
+#endif

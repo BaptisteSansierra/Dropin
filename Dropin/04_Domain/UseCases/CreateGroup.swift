@@ -16,6 +16,12 @@ struct CreateGroup {
     }
     
     func execute(_ group: GroupEntity) async throws {
+        guard group.name.count > 0 else {
+            throw DomainError.Group.missingName
+        }
+        if try await repository.exists(group) {
+            throw DomainError.Place.alreadyExists
+        }
         return try await repository.create(group)
     }
 }
