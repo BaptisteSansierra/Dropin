@@ -44,109 +44,103 @@ struct PlacesMapView: View {
         @Bindable var navigationContext = navigationContext
 
         //NavigationStack(path: $navigationContext.navigationPath) {
-            MapReader { proxy in
-                Map(position: $mapSettings.position) {
-                    // Add a marker at current new temporary place
-                    if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
-                        Marker(tmpPlace.name,
-                               monogram: Text("common.new".uppercased()),
-                               coordinate: tmpPlace.coordinates)
-                    }
-                    // TODO:  have a list of PlaceAnnotation + Marker
-                    // with 2 ForEach so we get rid of the IF_ELSE
-                                        
-                    if let selectedPlaceId = viewModel.selectedPlaceId {
-                        ForEach(places) { place in
-                            if place.id == selectedPlaceId.id && !place.databaseDeleted {
-                                // TODO: this marker should be displayed last to avoid overlay
-                                Marker(place.name, coordinate: place.coordinates)
-                            } else {
-                                if !place.databaseDeleted {
-                                    PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
-                                }
-                            }
-                        }
-                    } else {
-                        ForEach(places) { place in
+        MapReader { proxy in
+            Map(position: $mapSettings.position) {
+                // Add a marker at current new temporary place
+                if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
+                    Marker(tmpPlace.name,
+                           monogram: Text("common.new".uppercased()),
+                           coordinate: tmpPlace.coordinates)
+                }
+                // TODO:  have a list of PlaceAnnotation + Marker
+                // with 2 ForEach so we get rid of the IF_ELSE
+                                    
+                if let selectedPlaceId = viewModel.selectedPlaceId {
+                    ForEach(places) { place in
+                        if place.id == selectedPlaceId.id && !place.databaseDeleted {
+                            // TODO: this marker should be displayed last to avoid overlay
+                            Marker(place.name, coordinate: place.coordinates)
+                        } else {
                             if !place.databaseDeleted {
                                 PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
                             }
                         }
                     }
-                    //.mapItemDetailSelectionAccessory(.callout)
-                    UserAnnotation()
-                }
-                .simultaneousGesture(longPressHackDragGesture)
-                .onReceive(longPressTimer, perform: { time in
-                    onLongPressTimerFire(proxy: proxy)
-                })
-                .animation(.easeInOut, value: mapSettings.position)
-                .mapControls {
-                    MapCompass()
-                }
-                .mapStyle(mapSettings.selectedMapStyle)
-                .selectionDisabled(false)
-                .onMapCameraChange(frequency: .continuous) { _ in
-                    // Cancel long press timer when moving map camera
-                    longPressTimer.upstream.connect().cancel()
-                }
-                .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
-                    updateCameraCache(mapCameraUpdateContext)
-                }
-                .task {
-                    onFirstAppear()
-                }
-                .overlay {
-                    MapSettingsOverlay()
-                        .environment(mapSettings)
-                }
-                .overlay {
-                    zoomOnUserOverlay
-                }
-                .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
-                    viewModel.discardCreation()
-                    Task {
-                        places = try await viewModel.loadPlaces()
-                        clustering()
+                } else {
+                    ForEach(places) { place in
+                        if !place.databaseDeleted {
+                            PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
+                        }
                     }
-                }, content: {
-                    viewModel.createCreatePlacesView()
-                        //.presentationDetents([.medium, .large])
-                        .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
-                })
-                .onChange(of: viewModel.selectedPlaceId) {
-                    zoomOnPin()
                 }
-                .sheet(item: $viewModel.selectedPlaceId) { placeId in
-                    createPlaceDetailsSheetView()
-                        .presentationDetents([.medium, .large])
-                        .presentationCornerRadius(20)
-                }
-                .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
-                    Button("common.open_settings") {
-                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                        UIApplication.shared.open(url)
-                    }
-                    Button("common.cancel") {}
-                } message: {
-                    Text("common.loc_auth_required")
-                }
+                //.mapItemDetailSelectionAccessory(.callout)
+                UserAnnotation()
             }
-            .customToolbar(title: "",
-                           titleView: AnyView(LogoToolbarView()),
-                           leading: [CustomToolbarItem(content: AnyView(BurgerToolbarView()))],
-                           trailing: [
-                            CustomToolbarItem(content: AnyView(AddPlaceToolbarView()))                           ])
+            .simultaneousGesture(longPressHackDragGesture)
+            .onReceive(longPressTimer, perform: { time in
+                onLongPressTimerFire(proxy: proxy)
+            })
+            .animation(.easeInOut, value: mapSettings.position)
+            .mapControls {
+                MapCompass()
+            }
+            .mapStyle(mapSettings.selectedMapStyle)
+            .selectionDisabled(false)
+            .onMapCameraChange(frequency: .continuous) { _ in
+                // Cancel long press timer when moving map camera
+                longPressTimer.upstream.connect().cancel()
+            }
+            .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
+                updateCameraCache(mapCameraUpdateContext)
+            }
+            .task {
+                onFirstAppear()
+            }
+            .overlay {
+                MapSettingsOverlay()
+                    .environment(mapSettings)
+            }
+            .overlay {
+                zoomOnUserOverlay
+            }
+            .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
+                viewModel.discardCreation()
+                Task {
+                    places = try await viewModel.loadPlaces()
+                    clustering()
+                }
+            }, content: {
+                viewModel.createCreatePlacesView()
+                    //.presentationDetents([.medium, .large])
+                    .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+            })
+            .onChange(of: viewModel.selectedPlaceId) {
+                zoomOnPin()
+            }
+            .sheet(item: $viewModel.selectedPlaceId) { placeId in
+                createPlaceDetailsSheetView()
+                    .presentationDetents([.medium, .large])
+                    .presentationCornerRadius(20)
+            }
+            .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
+                Button("common.open_settings") {
+                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                    UIApplication.shared.open(url)
+                }
+                Button("common.cancel") {}
+            } message: {
+                Text("common.loc_auth_required")
+            }
+        }
+        .customToolbar(tabIndex: 0,
+                       leading: {
+                           BurgerToolbarView()
+                       }, trailing: {
+                           AddPlaceToolbarView()
+                       }, title: {
+                           LogoToolbarView()
+                       })
 
-//            .toolbarPreference([ToolbarPreferenceItem(placement: .topBarLeading,
-//                                                      content: BurgerToolbarView())
-//            ])
-//            .toolbar {
-//                DropinToolbar.Burger()
-//                DropinToolbar.Logo()
-//                DropinToolbar.AddPlace()
-//            }
-        //}
     }
 
     // MARK: - Subviews
@@ -319,10 +313,14 @@ struct MockPlacesMapView: View {
 }
 
 #Preview {
-    MockPlacesMapView()
-        .environment(LocationManager())
-        .environment(MapSettings())
-        .environment(NavigationContext())
+    NavigationStack {
+        MockPlacesMapView()
+            .environment(LocationManager())
+            .environment(MapSettings())
+            .environment(NavigationContext())
+            .navigationTitle("Map")
+            .navigationBarTitleDisplayMode(.inline)
+    }
 }
 
 #endif

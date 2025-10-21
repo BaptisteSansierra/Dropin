@@ -13,13 +13,9 @@ struct PlacesListView: View {
     // MARK: - State & Bindings
     @State private var viewModel: PlacesListViewModel
     @Binding private var places: [PlaceUI]
-//    @State private var sortedPlaces: [SDPlace] = []
-//    @State private var groupedSortedPlaces: [SDGroup: [SDPlace]] = [:]
-//    @State private var ungroupedSortedPlaces: [SDPlace] = []
-//    @State private var searchText = ""
-//    @State private var grouped = false
-//    @State private var sortMode: SortMode = .distance
 
+    // MARK: - Dependencies
+    @Environment(NavigationContext.self) private var navigationContext
 
     // MARK: - Init
     init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
@@ -30,6 +26,8 @@ struct PlacesListView: View {
     // MARK: - Body
     var body: some View {
         
+        @Bindable var navigationContext = navigationContext
+        
         List {
             // Show places without groups (empty if #2)
             if !viewModel.grouped { flatList }
@@ -37,7 +35,12 @@ struct PlacesListView: View {
             else { groupedList }
         }
         .listStyle(.grouped)
+        //.searchable(text: $viewModel.searchText, isPresented: $navigationContext.searchBarPresented)
+        .searchable(text: $viewModel.searchText)
+        .searchPresentationToolbarBehavior(.avoidHidingContent)
         .task {
+            try? await Task.sleep(nanoseconds: 1)
+
             Task {
                 viewModel.updateSorting(places)
             }
@@ -57,26 +60,23 @@ struct PlacesListView: View {
         .onChange(of: viewModel.sortMode) {
             viewModel.updateSorting(places)
         }
-        .searchable(text: $viewModel.searchText)
-        
-        .customToolbar(title: "",
-                       titleView: AnyView(LogoToolbarView()),
-                       leading: [CustomToolbarItem(content: AnyView(BurgerToolbarView()))],
-                       trailing: [
-                        CustomToolbarItem(content: AnyView(toolbarTrailingItem1)),
-                        CustomToolbarItem(content: AnyView(toolbarTrailingItem2))
-                       ])
-        /*
-        .toolbar {
-            DropinToolbar.Burger()
-            DropinToolbar.Logo()
-        }
-        .toolbar {
+        .customToolbar(tabIndex: 1,
+                       leading: {
+                           BurgerToolbarView()
+                       }, trailing: {
+                           trailingToolbarContent
+                       }) {
+                           LogoToolbarView()
+                       }
+    }
+
+    // MARK: - Subviews
+    private var trailingToolbarContent: some View {
+        Group {
             Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
                 viewModel.grouped.toggle()
             }
             .tint(.dropinPrimary)
-
             Menu("common.sort", systemImage: "arrow.up.arrow.down") {
                 Picker("common.sort", selection: $viewModel.sortMode) {
                     Text("common.sort.by_distance")
@@ -90,31 +90,6 @@ struct PlacesListView: View {
             }
             .tint(.dropinPrimary)
         }
-         */
-    }
-
-    // MARK: - Subviews
-
-    private var toolbarTrailingItem1: some View {
-        Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
-            viewModel.grouped.toggle()
-        }
-        .tint(.dropinPrimary)
-    }
-
-    private var toolbarTrailingItem2: some View {
-        Menu("common.sort", systemImage: "arrow.up.arrow.down") {
-            Picker("common.sort", selection: $viewModel.sortMode) {
-                Text("common.sort.by_distance")
-                    .tag(PlacesListViewModel.SortMode.distance)
-                Text("common.sort.by_name")
-                    .tag(PlacesListViewModel.SortMode.alphabetically)
-                Text("common.sort.by_creation_date")
-                    .tag(PlacesListViewModel.SortMode.creationDate)
-            }
-            .pickerStyle(.inline)
-        }
-        .tint(.dropinPrimary)
     }
 
     private var flatList: some View {
@@ -184,41 +159,14 @@ struct MockPlacesListView: View {
                 .tabItem {
                     Label("common.map", systemImage: "map")
                 }
+            Text("EmptyTab")
+                .tabItem {
+                    Label("Emptyti", systemImage: "cross")
+                }
         }
+        .navigationTitle("Pipo")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #endif
-
-
-//#if DEBUG
-//private struct PLVPreview: View {
-//    let container: ModelContainer
-//
-//    init() {
-//        do {
-//            let config = ModelConfiguration(isStoredInMemoryOnly: true)
-//            container = try ModelContainer(for: SDPlace.self, configurations: config)
-//        } catch {
-//            fatalError("couldn't create model container")
-//        }
-//        for l in SDPlace.all {
-//            container.mainContext.insert(l)
-//        }
-//    }
-//    
-//    var body: some View {
-//        NavigationStack {
-//            PlacesListView()
-//        }
-//        .modelContainer(container)
-//        .environment(LocationManager())
-//        .environment(NavigationContext())
-//    }
-//}
-//
-//#Preview {
-//    PLVPreview()
-//}
-//
-//#endif

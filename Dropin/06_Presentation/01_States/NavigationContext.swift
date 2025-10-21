@@ -36,4 +36,7 @@ import SwiftUI
 //    
     var navigationPath = NavigationPath()
 
+    
+    //var searchBarPresented: Bool = false
+
 }
