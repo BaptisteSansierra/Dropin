@@ -13,6 +13,7 @@ struct PlacesListView: View {
     // MARK: - State & Bindings
     @State private var viewModel: PlacesListViewModel
     @Binding private var places: [PlaceUI]
+    @State private var renderList = false
 
     // MARK: - Dependencies
     @Environment(NavigationContext.self) private var navigationContext
@@ -28,46 +29,78 @@ struct PlacesListView: View {
         
         @Bindable var navigationContext = navigationContext
         
-        List {
-            // Show places without groups (empty if #2)
-            if !viewModel.grouped { flatList }
-            // Show grouped places (empty if #1)
-            else { groupedList }
-        }
-        .listStyle(.grouped)
-        //.searchable(text: $viewModel.searchText, isPresented: $navigationContext.searchBarPresented)
-        .searchable(text: $viewModel.searchText)
-        .searchPresentationToolbarBehavior(.avoidHidingContent)
-        .task {
-            try? await Task.sleep(nanoseconds: 1)
+        NavigationStack(path: $navigationContext.navigationPath) {
 
-            Task {
+            Group {
+                if viewModel.loading || !renderList {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                } else {
+                    List {
+                        // Show places without groups (empty if #2)
+                        if !viewModel.grouped { flatList }
+                        // Show grouped places (empty if #1)
+                        else { groupedList }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .listStyle(.grouped)
+                    // TODO: to be implemented
+                    //.searchable(text: $viewModel.searchText)
+                    .searchPresentationToolbarBehavior(.avoidHidingContent)
+                    .refreshable {
+                        Task {
+                            try await self.viewModel.loadPlaces()
+                        }
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear
+                            .frame(height: 15)
+                    }
+                }
+            }
+            .task {
+                //try? await Task.sleep(for: .seconds(0.5))
+                try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
+                renderList = true
+                Task {
+                    viewModel.updateSorting(places)
+                }
+            }
+            // TO RESTORE
+            //            .onChange(of: places) {
+            //                viewModel.updateSorting(places)
+            //            }
+            .onChange(of: viewModel.grouped) {
                 viewModel.updateSorting(places)
             }
-        }
-        // TO RESTORE
-//            .onChange(of: places) {
-//                viewModel.updateSorting(places)
-//            }
-        .refreshable {
-            Task {
-                try await self.viewModel.loadPlaces()
+            .onChange(of: viewModel.sortMode) {
+                viewModel.updateSorting(places)
             }
+
+//            .customToolbar(tabIndex: 1,
+//                           leading: {
+//                BurgerToolbarView()
+//            }, trailing: {
+//                trailingToolbarContent
+//            }) {
+//                LogoToolbarView()
+//            }
+            
+            
+            .navigationDestination(for: PlaceEntity.self) { place in
+                createPlaceDetailsView(place)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+
+            .toolbar {
+                DropinToolbar.Burger()
+                DropinToolbar.Logo()
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    trailingToolbarContent
+                }
+            }
+            
         }
-        .onChange(of: viewModel.grouped) {
-            viewModel.updateSorting(places)
-        }
-        .onChange(of: viewModel.sortMode) {
-            viewModel.updateSorting(places)
-        }
-        .customToolbar(tabIndex: 1,
-                       leading: {
-                           BurgerToolbarView()
-                       }, trailing: {
-                           trailingToolbarContent
-                       }) {
-                           LogoToolbarView()
-                       }
     }
 
     // MARK: - Subviews
@@ -130,6 +163,14 @@ struct PlacesListView: View {
                 }
             }
         }
+    }
+    
+    // MARK: private methods
+    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+            fatalError("couldn't find any place named '\(place.name)' in list")
+        }
+        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
     }
 }
 

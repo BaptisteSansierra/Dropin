@@ -67,6 +67,10 @@ struct PlaceID: Identifiable, Equatable {
         return appContainer.createCreatePlaceView(place: tmpPlace)
     }
         
+    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
+        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
+    }
+
     func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
         return appContainer.createPlaceDetailsSheetView(place: place)
     }

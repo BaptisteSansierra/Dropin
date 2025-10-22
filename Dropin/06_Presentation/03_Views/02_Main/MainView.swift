@@ -7,26 +7,15 @@
 
 import SwiftUI
 
-struct CenteredLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .center, spacing: 7) {
-            configuration.icon
-                .font(.title)
-                .frame(height: 40)
-                //.border(.red, width: 1)
-            configuration.title
-                .font(.footnote)
-        }
-    }
-}
-
 struct MainView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: MainViewModel
     @State private var toolbarContents: [Int: CustomToolbarContent] = [:]
     @State private var selectedTab: Int = 0
-
+    @State private var tabViewOffsetY: CGFloat = 0
+    @State private var tabViewOpacity: CGFloat = 1
+    
     // MARK: - Dependencies
     @Environment(NavigationContext.self) private var navigationContext
 
@@ -42,117 +31,17 @@ struct MainView: View {
     
     // MARK: - Body
     var body: some View {
-        // Bindable
         @Bindable var navigationContext = navigationContext
         
-        // Content
-        NavigationStack(path: $navigationContext.navigationPath) {
+        ZStack {
+            viewModel.createPlacesMapView()
+                .opacity(selectedTab == 0 ? 1 : 0)
             
-            /*
-            ZStack {
-                
-                //currentView
-                
-                viewModel.createPlacesMapView()
-                    .opacity(selectedTab == 0 ? 1 : 0)
-
-                viewModel.createPlacesListView()
-                    .opacity(selectedTab == 1 ? 1 : 0)
-
-                
-                // custom tabs
-                VStack(spacing: 0) {
-                    Spacer()
-                    Divider()
-                    ZStack {
-                        Rectangle()
-                            .frame(height: 180)
-                            .foregroundStyle(.regularMaterial)
-                        HStack(alignment: .top) {
-                            Button {
-                                selectedTab = 0
-                                //navigationContext.searchBarPresented = false
-                            } label: {
-                                Spacer()
-                                Label {
-                                    Text("common.map")
-                                        .foregroundStyle(selectedTab == 0 ? .dropinSecondary : Color(rgba: "666666"))
-                                } icon: {
-                                    Image(systemName: "map")
-                                        .foregroundStyle(selectedTab == 0 ? .dropinSecondary : Color(rgba: "666666"))
-                                }
-                                .labelStyle(CenteredLabelStyle())
-                                Spacer()
-                            }
-                            Button {
-                                selectedTab = 1
-                                //navigationContext.searchBarPresented = true
-                            } label: {
-                                Spacer()
-                                Label {
-                                    Text("common.list")
-                                        .foregroundStyle(selectedTab == 1 ? .dropinSecondary : Color(rgba: "666666"))
-                                } icon: {
-                                    Image(systemName: "list.bullet")
-                                        .foregroundStyle(selectedTab == 1 ? .dropinSecondary : Color(rgba: "666666"))
-                                }
-                                .labelStyle(CenteredLabelStyle())
-                                Spacer()
-                            }
-
-                        }
-                    }
-                }
-                .ignoresSafeArea()
-            }
+            viewModel.createPlacesListView()
+                .opacity(selectedTab == 1 ? 1 : 0)
             
-             */
-            
-            TabView(selection: $selectedTab) {
-                viewModel.createPlacesMapView()
-                    .tabItem {
-                        Label("common.map", systemImage: "map")
-                    }
-                    .tag(0)
-                viewModel.createPlacesListView()
-                    .tabItem {
-                        Label("common.list", systemImage: "list.bullet")
-                    }
-                    .tag(1)
-            }
-            
-            
-            .navigationDestination(for: PlaceEntity.self) { place in
-                createPlaceDetailsView(place)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .onPreferenceChange(ToolbarContentPreference.self) { content in
-                guard let content = content else { return }
-                toolbarContents[content.tabIndex] = content
-            }
-            .toolbar {
-                // Custom title view
-                if let titleView = currentToolbar?.title {
-                    ToolbarItem(placement: .principal) {
-                        titleView
-                    }
-                }
-                // Leading items
-                if let leading = currentToolbar?.leading {
-                    ToolbarItemGroup(placement: .topBarLeading) {
-                        leading
-                    }
-                }
-                // Trailing items
-                if let trailing = currentToolbar?.trailing {
-                    ToolbarItemGroup(placement: .topBarTrailing) {
-                        trailing
-                    }
-                }
-            }
+            customTabView
         }
-        .toolbar(.visible, for: .tabBar)
-
         .task {
             Task {
                 try await viewModel.loadPlaces()
@@ -165,6 +54,9 @@ struct MainView: View {
             Button("common.ok") { }
         }) {
             Text("_TEMP_long_press_instructions")
+        }
+        .onChange(of: navigationContext.navigationPath) { oldValue, newValue in
+            animateTabBar(oldNavigationPath: oldValue, newNavigationPath: newValue)
         }
         /*
         .confirmationDialog("Save a location", isPresented: $navigationContext.showingCreatePlaceMenu, titleVisibility: .visible) {
@@ -196,65 +88,97 @@ struct MainView: View {
         }
          */
     }
-    
-//    func toolbarContentItem(item: ToolbarPreferenceItem) -> ToolbarItem<Any, View> {
-//        ToolbarItem(placement: item.placement) {
-//            Text("Aaa")
-//        }
-//    }
-//    
-//    var toolbarContent: some ToolbarContent {
-//        ForEach(toolbarItems) { item in
-//            ToolbarItem(placement: item.placement) {
-//                Text("Aaa")
+
+    // MARK: subviews
+//    var currentView: some View {
+//        Group {
+//            if selectedTab == 0 {
+//                viewModel.createPlacesMapView()
+//            } else {
+//                viewModel.createPlacesListView()
 //            }
 //        }
 //    }
+        
+    private var customTabView: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            Divider()
+            ZStack {
+                Rectangle()
+                    .frame(height: 80)
+                    .foregroundStyle(.regularMaterial)
+                VStack {
+                    HStack(alignment: .top) {
+                        Button {
+                            selectedTab = 0
+                        } label: {
+                            Spacer()
+                            Label {
+                                Text("common.map")
+                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary : Color(rgba: "666666"))
+                            } icon: {
+                                Image(systemName: "map")
+                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary : Color(rgba: "666666"))
+                            }
+                            .labelStyle(CenteredLabelStyle())
+                            Spacer()
+                        }
+                        Button {
+                            selectedTab = 1
+                        } label: {
+                            Spacer()
+                            Label {
+                                Text("common.list")
+                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary : Color(rgba: "666666"))
+                            } icon: {
+                                Image(systemName: "list.bullet")
+                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary : Color(rgba: "666666"))
+                            }
+                            .labelStyle(CenteredLabelStyle())
+                            Spacer()
+                        }
+                        
+                    }
+                    Spacer()
+                        .frame(height: 15)
+                }
+            }
+        }
+        .ignoresSafeArea()
+        .opacity(tabViewOpacity)
+        .offset(y: tabViewOffsetY)
+    }
 
-    // MARK: subviews
-    var currentView: some View {
-        Group {
-            if selectedTab == 0 {
-                viewModel.createPlacesMapView()
-            } else {
-                viewModel.createPlacesListView()
+    // MARK: private methods
+    private func animateTabBar(oldNavigationPath: NavigationPath, newNavigationPath: NavigationPath) {
+        if oldNavigationPath.count == 0 && newNavigationPath.count > 0 {
+            withAnimation(.easeInOut) {
+                tabViewOffsetY = 120
+                tabViewOpacity = 0
+            }
+        } else if oldNavigationPath.count > 0 && newNavigationPath.count == 0 {
+            withAnimation(.easeInOut) {
+                tabViewOffsetY = 0
+                tabViewOpacity = 1
             }
         }
     }
-
-    
-    // MARK: private methods
-    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-        guard let index = viewModel.places.firstIndex(where: { $0.id == place.id }) else {
-            fatalError("couldn't find any place named '\(place.name)' in list")
-        }
-        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
-    }
 }
 
-//struct DynamicToolbar: ToolbarContent {
-//    let items: [ToolbarPreferenceItem]
-//    
-//    var body: some ToolbarContent {
-////        ForEach(items, id: \.id) { item in
-//        ForEach(Array(items.enumerated()), id: \.element.id) { _, item in
-//
-//            ToolbarItem(placement: item.placement) {
-//                AnyView(item.content)
-//                //Text("Pipo")
-//            }
-//        }
-//    }
-//    
-//    @ToolbarContentBuilder
-//    private func ForEachToolbarItems(_ items: [ToolbarPreferenceItem]) -> some ToolbarContent {
-//        for item in items {
-//            ToolbarItem(placement: item.placement) {
-//                item.content
-//            }
-//        }
-//    }
-//}
+private struct CenteredLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .center, spacing: 0) {
+            configuration.icon
+                .font(.subheadline)
+                .frame(height: 15)
+                //.border(.red, width: 1)
+                .padding(.bottom, 5)
+            configuration.title
+                .font(.footnote)
+        }
+    }
+}
 
 #if DEBUG
 struct MockMainView: View {

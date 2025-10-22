@@ -24,14 +24,13 @@ import SwiftUI
     var searchText = ""
     var grouped = false
     var sortMode: SortMode = .distance
+    var loading: Bool = true
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let getPlaces: GetPlaces
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored private let locationManager: LocationManager
-    //@ObservationIgnored private var creationMode: CreationMode = .undefined  // TODO: to be used ?
-    //@ObservationIgnored private let deletePlace: DeletePlace
     
     init(_ appContainer: AppContainer, locationManager: LocationManager, getPlaces: GetPlaces, createPlace: CreatePlace) {
         self.appContainer = appContainer
@@ -41,6 +40,8 @@ import SwiftUI
     }
     
     func updateSorting(_ places: [PlaceUI]) {
+        loading = true
+        defer { loading = false }
         sortedPlaces.removeAll()
         groupedSortedPlaces.removeAll()
         ungroupedSortedPlaces.removeAll()
@@ -109,9 +110,9 @@ import SwiftUI
     }
 
     // MARK: - UI child
-//    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
-//        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
-//    }
+    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
+        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
+    }
 
     // MARK: - Use cases
     func loadPlaces() async throws -> [PlaceUI] {

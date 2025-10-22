@@ -38,6 +38,7 @@ struct PlaceDetailsView: View {
         .task {
             self.placeOrigin = place.copy()
         }
+        .toolbar(.hidden, for: .tabBar) 
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(editMode == .edit ? "common.cancel" : "common.edit") {

@@ -43,103 +43,114 @@ struct PlacesMapView: View {
         @Bindable var mapSettings = mapSettings
         @Bindable var navigationContext = navigationContext
 
-        //NavigationStack(path: $navigationContext.navigationPath) {
-        MapReader { proxy in
-            Map(position: $mapSettings.position) {
-                // Add a marker at current new temporary place
-                if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
-                    Marker(tmpPlace.name,
-                           monogram: Text("common.new".uppercased()),
-                           coordinate: tmpPlace.coordinates)
-                }
-                // TODO:  have a list of PlaceAnnotation + Marker
-                // with 2 ForEach so we get rid of the IF_ELSE
-                                    
-                if let selectedPlaceId = viewModel.selectedPlaceId {
-                    ForEach(places) { place in
-                        if place.id == selectedPlaceId.id && !place.databaseDeleted {
-                            // TODO: this marker should be displayed last to avoid overlay
-                            Marker(place.name, coordinate: place.coordinates)
-                        } else {
+        NavigationStack(path: $navigationContext.navigationPath) {
+            MapReader { proxy in
+                Map(position: $mapSettings.position) {
+                    // Add a marker at current new temporary place
+                    if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
+                        Marker(tmpPlace.name,
+                               monogram: Text("common.new".uppercased()),
+                               coordinate: tmpPlace.coordinates)
+                    }
+                    // TODO:  have a list of PlaceAnnotation + Marker
+                    // with 2 ForEach so we get rid of the IF_ELSE
+                    
+                    if let selectedPlaceId = viewModel.selectedPlaceId {
+                        ForEach(places) { place in
+                            if place.id == selectedPlaceId.id && !place.databaseDeleted {
+                                // TODO: this marker should be displayed last to avoid overlay
+                                Marker(place.name, coordinate: place.coordinates)
+                            } else {
+                                if !place.databaseDeleted {
+                                    PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
+                                }
+                            }
+                        }
+                    } else {
+                        ForEach(places) { place in
                             if !place.databaseDeleted {
                                 PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
                             }
                         }
                     }
-                } else {
-                    ForEach(places) { place in
-                        if !place.databaseDeleted {
-                            PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
-                        }
+                    //.mapItemDetailSelectionAccessory(.callout)
+                    UserAnnotation()
+                }
+                .simultaneousGesture(longPressHackDragGesture)
+                .onReceive(longPressTimer, perform: { time in
+                    onLongPressTimerFire(proxy: proxy)
+                })
+                .animation(.easeInOut, value: mapSettings.position)
+                .mapControls {
+                    MapCompass()
+                }
+                .mapStyle(mapSettings.selectedMapStyle)
+                .selectionDisabled(false)
+                .onMapCameraChange(frequency: .continuous) { _ in
+                    // Cancel long press timer when moving map camera
+                    longPressTimer.upstream.connect().cancel()
+                }
+                .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
+                    updateCameraCache(mapCameraUpdateContext)
+                }
+                .task {
+                    onFirstAppear()
+                }
+                .overlay {
+                    MapSettingsOverlay()
+                        .environment(mapSettings)
+                }
+                .overlay {
+                    zoomOnUserOverlay
+                }
+                .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
+                    viewModel.discardCreation()
+                    Task {
+                        places = try await viewModel.loadPlaces()
+                        clustering()
                     }
-                }
-                //.mapItemDetailSelectionAccessory(.callout)
-                UserAnnotation()
-            }
-            .simultaneousGesture(longPressHackDragGesture)
-            .onReceive(longPressTimer, perform: { time in
-                onLongPressTimerFire(proxy: proxy)
-            })
-            .animation(.easeInOut, value: mapSettings.position)
-            .mapControls {
-                MapCompass()
-            }
-            .mapStyle(mapSettings.selectedMapStyle)
-            .selectionDisabled(false)
-            .onMapCameraChange(frequency: .continuous) { _ in
-                // Cancel long press timer when moving map camera
-                longPressTimer.upstream.connect().cancel()
-            }
-            .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
-                updateCameraCache(mapCameraUpdateContext)
-            }
-            .task {
-                onFirstAppear()
-            }
-            .overlay {
-                MapSettingsOverlay()
-                    .environment(mapSettings)
-            }
-            .overlay {
-                zoomOnUserOverlay
-            }
-            .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
-                viewModel.discardCreation()
-                Task {
-                    places = try await viewModel.loadPlaces()
-                    clustering()
-                }
-            }, content: {
-                viewModel.createCreatePlacesView()
+                }, content: {
+                    viewModel.createCreatePlacesView()
                     //.presentationDetents([.medium, .large])
-                    .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
-            })
-            .onChange(of: viewModel.selectedPlaceId) {
-                zoomOnPin()
-            }
-            .sheet(item: $viewModel.selectedPlaceId) { placeId in
-                createPlaceDetailsSheetView()
-                    .presentationDetents([.medium, .large])
-                    .presentationCornerRadius(20)
-            }
-            .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
-                Button("common.open_settings") {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                    UIApplication.shared.open(url)
+                        .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+                })
+                .onChange(of: viewModel.selectedPlaceId) {
+                    zoomOnPin()
                 }
-                Button("common.cancel") {}
-            } message: {
-                Text("common.loc_auth_required")
+                .sheet(item: $viewModel.selectedPlaceId) { placeId in
+                    createPlaceDetailsSheetView()
+                        .presentationDetents([.medium, .large])
+                        .presentationCornerRadius(20)
+                }
+                .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
+                    Button("common.open_settings") {
+                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                        UIApplication.shared.open(url)
+                    }
+                    Button("common.cancel") {}
+                } message: {
+                    Text("common.loc_auth_required")
+                }
+            }
+            .navigationDestination(for: PlaceEntity.self) { place in
+                createPlaceDetailsView(place)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+
+            .toolbar {
+                DropinToolbar.Burger()
+                DropinToolbar.Logo()
+                DropinToolbar.AddPlace()
             }
         }
-        .customToolbar(tabIndex: 0,
-                       leading: {
-                           BurgerToolbarView()
-                       }, trailing: {
-                           AddPlaceToolbarView()
-                       }, title: {
-                           LogoToolbarView()
-                       })
+//        .customToolbar(tabIndex: 0,
+//                       leading: {
+//                           BurgerToolbarView()
+//                       }, trailing: {
+//                           AddPlaceToolbarView()
+//                       }, title: {
+//                           LogoToolbarView()
+//                       })
 
     }
 
@@ -258,14 +269,7 @@ struct PlacesMapView: View {
         //guard let place = viewModel.pinPlace else { return  }
         zoomOnPlace(place)
     }
-    
-//    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-//        guard let index = viewModel.places.firstIndex(where: { $0.id == place.id }) else {
-//            fatalError("couldn't find any place named '\(place.name)' in list")
-//        }
-//        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .edit)
-//    }
-    
+
     private func createPlaceDetailsSheetView() -> PlaceDetailsSheetView {
         guard let placeId = viewModel.selectedPlaceId else {
             fatalError("selectedPlaceId undefined")
@@ -293,6 +297,13 @@ struct PlacesMapView: View {
         }
         
         // TODO: clustering
+    }
+    
+    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+            fatalError("couldn't find any place named '\(place.name)' in list")
+        }
+        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
     }
 }
 
