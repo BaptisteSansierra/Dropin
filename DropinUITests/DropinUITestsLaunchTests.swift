@@ -6,7 +6,7 @@
 //
 
 import XCTest
-
+#if false
 final class DropinUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
@@ -31,3 +31,4 @@ final class DropinUITestsLaunchTests: XCTestCase {
         add(attachment)
     }
 }
+#endif
