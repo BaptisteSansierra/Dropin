@@ -84,6 +84,12 @@
         }
       }
     },
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
     "alert.address_copied_body" : {
       "localizations" : {
         "en" : {

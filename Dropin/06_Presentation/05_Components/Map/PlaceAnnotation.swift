@@ -17,20 +17,26 @@ struct PlaceAnnotation: MapContent {
     
     // MARK: - private vars
     private var place: PlaceUI
-
+    
     // MARK: - Body
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             
             PlaceAnnotationView(sysImage: place.systemImage,
                                 color: place.groupColor)
-                .onTapGesture {
-                    selectedPlaceId = PlaceID(id: place.id)
-                }
+            .onTapGesture {
+                print("Set selected Pace to \(place.id)")
+                selectedPlaceId = PlaceID(id: place.id)
+            }
         }
     }
     
     // MARK: - init
+    init(item: MapDisplayPlaceItem, selectedPlaceId: Binding<PlaceID?>) {
+        self.place = item.place
+        self._selectedPlaceId = selectedPlaceId
+    }
+    
     init(place: PlaceUI, selectedPlaceId: Binding<PlaceID?>) {
         self.place = place
         self._selectedPlaceId = selectedPlaceId

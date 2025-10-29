@@ -56,7 +56,22 @@ struct DropinApp: App {
             } catch {
                 print("Couldn't populate database: \(error)")
             }
+            
+            // Create data from cata OpenData
+            if true {
+                Task {
+                    do {
+                        print("Load Cat open data")
+                        let catOpenData = try CatOpenData(modelContext: modelContainer.mainContext)
+                        try await catOpenData.load()
+                    } catch {
+                        fatalError("Error while getting dummy openData: \(error)")
+                    }
+                }
+            }
+            
             #endif
+            
             // Create app container
             appContainer = AppContainer(modelContext: modelContainer.mainContext,
                                         locationManager: locationManager)
@@ -128,64 +143,3 @@ extension DropinApp {
     struct userDefaultsKeys {
     }
 }
-
-
-#if false
-@main
-struct DropinApp: App {
-
-    // MARK: - App states
-    @State private var modelContainer: ModelContainer
-    @State private var navigationContext = NavigationContext()
-    @State private var mapSettings = MapSettings()
-    @State private var locationManager = LocationManager()
-    @State private var placeFactory = PlaceFactory()
-    
-    // MARK: - Body
-    var body: some Scene {
-        WindowGroup {
-            RootView()
-                .onAppear {
-#if DEBUG
-                    //populateDevelopmentDatabase()
-#endif
-                }
-                .accentColor(.dropinSecondary)
-        }
-        .modelContainer(modelContainer)
-        .environment(navigationContext)
-        .environment(mapSettings)
-        .environment(locationManager)
-        .environment(placeFactory)
-    }
-    
-    private func populateDevelopmentDatabase() {
-#if DEBUG
-        // Add some tags
-        for item in SDTag.all {
-            modelContainer.mainContext.insert(item)
-        }
-        // some groups
-        for item in SDGroup.all {
-            modelContainer.mainContext.insert(item)
-        }
-        // and some places
-        for item in SDPlace.all {
-            modelContainer.mainContext.insert(item)
-        }
-#endif
-    }
-    
-    init() {
-        // Configure SwiftData container
-        let schema = Schema([SDPlace.self, SDTag.self, SDGroup.self])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }
-}
-
-#endif

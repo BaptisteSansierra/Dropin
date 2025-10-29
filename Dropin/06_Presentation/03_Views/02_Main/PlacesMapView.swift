@@ -8,7 +8,8 @@
 import SwiftUI
 import CoreLocation
 import MapKit
- 
+
+
 struct PlacesMapView: View {
     
     // MARK: - State & Bindings
@@ -20,14 +21,15 @@ struct PlacesMapView: View {
     @State private var longPressGestureDateStart: Date?
     @State private var longPressGestureCanceled = false
     @State private var longPressGestureLocation: CGPoint?
-    @State private var longPressTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
-    
+    @State private var longPressTimer = Timer.publish(every: 100, on: .main, in: .common).autoconnect()
+
     // MARK: - Dependencies
     @Environment(LocationManager.self) private var locationManager
     @Environment(MapSettings.self) private var mapSettings
     @Environment(NavigationContext.self) private var navigationContext
 
     // MARK: - private var
+    private let zoomMapDuration: TimeInterval = 10
     private var createPlaceSheetDefaultDetent: CGFloat = 0.6
 
     // MARK: - Init
@@ -46,41 +48,21 @@ struct PlacesMapView: View {
         NavigationStack(path: $navigationContext.navigationPath) {
             MapReader { proxy in
                 Map(position: $mapSettings.position) {
-                    // Add a marker at current new temporary place
-                    if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
-                        Marker(tmpPlace.name,
-                               monogram: Text("common.new".uppercased()),
-                               coordinate: tmpPlace.coordinates)
-                    }
-                    // TODO:  have a list of PlaceAnnotation + Marker
-                    // with 2 ForEach so we get rid of the IF_ELSE
                     
-                    if let selectedPlaceId = viewModel.selectedPlaceId {
-                        ForEach(places) { place in
-                            if place.id == selectedPlaceId.id && !place.databaseDeleted {
-                                // TODO: this marker should be displayed last to avoid overlay
-                                Marker(place.name, coordinate: place.coordinates)
-                            } else {
-                                if !place.databaseDeleted {
-                                    PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
-                                }
-                            }
-                        }
-                    } else {
-                        ForEach(places) { place in
-                            if !place.databaseDeleted {
-                                PlaceAnnotation(place: place, selectedPlaceId: $viewModel.selectedPlaceId)
-                            }
-                        }
-                    }
-                    //.mapItemDetailSelectionAccessory(.callout)
+                    mapContent
+                    
                     UserAnnotation()
                 }
                 .simultaneousGesture(longPressHackDragGesture)
                 .onReceive(longPressTimer, perform: { time in
                     onLongPressTimerFire(proxy: proxy)
                 })
-                .animation(.easeInOut, value: mapSettings.position)
+                .onChange(of: viewModel.selectedCluster, { oldValue, newValue in
+                    guard let value = newValue else { return }
+                    zoomOnCluster(value)
+                    viewModel.selectedCluster = nil
+                })
+                //.animation(.easeInOut(duration: zoomMapDuration), value: mapSettings.position)
                 .mapControls {
                     MapCompass()
                 }
@@ -107,7 +89,7 @@ struct PlacesMapView: View {
                     viewModel.discardCreation()
                     Task {
                         places = try await viewModel.loadPlaces()
-                        clustering()
+                        reloadData()
                     }
                 }, content: {
                     viewModel.createCreatePlacesView()
@@ -132,11 +114,15 @@ struct PlacesMapView: View {
                     Text("common.loc_auth_required")
                 }
             }
+            .safeAreaInset(edge: .bottom, content: {
+                Color.clear
+                    .frame(height: 40)
+            })
             .navigationDestination(for: PlaceEntity.self) { place in
                 createPlaceDetailsView(place)
             }
             .navigationBarTitleDisplayMode(.inline)
-
+            
             .toolbar {
                 DropinToolbar.Burger()
                 DropinToolbar.Logo()
@@ -152,6 +138,103 @@ struct PlacesMapView: View {
 //                           LogoToolbarView()
 //                       })
 
+    }
+
+    // MARK: map contents
+    @MapContentBuilder
+    private var mapContent: some MapContent {
+        if let _ = viewModel.selectedPlaceId {
+            mapContentWithSelection
+        } else {
+            mapContentWithNoSelection
+        }
+    }
+
+    @MapContentBuilder
+    private var mapContentWithSelection: some MapContent {
+        
+        visibleSmallAnnotations
+        
+        if let selectedPlaceId = viewModel.selectedPlaceId,
+           let selectedPlace = places.first(where: { $0.id == selectedPlaceId.id }) {
+            Marker(selectedPlace.name,
+                   systemImage: "mappin.circle",
+                   coordinate: selectedPlace.coordinates)
+        } else {
+            assertionInMapContentBuilder("could not find any place with id \(viewModel.selectedPlaceId?.id ?? "none") in mapContentWithSelection")
+        }
+    }
+    
+    @MapContentBuilder
+    private var mapContentWithNoSelection: some MapContent {
+        if viewModel.clusteringEnabled {
+            clusteredAnnotations
+#if DEBUG
+            if viewModel.debugDisplayBuckets {
+                bucketsPolygons
+            }
+#endif
+        } else {
+            visibleAnnotations
+        }
+        
+        // Add a marker at current new temporary place
+        if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
+            Marker(tmpPlace.name,
+                   monogram: Text("common.new".uppercased()),
+                   coordinate: tmpPlace.coordinates)
+        }
+    }
+    
+    private var visibleAnnotations: some MapContent {
+        ForEach(viewModel.visiblePlaces) { place in
+            if viewModel.selectedPlaceId == nil ||
+               viewModel.selectedPlaceId?.id != place.id {
+                PlaceAnnotation(place: place,
+                                selectedPlaceId: $viewModel.selectedPlaceId)
+            }
+        }
+    }
+
+    private var visibleSmallAnnotations: some MapContent {
+        ForEach(viewModel.visiblePlaces) { place in
+            if viewModel.selectedPlaceId == nil ||
+               viewModel.selectedPlaceId?.id != place.id {
+                PlaceSmallAnnotation(place: place)
+            }
+        }
+    }
+    
+#if DEBUG
+    private var bucketsPolygons: some MapContent {
+        ForEach(viewModel.buckets, id: \.self.id) { bucket in
+            let p1 = bucket.origin
+            let p2 = CLLocationCoordinate2D(latitude: p1.latitude + bucket.span.latitudeDelta,
+                                            longitude: p1.longitude)
+            let p3 = CLLocationCoordinate2D(latitude: p1.latitude + bucket.span.latitudeDelta,
+                                            longitude: p1.longitude + bucket.span.longitudeDelta)
+            let p4 = CLLocationCoordinate2D(latitude: p1.latitude,
+                                            longitude: p1.longitude + bucket.span.longitudeDelta)
+            MapPolygon(coordinates: [p1, p2, p3, p4, p1])
+                .foregroundStyle(.clear)
+                .stroke(.orange, lineWidth: 1)
+        }
+    }
+#endif
+    
+    private var clusteredAnnotations: some MapContent {
+        ForEach(viewModel.mapItems) { mapItem in
+            if let placeMapItem = mapItem as? MapDisplayPlaceItem {
+                if viewModel.selectedPlaceId == nil ||
+                    viewModel.selectedPlaceId?.id != placeMapItem.place.id {
+                    PlaceAnnotation(item: placeMapItem,
+                                    selectedPlaceId: $viewModel.selectedPlaceId)
+                }
+            } else if let clusterMapItem = mapItem as? MapDisplayClusterItem {
+                ClusterAnnotation(clusterItem: clusterMapItem,
+                                  selectedCluster: $viewModel.selectedCluster)
+            }
+        }
     }
 
     // MARK: - Subviews
@@ -208,6 +291,10 @@ struct PlacesMapView: View {
     private func onFirstAppear() {
         // Disable long press timer, will start when needed
         longPressTimer.upstream.connect().cancel()
+        
+        
+        // TODO: Improve location at load
+        
         // Get user position if defined
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             // NOTE: Randomly crashing at startup if not in async, to be investigated
@@ -244,7 +331,21 @@ struct PlacesMapView: View {
         mapSettings.currentCameraCenter = context.camera.centerCoordinate
         mapSettings.currentCameraDistance = context.camera.distance
         mapSettings.currentRegionSpan = context.region.span
-        clustering()
+        // Enable clustering if camera is far enough
+        viewModel.clusteringEnabled = mapSettings.currentCameraDistance > 1000
+        
+        print("Current zoom = \(mapSettings.currentCameraDistance)")
+        
+        // Compute places under camera
+        reloadData()
+    }
+    
+    private func zoomOnCluster(_ cluster: MapDisplayClusterItem) {
+        let region = MKCoordinateRegion(center: cluster.center,
+                                        span: cluster.span)
+        withAnimation(.easeInOut(duration: zoomMapDuration)) {
+            mapSettings.position = .region(region)
+        }
     }
     
     private func zoomOnPlace(_ place: PlaceUI) {
@@ -253,7 +354,7 @@ struct PlacesMapView: View {
         // Offset the new place coords so it's visible on the map despite the sheet appearing
         let coords = CLLocationCoordinate2D(latitude: place.coordinates.latitude - offset,
                                             longitude: place.coordinates.longitude)
-        withAnimation(.linear(duration: 0.5)) {
+        withAnimation(.easeInOut(duration: zoomMapDuration)) {
             mapSettings.position = .camera(MapCamera(centerCoordinate: coords,
                                                      distance: mapSettings.currentCameraDistance))
         }
@@ -280,25 +381,12 @@ struct PlacesMapView: View {
         return viewModel.createPlaceDetailsSheetView(place: $places[index])
     }
 
-    private func clustering() {
-        // First filter places within current rectangle
-        let center = mapSettings.currentCameraCenter
-        let span = mapSettings.currentRegionSpan
-        let maxLat = center.latitude + span.latitudeDelta * 0.5
-        let minLat = center.latitude - span.latitudeDelta * 0.5
-        let maxLong = center.longitude + span.longitudeDelta * 0.5
-        let minLong = center.longitude - span.longitudeDelta * 0.5
-        
-        let visiblePlaces = places.filter { place in
-            return place.coordinates.latitude > minLat &&
-                   place.coordinates.latitude < maxLat &&
-                   place.coordinates.longitude > minLong &&
-                   place.coordinates.longitude < maxLong
-        }
-        
-        // TODO: clustering
+    private func reloadData() {
+        viewModel.gridBasedClustering(places,
+                                      center: mapSettings.currentCameraCenter,
+                                      span: mapSettings.currentRegionSpan)
     }
-    
+        
     private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
         guard let index = places.firstIndex(where: { $0.id == place.id }) else {
             fatalError("couldn't find any place named '\(place.name)' in list")
