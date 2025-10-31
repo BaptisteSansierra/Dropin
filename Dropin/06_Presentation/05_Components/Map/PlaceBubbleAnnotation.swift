@@ -22,7 +22,7 @@ struct PlaceBubbleAnnotation: MapContent {
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             let size: CGFloat = 40
-            PlaceBubbleAnnotationView(sysImage: place.systemImage,
+            PlaceBubbleAnnotationView(sysImage: place.sfSymbol,
                                       size: size,
                                       color: place.groupColor)
                 // Offset the whole thing so the bubble peak is centered where it shoul

@@ -15,7 +15,13 @@ struct GroupSelectorView: View {
     @Binding private var place: PlaceUI
     @State private var createdGroupName: String = ""
     @State private var createdGroupColor: Color
+    @State private var createdGroupMarker: String?
     @State private var isShowingNameWarn = false
+    @State private var showingMarkerPicker = false
+    @State private var markerCircleOpacity: CGFloat = 1
+    @State private var markerPlaceholderOpacity: CGFloat = 0.3
+    @State private var markerPlaceholderColor: Color = .black
+    @State private var markerPlaceholderFont: Font = .system(size: 15)
     private var selectedGroupId: Binding<String> {
         Binding<String>(
             get: {
@@ -59,6 +65,9 @@ struct GroupSelectorView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $showingMarkerPicker) {
+            MarkerListView(selected: $createdGroupMarker)
+        }
     }
     
     // MARK: - Subviews
@@ -78,10 +87,9 @@ struct GroupSelectorView: View {
     private var selectionView: some View {
         VStack {
             if let group = place.group {
-                GroupView(name: group.name,
-                          color: group.color,
-                          hasDestructiveBt: true,
-                          destructiveAction: {
+                GroupView(group: group,
+                          actionType: .remove,
+                          action: {
                     place.group = nil
                 })
 
@@ -96,7 +104,7 @@ struct GroupSelectorView: View {
     }
     
     private var createGroupView: some View {
-        HStack() {
+        HStack(spacing: 0) {
             @Bindable var place = place
 
             ZStack {
@@ -107,7 +115,35 @@ struct GroupSelectorView: View {
                     .frame(width: 15, height: 15)
                     .foregroundStyle(createdGroupColor)
             }
+            .frame(width: 50)
+            .padding(.leading, 10)
+            //.border(.red, width: 2)
+            ZStack {
+                Circle()
+                    .strokeBorder(style: StrokeStyle(lineWidth: 2))
+                    .frame(width: 29, height: 29)
+                    .foregroundStyle(.dropinPrimary)
+                    .opacity(markerCircleOpacity)
+                    .onTapGesture {
+                        showingMarkerPicker.toggle()
+                    }
+                if let marker = createdGroupMarker {
+                    Image(systemName: marker)
+                        .foregroundStyle(.dropinPrimary)
+                        .font(.system(size: 15))
+                } else {
+                    Image(systemName: "tag")
+                        .foregroundStyle(markerPlaceholderColor)
+                        .font(markerPlaceholderFont)
+                        .opacity(markerPlaceholderOpacity)
+                }
+            }
+            .frame(width: 50)
+            .padding(.vertical)
+            .padding(.trailing, 10)
+            //.border(.green, width: 2)
             TextField("group_selector.new", text: $createdGroupName)
+                //.border(.blue, width: 2)
                 .autocorrectionDisabled()
                 .overlay {
                     if isShowingNameWarn {
@@ -119,25 +155,10 @@ struct GroupSelectorView: View {
                         }
                     }
                 }
+
             Spacer()
             IcoButton(systemImage: "plus").onTapGesture {
-                guard !createdGroupName.isEmpty else {
-                    withAnimation(.linear(duration: 0.5)) {
-                        isShowingNameWarn.toggle()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            withAnimation(.linear(duration: 0.5)) {
-                                isShowingNameWarn.toggle()
-                            }
-                        }
-                    }
-                    return
-                }
-                Task {
-                    let newGroup = try await viewModel.createGroup(name: createdGroupName, color: createdGroupColor.hex)
-                    place.group = newGroup
-                    createdGroupName = ""
-                    createdGroupColor = Color.random()
-                }
+                createGroup()
             }
             .padding(.trailing, 15)
         }
@@ -149,6 +170,47 @@ struct GroupSelectorView: View {
         self._viewModel = State(initialValue: viewModel) 
         self._place = place
         _createdGroupColor = State(initialValue: Color.random())
+    }
+    
+    private func createGroup() {
+        guard let groupMarker = createdGroupMarker else {
+            withAnimation(.linear(duration: 0.25)) {
+                markerCircleOpacity = 0
+                markerPlaceholderColor = .red
+                markerPlaceholderFont = .system(size: 22)
+                markerPlaceholderOpacity = 1
+            } completion: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        markerCircleOpacity = 1
+                        markerPlaceholderColor = .black
+                        markerPlaceholderFont = .system(size: 15)
+                        markerPlaceholderOpacity = 0.5
+                    }
+                }
+            }
+            return
+        }
+        guard !createdGroupName.isEmpty else {
+            withAnimation(.linear(duration: 0.5)) {
+                isShowingNameWarn.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.linear(duration: 0.5)) {
+                        isShowingNameWarn.toggle()
+                    }
+                }
+            }
+            return
+        }
+        Task {
+            let newGroup = try await viewModel.createGroup(name: createdGroupName,
+                                                           color: createdGroupColor.hex,
+                                                           marker: groupMarker)
+            place.group = newGroup
+            createdGroupName = ""
+            createdGroupColor = Color.random()
+            createdGroupMarker = nil
+        }
     }
 }
 

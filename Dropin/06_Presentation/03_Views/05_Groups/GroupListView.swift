@@ -29,7 +29,7 @@ struct GroupListView: View {
                     if !group.databaseDeleted {
                         NavigationLink(value: GroupMapper.toDomain(group)) {
                             HStack {
-                                GroupView(name: group.name, color: group.color, hasDestructiveBt: false)
+                                GroupView(group: group)
                                 Spacer()
                                 let nPlaces = group.places.count
                                 Text("group_list_view.num_places_\(nPlaces)")

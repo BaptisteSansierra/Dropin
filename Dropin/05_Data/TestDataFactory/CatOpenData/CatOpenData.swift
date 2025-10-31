@@ -126,7 +126,9 @@ final class CatOpenData {
                 if let idx = groups.firstIndex(where: { $0.name == item.tipusEntitat }) {
                     group = groups[idx]
                 } else {
-                    let g = GroupEntity(name: item.tipusEntitat, color: Color.random().hex)
+                    let g = GroupEntity(name: item.tipusEntitat,
+                                        color: Color.random().hex,
+                                        sfSymbol: "lock.open.fill")
                     groups.append(g)
                     group = g
                 }
@@ -156,7 +158,6 @@ final class CatOpenData {
                                     name: item.titol,
                                     coordinates: item.coords,
                                     address: item.address,
-                                    systemImage: "lock.open.fill",
                                     tags: placeTags,
                                     group: group,
                                     creationDate: Date())

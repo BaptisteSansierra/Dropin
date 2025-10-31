@@ -14,7 +14,7 @@ import CoreLocation
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
     var address: String = ""
-    var systemImage: String = "tag"
+    var sfSymbol: String? = nil
     var tags: [TagUI] = [TagUI]()
     var group: GroupUI? = nil
     var notes: String? = nil
@@ -30,14 +30,25 @@ import CoreLocation
         return group.color
     }
 
-    init(id: String, name: String, coordinates: CLLocationCoordinate2D, address: String, systemImage: String, tags: [TagUI], group: GroupUI? = nil, notes: String? = nil, phone: String? = nil, url: String? = nil, creationDate: Date, databaseDeleted: Bool) {
+    init(id: String,
+         name: String,
+         coordinates: CLLocationCoordinate2D,
+         address: String,
+         tags: [TagUI],
+         group: GroupUI? = nil,
+         sfSymbol: String? = nil,
+         notes: String? = nil,
+         phone: String? = nil,
+         url: String? = nil,
+         creationDate: Date,
+         databaseDeleted: Bool) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
         self.address = address
-        self.systemImage = systemImage
         self.tags = tags
         self.group = group
+        self.sfSymbol = sfSymbol
         self.notes = notes
         self.phone = phone
         self.url = url
@@ -56,21 +67,13 @@ import CoreLocation
                        name: name,
                        coordinates: coordinates,
                        address: address,
-                       systemImage: systemImage,
                        tags: tags,
                        group: group,
+                       sfSymbol: sfSymbol,
                        notes: notes,
                        phone: phone,
                        url: url,
                        creationDate: creationDate,
                        databaseDeleted: databaseDeleted)
     }
-    
-//    static func == (lhs: PlaceUI, rhs: PlaceUI) -> Bool {
-//        return lhs.id == rhs.id
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(id)
-//    }
 }

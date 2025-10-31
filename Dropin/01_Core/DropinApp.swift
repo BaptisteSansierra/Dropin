@@ -58,7 +58,7 @@ struct DropinApp: App {
             }
             
             // Create data from cata OpenData
-            if true {
+            if false {
                 Task {
                     do {
                         print("Load Cat open data")
