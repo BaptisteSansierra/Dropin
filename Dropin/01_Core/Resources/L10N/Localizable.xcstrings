@@ -266,6 +266,22 @@
         }
       }
     },
+    "common.clear_selection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear selection"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effacer la sélection"
+          }
+        }
+      }
+    },
     "common.create_place" : {
       "localizations" : {
         "en" : {
@@ -422,6 +438,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nom du groupe"
+          }
+        }
+      }
+    },
+    "common.group_symbol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group symbol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symbole du groupe"
           }
         }
       }

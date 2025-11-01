@@ -14,6 +14,7 @@ struct GroupDetailsView: View {
     @Binding private var group: GroupUI
     @State private var groupColor: Color
     @State private var showingRemoveAlert: Bool = false
+    @State private var showingMarkerList: Bool = false
 
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
@@ -30,7 +31,7 @@ struct GroupDetailsView: View {
         VStack(alignment: .center) {
             HStack {
                 Spacer()
-                GroupView(name: group.name, color: group.color, hasDestructiveBt: false)
+                GroupView(group: group)
                 Spacer()
             }
             .padding(.top, 15)
@@ -39,6 +40,8 @@ struct GroupDetailsView: View {
             nameView
 
             colorView
+            
+            sfSymbolView
             
             placesView
 
@@ -66,6 +69,17 @@ struct GroupDetailsView: View {
             } else {
                 Text("alert.remove_group_empty_body_\(group.name)")
             }
+        }
+        .fullScreenCover(isPresented: $showingMarkerList) {
+            MarkerListView(selected: Binding<String>(
+                get: {
+                    return group.sfSymbol
+                }, set: { value in
+                    group.sfSymbol = value
+                    Task {
+                        try await viewModel.updateGroup(group)
+                    }
+                }))
         }
     }
     
@@ -126,7 +140,44 @@ struct GroupDetailsView: View {
                             group.color = groupColor
                             updateGroup()
                         }
-
+                }
+            }
+        }
+    }
+    
+    private var sfSymbolView: some View {
+        VStack(alignment: .leading) {
+            Text("common.group_symbol")
+                .font(.caption)
+                .fontWeight(.medium)
+                .padding(.leading, 40)
+                .padding(.top, 10)
+                .foregroundStyle(.gray)
+            ZStack {
+                RoundedRectangle(cornerSize: 8)
+                    .frame(height: 45)
+                    .foregroundStyle(.white)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 20)
+                
+                HStack {
+                    ZStack(alignment: .center) {
+                        RoundedRectangle(cornerSize: 8)
+                            .strokeBorder(.black, style: StrokeStyle(lineWidth: 1))
+                            .frame(height: 25)
+                            .frame(width: 100)
+                            .foregroundStyle(.clear)
+                        Image(systemName: group.sfSymbol)
+                            .font(.system(size: 14))
+                    }
+                    .padding(.leading, 40)
+                    Spacer()
+                    IcoButton(systemImage: "ellipsis", icoSize: 14)
+                        .padding(0)
+                        .onTapGesture {
+                            showingMarkerList.toggle()
+                        }
+                        .padding(.trailing, 40)
                 }
             }
         }
@@ -201,7 +252,6 @@ struct GroupDetailsView: View {
 
 struct MockGroupDetailsView: View {
     var mock: MockContainer
-    //@State private var groups: [GroupUI]
     @State private var group: GroupUI
 
     var body: some View {
@@ -211,7 +261,6 @@ struct MockGroupDetailsView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        //self.groups = mock.getAllGroupUI()
         self.group = mock.getGroupUI(0)
     }
 }

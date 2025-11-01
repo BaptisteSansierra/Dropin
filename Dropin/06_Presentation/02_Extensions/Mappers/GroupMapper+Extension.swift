@@ -17,8 +17,9 @@ extension GroupMapper {
         }
         let groupUI = GroupUI(id: group.id,
                               name: group.name,
-                              places: placesUI,
                               color: group.color,
+                              sfSymbol: group.sfSymbol,
+                              places: placesUI,
                               creationDate: group.creationDate,
                               databaseDeleted: group.databaseDeleted)
         if !skipRelationships {
@@ -36,8 +37,9 @@ extension GroupMapper {
         }
         let group = GroupEntity(id: groupUI.id,
                                 name: groupUI.name,
-                                places: places,
                                 color: groupUI.color.hex,
+                                sfSymbol: groupUI.sfSymbol,
+                                places: places,
                                 creationDate: groupUI.creationDate,
                                 databaseDeleted: groupUI.databaseDeleted)
         if !skipRelationships {

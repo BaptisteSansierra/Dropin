@@ -13,7 +13,6 @@ enum DomainError: Error {
     enum Place: Error {
         case alreadyExists
         case missingName
-        case missingSysImage
         case notFound
     }
     enum Tag: Error {
@@ -24,6 +23,7 @@ enum DomainError: Error {
     enum Group: Error {
         case alreadyExists
         case missingName
+        case undefinedMarker
         case notFound
     }
 }

@@ -25,8 +25,8 @@ import SwiftUI
     }
     
     // MARK: Uses cases
-    func createGroup(name: String, color: String) async throws -> GroupUI {
-        let domainGroup = GroupEntity(name: name, color: color)
+    func createGroup(name: String, color: String, marker: String) async throws -> GroupUI {
+        let domainGroup = GroupEntity(name: name, color: color, sfSymbol: marker)
         try await createGroup.execute(domainGroup)
         let group = GroupMapper.toUI(domainGroup)
         groups.append(group)

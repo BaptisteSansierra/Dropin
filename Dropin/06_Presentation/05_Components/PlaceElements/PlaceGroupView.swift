@@ -28,10 +28,9 @@ struct PlaceGroupView: View {
                     Spacer()
                     
                     if let group = place.group {
-                        GroupView(name: group.name,
-                                  color: group.color,
-                                  hasDestructiveBt: editEnabled ? true : false,
-                                  destructiveAction: {
+                        GroupView(group: group,
+                                  actionType: editEnabled ? .remove : .none,
+                                  action: {
                             place.group = nil
                         })
                         .padding(.trailing)
