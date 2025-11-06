@@ -12,16 +12,32 @@ import CoreLocation
 
 struct DropinDomainTests {
 
+    @Test func testFoundations() async throws {
+        // Test string extension
+        #expect("#111".isValidHexaColor )
+        #expect("12F".isValidHexaColor )
+        #expect("#1a2b3C".isValidHexaColor )
+        #expect("F9e0D8".isValidHexaColor )
+        // Test CLLocationCoordinate2D extension
+        let p1 = CLLocationCoordinate2D(latitude: 10, longitude: 20)
+        let p2 = CLLocationCoordinate2D(latitude: 20, longitude: 20)
+        let p3 = CLLocationCoordinate2D(latitude: 10, longitude: 50)
+        #expect( p1.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == true )
+        #expect( p2.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
+        #expect( p3.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
+    }
+
+    @MainActor
     @Test func createPlace() async throws {
-        let placeRepo = await MockPlaceRepository()
-        let createPlaceUC = await CreatePlace(repository: placeRepo)
-        
+        let placeRepo = MockPlaceRepository()
+        let createPlaceUC = CreatePlace(repository: placeRepo)
+
         let place = PlaceEntity(id: UUID().uuidString,
                                 name: "London",
                                 coordinates: DropinApp.locations.london,
                                 address: "",
-                                systemImage: "tag",
                                 tags: [],
+                                icon: Icon("sf:tag"),
                                 creationDate: Date())
         // Check first creation is ok
         do {
@@ -40,38 +56,27 @@ struct DropinDomainTests {
                                              name: "",
                                              coordinates: CLLocationCoordinate2D.zero,
                                              address: "",
-                                             systemImage: "tag",
                                              tags: [],
+                                             icon: Icon("sf:tag"),
                                              creationDate: Date())
         await #expect(throws: DomainError.Place.missingName, performing: {
             try await createPlaceUC.execute(placeWithEmptyName)
         })
-
-        // Check empty sys image are not accepted
-        let placeWithEmptySysI = PlaceEntity(id: UUID().uuidString,
-                                             name: "world center",
-                                             coordinates: CLLocationCoordinate2D.zero,
-                                             address: "",
-                                             systemImage: "",
-                                             tags: [],
-                                             creationDate: Date())
-        await #expect(throws: DomainError.Place.missingSysImage, performing: {
-            try await createPlaceUC.execute(placeWithEmptySysI)
-        })
     }
     
+    @MainActor
     @Test func deletePlace() async throws {
-        let placeRepo = await MockPlaceRepository()
-        let getPlacesUC = await GetPlaces(repository: placeRepo)
-        let createPlaceUC = await CreatePlace(repository: placeRepo)
-        let deletePlaceUC = await DeletePlace(repository: placeRepo)
+        let placeRepo = MockPlaceRepository()
+        let getPlacesUC = GetPlaces(repository: placeRepo)
+        let createPlaceUC = CreatePlace(repository: placeRepo)
+        let deletePlaceUC = DeletePlace(repository: placeRepo)
 
         let place = PlaceEntity(id: UUID().uuidString,
                                 name: "London",
                                 coordinates: DropinApp.locations.london,
                                 address: "",
-                                systemImage: "tag",
                                 tags: [],
+                                icon: Icon("sf:tag"),
                                 creationDate: Date())
         
         var placesOrigin = [PlaceEntity]()
@@ -99,6 +104,34 @@ struct DropinDomainTests {
         // Check 2nd delete place fails
         await #expect(throws: DomainError.Place.notFound, performing: {
             try await deletePlaceUC.execute(place)
+        })
+    }
+    
+    @Test func createGroup() async throws {
+        let groupRepo = await MockGroupRepository()
+        let createGroupUC = await CreateGroup(repository: groupRepo)
+
+        // Check invalid icons are not accepted
+        let groupWithoutIco = GroupEntity(name: "dummy", color: "#000000", icon: Icon("none:none"))
+        await #expect(throws: DomainError.Group.undefinedMarker, performing: {
+            try await createGroupUC.execute(groupWithoutIco)
+        })
+        
+        // Check invalid colors are not accepted
+        let groupWithoutColor = GroupEntity(name: "dummy", color: "#0Z0T", icon: Icon("sf:tag"))
+        await #expect(throws: DomainError.Group.invalidColor, performing: {
+            try await createGroupUC.execute(groupWithoutColor)
+        })
+    }
+    
+    @Test func createTag() async throws {
+        let tagRepo = await MockTagRepository()
+        let createTagUC = await CreateTag(repository: tagRepo)
+
+        // Check invalid colors are not accepted
+        let tag = TagEntity(name: "dummy", color: "1234")
+        await #expect(throws: DomainError.Tag.invalidColor, performing: {
+            try await createTagUC.execute(tag)
         })
     }
 }

@@ -41,7 +41,7 @@ struct GroupDetailsView: View {
 
             colorView
             
-            sfSymbolView
+            iconView
             
             placesView
 
@@ -71,11 +71,11 @@ struct GroupDetailsView: View {
             }
         }
         .fullScreenCover(isPresented: $showingMarkerList) {
-            MarkerListView(selected: Binding<String>(
+            MarkerListView(selected: Binding<Icon>(
                 get: {
-                    return group.sfSymbol
+                    return group.icon
                 }, set: { value in
-                    group.sfSymbol = value
+                    group.icon = value
                     Task {
                         try await viewModel.updateGroup(group)
                     }
@@ -145,7 +145,7 @@ struct GroupDetailsView: View {
         }
     }
     
-    private var sfSymbolView: some View {
+    private var iconView: some View {
         VStack(alignment: .leading) {
             Text("common.group_symbol")
                 .font(.caption)
@@ -167,8 +167,8 @@ struct GroupDetailsView: View {
                             .frame(height: 25)
                             .frame(width: 100)
                             .foregroundStyle(.clear)
-                        Image(systemName: group.sfSymbol)
-                            .font(.system(size: 14))
+                        IconView(icon: group.icon)
+                            .sizeCaption()
                     }
                     .padding(.leading, 40)
                     Spacer()

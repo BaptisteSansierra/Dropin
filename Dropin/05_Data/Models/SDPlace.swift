@@ -17,7 +17,7 @@ final class SDPlace {
     var address: String
     @Relationship(deleteRule: .nullify, inverse: \SDTag.places) var tags: [SDTag]
     @Relationship(deleteRule: .nullify, inverse: \SDGroup.places) var group: SDGroup?
-    var sfSymbol: String? = nil
+    var icon: Icon? = nil
     var notes: String?
     var phone: String?
     var url: String?
@@ -31,7 +31,7 @@ final class SDPlace {
          address: String,
          tags: [SDTag] = [],
          group: SDGroup? = nil,
-         sfSymbol: String? = nil,
+         icon: Icon? = nil,
          notes: String? = nil,
          phone: String? = nil,
          url: String? = nil) {
@@ -43,7 +43,7 @@ final class SDPlace {
         self.address = address
         self.tags = tags
         self.group = group
-        self.sfSymbol = sfSymbol
+        self.icon = icon
         self.notes = notes
         self.phone = phone
         self.url = url
@@ -62,29 +62,29 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
                          tags: [],
                          group: nil,
-                         sfSymbol: "carrot.fill")
+                         icon: Icon("sf:carrot.fill"))
 
         let l2 = SDPlace(identifier: UUID().uuidString,
                          name: "Les Tres a la Cuina",
-                                latitude: 41.40522138362398,
-                                longitude: 2.1598304185317847,
-                                // Apple
-                                //latitude: 41.405341,
-                                //longitude: 2.159652,
-                                address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
-                                tags: [],
-                                group: nil,
-                                notes: "Don't forget your tupper",
-                                phone: "931054947",
-                                url: "http://lestresalacuina.com")
+                        latitude: 41.40522138362398,
+                        longitude: 2.1598304185317847,
+                        // Apple
+                        //latitude: 41.405341,
+                        //longitude: 2.159652,
+                        address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
+                        tags: [],
+                        group: nil,
+                        notes: "Don't forget your tupper",
+                        phone: "931054947",
+                        url: "http://lestresalacuina.com")
         
         let l3 = SDPlace(identifier: UUID().uuidString,
                          name: "Chiringuito Karamba",
-                                latitude: 41.44511384541266,
-                                longitude: 2.2495646936392317,
-                                address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
-                                tags: [],
-                                group: nil)
+                        latitude: 41.44511384541266,
+                        longitude: 2.2495646936392317,
+                        address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
+                        tags: [],
+                        group: nil)
 
         let l4 = SDPlace(identifier: UUID().uuidString,
                          name: "Continental Bar",
@@ -101,7 +101,7 @@ extension SDPlace {  // Mock extension
                          address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
                          tags: [],
                          group: nil,
-                         sfSymbol: "pianokeys")
+                         icon: Icon("sf:pianokeys"))
 
         let l6 = SDPlace(identifier: UUID().uuidString,
                          name: "El Col·leccionista",
@@ -110,7 +110,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
                          tags: [],
                          group: nil,
-                         sfSymbol: "figure.socialdance")
+                         icon: Icon("sf:figure.socialdance"))
 
         let l7 = SDPlace(identifier: UUID().uuidString,
                          name: "Molsa Biosí",
@@ -119,7 +119,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
                          tags: [],
                          group: nil,
-                         sfSymbol: "carrot")
+                         icon: Icon("sf:carrot"))
 
         let l8 = SDPlace(identifier: UUID().uuidString,
                          name: "Sincronia Yoga",
@@ -128,7 +128,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
                          tags: [],
                          group: nil,
-                         sfSymbol: "swirl.circle.righthalf.filled.inverse")
+                         icon: Icon("sf:swirl.circle.righthalf.filled.inverse"))
 
         let l9 = SDPlace(identifier: UUID().uuidString,
                          name: "Be Laundry Joanic",
@@ -137,7 +137,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
                          tags: [],
                          group: nil,
-                         sfSymbol: "basket")
+                         icon: Icon("sf:basket"))
 
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9]
     }

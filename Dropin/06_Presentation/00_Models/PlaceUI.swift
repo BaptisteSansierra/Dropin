@@ -14,7 +14,7 @@ import CoreLocation
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
     var address: String = ""
-    var sfSymbol: String? = nil
+    var icon: Icon? = nil
     var tags: [TagUI] = [TagUI]()
     var group: GroupUI? = nil
     var notes: String? = nil
@@ -36,7 +36,7 @@ import CoreLocation
          address: String,
          tags: [TagUI],
          group: GroupUI? = nil,
-         sfSymbol: String? = nil,
+         icon: Icon? = nil,
          notes: String? = nil,
          phone: String? = nil,
          url: String? = nil,
@@ -48,7 +48,7 @@ import CoreLocation
         self.address = address
         self.tags = tags
         self.group = group
-        self.sfSymbol = sfSymbol
+        self.icon = icon
         self.notes = notes
         self.phone = phone
         self.url = url
@@ -69,7 +69,7 @@ import CoreLocation
                        address: address,
                        tags: tags,
                        group: group,
-                       sfSymbol: sfSymbol,
+                       icon: icon,
                        notes: notes,
                        phone: phone,
                        url: url,

@@ -20,7 +20,10 @@ struct CreateTag {
             throw DomainError.Tag.missingName
         }
         if try await repository.exists(tag) {
-            throw DomainError.Place.alreadyExists
+            throw DomainError.Tag.alreadyExists
+        }
+        if !tag.color.isValidHexaColor {
+            throw DomainError.Tag.invalidColor
         }
         try await repository.create(tag)
     }

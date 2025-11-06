@@ -23,8 +23,8 @@ struct PlaceAnnotation: MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             
             PlaceAnnotationView(color: place.groupColor,
-                                systemImage: place.group?.sfSymbol,
-                                systemImageExtra: place.sfSymbol)
+                                icon: place.group?.icon,
+                                iconExtra: place.icon)
             .onTapGesture {
                 selectedPlaceId = PlaceID(id: place.id)
             }
@@ -53,14 +53,15 @@ struct PlaceAnnotationView: View {
     // MARK: - private vars
     private var style: Style = .borderedRect
     private var color: Color
-    private var systemImage: String?
-    private var systemImageExtra: String?
+    private var icon: Icon?
+    private var iconExtra: Icon?
 
     // MARK: - Body
     var body: some View {
 
         switch style {
             case .plainCircle:
+                // LEGACY
                 ZStack {
                     Circle()
                         .fill(.white)
@@ -68,8 +69,9 @@ struct PlaceAnnotationView: View {
                     Circle()
                         .fill(color)
                         .frame(width: 30, height: 30)
-                    if let sfSymbol = systemImage {
-                        Image(systemName: sfSymbol)
+                    if let icon = icon {
+                        IconView(icon: icon)
+                            .sizeXS()
                             .foregroundStyle(.white)
                     }
                 }
@@ -87,14 +89,19 @@ struct PlaceAnnotationView: View {
                         .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                         .fill(.white)
                         .frame(width: 32, height: 26)
-                    if let systemImage = systemImage {
-                        Image(systemName: systemImage)
+                    if let icon = icon {
+                        IconView(icon: icon)
+                            .sizeBody()
                     } else {
-                        Image(systemName: "questionmark.circle.dashed")
+                        Image("empty")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(.black.opacity(0.25))
+                            .frame(width: 17, height: 17)
                     }
                 }
                 .overlay(content: {
-                    if let systemImageExtra = systemImageExtra {
+                    if let iconExtra = iconExtra {
                         VStack(spacing: 0) {
                             HStack(spacing: 0) {
                                 Spacer()
@@ -108,8 +115,8 @@ struct PlaceAnnotationView: View {
                                     Circle()
                                         .fill(.white)
                                         .frame(width: 19, height: 19)
-                                    Image(systemName: systemImageExtra)
-                                        .font(.system(size: 10))
+                                    IconView(icon: iconExtra)
+                                        .sizeCaption2()
                                 }
                             }
                             Spacer()
@@ -122,11 +129,11 @@ struct PlaceAnnotationView: View {
     
     // MARK: - init
     init(color: Color = .dropinPrimary,
-         systemImage: String? = nil,
-         systemImageExtra: String? = nil) {
+         icon: Icon? = nil,
+         iconExtra: Icon? = nil) {
         self.color = color
-        self.systemImage = systemImage
-        self.systemImageExtra = systemImageExtra
+        self.icon = icon
+        self.iconExtra = iconExtra
     }
 }
 
@@ -169,10 +176,10 @@ struct MockPlaceAnnotation: View {
         self.place4.group = nil
         self.place5.group = group2
 
-        self.place2.sfSymbol = "duffle.bag"
-        self.place3.sfSymbol = nil
-        self.place4.sfSymbol = "figure.seated.side.left.airbag.on"
-        self.place5.sfSymbol = "ivfluid.bag"
+        self.place2.icon = Icon(source: .sf, name: "duffle.bag")
+        self.place3.icon = nil
+        self.place4.icon = Icon(source: .sf, name: "figure.seated.side.left.airbag.on")
+        self.place5.icon = Icon(source: .sf, name: "ivfluid.bag")
 
         self.place2.coordinates = place.coordinates.offset(x: 0, y: 0.05)
         self.place3.coordinates = place.coordinates.offset(x: 0.05, y: 0)
