@@ -18,7 +18,7 @@ extension GroupMapper {
         let groupUI = GroupUI(id: group.id,
                               name: group.name,
                               color: group.color,
-                              sfSymbol: group.sfSymbol,
+                              icon: group.icon,
                               places: placesUI,
                               creationDate: group.creationDate,
                               databaseDeleted: group.databaseDeleted)
@@ -38,7 +38,7 @@ extension GroupMapper {
         let group = GroupEntity(id: groupUI.id,
                                 name: groupUI.name,
                                 color: groupUI.color.hex,
-                                sfSymbol: groupUI.sfSymbol,
+                                icon: groupUI.icon,
                                 places: places,
                                 creationDate: groupUI.creationDate,
                                 databaseDeleted: groupUI.databaseDeleted)

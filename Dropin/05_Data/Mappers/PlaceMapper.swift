@@ -29,7 +29,7 @@ public enum PlaceMapper {
                                 address: sdPlace.address,
                                 tags: tags,
                                 group: group,
-                                sfSymbol: sdPlace.sfSymbol,
+                                icon: sdPlace.icon,
                                 notes: sdPlace.notes,
                                 phone: sdPlace.phone,
                                 url: sdPlace.url,
@@ -53,7 +53,7 @@ public enum PlaceMapper {
                        address: place.address,
                        tags: [SDTag](),
                        group: nil,
-                       sfSymbol: place.sfSymbol,
+                       icon: place.icon,
                        notes: place.notes,
                        phone: place.phone,
                        url: place.url)

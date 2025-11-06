@@ -11,7 +11,7 @@ import SwiftUI
 @Observable class GroupUI: Identifiable {
     let id: String
     var name: String
-    var sfSymbol: String
+    var icon: Icon
     var color: Color
     var places: [PlaceUI] = [PlaceUI]()
     var creationDate: Date
@@ -19,10 +19,10 @@ import SwiftUI
     /// When  databaseDeleted is true, UI objects should be ignored
     var databaseDeleted: Bool = false
 
-    init(id: String, name: String, color: String, sfSymbol: String, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
+    init(id: String, name: String, color: String, icon: Icon, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
         self.id = id
         self.name = name
-        self.sfSymbol = sfSymbol
+        self.icon = icon
         self.color = Color(rgba: color)
         self.places = places
         self.creationDate = creationDate

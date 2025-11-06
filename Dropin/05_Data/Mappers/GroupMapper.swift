@@ -17,7 +17,7 @@ public enum GroupMapper {
         let group = GroupEntity(id: sdGroup.identifier,
                                 name: sdGroup.name,
                                 color: sdGroup.color,
-                                sfSymbol: sdGroup.sfSymbol,
+                                icon: sdGroup.icon,
                                 places: places,
                                 creationDate: sdGroup.creationDate)
         if !skipRelationships {
@@ -32,6 +32,6 @@ public enum GroupMapper {
         return SDGroup(identifier: group.id,
                        name: group.name,
                        color: group.color,
-                       sfSymbol: group.sfSymbol)
+                       icon: group.icon)
     }
 }

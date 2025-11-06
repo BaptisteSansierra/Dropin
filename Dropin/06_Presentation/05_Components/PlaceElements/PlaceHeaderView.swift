@@ -31,8 +31,8 @@ struct PlaceHeaderView: View {
                 ZStack(alignment: .topLeading) {
                     let color = place.groupColor
                     PlaceAnnotationView(color: color,
-                                        systemImage: place.group?.sfSymbol,
-                                        systemImageExtra: place.sfSymbol)
+                                        icon: place.group?.icon,
+                                        iconExtra: place.icon)
                     .padding()
                     IcoButton(systemImage: "ellipsis", icoSize: 14)
                         .padding(0)

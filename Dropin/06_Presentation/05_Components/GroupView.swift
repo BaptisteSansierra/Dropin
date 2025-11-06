@@ -24,7 +24,7 @@ struct GroupView: View {
     // MARK: - private vars
     private var name: String
     private var color: Color
-    private var systemImage: String?
+    private var icon: Icon?
     private var action: (() -> Void)?
     private var actionType: ActionType
     private var mode: GDispMod = .final
@@ -53,9 +53,9 @@ struct GroupView: View {
             case .final:
                 ZStack(alignment: .topTrailing) {
                     HStack(alignment: .center, spacing: 10) {
-                        
-                        if let systemImage = systemImage {
-                            Image(systemName: systemImage)
+                        if let icon = icon {
+                            IconView(icon: icon)
+                                .sizeBody()
                         }
                         Text(name)
                             .font(.headline)
@@ -122,25 +122,25 @@ struct GroupView: View {
     // MARK: - init
     init(name: String,
          color: Color,
-         systemImage: String?,
+         icon: Icon?,
          actionType: ActionType = .none,
          action: (() -> Void)? = nil) {
         self.name = name
         self.color = color
-        self.systemImage = systemImage
+        self.icon = icon
         self.actionType = actionType
         self.action = action
     }
 
     fileprivate init(name: String,
                      color: Color,
-                     systemImage: String?,
+                     icon: Icon?,
                      actionType: ActionType = .none,
                      action: (() -> Void)? = nil,
                      mode: GDispMod ) {
         self.name = name
         self.color = color
-        self.systemImage = systemImage
+        self.icon = icon
         self.actionType = actionType
         self.action = action
         self.mode = mode
@@ -151,7 +151,7 @@ struct GroupView: View {
          action: (() -> Void)? = nil) {
         self.name = group.name
         self.color = group.color
-        self.systemImage = group.sfSymbol
+        self.icon = group.icon
         self.actionType = actionType
         self.action = action
     }
@@ -161,25 +161,25 @@ struct GroupView: View {
     VStack(spacing: 20) {
         GroupView(name: "Legacy",
                   color: .brown,
-                  systemImage: "tag",
+                  icon: Icon("sf:tag"),
                   mode: .legacy)
 
         GroupView(name: "Nice Group",
                   color: .brown,
-                  systemImage: "tag")
+                  icon: Icon("sf:tag"))
 
         GroupView(name: "No Mark",
                   color: .brown,
-                  systemImage: nil,
+                  icon: nil,
                   actionType: .remove,
                   action: { print("Do the work") })
 
         GroupView(name: "Mark",
                   color: .brown,
-                  systemImage: "carrot",
+                  icon: Icon("sf:carrot"),
                   actionType: .edit,
                   action: { print("Eat a carrot") })
 
-        PlaceAnnotationView(color: .brown, systemImage: "tag")
+        PlaceAnnotationView(color: .brown, icon: Icon("sf:tag"))
     }
 }

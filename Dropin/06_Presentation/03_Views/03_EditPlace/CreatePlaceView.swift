@@ -123,7 +123,7 @@ struct CreatePlaceView: View {
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showingMarkerList) {
-            MarkerListView(selected: $place.sfSymbol)
+            MarkerListView(selected: $place.icon)
         }
     }
         

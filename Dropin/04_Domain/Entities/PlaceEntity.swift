@@ -15,7 +15,7 @@ struct PlaceEntity: Hashable {
     var address: String
     var tags: [TagEntity]
     var group: GroupEntity?
-    var sfSymbol: String?
+    var icon: Icon?
     var notes: String?
     var phone: String?
     var url: String?
@@ -30,7 +30,7 @@ struct PlaceEntity: Hashable {
          address: String,
          tags: [TagEntity],
          group: GroupEntity? = nil,
-         sfSymbol: String? = nil,
+         icon: Icon? = nil,
          notes: String? = nil,
          phone: String? = nil,
          url: String? = nil,
@@ -40,10 +40,10 @@ struct PlaceEntity: Hashable {
         self.name = name
         self.coordinates = coordinates
         self.address = address
-        self.sfSymbol = sfSymbol
+        self.icon = icon
         self.tags = tags
         self.group = group
-        self.sfSymbol = sfSymbol
+        self.icon = icon
         self.notes = notes
         self.phone = phone
         self.url = url

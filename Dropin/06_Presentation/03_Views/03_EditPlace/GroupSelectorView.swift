@@ -15,7 +15,7 @@ struct GroupSelectorView: View {
     @Binding private var place: PlaceUI
     @State private var createdGroupName: String = ""
     @State private var createdGroupColor: Color
-    @State private var createdGroupMarker: String?
+    @State private var createdGroupIcon: Icon?
     @State private var isShowingNameWarn = false
     @State private var showingMarkerPicker = false
     @State private var markerCircleOpacity: CGFloat = 1
@@ -66,7 +66,7 @@ struct GroupSelectorView: View {
             }
         }
         .fullScreenCover(isPresented: $showingMarkerPicker) {
-            MarkerListView(selected: $createdGroupMarker)
+            MarkerListView(selected: $createdGroupIcon)
         }
     }
     
@@ -127,10 +127,10 @@ struct GroupSelectorView: View {
                     .onTapGesture {
                         showingMarkerPicker.toggle()
                     }
-                if let marker = createdGroupMarker {
-                    Image(systemName: marker)
+                if let icon = createdGroupIcon {
+                    IconView(icon: icon)
+                        .sizeCaption()
                         .foregroundStyle(.dropinPrimary)
-                        .font(.system(size: 15))
                 } else {
                     Image(systemName: "tag")
                         .foregroundStyle(markerPlaceholderColor)
@@ -173,7 +173,7 @@ struct GroupSelectorView: View {
     }
     
     private func createGroup() {
-        guard let groupMarker = createdGroupMarker else {
+        guard let groupIcon = createdGroupIcon else {
             withAnimation(.linear(duration: 0.25)) {
                 markerCircleOpacity = 0
                 markerPlaceholderColor = .red
@@ -205,11 +205,11 @@ struct GroupSelectorView: View {
         Task {
             let newGroup = try await viewModel.createGroup(name: createdGroupName,
                                                            color: createdGroupColor.hex,
-                                                           marker: groupMarker)
+                                                           icon: groupIcon)
             place.group = newGroup
             createdGroupName = ""
             createdGroupColor = Color.random()
-            createdGroupMarker = nil
+            createdGroupIcon = nil
         }
     }
 }

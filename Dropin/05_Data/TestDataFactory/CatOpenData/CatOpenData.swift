@@ -128,7 +128,7 @@ final class CatOpenData {
                 } else {
                     let g = GroupEntity(name: item.tipusEntitat,
                                         color: Color.random().hex,
-                                        sfSymbol: "lock.open.fill")
+                                        icon: Icon(source: .sf, name: "lock.open.fill"))
                     groups.append(g)
                     group = g
                 }

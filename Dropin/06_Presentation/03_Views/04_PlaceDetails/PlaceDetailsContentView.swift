@@ -98,7 +98,7 @@ struct PlaceDetailsContentView: View {
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showingMarkerList) {
-            MarkerListView(selected: $place.sfSymbol)
+            MarkerListView(selected: $place.icon)
         }
         .onChange(of: editMode) { oldValue, newValue in
             if oldValue == .edit && newValue == .cancel {

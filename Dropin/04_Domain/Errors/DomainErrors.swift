@@ -18,12 +18,14 @@ enum DomainError: Error {
     enum Tag: Error {
         case alreadyExists
         case missingName
+        case invalidColor
         case notFound
     }
     enum Group: Error {
         case alreadyExists
         case missingName
         case undefinedMarker
+        case invalidColor
         case notFound
     }
 }
