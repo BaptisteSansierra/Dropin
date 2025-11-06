@@ -70,61 +70,6 @@ struct MarkerListView: View {
     }
     
     private var scrollView: some View {
-        
-
-/*
-        ScrollView {
-            ScrollViewReader { proxy in
-                LazyVStack() {
-                    ForEach(IconLibrary.categories, id: \.self.name) { categoryItem in
-                        Section {
-                            LazyVGrid(columns: columns, spacing: 20) {
-                                ForEach(categoryItem.icons, id: \.self) { icon in
-                                    let isSelected = icon == selected
-                                    ZStack {
-                                        Circle()
-                                            .stroke(.dropinPrimary, style: StrokeStyle(lineWidth: 3))
-                                            .frame(width: 38, height: 38)
-                                            .opacity(isSelected ? 0.5 : 0)
-                                        Circle()
-                                            .foregroundStyle(.dropinPrimary)
-                                            .frame(width: 33, height: 33)
-                                            .opacity(isSelected ? 1 : 0)
-                                        icon.view()
-                                            .font(.caption)
-                                            .frame(width: 10, height: 10)
-                                            .foregroundStyle(isSelected ? .white : .gray)
-                                            .onTapGesture {
-                                                selected = icon
-                                                dismiss()
-                                            }
-                                            .id(icon)
-                                    }
-                                    .frame(minHeight: 30)
-                                }
-                            }
-                        } header: {
-                            Text(categoryItem.name)
-                                .font(.headline)
-                                .foregroundStyle(.gray)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .textCase(.uppercase)
-                                .padding(.horizontal, 30)
-                                .padding(.top)
-                        }
-
-                    }
-                }
-                .onAppear {
-                    if let selected = selected {
-                        proxy.scrollTo(selected, anchor: .center)
-                    }
-                }
-            }
-        }
-        .background(Color(.systemGroupedBackground))
-*/
-
         ScrollView {
             ScrollViewReader { proxy in
                 LazyVStack() {
@@ -178,36 +123,6 @@ struct MarkerListView: View {
         }
         .background(Color(.systemGroupedBackground))
     }
-   
-    /*
-    private var listView: some View {
-        List {
-            ForEach(sections, id: \.self.name) { section in
-                Section(section.name) {
-                    LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(section.items, id: \.self) { item in
-                            let isSelected = item == selected
-                            ZStack {
-                                Image(systemName: item)
-                                    .foregroundStyle(isSelected ? .black : .gray)
-                                    .onTapGesture {
-                                        selected = item
-                                        dismiss()
-                                    }
-                                    .id(item)
-                                Circle()
-                                    .stroke(.dropinPrimary, style: StrokeStyle(lineWidth: 3))
-                                    .frame(width: 30, height: 30)
-                                    .opacity(isSelected ? 1 : 0)
-                            }
-                            .frame(minHeight: 30)
-                        }
-                    }
-                }
-            }
-        }
-    }
-     */
     
     private var footerView: some View {
         VStack(spacing: 0) {

@@ -10,7 +10,7 @@ import Foundation
 struct IconLibrary {
     
     static let categories: [(name: String, icons: [Icon])] = [
-        // TODO : L10N
+        // TODO : L10N category names
         ("Food & Drinks", [
             // Food
             Icon(source: .sf, name: "fork.knife"),

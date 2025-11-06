@@ -14,10 +14,13 @@ struct DropinDomainTests {
 
     @Test func testFoundations() async throws {
         // Test string extension
-        #expect("#111".isValidHexaColor )
-        #expect("12F".isValidHexaColor )
-        #expect("#1a2b3C".isValidHexaColor )
-        #expect("F9e0D8".isValidHexaColor )
+        #expect("#111".isValidHexaColor)
+        #expect("12F".isValidHexaColor)
+        #expect("#1a2b3C".isValidHexaColor)
+        #expect("F9e0D8".isValidHexaColor)
+        #expect(!"#1a2b3".isValidHexaColor)
+        #expect(!"F9e0D82".isValidHexaColor)
+        #expect(!"QRTYIO".isValidHexaColor)
         // Test CLLocationCoordinate2D extension
         let p1 = CLLocationCoordinate2D(latitude: 10, longitude: 20)
         let p2 = CLLocationCoordinate2D(latitude: 20, longitude: 20)
