@@ -48,45 +48,19 @@ struct MainView: View {
             }
         }
         .accentColor(.dropinSecondary)
-        .alert("common.create_place",
-               isPresented: $navigationContext.showingCreatePlaceMenu,
-               actions: {
-            Button("common.ok") { }
-        }) {
-            Text("_TEMP_long_press_instructions")
-        }
+//        .alert("common.create_place",
+//               isPresented: $navigationContext.showingCreatePlaceMenu,
+//               actions: {
+//            Button("common.ok") { }
+//        }) {
+//            Text("_TEMP_long_press_instructions")
+//            
+//            Create place from address
+//            
+//        }
         .onChange(of: navigationContext.navigationPath) { oldValue, newValue in
             animateTabBar(oldNavigationPath: oldValue, newNavigationPath: newValue)
         }
-        /*
-        .confirmationDialog("Save a location", isPresented: $navigationContext.showingCreatePlaceMenu, titleVisibility: .visible) {
-            Button("From your current position") {
-                
-            }
-            Button("Drop a pin") {
-                
-            }
-            Button("Provide an address") {
-                // https://developer.apple.com/documentation/applemapsserverapi/-v1-searchautocomplete
-            }
-            Button("Provide coordinates") {
-                //
-            }
-            Button("From image library") {
-                //
-            }
-            Button("RANDOM COORDS") {
-                guard let loc = locationManager.lastKnownLocation else {
-                    print("Unknown loc")
-                    return
-                }
-                let latitude = loc.latitude + Double.random(in: -0.02...0.01)
-                let longitude = loc.longitude + Double.random(in: -0.02...0.01)
-                let item = SDPlace(name: "random\(Int.random(in: 100...999))", latitude: latitude, longitude: longitude, address: "")
-                modelContext.insert(item)
-            }
-        }
-         */
     }
 
     // MARK: subviews

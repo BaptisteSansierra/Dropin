@@ -22,9 +22,9 @@ struct CreateGroup {
         if try await repository.exists(group) {
             throw DomainError.Group.alreadyExists
         }
-        if !group.icon.isValid {
-            throw DomainError.Group.undefinedMarker
-        }
+//        if !group.icon.isValid {
+//            throw DomainError.Group.undefinedMarker
+//        }
         if !group.color.isValidHexaColor {
             throw DomainError.Group.invalidColor
         }

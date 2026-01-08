@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import SwiftUI
+import MapKit
 
 @MainActor
 final class AppContainer {
@@ -16,12 +17,14 @@ final class AppContainer {
     private let tagRepository: TagRepository
     private let groupRepository: GroupRepository
     private let locationManager: LocationManager
-    
+    private let addressLookupService: AddressLookupService
+
     init(modelContext: ModelContext, locationManager: LocationManager) {
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
         self.locationManager = locationManager
+        addressLookupService = AddressLookupService(locationManager: locationManager)
     }
     
     func createRootView() -> RootView {
@@ -122,16 +125,30 @@ final class AppContainer {
 
     func createGroupListView() -> GroupListView {
         let vm = GroupListViewModel(self,
-                                  getGroups: GetGroups(repository: groupRepository),
-                                  deleteGroup: DeleteGroup(repository: groupRepository))
+                                    getGroups: GetGroups(repository: groupRepository),
+                                    deleteGroup: DeleteGroup(repository: groupRepository))
         return GroupListView(viewModel: vm)
     }
     
     func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
         let vm = GroupDetailsViewModel(self,
-                                     updateGroup: UpdateGroup(repository: groupRepository),
-                                     deleteGroup: DeleteGroup(repository: groupRepository))
+                                       updateGroup: UpdateGroup(repository: groupRepository),
+                                       deleteGroup: DeleteGroup(repository: groupRepository))
         return GroupDetailsView(viewModel: vm, group: group)
+    }
+    
+    func createLookupPlacesView() -> LookupPlacesView {
+        let vm = LookupPlacesViewModel(self,
+                                       addressLookupService: addressLookupService)
+        return LookupPlacesView(viewModel: vm)
+    }
+    
+    func createLookupPlaceView(lookupResult: LookupResult) -> LookupPlaceView {
+        let vm = LookupPlaceViewModel(self,
+                                      createPlace: CreatePlace(repository: placeRepository),
+                                      locationManager: locationManager,
+                                      lookupResult: lookupResult)
+        return LookupPlaceView(viewModel: vm)
     }
 }
 

@@ -32,12 +32,11 @@ struct PlaceRowView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(place.name)
-                        .font(.body)
+                        .cellTitleFormater()
                         .allowsHitTesting(true)
                     Spacer()
                     Text(locationManager.distanceStringTo(place.coordinates) ?? "")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
+                        .cellSubtitleFormater()
                 }
                 ZStack(alignment: .leading) {
                     Rectangle()

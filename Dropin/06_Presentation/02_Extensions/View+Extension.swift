@@ -26,7 +26,15 @@ extension View {
     func onFirstAppear(_ action: @escaping () -> ()) -> some View {
         modifier(FirstAppear(action: action))
     }
-    
+
+    // Using ViewModifier formatters
+    func cellTitleFormater() -> some View {
+        modifier(CellTitleFormater())
+    }
+    func cellSubtitleFormater() -> some View {
+        modifier(CellSubtitleFormater())
+    }
+
     // Using ViewModifier CustomToolbar
     func customToolbar<Leading: View, Trailing: View, Title: View>(tabIndex: Int = 0,
                                                                    @ViewBuilder leading: () -> Leading = { EmptyView() },

@@ -13,12 +13,18 @@ import Contacts
 @Observable class LocationManager: NSObject {
     
     // MARK: - observed vars
-    var lastKnownLocation: CLLocationCoordinate2D?
-    var authorized: Bool?
+    private(set) var lastKnownLocation: CLLocationCoordinate2D?
+    private(set) var authorized: Bool?
 
     // MARK: - not observed vars
     @ObservationIgnored private var manager = CLLocationManager()
     @ObservationIgnored private var started = false
+    @ObservationIgnored private lazy var distanceFormatter: MeasurementFormatter = {
+        let formatter = MeasurementFormatter()
+        formatter.unitOptions = .naturalScale
+        formatter.unitStyle = .short
+        return formatter
+    }()
     
     override init() {
         manager.desiredAccuracy = kCLLocationAccuracyBest
@@ -69,7 +75,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
 // MARK: - distance utils
 extension LocationManager {
-
+    
     static func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
         let l1 = CLLocation(latitude: from.latitude, longitude: from.longitude)
         let l2 = CLLocation(latitude: to.latitude, longitude: to.longitude)
@@ -82,13 +88,19 @@ extension LocationManager {
     }
     
     func distanceStringTo(_ coords: CLLocationCoordinate2D) -> String? {
-        guard let d = distanceTo(coords) else { return nil }
-        if d < 900 {
-            return "\(Int(d))m"
-        } else if d < 10000 {
-            return "\(String(format: "%.1f", d / 1000))km"
-        }
-        return "\(String(format: "%.0f", d / 1000))km"
+        guard let distance = distanceTo(coords) else { return nil }
+        let measurement = Measurement(value: distance, unit: UnitLength.meters)
+        // Adjust precision
+        distanceFormatter.numberFormatter.maximumFractionDigits = distance < 10000 ? 1 : 0
+        return distanceFormatter.string(from: measurement)
+        
+//        guard let d = distanceTo(coords) else { return nil }
+//        if d < 900 {
+//            return "\(Int(d))m"
+//        } else if d < 10000 {
+//            return "\(String(format: "%.1f", d / 1000))km"
+//        }
+//        return "\(String(format: "%.0f", d / 1000))km"
     }
 }
 

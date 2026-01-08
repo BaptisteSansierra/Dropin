@@ -35,14 +35,20 @@ struct SideMenuView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             if navigationContext.showingSideMenu {
+                Color.black
+                    .opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        navigationContext.showingSideMenu = false
+                    }
                 HStack {
                     ZStack{
                         Rectangle()
                             .fill(.white)
-                            .frame(width: 300)
+                            .frame(minWidth: 300, maxWidth: 340)
                             .shadow(color: .black, radius: 5, x: 0, y: 3)
                         content
-                            .frame(width: 300)
+                            .frame(minWidth: 300, maxWidth: 340)
                             .background(.white)
                     }
                     .background(.clear)
@@ -63,29 +69,67 @@ struct SideMenuView: View {
         VStack(spacing: 0) {
             header
                 .padding(0)
-            Spacer()
-                .frame(height: 80)
+//            Spacer()
+//                .frame(height: 80)
             
             SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
-                .padding(.bottom, 20)
+                .padding(.bottom, 0)
             
             SideMenuItemView(label: "common.groups",
                              systemImage: "folder",
                              context: .groups,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
-                .padding(.bottom, 20)
+                .padding(.bottom, 0)
 
             SideMenuItemView(label: "common.tags",
-                             systemImage: "tag",
+                             systemImage: "slider.horizontal.3",
                              context: .tags,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
-                .padding(.bottom, 20)
+                .padding(.bottom, 0)
+            
+            Divider()
+                .padding(.vertical, 5)
+            
+            SideMenuItemView(label: "common.favorites",
+                             systemImage: "star",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+            SideMenuItemView(label: "common.recents",
+                             systemImage: "clock",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+
+            Divider()
+                .padding(.vertical, 5)
+            
+            SideMenuItemView(label: "common.settings",
+                             systemImage: "slider.horizontal.3",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+            SideMenuItemView(label: "common.about",
+                             systemImage: "info.circle",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+            SideMenuItemView(label: "common.reportproblem",
+                             systemImage: "exclamationmark.triangle",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
 
             Spacer()
             

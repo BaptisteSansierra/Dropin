@@ -152,7 +152,7 @@ struct MockMarkerListSelectionView: View {
                 Text(verbatim: "common.selected")
                 IconView(icon: icon)
                     .sizeCaption2()
-                Text(icon.name)
+                Text(icon.rawValue)
                     .font(.caption2)
                     .foregroundColor(.gray)
             } else {
@@ -181,7 +181,7 @@ struct MockMarkerListSelectionView: View {
 }
 
 struct MockNullableMarkerListView: View {
-    @State var icon: Icon? = Icon("sf:figure.socialdance") // "figure.outdoor.rowing"
+    @State var icon: Icon? = .sf("figure.socialdance") // "figure.outdoor.rowing"
     var body: some View {
         VStack {
             MockMarkerListSelectionView(icon: $icon)
@@ -193,7 +193,7 @@ struct MockNullableMarkerListView: View {
 }
 
 struct MockMarkerListView: View {
-    @State var icon: Icon = Icon("sf:figure.socialdance")
+    @State var icon: Icon = .sf("figure.socialdance")
     var body: some View {
         MockMarkerListSelectionView(icon: $icon)
             .background(.purple.opacity(0.2))

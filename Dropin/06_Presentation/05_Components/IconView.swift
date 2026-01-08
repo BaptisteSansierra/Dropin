@@ -11,26 +11,20 @@ struct IconView: View {
     let icon: Icon
     
     var body: some View {
-        Group {
-            switch icon.source {
-                case .sf:
-                    Image(systemName: icon.name)
-                    
-                case .fa:
-                    Image(icon.name)
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                    
-                case .invalid:
-                    Image(systemName: "questionmark.circle")
-            }
+        switch icon {
+            case .sf(let name):
+                Image(systemName: name)
+            case .fa(let name):
+                Image(name)
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
         }
     }
-
+    
     @ViewBuilder
     func sizeLargeTitle() -> some View {
-        switch icon.source {
+        switch icon {
             case .sf:
                 font(.largeTitle)
             default:
@@ -40,7 +34,7 @@ struct IconView: View {
     
     @ViewBuilder
     func sizeTitle() -> some View {
-        switch icon.source {
+        switch icon {
             case .sf:
                 font(.title)
             default:
@@ -50,7 +44,7 @@ struct IconView: View {
     
     @ViewBuilder
     func sizeBody() -> some View {
-        switch icon.source {
+        switch icon {
             case .sf:
                 font(.body)
             default:
@@ -60,7 +54,7 @@ struct IconView: View {
     
     @ViewBuilder
     func sizeCaption() -> some View {
-        switch icon.source {
+        switch icon {
             case .sf:
                 font(.caption)
             default:
@@ -70,7 +64,7 @@ struct IconView: View {
 
     @ViewBuilder
     func sizeCaption2() -> some View {
-        switch icon.source {
+        switch icon {
             case .sf:
                 font(.caption2)
             default:
@@ -80,7 +74,7 @@ struct IconView: View {
 
     @ViewBuilder
     func sizeXS() -> some View {
-        switch icon.source {
+        switch icon {
             case .sf:
                 font(.system(size: 8))
             default:
@@ -91,9 +85,9 @@ struct IconView: View {
 
 #Preview {
     
-    let ic1 = Icon(source: .fa, name: "bowl-rice")
-    //let ic2 = Icon(source: .fa, name: "bowl-rice-wire")
-    let ic3 = Icon(source: .sf, name: "birthday.cake")
+    let ic1: Icon = .fa("bowl-rice")
+    //let ic2 = .fa("bowl-rice-wire")
+    let ic3: Icon = .sf("birthday.cake")
 
     VStack {
         IconView(icon: ic1)

@@ -45,7 +45,7 @@ import SwiftUI
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
     }
-    
+
     // MARK: Use cases
     func loadPlaces() async throws {
         let domainPlaces = try await getPlaces.execute()

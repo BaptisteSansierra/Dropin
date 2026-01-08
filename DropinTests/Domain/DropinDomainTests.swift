@@ -40,7 +40,7 @@ struct DropinDomainTests {
                                 coordinates: DropinApp.locations.london,
                                 address: "",
                                 tags: [],
-                                icon: Icon("sf:tag"),
+                                icon: .sf("tag"),
                                 creationDate: Date())
         // Check first creation is ok
         do {
@@ -60,7 +60,7 @@ struct DropinDomainTests {
                                              coordinates: CLLocationCoordinate2D.zero,
                                              address: "",
                                              tags: [],
-                                             icon: Icon("sf:tag"),
+                                             icon: .sf("tag"),
                                              creationDate: Date())
         await #expect(throws: DomainError.Place.missingName, performing: {
             try await createPlaceUC.execute(placeWithEmptyName)
@@ -79,7 +79,7 @@ struct DropinDomainTests {
                                 coordinates: DropinApp.locations.london,
                                 address: "",
                                 tags: [],
-                                icon: Icon("sf:tag"),
+                                icon: .sf("tag"),
                                 creationDate: Date())
         
         var placesOrigin = [PlaceEntity]()
@@ -115,13 +115,13 @@ struct DropinDomainTests {
         let createGroupUC = await CreateGroup(repository: groupRepo)
 
         // Check invalid icons are not accepted
-        let groupWithoutIco = GroupEntity(name: "dummy", color: "#000000", icon: Icon("none:none"))
-        await #expect(throws: DomainError.Group.undefinedMarker, performing: {
-            try await createGroupUC.execute(groupWithoutIco)
-        })
+//        let groupWithoutIco = GroupEntity(name: "dummy", color: "#000000", icon: Icon("none:none"))
+//        await #expect(throws: DomainError.Group.undefinedMarker, performing: {
+//            try await createGroupUC.execute(groupWithoutIco)
+//        })
         
         // Check invalid colors are not accepted
-        let groupWithoutColor = GroupEntity(name: "dummy", color: "#0Z0T", icon: Icon("sf:tag"))
+        let groupWithoutColor = GroupEntity(name: "dummy", color: "#0Z0T", icon: Icon.sf("tag"))
         await #expect(throws: DomainError.Group.invalidColor, performing: {
             try await createGroupUC.execute(groupWithoutColor)
         })

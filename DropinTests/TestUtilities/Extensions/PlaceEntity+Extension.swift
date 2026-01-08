@@ -17,7 +17,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:fork.knife.circle"),
+                             icon: .sf("fork.knife.circle"),
                              creationDate: Date()
                              )
 
@@ -30,7 +30,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:fork.knife.circle"),
+                             icon: .sf("fork.knife.circle"),
                              notes: "Don't forget your tupper",
                              phone: "931054947",
                              url: "http://lestresalacuina.com",
@@ -44,7 +44,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:fork.knife.circle"),
+                             icon: .sf("fork.knife.circle"),
                              creationDate: Date()
                              )
 
@@ -54,7 +54,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer de la Providència, 30, /nGràcia, /n08024 Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:wineglass"),
+                             icon: .sf("wineglass"),
                              creationDate: Date()
                              )
 
@@ -64,7 +64,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:pianokeys"),
+                             icon: .sf("pianokeys"),
                              creationDate: Date()
                              )
 
@@ -75,7 +75,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:figure.socialdance"),
+                             icon: .sf("figure.socialdance"),
                              creationDate: Date()
                              )
 
@@ -85,7 +85,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:carrot"),
+                             icon: .sf("carrot"),
                              creationDate: Date()
                             )
 
@@ -96,7 +96,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:swirl.circle.righthalf.filled.inverse"),
+                             icon: .sf("swirl.circle.righthalf.filled.inverse"),
                              creationDate: Date()
                              )
 
@@ -107,7 +107,7 @@ extension PlaceEntity {  // Mock extension
                              address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
                              tags: [],
                              group: nil,
-                             icon: Icon("sf:basket"),
+                             icon: .sf("basket"),
                              creationDate: Date()
                              )
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9]

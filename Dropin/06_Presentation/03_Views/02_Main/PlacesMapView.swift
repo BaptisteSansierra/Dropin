@@ -28,6 +28,8 @@ struct PlacesMapView: View {
     @Environment(MapSettings.self) private var mapSettings
     @Environment(NavigationContext.self) private var navigationContext
 
+    // TODO: locationManager to be moved in viewModel and injected as well as others...
+    
     // MARK: - private var
     private let zoomMapDuration: TimeInterval = 10
     private var createPlaceSheetDefaultDetent: CGFloat = 0.6
@@ -40,104 +42,180 @@ struct PlacesMapView: View {
 
     // MARK: - Body
     var body: some View {
-        // Bindable
-        @Bindable var viewModel = viewModel
-        @Bindable var mapSettings = mapSettings
+        @Bindable var navigationContext = navigationContext
+        NavigationStack(path: $navigationContext.navigationPath) {
+            mapReaderView
+        }
+    }
+
+    // MARK: - Subviews
+    private var mapReaderView: some View {
         @Bindable var navigationContext = navigationContext
 
-        NavigationStack(path: $navigationContext.navigationPath) {
-            MapReader { proxy in
-                Map(position: $mapSettings.position) {
-                    
-                    mapContent
-                    
-                    UserAnnotation()
-                }
-                .simultaneousGesture(longPressHackDragGesture)
-                .onReceive(longPressTimer, perform: { time in
-                    onLongPressTimerFire(proxy: proxy)
-                })
-                .onChange(of: viewModel.selectedCluster, { oldValue, newValue in
-                    guard let value = newValue else { return }
-                    zoomOnCluster(value)
-                    viewModel.selectedCluster = nil
-                })
-                //.animation(.easeInOut(duration: zoomMapDuration), value: mapSettings.position)
-                .mapControls {
-                    MapCompass()
-                }
-                .mapStyle(mapSettings.selectedMapStyle)
-                .selectionDisabled(false)
-                .onMapCameraChange(frequency: .continuous) { _ in
-                    // Cancel long press timer when moving map camera
-                    longPressTimer.upstream.connect().cancel()
-                }
-                .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
-                    updateCameraCache(mapCameraUpdateContext)
-                }
-                .task {
-                    onFirstAppear()
-                }
-                .overlay {
-                    MapSettingsOverlay()
-                        .environment(mapSettings)
-                }
-                .overlay {
-                    zoomOnUserOverlay
-                }
-                .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
-                    viewModel.discardCreation()
-                    Task {
-                        places = try await viewModel.loadPlaces()
-                        reloadData()
-                    }
-                }, content: {
-                    viewModel.createCreatePlacesView()
-                    //.presentationDetents([.medium, .large])
-                        .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
-                })
-                .onChange(of: viewModel.selectedPlaceId) {
-                    zoomOnPin()
-                }
-                .sheet(item: $viewModel.selectedPlaceId) { placeId in
-                    createPlaceDetailsSheetView()
-                        .presentationDetents([.medium, .large])
-                        .presentationCornerRadius(20)
-                }
-                .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
-                    Button("common.open_settings") {
-                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                        UIApplication.shared.open(url)
-                    }
-                    Button("common.cancel") {}
-                } message: {
-                    Text("common.loc_auth_required")
-                }
+        return MapReader { proxy in
+            mapView(proxy: proxy)
+        }
+        .safeAreaInset(edge: .bottom, content: {
+            Color.clear
+                .frame(height: 40)
+        })
+        .navigationDestination(for: PlaceEntity.self) { place in
+            createPlaceDetailsView(place)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.white, for: .navigationBar)
+        .toolbar {
+            DropinToolbar.Burger()
+            DropinToolbar.Logo()
+            DropinToolbar.AddPlace()
+        }
+        .confirmationDialog("common.save_new_place",
+                            isPresented: $navigationContext.showingCreatePlaceMenu,
+                            titleVisibility: .visible,
+                            actions: createNewPlaceActions)
+        .presentationCompactAdaptation(.sheet)
+    }
+    
+    @ViewBuilder
+    private func createNewPlaceActions() -> some View {
+        // Create place from input string
+        NavigationLink {
+            viewModel.createLookupPlacesView()
+        } label: {
+            Text("menu.new_place.adress")
+        }
+        // Create place from here now
+        NavigationLink {
+        } label: {
+            Text("menu.new_place.current")
+        }
+        // Create place from lat/long
+        NavigationLink {
+        } label: {
+            Text("menu.new_place.coords")
+        }
+        // Create place from moving map under cursor
+        NavigationLink {
+        } label: {
+            Text("menu.new_place.drop_pin")
+        }
+        // Create place from contact
+        NavigationLink {
+        } label: {
+            Text("menu.new_place.contact")
+        }
+        // Create place from a pic
+        NavigationLink {
+        } label: {
+            // Does this make sense ?
+            // only when image supported maybe
+            Text("From image library (not implemented) ")
+        }
+//        Button("RANDOM COORDS") {
+//                guard let loc = locationManager.lastKnownLocation else {
+//                    print("Unknown loc")
+//                    return
+//                }
+//                let latitude = loc.latitude + Double.random(in: -0.02...0.01)
+//                let longitude = loc.longitude + Double.random(in: -0.02...0.01)
+//                let item = SDPlace(name: "random\(Int.random(in: 100...999))", latitude: latitude, longitude: longitude, address: "")
+//                modelContext.insert(item)
+//        }.disabled(true)
+    }
+
+    private func mapView(proxy: MapProxy) -> some View {
+        @Bindable var mapSettings = mapSettings
+        
+        return Map(position: $mapSettings.position) {
+            mapContent
+            UserAnnotation()
+        }
+        .simultaneousGesture(longPressHackDragGesture)
+        .onReceive(longPressTimer, perform: { time in
+            onLongPressTimerFire(proxy: proxy)
+        })
+        .onChange(of: viewModel.selectedCluster, { oldValue, newValue in
+            guard let value = newValue else { return }
+            zoomOnCluster(value)
+            viewModel.selectedCluster = nil
+        })
+        //.animation(.easeInOut(duration: zoomMapDuration), value: mapSettings.position)
+        .mapControls {
+            MapCompass()
+        }
+        .mapStyle(mapSettings.selectedMapStyle)
+        .selectionDisabled(false)
+        .onMapCameraChange(frequency: .continuous) { _ in
+            // Cancel long press timer when moving map camera
+            longPressTimer.upstream.connect().cancel()
+        }
+        .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
+            updateCameraCache(mapCameraUpdateContext)
+        }
+        .task {
+            onFirstAppear()
+        }
+        .overlay {
+            MapSettingsOverlay()
+                .environment(mapSettings)
+        }
+        .overlay {
+            zoomOnUserOverlay
+        }
+        .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
+            viewModel.discardCreation()
+            Task {
+                places = try await viewModel.loadPlaces()
+                reloadData()
             }
-            .safeAreaInset(edge: .bottom, content: {
-                Color.clear
-                    .frame(height: 40)
-            })
-            .navigationDestination(for: PlaceEntity.self) { place in
-                createPlaceDetailsView(place)
+        }, content: {
+            viewModel.createCreatePlacesView()
+            //.presentationDetents([.medium, .large])
+                .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+                .presentationBackground(.white)
+        })
+        .onChange(of: viewModel.selectedPlaceId) {
+            zoomOnPin()
+        }
+        .sheet(item: $viewModel.selectedPlaceId) { placeId in
+            createPlaceDetailsSheetView()
+                .presentationDetents([.medium, .large])
+                .presentationCornerRadius(20)
+                .presentationBackground(.white)
+        }
+        .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
+            Button("common.open_settings") {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                UIApplication.shared.open(url)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            
-            .toolbar {
-                DropinToolbar.Burger()
-                DropinToolbar.Logo()
-                DropinToolbar.AddPlace()
+            Button("common.cancel") {}
+        } message: {
+            Text("common.loc_auth_required")
+        }
+    }
+
+    private var zoomOnUserOverlay: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                if let locauthorized = locationManager.authorized, locauthorized {
+                    if let userLoc = locationManager.lastKnownLocation {
+                        MapIcoButton(systemImage: "location.fill", offset: CGPoint(x: -1, y: 1), imageFrame: CGSize(width: 15, height: 15))
+                            .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
+                            .onTapGesture {
+                                mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
+                            }
+                    }
+                } else {
+                    MapIcoButton(systemImage: "exclamationmark.triangle", offset: CGPoint(x: 0, y: -1), imageFrame: CGSize(width: 15, height: 15), color: .red)
+                        .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
+                        .onTapGesture {
+                            showAuthLocAlert.toggle()
+                        }
+                }
             }
         }
-//        .customToolbar(tabIndex: 0,
-//                       leading: {
-//                           BurgerToolbarView()
-//                       }, trailing: {
-//                           AddPlaceToolbarView()
-//                       }, title: {
-//                           LogoToolbarView()
-//                       })
-
     }
 
     // MARK: map contents
@@ -233,31 +311,6 @@ struct PlacesMapView: View {
             } else if let clusterMapItem = mapItem as? MapDisplayClusterItem {
                 ClusterAnnotation(clusterItem: clusterMapItem,
                                   selectedCluster: $viewModel.selectedCluster)
-            }
-        }
-    }
-
-    // MARK: - Subviews
-    private var zoomOnUserOverlay: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                if let locauthorized = locationManager.authorized, locauthorized {
-                    if let userLoc = locationManager.lastKnownLocation {
-                        MapIcoButton(systemImage: "location.fill", offset: CGPoint(x: -1, y: 1), imageFrame: CGSize(width: 15, height: 15))
-                            .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
-                            .onTapGesture {
-                                mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
-                            }
-                    }
-                } else {
-                    MapIcoButton(systemImage: "exclamationmark.triangle", offset: CGPoint(x: 0, y: -1), imageFrame: CGSize(width: 15, height: 15), color: .red)
-                        .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
-                        .onTapGesture {
-                            showAuthLocAlert.toggle()
-                        }
-                }
             }
         }
     }

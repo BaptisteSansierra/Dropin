@@ -11,6 +11,7 @@ enum SideMenuContext {
     case main
     case groups
     case tags
+    case toBeImplemnented
 }
 
 @MainActor

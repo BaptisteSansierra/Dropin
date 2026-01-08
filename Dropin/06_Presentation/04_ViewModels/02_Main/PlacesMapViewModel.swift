@@ -251,6 +251,10 @@ struct Bucket {
         return appContainer.createPlaceDetailsSheetView(place: place)
     }
 
+    func createLookupPlacesView() -> LookupPlacesView {
+        return appContainer.createLookupPlacesView()
+    }
+
     // MARK: - Use cases
     func loadPlaces() async throws -> [PlaceUI] {
         let domainPlaces = try await getPlaces.execute()

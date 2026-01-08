@@ -29,7 +29,6 @@ struct SideMenuItemView: View {
         VStack {
             ZStack {
                 Rectangle()
-                    //.cornerRadius(40)
                     .foregroundStyle(Color.gray.opacity(0.2))
                     .opacity(context == currentSideMenuContext ? 1 : 0)
                     .padding(.horizontal, 0)
@@ -41,11 +40,13 @@ struct SideMenuItemView: View {
                             .frame(width: 100, height: 50)
                             .opacity(0)
                         Image(systemName: systemImage)
-                            .font(.headline)
-                            .foregroundStyle(textColor)
+                            .font(.body)
+                            .fontWeight(.light)
+                            .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : textColor)
                     }
                     Text(label)
-                        .font(.headline)
+                        .font(context == currentSideMenuContext ? .headline : .body)
+                        .fontWeight(context == currentSideMenuContext ? .medium : .thin)
                         .foregroundStyle(textColor)
                     Spacer()
                 }

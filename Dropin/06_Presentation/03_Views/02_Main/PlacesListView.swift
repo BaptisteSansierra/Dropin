@@ -46,16 +46,16 @@ struct PlacesListView: View {
                     .listStyle(.grouped)
                     // TODO: to be implemented
                     //.searchable(text: $viewModel.searchText)
-                    .searchPresentationToolbarBehavior(.avoidHidingContent)
-                    .refreshable {
-                        Task {
-                            try await self.viewModel.loadPlaces()
-                        }
-                    }
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear
-                            .frame(height: 15)
-                    }
+//                    .searchPresentationToolbarBehavior(.avoidHidingContent)
+//                    .refreshable {
+//                        Task {
+//                            try await self.viewModel.loadPlaces()
+//                        }
+//                    }
+//                    .safeAreaInset(edge: .bottom) {
+//                        Color.clear
+//                            .frame(height: 15)
+//                    }
                 }
             }
             .task {

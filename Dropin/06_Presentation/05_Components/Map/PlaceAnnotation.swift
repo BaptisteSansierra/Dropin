@@ -176,10 +176,10 @@ struct MockPlaceAnnotation: View {
         self.place4.group = nil
         self.place5.group = group2
 
-        self.place2.icon = Icon(source: .sf, name: "duffle.bag")
+        self.place2.icon = .sf("duffle.bag")
         self.place3.icon = nil
-        self.place4.icon = Icon(source: .sf, name: "figure.seated.side.left.airbag.on")
-        self.place5.icon = Icon(source: .sf, name: "ivfluid.bag")
+        self.place4.icon = .sf("figure.seated.side.left.airbag.on")
+        self.place5.icon = .sf("ivfluid.bag")
 
         self.place2.coordinates = place.coordinates.offset(x: 0, y: 0.05)
         self.place3.coordinates = place.coordinates.offset(x: 0.05, y: 0)

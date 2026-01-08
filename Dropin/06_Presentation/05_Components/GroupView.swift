@@ -161,12 +161,12 @@ struct GroupView: View {
     VStack(spacing: 20) {
         GroupView(name: "Legacy",
                   color: .brown,
-                  icon: Icon("sf:tag"),
+                  icon: .sf("tag"),
                   mode: .legacy)
 
         GroupView(name: "Nice Group",
                   color: .brown,
-                  icon: Icon("sf:tag"))
+                  icon: .sf("tag"))
 
         GroupView(name: "No Mark",
                   color: .brown,
@@ -176,10 +176,10 @@ struct GroupView: View {
 
         GroupView(name: "Mark",
                   color: .brown,
-                  icon: Icon("sf:carrot"),
+                  icon: .sf("carrot"),
                   actionType: .edit,
                   action: { print("Eat a carrot") })
 
-        PlaceAnnotationView(color: .brown, icon: Icon("sf:tag"))
+        PlaceAnnotationView(color: .brown, icon: .sf("tag"))
     }
 }

@@ -62,7 +62,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
                          tags: [],
                          group: nil,
-                         icon: Icon("sf:carrot.fill"))
+                         icon: .sf("carrot.fill"))
 
         let l2 = SDPlace(identifier: UUID().uuidString,
                          name: "Les Tres a la Cuina",
@@ -101,7 +101,7 @@ extension SDPlace {  // Mock extension
                          address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
                          tags: [],
                          group: nil,
-                         icon: Icon("sf:pianokeys"))
+                         icon: .sf("pianokeys"))
 
         let l6 = SDPlace(identifier: UUID().uuidString,
                          name: "El Col·leccionista",
@@ -110,7 +110,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
                          tags: [],
                          group: nil,
-                         icon: Icon("sf:figure.socialdance"))
+                         icon: .sf("figure.socialdance"))
 
         let l7 = SDPlace(identifier: UUID().uuidString,
                          name: "Molsa Biosí",
@@ -119,7 +119,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
                          tags: [],
                          group: nil,
-                         icon: Icon("sf:carrot"))
+                         icon: .sf("carrot"))
 
         let l8 = SDPlace(identifier: UUID().uuidString,
                          name: "Sincronia Yoga",
@@ -128,7 +128,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
                          tags: [],
                          group: nil,
-                         icon: Icon("sf:swirl.circle.righthalf.filled.inverse"))
+                         icon: .sf("swirl.circle.righthalf.filled.inverse"))
 
         let l9 = SDPlace(identifier: UUID().uuidString,
                          name: "Be Laundry Joanic",
@@ -137,7 +137,7 @@ extension SDPlace {  // Mock extension
                          address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
                          tags: [],
                          group: nil,
-                         icon: Icon("sf:basket"))
+                         icon: .sf("basket"))
 
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9]
     }
