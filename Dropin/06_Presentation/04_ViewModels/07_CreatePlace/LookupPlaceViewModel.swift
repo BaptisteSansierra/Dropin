@@ -14,6 +14,7 @@ import MapKit
 @Observable class LookupPlaceViewModel {
         
     // MARK: Properties
+    private(set) var coordinator: MainCoordinator
     var lookupResolvedItem: LookupResolvedItem
 //    var resolvedResult: Result<LookupResolvedItem, Error>?
 //    var searching: Bool = false
@@ -27,9 +28,11 @@ import MapKit
 
     // MARK: - init
     init(_ appContainer: AppContainer,
+         coordinator: MainCoordinator,
          createPlace: CreatePlace,
          lookupResolvedItem: LookupResolvedItem) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.createPlace = createPlace
         self.lookupResolvedItem = lookupResolvedItem
     }
@@ -40,7 +43,12 @@ import MapKit
 //    TODO:    Remove all the NavigationLink => work with coordinator
 //    cf: chat : "IOS dev questions v2"
 //    
-    
+
+    // MARK: - Navigation
+    func pushCreatePlaceView() {
+        coordinator.pushUndefinedDummyView()
+    }
+
     // MARK: -
     /*
     func requestPlace() async {

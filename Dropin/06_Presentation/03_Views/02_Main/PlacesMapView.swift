@@ -43,9 +43,9 @@ struct PlacesMapView: View {
     // MARK: - Body
     var body: some View {
         @Bindable var navigationContext = navigationContext
-        NavigationStack(path: $navigationContext.navigationPath) {
+        //NavigationStack(path: $navigationContext.navigationPath) {
             mapReaderView
-        }
+        //}
     }
 
     // MARK: - Subviews
@@ -59,16 +59,16 @@ struct PlacesMapView: View {
             Color.clear
                 .frame(height: 40)
         })
-        .navigationDestination(for: PlaceEntity.self) { place in
-            createPlaceDetailsView(place)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.white, for: .navigationBar)
-        .toolbar {
-            DropinToolbar.Burger()
-            DropinToolbar.Logo()
-            DropinToolbar.AddPlace()
-        }
+//        .navigationDestination(for: PlaceEntity.self) { place in
+//            createPlaceDetailsView(place)
+//        }
+//        .navigationBarTitleDisplayMode(.inline)
+//        .toolbarBackground(.white, for: .navigationBar)
+//        .toolbar {
+//            DropinToolbar.Burger()
+//            DropinToolbar.Logo()
+//            DropinToolbar.AddPlace()
+//        }
         .confirmationDialog("common.save_new_place",
                             isPresented: $navigationContext.showingCreatePlaceMenu,
                             titleVisibility: .visible,
@@ -79,33 +79,41 @@ struct PlacesMapView: View {
     @ViewBuilder
     private func createNewPlaceActions() -> some View {
         // Create place from input string
-        NavigationLink {
-            viewModel.createLookupPlacesView()
+        Button {
+            viewModel.pushLookupPlacesView()
         } label: {
             Text("menu.new_place.adress")
         }
+
+//        NavigationLink {
+//            viewModel.createLookupPlacesView()
+//        } label: {
+//            Text("OBSOLETE menu.new_place.adress")
+//        }
+//        
+        
         // Create place from here now
-        NavigationLink {
+        Button {
         } label: {
             Text("menu.new_place.current")
         }
         // Create place from lat/long
-        NavigationLink {
+        Button {
         } label: {
             Text("menu.new_place.coords")
         }
         // Create place from moving map under cursor
-        NavigationLink {
+        Button {
         } label: {
             Text("menu.new_place.drop_pin")
         }
         // Create place from contact
-        NavigationLink {
+        Button {
         } label: {
             Text("menu.new_place.contact")
         }
         // Create place from a pic
-        NavigationLink {
+        Button {
         } label: {
             // Does this make sense ?
             // only when image supported maybe
@@ -387,7 +395,7 @@ struct PlacesMapView: View {
         // Enable clustering if camera is far enough
         viewModel.clusteringEnabled = mapSettings.currentCameraDistance > 1000
         
-        print("Current zoom = \(mapSettings.currentCameraDistance)")
+        //print("Current zoom = \(mapSettings.currentCameraDistance)")
         
         // Compute places under camera
         reloadData()
@@ -440,12 +448,12 @@ struct PlacesMapView: View {
                                       span: mapSettings.currentRegionSpan)
     }
         
-    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
-            fatalError("couldn't find any place named '\(place.name)' in list")
-        }
-        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
-    }
+//    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+//        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+//            fatalError("couldn't find any place named '\(place.name)' in list")
+//        }
+//        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
+//    }
 }
 
 #if DEBUG

@@ -10,7 +10,9 @@ import SwiftUI
 
 @MainActor
 @Observable class PlaceDetailsSheetViewModel {
-    
+
+    private var coordinator: MainCoordinator
+
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var updatePlace: UpdatePlace
     @ObservationIgnored private var deletePlace: DeletePlace
@@ -20,6 +22,7 @@ import SwiftUI
     @ObservationIgnored private var createGroup: CreateGroup
     
     init(_ appContainer: AppContainer,
+         coordinator: MainCoordinator,
          updatePlace: UpdatePlace,
          deletePlace: DeletePlace,
          getTags: GetTags,
@@ -27,6 +30,7 @@ import SwiftUI
          getGroups: GetGroups,
          createGroup: CreateGroup) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.updatePlace = updatePlace
         self.deletePlace = deletePlace
         self.getTags = getTags
@@ -35,6 +39,11 @@ import SwiftUI
         self.createGroup = createGroup
     }
     
+    // MARK: Navigation
+    func pushPlaceDetailsView(placeId: String) {
+        coordinator.pushPlaceDetailsView(placeId: placeId)
+    }
+
     // MARK: Child UI
     func createPlaceDetailsContentView(place: Binding<PlaceUI>, editMode: Binding<PlaceEditMode>) -> PlaceDetailsContentView {
         return appContainer.createPlaceDetailsContentView(place: place, editMode: editMode)

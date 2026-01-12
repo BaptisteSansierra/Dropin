@@ -11,16 +11,36 @@ import SwiftUI
 @MainActor
 @Observable class MainViewModel {
     
+    var coordinator: MainCoordinator
     var places: [PlaceUI] = [PlaceUI]()
+
+    // /////////////////////
+    // Moved from PlacesListViewModel in order to define ToolBar in MainView
+    // currently duplicated, should be solved somehow
+    var grouped = false
+    enum SortMode: Int {
+        case distance = 0
+        case alphabetically = 1
+        case creationDate = 2
+    }
+    var sortMode: SortMode = .distance
+    // /////////////////////
+
     
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var getPlaces: GetPlaces
     
-    init(_ appContainer: AppContainer, getPlaces: GetPlaces) {
+    init(_ appContainer: AppContainer, coordinator: MainCoordinator, getPlaces: GetPlaces) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.getPlaces = getPlaces
     }
-    
+
+//    // MARK: Navigation
+//    func pushLookupPlacesView() {
+//        coordinator.pushLookupPlacesView()
+//    }
+
     // MARK: UI Child
     func createPlacesMapView() -> PlacesMapView {
         let bindingPlaces = Binding<[PlaceUI]>(
@@ -44,6 +64,10 @@ import SwiftUI
     
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
+    }
+
+    func createLookupPlacesView() -> LookupPlacesView {
+        return appContainer.createLookupPlacesView()
     }
 
     // MARK: Use cases

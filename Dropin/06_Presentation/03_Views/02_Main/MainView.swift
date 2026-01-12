@@ -31,9 +31,9 @@ struct MainView: View {
     
     // MARK: - Body
     var body: some View {
-        @Bindable var navigationContext = navigationContext
+        //@Bindable var navigationContext = navigationContext
         
-        //NavigationStack(path: $navigationContext.navigationPath) {
+        NavigationStack(path: $viewModel.coordinator.path) {
             
             ZStack {
                 viewModel.createPlacesMapView()
@@ -41,32 +41,44 @@ struct MainView: View {
                 
                 viewModel.createPlacesListView()
                     .opacity(selectedTab == 1 ? 1 : 0)
-                
+
                 customTabView
             }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.white, for: .navigationBar)
+            .toolbar {
+                DropinToolbar.Burger()
+                DropinToolbar.Logo()
+                if selectedTab == 0 {
+                    DropinToolbar.AddPlace()
+                } else {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        listTrailingToolbarContent
+                    }
+                }
+            }
+            .navigationDestination(for: NavigationItem.self) { navigationItem in
+                resolveDestination(navigationItem: navigationItem)
+            }
+
             
-        //}
+            // TODO: to be removed
+//            .navigationDestination(for: PlaceEntity.self) { place in
+//                // TODO: to be removed following func
+//                createPlaceDetailsView(place)
+//            }
+        }
         .task {
             Task {
                 try await viewModel.loadPlaces()
             }
         }
         .accentColor(.dropinSecondary)
-//        .alert("common.create_place",
-//               isPresented: $navigationContext.showingCreatePlaceMenu,
-//               actions: {
-//            Button("common.ok") { }
-//        }) {
-//            Text("_TEMP_long_press_instructions")
-//            
-//            Create place from address
-//            
-//        }
         .onChange(of: navigationContext.navigationPath) { oldValue, newValue in
             animateTabBar(oldNavigationPath: oldValue, newNavigationPath: newValue)
         }
     }
-
+    
     // MARK: subviews
 //    var currentView: some View {
 //        Group {
@@ -77,7 +89,27 @@ struct MainView: View {
 //            }
 //        }
 //    }
-        
+
+    @ViewBuilder
+    private var listTrailingToolbarContent: some View {
+        Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
+                        viewModel.grouped.toggle()
+        }
+        .tint(.dropinPrimary)
+        Menu("common.sort", systemImage: "arrow.up.arrow.down") {
+            Picker("common.sort", selection: $viewModel.sortMode) {
+                Text("common.sort.by_distance")
+                    .tag(PlacesListViewModel.SortMode.distance)
+                Text("common.sort.by_name")
+                    .tag(PlacesListViewModel.SortMode.alphabetically)
+                Text("common.sort.by_creation_date")
+                    .tag(PlacesListViewModel.SortMode.creationDate)
+            }
+            .pickerStyle(.inline)
+        }
+        .tint(.dropinPrimary)
+    }
+
     private var customTabView: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -140,6 +172,43 @@ struct MainView: View {
                 tabViewOffsetY = 0
                 tabViewOpacity = 1
             }
+        }
+    }
+
+    private func createPlaceDetailsView(_ placeId: String) -> PlaceDetailsView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
+            fatalError("couldn't find any place '\(placeId)' in list")
+        }
+        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
+    }
+
+    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == place.id }) else {
+            fatalError("couldn't find any place named '\(place.name)' in list")
+        }
+        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
+    }
+    
+    @ViewBuilder
+    private func resolveDestination(navigationItem: NavigationItem) -> some View {
+        switch navigationItem {
+            case .placeDetailsView(let placeID, _):
+                createPlaceDetailsView(placeID)
+            case .lookupPlacesView:
+                viewModel.createLookupPlacesView()
+            case .undefinedDummyView:
+                ZStack {
+                    Color.orange
+                    Text("To be implemented...")
+                }
+            default:
+                ZStack {
+                    Color.orange
+                    Text("Undefined navigation item")
+                }
+                .onAppear {
+                    assertionFailure("undefined navigation item \(navigationItem)")
+                }
         }
     }
 }

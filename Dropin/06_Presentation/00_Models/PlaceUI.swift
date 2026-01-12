@@ -10,6 +10,7 @@ import CoreLocation
 
 @MainActor
 @Observable class PlaceUI: Identifiable {
+    
     let id: String
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
@@ -28,6 +29,10 @@ import CoreLocation
     var groupColor: Color {
         guard let group = self.group else { return .dropinPrimary }
         return group.color
+    }
+
+    static func == (lhs: PlaceUI, rhs: PlaceUI) -> Bool {
+        lhs.id == rhs.id
     }
 
     init(id: String,

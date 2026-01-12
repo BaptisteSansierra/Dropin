@@ -16,6 +16,8 @@ final class AppContainer {
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
     private let groupRepository: GroupRepository
+
+    private let coordinator: MainCoordinator
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
     private let reachabilityService: ReachabilityService
@@ -24,6 +26,8 @@ final class AppContainer {
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        
+        coordinator = MainCoordinator()
         self.locationManager = locationManager
         addressLookupService = AddressLookupService(locationManager: locationManager)
         reachabilityService = ReachabilityService()
@@ -36,12 +40,14 @@ final class AppContainer {
     
     func createMainView() -> MainView {
         let vm = MainViewModel(self,
+                               coordinator: coordinator,
                                getPlaces: GetPlaces(repository: placeRepository))
         return MainView(viewModel: vm)
     }
 
     func createPlacesMapView(places: Binding<[PlaceUI]>) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
+                                    coordinator: coordinator,
                                     getPlaces: GetPlaces(repository: placeRepository),
                                     createPlace: CreatePlace(repository: placeRepository))
         return PlacesMapView(viewModel: vm, places: places)
@@ -49,6 +55,7 @@ final class AppContainer {
     
     func createPlacesListView(places: Binding<[PlaceUI]>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
+                                     coordinator: coordinator,
                                      locationManager: locationManager,
                                      getPlaces: GetPlaces(repository: placeRepository),
                                      createPlace: CreatePlace(repository: placeRepository))
@@ -77,6 +84,7 @@ final class AppContainer {
     
     func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
         let vm = PlaceDetailsSheetViewModel(self,
+                                            coordinator: coordinator,
                                             updatePlace: UpdatePlace(repository: placeRepository),
                                             deletePlace: DeletePlace(repository: placeRepository),
                                             getTags: GetTags(repository: tagRepository),
@@ -149,6 +157,7 @@ final class AppContainer {
     
     func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem) -> LookupPlaceView {
         let vm = LookupPlaceViewModel(self,
+                                      coordinator: coordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
                                       lookupResolvedItem: lookupResolvedItem)
         return LookupPlaceView(viewModel: vm)

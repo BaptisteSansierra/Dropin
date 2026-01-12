@@ -203,7 +203,8 @@ struct LookupPlaceView: View {
     }
     
     private func confirm() {
-        
+        dismiss()
+        viewModel.pushCreatePlaceView()
     }
     
     private func cancel() {

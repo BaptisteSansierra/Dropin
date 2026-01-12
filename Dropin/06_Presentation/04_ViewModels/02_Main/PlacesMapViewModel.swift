@@ -36,6 +36,8 @@ struct Bucket {
     }
 
     // MARK: Properties
+    private(set) var coordinator: MainCoordinator
+
     //var places: [PlaceUI] = [PlaceUI]()
     var tmpPlace: PlaceUI? = nil   // Used for creating a new place
     /// `selectedPlaceId` is defined when a place annotation is selected on the map, toggle the corresponding sheet
@@ -68,8 +70,12 @@ struct Bucket {
     @ObservationIgnored private var creationMode: CreationMode = .undefined  // TODO: to be used ?
     //@ObservationIgnored private let deletePlace: DeletePlace
     
-    init(_ appContainer: AppContainer, getPlaces: GetPlaces, createPlace: CreatePlace) {
+    init(_ appContainer: AppContainer,
+         coordinator: MainCoordinator,
+         getPlaces: GetPlaces,
+         createPlace: CreatePlace) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.getPlaces = getPlaces
         self.createPlace = createPlace
     }
@@ -235,6 +241,11 @@ struct Bucket {
 //        print("Remaining places: \(remainingPlaces.count)")
     }
     
+    // MARK: Navigation
+    func pushLookupPlacesView() {
+        coordinator.pushLookupPlacesView()
+    }
+    
     // MARK: - UI child
     func createCreatePlacesView() -> CreatePlaceView {
         guard let tmpPlace = tmpPlace else {
@@ -243,17 +254,17 @@ struct Bucket {
         return appContainer.createCreatePlaceView(place: tmpPlace)
     }
         
-    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
-        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
-    }
+//    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
+//        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
+//    }
 
     func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
         return appContainer.createPlaceDetailsSheetView(place: place)
     }
 
-    func createLookupPlacesView() -> LookupPlacesView {
-        return appContainer.createLookupPlacesView()
-    }
+//    func createLookupPlacesView() -> LookupPlacesView {
+//        return appContainer.createLookupPlacesView()
+//    }
 
     // MARK: - Use cases
     func loadPlaces() async throws -> [PlaceUI] {

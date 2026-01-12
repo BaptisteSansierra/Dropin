@@ -29,7 +29,7 @@ struct PlacesListView: View {
         
         @Bindable var navigationContext = navigationContext
         
-        NavigationStack(path: $navigationContext.navigationPath) {
+        //NavigationStack(path: $navigationContext.navigationPath) {
 
             Group {
                 if viewModel.loading || !renderList {
@@ -87,23 +87,24 @@ struct PlacesListView: View {
 //            }
             
             
-            .navigationDestination(for: PlaceEntity.self) { place in
-                createPlaceDetailsView(place)
-            }
-            .navigationBarTitleDisplayMode(.inline)
+//            .navigationDestination(for: PlaceEntity.self) { place in
+//                createPlaceDetailsView(place)
+//            }
+//            .navigationBarTitleDisplayMode(.inline)
 
-            .toolbar {
-                DropinToolbar.Burger()
-                DropinToolbar.Logo()
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    trailingToolbarContent
-                }
-            }
+//            .toolbar {
+//                DropinToolbar.Burger()
+//                DropinToolbar.Logo()
+//                ToolbarItemGroup(placement: .topBarTrailing) {
+//                    trailingToolbarContent
+//                }
+//            }
             
-        }
+        //}
     }
 
     // MARK: - Subviews
+    /*
     private var trailingToolbarContent: some View {
         Group {
             Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
@@ -124,6 +125,7 @@ struct PlacesListView: View {
             .tint(.dropinPrimary)
         }
     }
+     */
 
     private var flatList: some View {
         ForEach(viewModel.sortedPlaces) { place in
@@ -166,12 +168,12 @@ struct PlacesListView: View {
     }
     
     // MARK: private methods
-    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
-            fatalError("couldn't find any place named '\(place.name)' in list")
-        }
-        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
-    }
+//    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+//        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+//            fatalError("couldn't find any place named '\(place.name)' in list")
+//        }
+//        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
+//    }
 }
 
 

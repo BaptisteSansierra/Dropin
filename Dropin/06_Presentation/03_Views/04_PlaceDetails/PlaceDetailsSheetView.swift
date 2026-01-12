@@ -115,7 +115,8 @@ struct PlaceDetailsSheetView: View {
     
     private func onPressEdit() {
         dismiss()
-        navigationContext.navigationPath.append(PlaceMapper.toDomain(place))
+        viewModel.pushPlaceDetailsView(placeId: place.id)
+        //navigationContext.navigationPath.append(PlaceMapper.toDomain(place))
     }
     
     private func routeThrowGoogle() {
