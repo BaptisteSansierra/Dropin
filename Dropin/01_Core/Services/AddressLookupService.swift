@@ -17,11 +17,9 @@ struct LookupResult: Identifiable, Sendable {
     }
 }
 
+@MainActor
 final class AddressLookupService: NSObject {
     
-    // Mark as nonisolated(unsafe) since we control the access pattern
-    // This remove warnings until Apple's MapKit types has been audited for Sendable, could probably be removed then
-    //private nonisolated(unsafe) var queryContinuation: CheckedContinuation<[MKLocalSearchCompletion], any Error>?
     private var queryContinuation: CheckedContinuation<[LookupResult], any Error>?
     private let completer: MKLocalSearchCompleter
     private let locationManager: LocationManager
@@ -44,66 +42,56 @@ final class AddressLookupService: NSObject {
         }
         
         // Cancel any in-flight continuation
-        queryContinuation?.resume(throwing: CancellationError())
-        queryContinuation = nil
+        if let old = queryContinuation {
+            queryContinuation = nil
+            old.resume(throwing: CancellationError())
+        }
 
         return try await withCheckedThrowingContinuation { continuation in
             queryContinuation = continuation
             completer.queryFragment = query
         }
     }
-}
-
-extension AddressLookupService: MKLocalSearchCompleterDelegate {
     
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+    // Private methods to handle results on MainActor
+    private func handleResults(_ results: [MKLocalSearchCompletion]) {
+        guard let continuation = queryContinuation else { return }
+        queryContinuation = nil
         
-        //Task { @MainActor in
-            queryContinuation?.resume(returning: completer.results.map({ LookupResult(localSearchCompletion: $0) }))
-            queryContinuation = nil
-        //}
-
-//        let p: MKMapItem
-//        p.pointOfInterestCategory
-//        
-        for r in completer.results {
+        let lookupResults = results.map { LookupResult(localSearchCompletion: $0) }
+        continuation.resume(returning: lookupResults)
+        
+        //        let p: MKMapItem
+        //        p.pointOfInterestCategory
+        //
+        for r in results {
             print("R: \(r.title)")
             print("   \(r.subtitle)")
             print("   \(r.description)")
             print("---------")
         }
-        /*
+    }
+    
+    private func handleError(_ error: Error) {
+        guard let continuation = queryContinuation else { return }
+        queryContinuation = nil
+        
+        continuation.resume(throwing: error)
+    }
+}
 
-        Task {
-            if let first = completer.results.first {
-                let request = MKLocalSearch.Request(completion: first)
-                let search = MKLocalSearch(request: request)
-                do {
-                    let response = try await search.start()
-                    print("FIRST LOC FOUND : ")
-                    print("Name: \(response.mapItems.first!.name)")
-                    if #available(iOS 26.0, *) {
-                        print("Address: \(response.mapItems.first!.address)")
-                    } else {
-                        if let postalAddress = response.mapItems.first!.placemark.postalAddress {
-                            let formatter = CNPostalAddressFormatter()
-                            let addressString = formatter.string(from: postalAddress)
-                            print("Address Postal: \(addressString)")
-                        }
-                    }
-                    print("Phone: \(response.mapItems.first!.phoneNumber)")
-                    print("URL: \(response.mapItems.first!.url)")
-
-                } catch {
-                    print("oulala")
-                }
-            }
+@MainActor
+extension AddressLookupService: MKLocalSearchCompleterDelegate {
+    
+    nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        Task { @MainActor in
+            handleResults(completer.results)
         }
-         */
     }
 
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: any Error) {
-        queryContinuation?.resume(throwing: error)
-        queryContinuation = nil
+    nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: any Error) {
+        Task { @MainActor in
+            handleError(error)
+        }
     }
 }

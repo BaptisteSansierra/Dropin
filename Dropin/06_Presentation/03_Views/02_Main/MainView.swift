@@ -33,15 +33,19 @@ struct MainView: View {
     var body: some View {
         @Bindable var navigationContext = navigationContext
         
-        ZStack {
-            viewModel.createPlacesMapView()
-                .opacity(selectedTab == 0 ? 1 : 0)
+        //NavigationStack(path: $navigationContext.navigationPath) {
             
-            viewModel.createPlacesListView()
-                .opacity(selectedTab == 1 ? 1 : 0)
+            ZStack {
+                viewModel.createPlacesMapView()
+                    .opacity(selectedTab == 0 ? 1 : 0)
+                
+                viewModel.createPlacesListView()
+                    .opacity(selectedTab == 1 ? 1 : 0)
+                
+                customTabView
+            }
             
-            customTabView
-        }
+        //}
         .task {
             Task {
                 try await viewModel.loadPlaces()

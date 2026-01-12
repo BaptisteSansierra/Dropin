@@ -8,48 +8,36 @@
 import SwiftUI
 import MapKit
 
-
-struct CustomOverlay<Item: NSObject, OverlayContent: View>: ViewModifier {
-    
-    var item: Item?
-    @ViewBuilder let overlayContent: () -> OverlayContent
-    
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if let _ = item {
-            content.overlay {
-                overlayContent()
-                
-//                Color.red
-//                    .opacity(0.3)
-//                    .ignoresSafeArea()
-            }
-        } else {
-            content
-        }
-    }
-}
-
-
 struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
-    @State private var selected: LookupResult? {
-        didSet {
-//            if selected == nil {
-//                print("DIDSet selected NIIIL")
-//            } else {
-//                print("DIDSet selected = \(selected!.item.title)")
-//            }
-        }
-    }
-    @State private var showDetails: Bool = false
+//    @State private var selected: LookupResult?
+//    @State private var showDetails: Bool = false
 
     // MARK: - init
     init(viewModel: LookupPlacesViewModel) {
         self.viewModel = viewModel
     }
+    
+    
+//    @ViewBuilder
+//    private func errorView(_ error: Error) -> some View {
+//        VStack {
+//            Text("Unable to find location")
+//            switch error {
+//                case let viewError as LookupPlaceViewModel.ViewError:
+//                    switch viewError {
+//                        case .noResultFound:
+//                            Text("no result found")
+//                    }
+//                default:
+//                    Text(commonErrorMessage(error))
+//            }
+//        }
+//    }
+    
+    
 
     // MARK: - Body
     var body: some View {
@@ -59,19 +47,32 @@ struct LookupPlacesView: View {
             .padding(.horizontal)
             .padding(.bottom, 20)
             Divider()
-            if let _ = viewModel.lookupError {
-                errorView
-            } else {
-                if viewModel.results.count > 0 {
-                    resultsView
+            if viewModel.reachabilityService.isConnected {
+                if let _ = viewModel.lookupError {
+                    errorView
                 } else {
-                    placeholderView
+                    ZStack {
+                        if viewModel.results.count > 0 || viewModel.searching {
+                            resultsView
+                        } else {
+                            placeholderView
+                        }
+                        if viewModel.resolving {
+                            Color.gray
+                                .opacity(0.25)
+                                .ignoresSafeArea()
+                            ProgressView()
+                        }
+                    }
                 }
+            } else {
+                noConnectionView
             }
             Spacer()
         }
         .navigationTitle("common.save_new_place")
         .navigationBarTitleDisplayMode(.inline)
+// Use Apple default ?
 //        .searchable(text: $searchText,
 //                    placement: .navigationBarDrawer,
 //                    prompt: "Do your math")
@@ -80,32 +81,26 @@ struct LookupPlacesView: View {
             viewModel.query = "ddd"
             #endif
         }
-        .fullScreenCover(isPresented: $showDetails,
-                         onDismiss: {
-                             selected = nil
-                         },
-                         content: {
-            if let selected = selected {
-                viewModel.createLookupPlaceView(selected)
-            } else {
-                //_ = assertionFailure("undefined")
-                EmptyView()
-                //fatalError("unexpected undefined MKLocalSearchCompletion")
-                // print("OUlalalalal")
-            }
+//        .fullScreenCover(item: $selected,
+//                         content: { item in
+//            viewModel.createLookupPlaceView(item)
+//        })
+//        .sheet(item: $selected) { item in
+//            viewModel.createLookupPlaceView(item)
+//                .presentationBackground(.ultraThinMaterial)
+//        }
+        .sheet(item: $viewModel.resolvedPlace,
+               content: { item in
+            viewModel.createLookupPlaceView(item)
+                .presentationBackground(.ultraThinMaterial)
         })
-//        .modifier(CustomOverlay(item: selected, overlayContent: {
-//
-////            Color.red
-////                .opacity(0.3)
-////                .ignoresSafeArea()
-//            if let selected = selected {
-//                viewModel.createLookupPlaceView(selected)
-//            } else {
-//                EmptyView()
-//            }
-//
-//        }))
+        .onChange(of: viewModel.reachabilityService.isConnected) { oldValue, newValue in
+            if newValue {
+                viewModel.updateQuery()
+            } else {
+                viewModel.resetResults()
+            }
+        }
     }
         
     // MARK: - Subviews
@@ -119,25 +114,38 @@ struct LookupPlacesView: View {
         }
     }
     
-    private var resultsView: some View {
-        List {
-            ForEach(viewModel.results, id: \.id) { item in
-                
-                Button {
-                    presentDetails(item)
-                } label: {
-                    itemCell(item)
-                }
+    private var noConnectionView: some View {
+        ContentUnavailableView {
+            Label("error.no_connection", systemImage: "antenna.radiowaves.left.and.right.slash")
+        }
+    }
 
-                
-//                NavigationLink {
-//                    viewModel.createLookupPlaceView(item)
-//                } label: {
-//                    itemCell(item)
-//                }
+    private var resultsView: some View {
+        ZStack {
+            List {
+                ForEach(viewModel.results, id: \.id) { item in
+                    Button {
+                        presentDetails(item)
+                    } label: {
+                        itemCell(item)
+                    }
+                }
+            }
+            .listStyle(.inset)
+            if viewModel.searching {
+                if viewModel.results.count > 0 {
+                    Color.gray
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .opacity(0.25)
+                }
+                VStack {
+                    ProgressView()
+                        .frame(height: 100)
+                    Spacer()
+                }
             }
         }
-        .listStyle(.inset)
     }
     
     @ViewBuilder
@@ -162,8 +170,11 @@ struct LookupPlacesView: View {
     
     // MARK: - private methods
     private func presentDetails(_ lookupResult: LookupResult) {
-        selected = lookupResult
-        showDetails = true
+        Task {
+            await viewModel.resolvePlace(lookupResult)
+        }
+//        selected = lookupResult
+//        showDetails = true
     }
 }
 

@@ -49,4 +49,23 @@ extension View {
                                       trailing: trailingView is EmptyView ? nil : AnyView(trailingView),
                                       title: titleView is EmptyView ? nil : AnyView(titleView)))
     }
+    
+    func commonErrorMessage(_ error: Error) -> String {
+        switch error {
+            case let urlError as URLError:
+                switch urlError.code {
+                    case .notConnectedToInternet:
+                        return "No internet connection"
+                    case .timedOut:
+                        return "Request timed out, check your internet connection"
+                    default:
+                        return "URLError: \(urlError.code)"
+                }
+
+            case let nsError as NSError where nsError.domain == NSURLErrorDomain:
+                return "NSURLDomainError: \(nsError.localizedDescription)"
+            default:
+                return "Unknown error: \(error.localizedDescription)"
+        }
+    }
 }

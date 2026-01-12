@@ -6,6 +6,7 @@
 //
 
 import MapKit
+import Contacts
 
 extension MKMapItem {
     
@@ -288,4 +289,27 @@ extension MKMapItem {
         }
     }
      */
+    
+    
+    func resolvedAddress() -> String? {
+        if #available(iOS 26.0, *) {
+            if let itemAddress = address {
+                return itemAddress.fullAddress
+            }
+        } else {
+            if let postalAddress = placemark.postalAddress {
+                let formatter = CNPostalAddressFormatter()
+                return formatter.string(from: postalAddress)
+            }
+        }
+        return nil
+    }
+    
+    func resolvedCoordinates() -> CLLocationCoordinate2D {
+        if #available(iOS 26.0, *) {
+            return location.coordinate
+        } else {
+            return placemark.coordinate
+        }
+    }
 }

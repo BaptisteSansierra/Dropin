@@ -12,6 +12,7 @@ struct LookupPlaceView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlaceViewModel
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: - init
     init(viewModel: LookupPlaceViewModel) {
@@ -22,38 +23,21 @@ struct LookupPlaceView: View {
     var body: some View {
         ZStack {
             Color.gray
-                .opacity(0.25)
+                .opacity(0)
                 .ignoresSafeArea()
-            if let result = viewModel.resolvedResult {
-                VStack {
+            VStack {
+                Spacer()
+                contentView(viewModel.lookupResolvedItem)
+                Spacer()
+                HStack {
                     Spacer()
-                    if viewModel.showContent {
-                        contentView(result)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
+                    cancelButton
                     Spacer()
-                    HStack {
-                        Spacer()
-                        if viewModel.showContent {
-                            cancelButton
-                                .transition(.move(edge: .leading).combined(with: .opacity))
-                        }
-                        Spacer()
-                        if viewModel.showContent {
-                            confirmButton
-                                .transition(.move(edge: .trailing).combined(with: .opacity))
-                        }
-                        Spacer()
-                    }
+                    confirmButton
                     Spacer()
                 }
-                
-            } else {
-                loadingView
+                Spacer()
             }
-        }
-        .task {
-            await viewModel.requestPlace()
         }
     }
     
@@ -69,7 +53,7 @@ struct LookupPlaceView: View {
                 Image(systemName: "multiply")
                     .font(.system(size: 30))
                     .foregroundStyle(.red)
-                    .opacity(0.2)
+                    .opacity(0.5)
             }
             .padding(.trailing, 20)
         }
@@ -87,7 +71,7 @@ struct LookupPlaceView: View {
                 Image(systemName: "plus")
                     .font(.system(size: 30))
                     .foregroundStyle(.dropinPrimary)
-                    .opacity(0.2)
+                    .opacity(0.5)
             }
             .padding(.leading, 20)
         }
@@ -101,24 +85,7 @@ struct LookupPlaceView: View {
             ProgressView()
         }
     }
-    
-    private func errorView(_ error: Error) -> some View {
-        VStack {
-            Text("Error")
-            Text(error.localizedDescription)
-        }
-    }
-    
-    @ViewBuilder
-    private func contentView(_ result: Result<LookupResolvedItem, Error>) -> some View {
-        switch result {
-            case .success(let item):
-                contentView(item)
-            case .failure(let error):
-                errorView(error)
-        }
-    }
-    
+
     private func contentView(_ item: LookupResolvedItem) -> some View {
         VStack {
             Map(position: $viewModel.camera,
@@ -149,34 +116,28 @@ struct LookupPlaceView: View {
                 }
             }
             .onAppear {
-                viewModel.updateCamera(coordinates: item.location)
+                viewModel.updateCamera(coordinates: item.coordinates)
             }
             .frame(height: 350)
             .padding(.bottom, 10)
             HStack(spacing: 0) {
-                if let poiItem = item as? LookupPOIResolvedItem {
-                    ZStack {
-                        Circle()
-                            .fill(.dropinPrimary)
-                            .frame(width: 30, height: 30)
-                        IconView(icon: poiItem.icon)
+                ZStack {
+                    Circle()
+                        .fill(.dropinPrimary)
+                        .frame(width: 30, height: 30)
+                    if let icon = item.icon {
+                        IconView(icon: icon)
                             .sizeCaption2()
                             .foregroundStyle(.white)
                             .padding(.horizontal, 0)
-                    }
-                    .padding(.leading)
-                } else {
-                    ZStack {
-                        Circle()
-                            .fill(.dropinPrimary)
-                            .frame(width: 30, height: 30)
+                    } else {
                         Image(systemName: "signpost.right.and.left")
                             .font(.caption2)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 0)
                     }
-                    .padding(.leading)
                 }
+                .padding(.leading)
                 VStack(alignment: .leading, spacing: 0) {
                     textResolvingName(for: item)
                         .cellTitleFormater()
@@ -208,29 +169,45 @@ struct LookupPlaceView: View {
     
     // MARK: - private methods
     private func textResolvingName(for item: LookupResolvedItem) -> Text {
-        if let poiItem = item as? LookupPOIResolvedItem,
-           let poiName = poiItem.name {
-            return Text(verbatim: poiName)
+        switch item.type {
+            case .address:
+                return Text("common.new_place")
+            case .poi:
+                if let name = item.name {
+                    return Text(verbatim: name)
+                } else {
+                    assertionFailure("undefined name for POI")
+                    return Text("common.new_place")
+                }
         }
-        return Text("common.new_place")
     }
     
     private func markerResolvingName(for item: LookupResolvedItem) -> some MapContent {
-        if let poiItem = item as? LookupPOIResolvedItem,
-           let poiName = poiItem.name {
-            return Marker(poiName,
-                          systemImage: item.mapItem.icon().name,
-                          coordinate: item.location)
+        switch item.type {
+            case .address:
+                return Marker("common.new_place",
+                              systemImage: item.mapItem.icon().name,
+                              coordinate: item.coordinates)
+            case .poi:
+                if let name = item.name {
+                    return Marker(name,
+                                  systemImage: item.mapItem.icon().name,
+                                  coordinate: item.coordinates)
+                } else {
+                    assertionFailure("undefined name for POI")
+                    return Marker("common.new_place",
+                                  systemImage: item.mapItem.icon().name,
+                                  coordinate: item.coordinates)
+                }
         }
-        return Marker("common.new_place",
-                      systemImage: item.mapItem.icon().name,
-                      coordinate: item.location)
     }
     
     private func confirm() {
+        
     }
     
     private func cancel() {
+        dismiss()
     }
 }
 
@@ -243,6 +220,7 @@ import MapKit
 struct MockLookupPlaceView: View {
     var mock: MockContainer
     @State private var results: [LookupResult] = []
+    @State private var lookupResolvedItem: LookupResolvedItem?
     @State private var lookupError: Error?
 
     var body: some View {
@@ -252,8 +230,8 @@ struct MockLookupPlaceView: View {
                     Text("Error")
                     Text(error.localizedDescription)
                 }
-            } else if let first = results.first {
-                mock.appContainer.createLookupPlaceView(lookupResult: first)
+            } else if let lookupResolvedItem = lookupResolvedItem {
+                mock.appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem)
             } else {
                 VStack {
                     Text("Loading...")
@@ -274,7 +252,37 @@ struct MockLookupPlaceView: View {
     private func load() async {
         do {
             //self.results = try await mock.addressLookupService.search(query: "la chitarra")
-            self.results = try await mock.addressLookupService.search(query: "4 rue de la passerelle")
+            self.results = try await mock.addressLookupService.search(query: "5 rue chevalet")
+            if let first = results.first {
+                let request = MKLocalSearch.Request(completion: first.localSearchCompletion)
+                let search = MKLocalSearch(request: request)
+                do {
+                    let response = try await search.start()
+                    guard let item = response.mapItems.first else {
+                        let error = URLError(.fileDoesNotExist)
+                        throw error
+                    }
+                    // Return resolved item
+                    if let poi = item.pointOfInterestCategory {
+                        lookupResolvedItem = LookupResolvedItem(mapItem: item,
+                                                                address: item.resolvedAddress() ?? "N/A",
+                                                                coordinates: item.resolvedCoordinates(),
+                                                                distance: "N/A",
+                                                                name: item.name,
+                                                                pointOfInterestCategory: poi,
+                                                                icon: item.icon())
+                    } else {
+                        lookupResolvedItem = LookupResolvedItem(mapItem: item,
+                                                                address: item.resolvedAddress() ?? "N/A",
+                                                                coordinates: item.resolvedCoordinates(),
+                                                                distance: "N/A")
+                    }
+                } catch {
+                    lookupError = error
+                }
+            } else {
+                lookupError = URLError(.badURL)
+            }
         } catch {
             self.lookupError = error
         }
@@ -282,33 +290,12 @@ struct MockLookupPlaceView: View {
 }
 
 #Preview {
-    @Previewable @State var show = false
     NavigationStack {
         VStack {
-//            Button {
-//                show.toggle()
-//            } label: {
-//                Text("Showw")
-//            }
-//            
-//            Spacer()
-
             MockLookupPlaceView()
                 .ignoresSafeArea()
         }
     }
-    .fullScreenCover(isPresented: $show) {
-        ZStack {
-            Color.red
-                //.opacity(0.3)
-            Text("Crotteeee")
-        }
-        .ignoresSafeArea()
-        .transition(.opacity)
-    }
-//    .alert("Jambon", isPresented: $show) {
-//        Button("Pioupiou", action: {print("Piou Piou")})
-//    }
 }
 
 #endif

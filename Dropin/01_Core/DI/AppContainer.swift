@@ -18,6 +18,7 @@ final class AppContainer {
     private let groupRepository: GroupRepository
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
+    private let reachabilityService: ReachabilityService
 
     init(modelContext: ModelContext, locationManager: LocationManager) {
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
@@ -25,6 +26,7 @@ final class AppContainer {
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
         self.locationManager = locationManager
         addressLookupService = AddressLookupService(locationManager: locationManager)
+        reachabilityService = ReachabilityService()
     }
     
     func createRootView() -> RootView {
@@ -139,15 +141,16 @@ final class AppContainer {
     
     func createLookupPlacesView() -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
-                                       addressLookupService: addressLookupService)
+                                       addressLookupService: addressLookupService,
+                                       locationManager: locationManager,
+                                       reachabilityService: reachabilityService)
         return LookupPlacesView(viewModel: vm)
     }
     
-    func createLookupPlaceView(lookupResult: LookupResult) -> LookupPlaceView {
+    func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem) -> LookupPlaceView {
         let vm = LookupPlaceViewModel(self,
                                       createPlace: CreatePlace(repository: placeRepository),
-                                      locationManager: locationManager,
-                                      lookupResult: lookupResult)
+                                      lookupResolvedItem: lookupResolvedItem)
         return LookupPlaceView(viewModel: vm)
     }
 }

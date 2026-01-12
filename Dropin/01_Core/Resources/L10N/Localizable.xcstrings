@@ -955,6 +955,16 @@
     "Error while fetching" : {
 
     },
+    "error.no_connection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection"
+          }
+        }
+      }
+    },
     "From image library (not implemented) " : {
 
     },
