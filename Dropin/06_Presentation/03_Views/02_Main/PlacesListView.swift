@@ -129,10 +129,7 @@ struct PlacesListView: View {
 
     private var flatList: some View {
         ForEach(viewModel.sortedPlaces) { place in
-            NavigationLink(value: PlaceMapper.toDomain(place)) {
-                PlaceRowView(place: place)
-                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-            }
+            placeRowView(place)
         }
     }
 
@@ -146,10 +143,7 @@ struct PlacesListView: View {
                    let groupName = firstPlace.group?.name {
                     Section(groupName) {
                         ForEach(groupPlaces) { place in
-                            NavigationLink(value: PlaceMapper.toDomain(place)) {
-                                PlaceRowView(place: place)
-                                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                            }
+                            placeRowView(place)
                         }
                     }
                 }
@@ -157,15 +151,21 @@ struct PlacesListView: View {
             if viewModel.ungroupedSortedPlaces.count > 0 {
                 Section("common.not_grouped") {
                     ForEach(viewModel.ungroupedSortedPlaces) { place in
-                        NavigationLink(value: PlaceMapper.toDomain(place)) {
-                            PlaceRowView(place: place)
-                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                        }
+                        placeRowView(place)
                     }
                 }
             }
         }
     }
+    
+    private func placeRowView(_ place: PlaceUI) -> some View {
+        PlaceRowView(place: place)
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+            .onTapGesture {
+                viewModel.pushPlaceDetailsView(placeId: place.id)
+            }
+    }
+
     
     // MARK: private methods
 //    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {

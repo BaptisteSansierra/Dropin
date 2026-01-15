@@ -36,59 +36,13 @@ import MapKit
         self.createPlace = createPlace
         self.lookupResolvedItem = lookupResolvedItem
     }
-//    
-//TODO: resolve the place before showinh this view => no connectivity issues to handle
-//    -> Push the LookupResolvedItem in navigation path
-//    
-//    TODO:    Remove all the NavigationLink => work with coordinator
-//    cf: chat : "IOS dev questions v2"
-//    
 
     // MARK: - Navigation
     func pushCreatePlaceView() {
         coordinator.pushUndefinedDummyView()
     }
 
-    // MARK: -
-    /*
-    func requestPlace() async {
-        searching = true
-        let request = MKLocalSearch.Request(completion: lookupResult.localSearchCompletion)
-        let search = MKLocalSearch(request: request)
-        do {
-            let response = try await search.start()
-            guard let item = response.mapItems.first else {
-                let error = ViewError.noResultFound
-                throw error
-            }
-            // TODO remove force
-            resolvedResult = .success(try! resolvedResultFromMapItem(item))
-            
-            searching = false
-            //showContent = true
-
-
-//            print("FIRST LOC FOUND : ")
-//            print("Name: \(response.mapItems.first!.name)")
-//            if #available(iOS 26.0, *) {
-//                print("Address: \(response.mapItems.first!.address)")
-//            } else {
-//                if let postalAddress = response.mapItems.first!.placemark.postalAddress {
-//                    let formatter = CNPostalAddressFormatter()
-//                    let addressString = formatter.string(from: postalAddress)
-//                    print("Address Postal: \(addressString)")
-//                }
-//            }
-//            print("Phone: \(response.mapItems.first!.phoneNumber)")
-//            print("URL: \(response.mapItems.first!.url)")
-
-        } catch {
-            resolvedResult = .failure(error)
-            searching = false
-        }
-    }
-     */
-    
+    // MARK: - Actions
     func zoomIn() {
         guard cameraDistance >= 125 else { return }
         cameraDistance /= 2

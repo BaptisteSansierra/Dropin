@@ -210,7 +210,7 @@ struct MockTagDetailsView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.tag = mock.getTagUI(0)
+        self.tag = mock.getTagUI(1)
     }
 }
 

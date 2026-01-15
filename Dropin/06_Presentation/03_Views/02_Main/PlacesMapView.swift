@@ -84,14 +84,6 @@ struct PlacesMapView: View {
         } label: {
             Text("menu.new_place.adress")
         }
-
-//        NavigationLink {
-//            viewModel.createLookupPlacesView()
-//        } label: {
-//            Text("OBSOLETE menu.new_place.adress")
-//        }
-//        
-        
         // Create place from here now
         Button {
         } label: {

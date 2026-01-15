@@ -58,6 +58,18 @@ import SwiftUI
         sortGroupedPlaces(places)
     }
 
+    // MARK: Navigation
+    func pushPlaceDetailsView(placeId: String) {
+        coordinator.pushPlaceDetailsView(placeId: placeId)
+    }
+
+    // MARK: - Use cases
+    func loadPlaces() async throws -> [PlaceUI] {
+        let domainPlaces = try await getPlaces.execute()
+        return domainPlaces.map { PlaceMapper.toUI($0) }
+    }
+
+    // MARK: - private methods
     private func sortGroupedPlaces(_ places: [PlaceUI]) {
         groupedSortedPlaces.removeAll()
         ungroupedSortedPlaces.removeAll()
@@ -120,11 +132,5 @@ import SwiftUI
 //        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
 //    }
 
-    // MARK: - Use cases
-    func loadPlaces() async throws -> [PlaceUI] {
-        let domainPlaces = try await getPlaces.execute()
-        return domainPlaces.map { PlaceMapper.toUI($0) }
-    }
 
-    // MARK: - private methods
 }
