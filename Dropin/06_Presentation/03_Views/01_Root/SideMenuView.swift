@@ -10,7 +10,8 @@ import SwiftUI
 struct SideMenuView: View {
     
     // MARK: - States & Bindings
-    @Binding var currentSideMenuContext: SideMenuContext
+    @Binding private var currentSideMenuContext: SideMenuContext
+    @State private var logoVariant: DropinLogo.Variant = .logo
 
     // MARK: - Dependencies
     @Environment(NavigationContext.self) var navigationContext
@@ -159,18 +160,24 @@ struct SideMenuView: View {
                         Circle()
                             .foregroundStyle(.backgroundPrimary)
                             .frame(width: 60, height: 60)
-                        DropinLogo(lineWidthMuliplier: 2, pinSizeMuliplier: 1.5)
+                        DropinLogo(variant: logoVariant,
+                                   lineWidthMuliplier: 2,
+                                   pinSizeMuliplier: 1.5)
                             .frame(width: 50, height: 50)
                     }
                     .padding(.leading, 25)
                     .padding(.trailing, 25)
-                    
+
                     Text("Dropin")
                         .foregroundStyle(.backgroundPrimary)
                         .font(.largeTitleSemibold)
 
                     Spacer()
                 }
+                .onTapGesture {
+                    logoVariant = DropinLogo.Variant.random(excluded: logoVariant)
+                }
+
                 Spacer()
             }
         }
