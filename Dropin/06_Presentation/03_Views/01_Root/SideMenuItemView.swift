@@ -40,13 +40,11 @@ struct SideMenuItemView: View {
                             .frame(width: 100, height: 50)
                             .opacity(0)
                         Image(systemName: systemImage)
-                            .font(.body)
-                            .fontWeight(.light)
+                            .font(.bodyLight)
                             .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : textColor)
                     }
                     Text(label)
-                        .font(context == currentSideMenuContext ? .headline : .body)
-                        .fontWeight(context == currentSideMenuContext ? .medium : .thin)
+                        .font(context == currentSideMenuContext ? .bodyMedium : .bodyThin)
                         .foregroundStyle(textColor)
                     Spacer()
                 }

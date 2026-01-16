@@ -17,6 +17,7 @@ struct TagView: View {
     // MARK: - Body
     var body: some View {
         Text(name)
+            .textStyle(.tagSticker)
             .font(.footnote)
             .bold()
             .foregroundColor(.white)

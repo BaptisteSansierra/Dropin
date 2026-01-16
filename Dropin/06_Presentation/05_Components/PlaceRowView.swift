@@ -32,19 +32,18 @@ struct PlaceRowView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(place.name)
-                        .cellTitleFormater()
+                        .textStyle(.cellTitle)
                         .allowsHitTesting(true)
                     Spacer()
                     Text(locationManager.distanceStringTo(place.coordinates) ?? "")
-                        .cellSubtitleFormater()
+                        .textStyle(.cellSubtitle)
                 }
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .foregroundStyle(.clear)
                         .frame(height: 40)
                     Text(place.address.isEmpty ? "" : place.address)
-                        .font(.caption2)
-                        .foregroundStyle(.gray)
+                        .textStyle(.cellSubtitle2)
                         .multilineTextAlignment(.leading)
                 }
                 ScrollView(.horizontal) {

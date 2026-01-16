@@ -82,6 +82,7 @@ struct LookupPlaceView: View {
     private var loadingView: some View {
         VStack {
             Text("Loading...")
+                .textStyle(.body)
             ProgressView()
         }
     }
@@ -140,16 +141,16 @@ struct LookupPlaceView: View {
                 .padding(.leading)
                 VStack(alignment: .leading, spacing: 0) {
                     textResolvingName(for: item)
-                        .cellTitleFormater()
+                        .textStyle(.cellTitle)
                         .padding(.vertical, 5)
                     Text(item.address)
-                        .cellSubtitleFormater()
+                        .textStyle(.cellSubtitle)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
                 if let distance = item.distance {
                     Text(distance)
-                        .font(.caption2)
+                        .textStyle(.cellDetail)
                         .padding(.trailing)
                 }
             }
@@ -162,7 +163,6 @@ struct LookupPlaceView: View {
             RoundedRectangle(cornerRadius: 25)
                 .fill(.white)
                 .shadow(color: .black.opacity(0.3), radius: 6, x: 2, y: -4)
-                
         }
         .padding()
     }

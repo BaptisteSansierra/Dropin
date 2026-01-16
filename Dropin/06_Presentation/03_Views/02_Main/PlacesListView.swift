@@ -15,9 +15,6 @@ struct PlacesListView: View {
     @Binding private var places: [PlaceUI]
     @State private var renderList = false
 
-    // MARK: - Dependencies
-    @Environment(NavigationContext.self) private var navigationContext
-
     // MARK: - Init
     init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
         self.viewModel = viewModel
@@ -26,26 +23,21 @@ struct PlacesListView: View {
 
     // MARK: - Body
     var body: some View {
-        
-        @Bindable var navigationContext = navigationContext
-        
-        //NavigationStack(path: $navigationContext.navigationPath) {
-
-            Group {
-                if viewModel.loading || !renderList {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                } else {
-                    List {
-                        // Show places without groups (empty if #2)
-                        if !viewModel.grouped { flatList }
-                        // Show grouped places (empty if #1)
-                        else { groupedList }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .listStyle(.grouped)
-                    // TODO: to be implemented
-                    //.searchable(text: $viewModel.searchText)
+        Group {
+            if viewModel.loading || !renderList {
+                ProgressView()
+                    .progressViewStyle(.circular)
+            } else {
+                List {
+                    // Show places without groups (empty if #2)
+                    if !viewModel.grouped { flatList }
+                    // Show grouped places (empty if #1)
+                    else { groupedList }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .listStyle(.grouped)
+                // TODO: to be implemented?
+                //.searchable(text: $viewModel.searchText)
 //                    .searchPresentationToolbarBehavior(.avoidHidingContent)
 //                    .refreshable {
 //                        Task {
@@ -56,26 +48,21 @@ struct PlacesListView: View {
 //                        Color.clear
 //                            .frame(height: 15)
 //                    }
-                }
             }
-            .task {
-                //try? await Task.sleep(for: .seconds(0.5))
-                try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
-                renderList = true
-                Task {
-                    viewModel.updateSorting(places)
-                }
-            }
-            // TO RESTORE
-            //            .onChange(of: places) {
-            //                viewModel.updateSorting(places)
-            //            }
-            .onChange(of: viewModel.grouped) {
+        }
+        .task {
+            try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
+            renderList = true
+            Task {
                 viewModel.updateSorting(places)
             }
-            .onChange(of: viewModel.sortMode) {
-                viewModel.updateSorting(places)
-            }
+        }
+        .onChange(of: viewModel.grouped) {
+            viewModel.updateSorting(places)
+        }
+        .onChange(of: viewModel.sortMode) {
+            viewModel.updateSorting(places)
+        }
 
 //            .customToolbar(tabIndex: 1,
 //                           leading: {

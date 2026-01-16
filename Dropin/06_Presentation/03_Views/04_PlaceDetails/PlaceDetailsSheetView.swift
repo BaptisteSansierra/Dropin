@@ -85,7 +85,7 @@ struct PlaceDetailsSheetView: View {
                     .foregroundStyle(.dropinPrimary)
                     .frame(height: DropinApp.ui.button.height)
                 Text("common.go")
-                    .foregroundStyle(.white)
+                    .textStyle(.mainButton)
             }
             .padding(.leading, 15)
             .onTapGesture { onPressGo() }
@@ -95,7 +95,7 @@ struct PlaceDetailsSheetView: View {
                     .foregroundStyle(.dropinPrimary)
                     .frame(height: DropinApp.ui.button.height)
                 Text("common.edit")
-                    .foregroundStyle(.white)
+                    .textStyle(.mainButton)
             }
             .padding(.trailing, 15)
             .onTapGesture { onPressEdit() }

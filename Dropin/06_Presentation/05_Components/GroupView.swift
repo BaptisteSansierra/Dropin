@@ -16,80 +16,53 @@ struct GroupView: View {
         case none
     }
 
-    fileprivate enum GDispMod {
-        case legacy
-        case final
-    }
-
     // MARK: - private vars
     private var name: String
     private var color: Color
     private var icon: Icon?
     private var action: (() -> Void)?
     private var actionType: ActionType
-    private var mode: GDispMod = .final
 
     // MARK: - Body
     var body: some View {
-        
-        switch mode {
-            case .legacy:
-                ZStack(alignment: .topTrailing) {
-                    ZStack(alignment: .center) {
-                        Text(name)
-                            .font(.headline)
-                            .padding(9)
-                            .cornerRadius(5)
-                            .overlay {
-                                RoundedRectangle(cornerSize: CGSize(width: 6, height: 6))
-                                    .stroke(color, lineWidth: 2)
-                            }
-                            .padding()
-                    }
-                    actionButton
+        ZStack(alignment: .topTrailing) {
+            HStack(alignment: .center, spacing: 10) {
+                if let icon = icon {
+                    IconView(icon: icon)
+                        .sizeBody()
                 }
-                .padding(.horizontal, 10)
-
-            case .final:
-                ZStack(alignment: .topTrailing) {
-                    HStack(alignment: .center, spacing: 10) {
-                        if let icon = icon {
-                            IconView(icon: icon)
-                                .sizeBody()
-                        }
-                        Text(name)
-                            .font(.headline)
+                Text(name)
+                    .textStyle(.groupSticker)
+            }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .overlay {
+                ZStack {
+                    GeometryReader { geom in
+                        RoundedRectangle(cornerSize: 8)
+                            .stroke(color,
+                                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                            .frame(width: geom.size.width,
+                                   height: geom.size.height)
+                        RoundedRectangle(cornerSize: 8)
+                            .stroke(color.opacity(0.5),
+                                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                            .offset(x: 1, y: 1)
+                            .frame(width: geom.size.width - 2,
+                                   height: geom.size.height - 2)
+                        RoundedRectangle(cornerSize: 8)
+                            .stroke(color.opacity(0.2),
+                                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                            .offset(x: 2, y: 2)
+                            .frame(width: geom.size.width - 4,
+                                   height: geom.size.height - 4)
                     }
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 14)
-                    .overlay {
-                        ZStack {
-                            GeometryReader { geom in
-                                RoundedRectangle(cornerSize: 8)
-                                    .stroke(color,
-                                            style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                                    .frame(width: geom.size.width,
-                                           height: geom.size.height)
-                                RoundedRectangle(cornerSize: 8)
-                                    .stroke(color.opacity(0.5),
-                                            style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                                    .offset(x: 1, y: 1)
-                                    .frame(width: geom.size.width - 2,
-                                           height: geom.size.height - 2)
-                                RoundedRectangle(cornerSize: 8)
-                                    .stroke(color.opacity(0.2),
-                                            style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
-                                    .offset(x: 2, y: 2)
-                                    .frame(width: geom.size.width - 4,
-                                           height: geom.size.height - 4)
-                            }
-                        }
-                    }
-                    actionButton
-                        .offset(x: 14, y: -14)
                 }
-                .padding(.horizontal, 10)
+            }
+            actionButton
+                .offset(x: 14, y: -14)
         }
+        .padding(.horizontal, 10)
     }
     
     private var removeButton: some View {
@@ -132,20 +105,6 @@ struct GroupView: View {
         self.action = action
     }
 
-    fileprivate init(name: String,
-                     color: Color,
-                     icon: Icon?,
-                     actionType: ActionType = .none,
-                     action: (() -> Void)? = nil,
-                     mode: GDispMod ) {
-        self.name = name
-        self.color = color
-        self.icon = icon
-        self.actionType = actionType
-        self.action = action
-        self.mode = mode
-    }
-
     init(group: GroupUI,
          actionType: ActionType = .none,
          action: (() -> Void)? = nil) {
@@ -159,11 +118,6 @@ struct GroupView: View {
 
 #Preview {
     VStack(spacing: 20) {
-        GroupView(name: "Legacy",
-                  color: .brown,
-                  icon: .sf("tag"),
-                  mode: .legacy)
-
         GroupView(name: "Nice Group",
                   color: .brown,
                   icon: .sf("tag"))

@@ -32,6 +32,7 @@ struct TagListView: View {
                             Spacer()
                             let nPlaces = tag.places.count
                             Text("tag_list_view.num_places_\(nPlaces)")
+                                .textStyle(.placeholder)
                         }
                         .swipeActions {
                             Button() {

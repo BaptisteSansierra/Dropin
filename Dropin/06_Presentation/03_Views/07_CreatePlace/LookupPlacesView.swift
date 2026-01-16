@@ -12,32 +12,11 @@ struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
-//    @State private var selected: LookupResult?
-//    @State private var showDetails: Bool = false
 
     // MARK: - init
     init(viewModel: LookupPlacesViewModel) {
         self.viewModel = viewModel
     }
-    
-    
-//    @ViewBuilder
-//    private func errorView(_ error: Error) -> some View {
-//        VStack {
-//            Text("Unable to find location")
-//            switch error {
-//                case let viewError as LookupPlaceViewModel.ViewError:
-//                    switch viewError {
-//                        case .noResultFound:
-//                            Text("no result found")
-//                    }
-//                default:
-//                    Text(commonErrorMessage(error))
-//            }
-//        }
-//    }
-    
-    
 
     // MARK: - Body
     var body: some View {
@@ -81,14 +60,6 @@ struct LookupPlacesView: View {
             viewModel.query = "ddd"
             #endif
         }
-//        .fullScreenCover(item: $selected,
-//                         content: { item in
-//            viewModel.createLookupPlaceView(item)
-//        })
-//        .sheet(item: $selected) { item in
-//            viewModel.createLookupPlaceView(item)
-//                .presentationBackground(.ultraThinMaterial)
-//        }
         .sheet(item: $viewModel.resolvedPlace,
                content: { item in
             viewModel.createLookupPlaceView(item)
@@ -110,6 +81,7 @@ struct LookupPlacesView: View {
         } description: {
             if let error = viewModel.lookupError {
                 Text(error.localizedDescription)
+                    .textStyle(.body)
             }
         }
     }
@@ -162,9 +134,9 @@ struct LookupPlacesView: View {
     private func itemCell(_ item: LookupResult) -> some View {
         VStack(alignment: .leading) {
             Text(item.localSearchCompletion.title)
-                .cellTitleFormater()
+                .textStyle(.cellTitle)
             Text(item.localSearchCompletion.subtitle)
-                .cellSubtitleFormater()
+                .textStyle(.cellSubtitle)
         }
     }
     
@@ -173,8 +145,6 @@ struct LookupPlacesView: View {
         Task {
             await viewModel.resolvePlace(lookupResult)
         }
-//        selected = lookupResult
-//        showDetails = true
     }
 }
 

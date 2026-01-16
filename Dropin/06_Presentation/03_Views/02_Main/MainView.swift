@@ -31,10 +31,7 @@ struct MainView: View {
     
     // MARK: - Body
     var body: some View {
-        //@Bindable var navigationContext = navigationContext
-        
         NavigationStack(path: $viewModel.coordinator.path) {
-            
             ZStack {
                 viewModel.createPlacesMapView()
                     .opacity(selectedTab == 0 ? 1 : 0)
@@ -74,9 +71,11 @@ struct MainView: View {
             }
         }
         .accentColor(.dropinSecondary)
+        /* obsolete TODO: remove
         .onChange(of: navigationContext.navigationPath) { oldValue, newValue in
             animateTabBar(oldNavigationPath: oldValue, newNavigationPath: newValue)
         }
+         */
     }
     
     // MARK: subviews
@@ -99,10 +98,13 @@ struct MainView: View {
         Menu("common.sort", systemImage: "arrow.up.arrow.down") {
             Picker("common.sort", selection: $viewModel.sortMode) {
                 Text("common.sort.by_distance")
+                    .textStyle(.body)
                     .tag(PlacesListViewModel.SortMode.distance)
                 Text("common.sort.by_name")
+                    .textStyle(.body)
                     .tag(PlacesListViewModel.SortMode.alphabetically)
                 Text("common.sort.by_creation_date")
+                    .textStyle(.body)
                     .tag(PlacesListViewModel.SortMode.creationDate)
             }
             .pickerStyle(.inline)
@@ -161,6 +163,7 @@ struct MainView: View {
     }
 
     // MARK: private methods
+    /* obsolete TODO: remove
     private func animateTabBar(oldNavigationPath: NavigationPath, newNavigationPath: NavigationPath) {
         if oldNavigationPath.count == 0 && newNavigationPath.count > 0 {
             withAnimation(.easeInOut) {
@@ -174,6 +177,7 @@ struct MainView: View {
             }
         }
     }
+     */
 
     private func createPlaceDetailsView(_ placeId: String) -> PlaceDetailsView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
@@ -217,12 +221,12 @@ private struct CenteredLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .center, spacing: 0) {
             configuration.icon
-                .font(.subheadline)
+                .font(.subheadlineRegular)
                 .frame(height: 15)
                 //.border(.red, width: 1)
                 .padding(.bottom, 5)
             configuration.title
-                .font(.footnote)
+                .font(.footnoteRegular)
         }
     }
 }

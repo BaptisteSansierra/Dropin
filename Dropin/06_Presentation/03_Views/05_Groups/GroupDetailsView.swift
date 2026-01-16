@@ -87,10 +87,8 @@ struct GroupDetailsView: View {
     private var nameView: some View {
         VStack(alignment: .leading) {
             Text("common.group_name")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
@@ -98,6 +96,7 @@ struct GroupDetailsView: View {
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 TextField("common.group_name", text: $group.name)
+                    .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
                     .padding(.horizontal, 40)
@@ -113,11 +112,9 @@ struct GroupDetailsView: View {
     private var colorView: some View {
         VStack(alignment: .leading) {
             Text("common.group_color")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
                 .padding(.top, 10)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
@@ -148,11 +145,9 @@ struct GroupDetailsView: View {
     private var iconView: some View {
         VStack(alignment: .leading) {
             Text("common.group_symbol")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
                 .padding(.top, 10)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
@@ -187,11 +182,9 @@ struct GroupDetailsView: View {
         VStack(alignment: .leading) {
             if group.places.count > 0 {
                 Text("common.related_places")
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .textStyle(.formSectionTitle2)
                     .padding(.leading, 40)
                     .padding(.top, 30)
-                    .foregroundStyle(.gray)
                 Divider()
                 List {
                     ForEach(group.places) { place in
@@ -210,11 +203,9 @@ struct GroupDetailsView: View {
                 }
             } else {
                 Text("common.no_related_places")
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .textStyle(.formSectionTitle2)
                     .padding(.leading, 40)
                     .padding(.top, 30)
-                    .foregroundStyle(.gray)
             }
         }
     }
@@ -226,7 +217,7 @@ struct GroupDetailsView: View {
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_group")
-                .foregroundStyle(.white)
+                .textStyle(.mainButton)
         }
         .padding(.bottom, 15)
         .onTapGesture {

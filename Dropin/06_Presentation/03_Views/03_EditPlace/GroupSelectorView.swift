@@ -46,6 +46,7 @@ struct GroupSelectorView: View {
         VStack {
             HStack {
                 Text("group_selector.title")
+                    .textStyle(.body)
                     .padding()
             }
             .padding(.top)
@@ -74,9 +75,13 @@ struct GroupSelectorView: View {
     private var groupPickerView: some View {
         VStack {
             Picker("common.groups", selection: selectedGroupId) {
-                Text("group_selector.none").tag("")
+                Text("group_selector.none")
+                    .tag("")
+                    .textStyle(.body)
                 ForEach(viewModel.groups) { group in
-                    Text(group.name).tag(group.id)
+                    Text(group.name)
+                        .tag(group.id)
+                        .textStyle(.body)
                 }
             }
             .pickerStyle(.wheel)
@@ -95,8 +100,7 @@ struct GroupSelectorView: View {
 
             } else {
                 Text("group_selector.none_selected")
-                    .font(.callout)
-                    .foregroundStyle(.gray)
+                    .textStyle(.placeholder)
                     .padding()
             }
             Divider()
@@ -106,7 +110,7 @@ struct GroupSelectorView: View {
     private var createGroupView: some View {
         HStack(spacing: 0) {
             @Bindable var place = place
-
+            // Color picker
             ZStack {
                 ColorPicker("", selection: $createdGroupColor, supportsOpacity: false)
                     .labelsHidden()
@@ -117,7 +121,7 @@ struct GroupSelectorView: View {
             }
             .frame(width: 50)
             .padding(.leading, 10)
-            //.border(.red, width: 2)
+            // Marker picker
             ZStack {
                 Circle()
                     .strokeBorder(style: StrokeStyle(lineWidth: 2))
@@ -141,8 +145,9 @@ struct GroupSelectorView: View {
             .frame(width: 50)
             .padding(.vertical)
             .padding(.trailing, 10)
-            //.border(.green, width: 2)
+            // Group name
             TextField("group_selector.new", text: $createdGroupName)
+                .textStyle(.body)
                 //.border(.blue, width: 2)
                 .autocorrectionDisabled()
                 .overlay {
@@ -150,8 +155,7 @@ struct GroupSelectorView: View {
                         ZStack(alignment: .leading) {
                             Rectangle().fill(.white)
                             Text("placeholder.group_name")
-                                .bold()
-                                .foregroundStyle(.red)
+                                .textStyle(.bodyError)
                         }
                     }
                 }

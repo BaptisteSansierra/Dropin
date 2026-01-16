@@ -73,10 +73,8 @@ struct TagDetailsView: View {
     private var nameView: some View {
         VStack(alignment: .leading) {
             Text("common.tag_name")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
@@ -84,6 +82,7 @@ struct TagDetailsView: View {
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 TextField("common.tag_name", text: $tag.name)
+                    .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
                     .padding(.horizontal, 40)
@@ -99,11 +98,9 @@ struct TagDetailsView: View {
     private var colorView: some View {
         VStack(alignment: .leading) {
             Text("common.tag_color")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
                 .padding(.top, 10)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
@@ -136,11 +133,9 @@ struct TagDetailsView: View {
             
             if tag.places.count > 0 {
                 Text("common.related_places")
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .textStyle(.formSectionTitle2)
                     .padding(.leading, 40)
                     .padding(.top, 30)
-                    .foregroundStyle(.gray)
                 Divider()
                 List {
                     ForEach(tag.places) { place in
@@ -159,11 +154,9 @@ struct TagDetailsView: View {
                 }
             } else {
                 Text("common.no_related_places")
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .textStyle(.formSectionTitle2)
                     .padding(.leading, 40)
                     .padding(.top, 30)
-                    .foregroundStyle(.gray)
             }
         }
     }
@@ -175,7 +168,7 @@ struct TagDetailsView: View {
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_tag")
-                .foregroundStyle(.white)
+                .textStyle(.mainButton)
         }
         .padding(.bottom, 15)
         .onTapGesture {

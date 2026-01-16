@@ -103,6 +103,7 @@ final class AppContainer {
 
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         let vm = PlaceDetailsViewModel(self,
+                                       coordinator: mainCoordinator,
                                        updatePlace: UpdatePlace(repository: placeRepository),
                                        deletePlace: DeletePlace(repository: placeRepository),
                                        getTags: GetTags(repository: tagRepository),

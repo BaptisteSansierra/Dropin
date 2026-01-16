@@ -57,6 +57,7 @@ struct MarkerListView: View {
     private var headerView: some View {
         ZStack {
             Text("markers.select")
+                .textStyle(.body)
                 .padding()
             HStack {
                 Spacer()
@@ -105,8 +106,7 @@ struct MarkerListView: View {
                             .padding(.horizontal, 20)
                         } header: {
                             Text(categoryItem.name)
-                                .font(.headline)
-                                .foregroundStyle(.gray)
+                                .textStyle(.formSectionTitle)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .textCase(.uppercase)
                                 .padding(.horizontal, 30)

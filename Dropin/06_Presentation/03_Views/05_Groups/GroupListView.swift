@@ -32,6 +32,7 @@ struct GroupListView: View {
                             Spacer()
                             let nPlaces = group.places.count
                             Text("group_list_view.num_places_\(nPlaces)")
+                                .textStyle(.placeholder)
                         }
                         .swipeActions {
                             Button() {

@@ -43,12 +43,11 @@ struct PlaceHeaderView: View {
                 }
                 VStack(alignment: .leading) {
                     TextField(editEnabled ? "placeholder.place_name" : "common.na", text: $place.name)
-                        .font(.title)
+                        .textStyle(.title)
                         .autocorrectionDisabled()
                         .disabled(!editEnabled)
                     Text(place.address.isEmpty ? "" : place.address)
-                        .font(.callout)
-                        .foregroundStyle(.gray)
+                        .textStyle(.placeholder)
                         .onTapGesture(count: 2, perform: {
                             navigationContext.showingAddressToClipboard.toggle()
                             print("COPY TO CLIPBOARD: \(place.address)")

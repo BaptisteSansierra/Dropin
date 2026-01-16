@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+
+// TODO: to be replaced somehow
+
+
+
 /// NavigationContext owns the navigation context values as :
 ///  - current sidebar section
 ///  - showing stuff(dialog, sheet, ...) state boolean
@@ -33,8 +38,11 @@ import SwiftUI
 //
     /// show/hide the copied to clipboard alert
     var showingAddressToClipboard: Bool = false
-//    
-    var navigationPath = NavigationPath()
+//
+    
+
+    // deprecated
+//    var navigationPath = NavigationPath()
 
     
     //var searchBarPresented: Bool = false

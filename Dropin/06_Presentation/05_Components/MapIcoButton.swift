@@ -34,7 +34,7 @@ struct MapIcoButton: View {
             .frame(width: 30, height: 30)
             if let rightCaption = rightCaption {
                 Text(rightCaption)
-                    .font(.caption2)
+                    .textStyle(.caption2)
                     .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
                     .background(.white)
                     .cornerRadius(5)

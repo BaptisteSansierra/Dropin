@@ -55,10 +55,12 @@ struct SearchTextFieldView: View {
                 .frame(width: height, height: height)
             ZStack {
                 Text(placeholder)
+                    .textStyle(.placeholder)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color(uiColor: .secondaryLabel))
                     .opacity(isTextEmpty ? 1 : 0)
                 TextField("", text: $text)
+                    .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .focused($textFocused)
                     .keyboardType(.default)
@@ -89,7 +91,7 @@ struct SearchTextFieldView: View {
     @Previewable @State var text: String = ""
     NavigationStack {
         VStack {
-            SearchTextFieldView(text: $text, placeholder: "custom placeholder")
+            SearchTextFieldView(text: $text, placeholder: "preview placeholder")
                 .padding()
             Spacer()
         }

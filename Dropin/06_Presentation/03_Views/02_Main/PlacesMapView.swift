@@ -42,10 +42,7 @@ struct PlacesMapView: View {
 
     // MARK: - Body
     var body: some View {
-        @Bindable var navigationContext = navigationContext
-        //NavigationStack(path: $navigationContext.navigationPath) {
-            mapReaderView
-        //}
+        mapReaderView
     }
 
     // MARK: - Subviews
@@ -59,16 +56,6 @@ struct PlacesMapView: View {
             Color.clear
                 .frame(height: 40)
         })
-//        .navigationDestination(for: PlaceEntity.self) { place in
-//            createPlaceDetailsView(place)
-//        }
-//        .navigationBarTitleDisplayMode(.inline)
-//        .toolbarBackground(.white, for: .navigationBar)
-//        .toolbar {
-//            DropinToolbar.Burger()
-//            DropinToolbar.Logo()
-//            DropinToolbar.AddPlace()
-//        }
         .confirmationDialog("common.save_new_place",
                             isPresented: $navigationContext.showingCreatePlaceMenu,
                             titleVisibility: .visible,
@@ -83,26 +70,31 @@ struct PlacesMapView: View {
             viewModel.pushLookupPlacesView()
         } label: {
             Text("menu.new_place.adress")
+                .textStyle(.body)
         }
         // Create place from here now
         Button {
         } label: {
             Text("menu.new_place.current")
+                .textStyle(.body)
         }
         // Create place from lat/long
         Button {
         } label: {
             Text("menu.new_place.coords")
+                .textStyle(.body)
         }
         // Create place from moving map under cursor
         Button {
         } label: {
             Text("menu.new_place.drop_pin")
+                .textStyle(.body)
         }
         // Create place from contact
         Button {
         } label: {
             Text("menu.new_place.contact")
+                .textStyle(.body)
         }
         // Create place from a pic
         Button {
@@ -110,6 +102,7 @@ struct PlacesMapView: View {
             // Does this make sense ?
             // only when image supported maybe
             Text("From image library (not implemented) ")
+                .textStyle(.body)
         }
 //        Button("RANDOM COORDS") {
 //                guard let loc = locationManager.lastKnownLocation else {
