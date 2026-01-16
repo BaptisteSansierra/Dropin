@@ -12,6 +12,7 @@ struct TextStyleModifier: ViewModifier {
     enum Style: String, CaseIterable {
         case title
         case body
+        case bodyWarning
         case bodyError
         case caption2
         case placeholder
@@ -21,7 +22,7 @@ struct TextStyleModifier: ViewModifier {
         case stringFieldContent
         case cellTitle
         case cellSubtitle
-        case cellSubtitle2
+        //case cellSubtitle2
         case cellDetail
         case tagSticker
         case groupSticker
@@ -44,6 +45,8 @@ struct TextStyleModifier: ViewModifier {
                 .titleRegular
             case .body:
                 .bodyRegular
+            case .bodyWarning:
+                .bodyBold
             case .bodyError:
                 .bodyBold
             case .caption2:
@@ -62,8 +65,8 @@ struct TextStyleModifier: ViewModifier {
                 .bodyMedium
             case .cellSubtitle:
                 .captionRegular
-            case .cellSubtitle2:
-                .caption2Regular
+//            case .cellSubtitle2:
+//                .caption2Regular
             case .cellDetail:
                 .captionRegular
             case .tagSticker:
@@ -80,39 +83,41 @@ struct TextStyleModifier: ViewModifier {
     private var color: Color {
         switch style {
             case .title:
-                .black
+                .textPrimary
             case .body:
-                .black
+                .textPrimary
+            case .bodyWarning:
+                .warning
             case .bodyError:
-                .red
+                .destructive
             case .caption2:
-                .black
+                .textPrimary
             case .placeholder:
-                .gray
+                .textSecondary
             case .mainButton:
-                .white
+                .backgroundPrimary
             case .secondaryButton:
                 .dropinPrimary
             case .stringFieldTitle:
-                .gray
+                .textSecondary
             case .stringFieldContent:
-                .black
+                .textPrimary
             case .cellTitle:
-                .black
+                .textPrimary
             case .cellSubtitle:
-                .gray
-            case .cellSubtitle2:
-                .gray
+                .textSecondary
+//            case .cellSubtitle2:
+//                .gray
             case .cellDetail:
-                .black
+                .textPrimary
             case .tagSticker:
-                .white
+                .backgroundPrimary
             case .groupSticker:
-                .black
+                .textPrimary
             case .formSectionTitle:
-                .gray
+                .textSecondary
             case .formSectionTitle2:
-                .gray
+                .textSecondary
         }
     }
 }
@@ -174,6 +179,8 @@ struct TextStyleModifier: ViewModifier {
 
             Text("body")
                 .textStyle(.body)
+            Text("body warning")
+                .textStyle(.bodyWarning)
             Text("body error")
                 .textStyle(.bodyError)
             Text("caption2")
@@ -189,14 +196,14 @@ struct TextStyleModifier: ViewModifier {
                 .textStyle(.cellTitle)
             Text("cellSubTitle")
                 .textStyle(.cellSubtitle)
-            Text("cellSubTitle2")
-                .textStyle(.cellSubtitle2)
+//            Text("cellSubTitle2")
+//                .textStyle(.cellSubtitle2)
             Text("cellDetail")
                 .textStyle(.cellDetail)
             Text("tagSticker")
                 .textStyle(.tagSticker)
                 .padding(5)
-                .background(.red)
+                .background(.purple)
             Text("groupSticker")
                 .textStyle(.groupSticker)
                 .padding(5)

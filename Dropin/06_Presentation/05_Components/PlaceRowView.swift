@@ -36,14 +36,14 @@ struct PlaceRowView: View {
                         .allowsHitTesting(true)
                     Spacer()
                     Text(locationManager.distanceStringTo(place.coordinates) ?? "")
-                        .textStyle(.cellSubtitle)
+                        .textStyle(.cellDetail)
                 }
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .foregroundStyle(.clear)
                         .frame(height: 40)
                     Text(place.address.isEmpty ? "" : place.address)
-                        .textStyle(.cellSubtitle2)
+                        .textStyle(.cellSubtitle)
                         .multilineTextAlignment(.leading)
                 }
                 ScrollView(.horizontal) {

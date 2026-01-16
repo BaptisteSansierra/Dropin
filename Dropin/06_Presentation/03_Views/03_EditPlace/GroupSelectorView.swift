@@ -19,9 +19,17 @@ struct GroupSelectorView: View {
     @State private var isShowingNameWarn = false
     @State private var showingMarkerPicker = false
     @State private var markerCircleOpacity: CGFloat = 1
-    @State private var markerPlaceholderOpacity: CGFloat = 0.3
-    @State private var markerPlaceholderColor: Color = .black
-    @State private var markerPlaceholderFont: Font = .system(size: 15)
+    @State private var markerPlaceholderOpacity: CGFloat
+    @State private var markerPlaceholderColor: Color
+    @State private var markerPlaceholderFont: Font
+
+    // MARK: - Dependencies
+    @Environment(\.dismiss) private var dismiss
+    
+    // MARK: - Private properties
+    private let markerPlaceholderOpacityDefault: CGFloat = 0.3
+    private let markerPlaceholderColorDefault: Color = .textPrimary
+    private let markerPlaceholderFontDefault: Font = .system(size: 15)
     private var selectedGroupId: Binding<String> {
         Binding<String>(
             get: {
@@ -38,9 +46,16 @@ struct GroupSelectorView: View {
             })
     }
     
-    // MARK: - Dependencies
-    @Environment(\.dismiss) private var dismiss
-    
+    // MARK: - init
+    init(viewModel: GroupSelectorViewModel, place: Binding<PlaceUI>) {
+        self._viewModel = State(initialValue: viewModel)
+        self._place = place
+        _createdGroupColor = State(initialValue: Color.random())
+        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
+        markerPlaceholderColor = markerPlaceholderColorDefault
+        markerPlaceholderFont = markerPlaceholderFontDefault
+    }
+
     // MARK: - Body
     var body: some View {
         VStack {
@@ -153,7 +168,7 @@ struct GroupSelectorView: View {
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(.white)
+                            Rectangle().fill(.backgroundPrimary)
                             Text("placeholder.group_name")
                                 .textStyle(.bodyError)
                         }
@@ -168,28 +183,22 @@ struct GroupSelectorView: View {
         }
 
     }
-    
-    // MARK: - init
-    init(viewModel: GroupSelectorViewModel, place: Binding<PlaceUI>) {
-        self._viewModel = State(initialValue: viewModel) 
-        self._place = place
-        _createdGroupColor = State(initialValue: Color.random())
-    }
-    
+
+    // MARK: - private methods
     private func createGroup() {
         guard let groupIcon = createdGroupIcon else {
             withAnimation(.linear(duration: 0.25)) {
                 markerCircleOpacity = 0
-                markerPlaceholderColor = .red
+                markerPlaceholderColor = .warning
                 markerPlaceholderFont = .system(size: 22)
                 markerPlaceholderOpacity = 1
             } completion: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation(.easeOut(duration: 0.25)) {
                         markerCircleOpacity = 1
-                        markerPlaceholderColor = .black
-                        markerPlaceholderFont = .system(size: 15)
-                        markerPlaceholderOpacity = 0.5
+                        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
+                        markerPlaceholderColor = markerPlaceholderColorDefault
+                        markerPlaceholderFont = markerPlaceholderFontDefault
                     }
                 }
             }

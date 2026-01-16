@@ -21,23 +21,18 @@ struct LookupPlaceView: View {
     
     // MARK: - body
     var body: some View {
-        ZStack {
-            Color.gray
-                .opacity(0)
-                .ignoresSafeArea()
-            VStack {
+        VStack {
+            Spacer()
+            contentView(viewModel.lookupResolvedItem)
+            Spacer()
+            HStack {
                 Spacer()
-                contentView(viewModel.lookupResolvedItem)
+                cancelButton
                 Spacer()
-                HStack {
-                    Spacer()
-                    cancelButton
-                    Spacer()
-                    confirmButton
-                    Spacer()
-                }
+                confirmButton
                 Spacer()
             }
+            Spacer()
         }
     }
     
@@ -47,12 +42,12 @@ struct LookupPlaceView: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(.white)
-                    .stroke(.red, style: StrokeStyle(lineWidth: 2))
+                    .fill(.backgroundPrimary)
+                    .stroke(.destructive, style: StrokeStyle(lineWidth: 2))
                     .frame(width: 60, height: 60)
                 Image(systemName: "multiply")
                     .font(.system(size: 30))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(.destructive)
                     .opacity(0.5)
             }
             .padding(.trailing, 20)
@@ -65,7 +60,7 @@ struct LookupPlaceView: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(.white)
+                    .fill(.backgroundPrimary)
                     .stroke(.dropinPrimary, style: StrokeStyle(lineWidth: 2))
                     .frame(width: 60, height: 60)
                 Image(systemName: "plus")
@@ -101,14 +96,14 @@ struct LookupPlaceView: View {
                         Spacer()
                         MapIcoButton(systemImage: "plus",
                                      imageFrame: CGSize(width: 15, height: 15),
-                                     color: viewModel.cameraDistance < 125 ? .gray : .dropinPrimary )
+                                     color: viewModel.cameraDistance < 125 ? .disabled : .dropinPrimary )
                             .padding(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10))
                             .onTapGesture {
                                 viewModel.zoomIn()
                             }
                         MapIcoButton(systemImage: "minus",
                                      imageFrame: CGSize(width: 15, height: 15),
-                                     color: viewModel.cameraDistance >= 32_768_000 ? .gray : .dropinPrimary)
+                                     color: viewModel.cameraDistance >= 32_768_000 ? .disabled : .dropinPrimary)
                             .padding(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10))
                             .onTapGesture {
                                 viewModel.zoomOut()
@@ -129,12 +124,12 @@ struct LookupPlaceView: View {
                     if let icon = item.icon {
                         IconView(icon: icon)
                             .sizeCaption2()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.backgroundPrimary)
                             .padding(.horizontal, 0)
                     } else {
                         Image(systemName: "signpost.right.and.left")
                             .font(.caption2)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.backgroundPrimary)
                             .padding(.horizontal, 0)
                     }
                 }
@@ -161,8 +156,8 @@ struct LookupPlaceView: View {
         .background(.clear)
         .background {
             RoundedRectangle(cornerRadius: 25)
-                .fill(.white)
-                .shadow(color: .black.opacity(0.3), radius: 6, x: 2, y: -4)
+                .fill(.backgroundPrimary)
+                .shadow(color: .textPrimary.opacity(0.4), radius: 6, x: 2, y: -3)
         }
         .padding()
     }

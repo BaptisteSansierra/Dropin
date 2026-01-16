@@ -40,7 +40,7 @@ struct GroupListView: View {
                             } label: {
                                 Label("common.delete", systemImage: "trash")
                             }
-                            .tint(.red)
+                            .tint(.destructive)
                         }
                         .onTapGesture {
                             viewModel.pushGroupDetailsView(groupId: group.id)

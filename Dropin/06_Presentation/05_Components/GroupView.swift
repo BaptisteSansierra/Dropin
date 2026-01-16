@@ -66,7 +66,7 @@ struct GroupView: View {
     }
     
     private var removeButton: some View {
-        IcoButton(systemImage: "multiply", icoSize: 10, icoColor: .red)
+        IcoButton(systemImage: "multiply", icoSize: 10, icoColor: .destructive)
             .onTapGesture {
                 action?()
             }

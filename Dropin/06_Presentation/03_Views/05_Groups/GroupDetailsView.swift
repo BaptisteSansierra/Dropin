@@ -49,7 +49,7 @@ struct GroupDetailsView: View {
             
             deleteButton
         }
-        .background(Color(uiColor: UIColor.systemGroupedBackground))
+        .background(.backgroundSecondary)
         .alert("alert.remove_group_title",
                isPresented: $showingRemoveAlert) {
             Button("common.cancel", role: .cancel) { }
@@ -92,7 +92,7 @@ struct GroupDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 TextField("common.group_name", text: $group.name)
@@ -118,7 +118,7 @@ struct GroupDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 HStack() {
@@ -151,14 +151,14 @@ struct GroupDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 
                 HStack {
                     ZStack(alignment: .center) {
                         RoundedRectangle(cornerSize: 8)
-                            .strokeBorder(.black, style: StrokeStyle(lineWidth: 1))
+                            .strokeBorder(.textPrimary, style: StrokeStyle(lineWidth: 1))
                             .frame(height: 25)
                             .frame(width: 100)
                             .foregroundStyle(.clear)
@@ -197,7 +197,7 @@ struct GroupDetailsView: View {
                             } label: {
                                 Text("common.unlink")
                             }
-                            .tint(.red)
+                            .tint(.destructive)
                         }
                     }
                 }
@@ -213,7 +213,7 @@ struct GroupDetailsView: View {
     private var deleteButton: some View {
         ZStack {
             RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.red)
+                .foregroundStyle(.destructive)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_group")

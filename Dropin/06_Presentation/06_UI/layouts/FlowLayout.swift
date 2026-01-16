@@ -123,7 +123,7 @@ struct FlowLayoutPreviewView: View {
                     .frame(width: element, height: 25)
                     .overlay {
                         RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))
-                            .stroke(.red, lineWidth: 1)
+                            .stroke(.brown, lineWidth: 1)
                     }
             }
         }

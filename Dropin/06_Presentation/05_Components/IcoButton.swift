@@ -20,7 +20,7 @@ struct IcoButton: View {
     var body: some View {
         ZStack() {
             Circle()
-                .foregroundStyle(.white)
+                .foregroundStyle(.backgroundPrimary)
                 .frame(width: size, height: size)
             Image(systemName: systemImage)
                 .resizable()
@@ -28,7 +28,7 @@ struct IcoButton: View {
                 .frame(width: icoSize, height: icoSize)
                 .foregroundStyle(icoColor)
         }
-        .shadow(radius: 5, x: 2, y: 2)
+        .shadow(color: .textPrimary, radius: 5, x: 2, y: 2)
     }
 
     // MARK: - init

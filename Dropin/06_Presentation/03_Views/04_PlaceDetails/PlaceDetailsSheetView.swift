@@ -48,9 +48,9 @@ struct PlaceDetailsSheetView: View {
             // Footer
             ZStack(alignment: .center) {
                 Rectangle()
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .frame(height: 60)
-                    .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: -5)
+                    .shadow(color: .textPrimary.opacity(0.2), radius: 3, x: 0, y: -5)
                 footer
             }
         }

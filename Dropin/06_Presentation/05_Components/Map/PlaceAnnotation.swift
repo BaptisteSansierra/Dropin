@@ -47,7 +47,7 @@ struct PlaceAnnotationView: View {
 
     private enum Style {
         case borderedRect
-        case plainCircle
+        case plainCircle // LEGACY
     }
     
     // MARK: - private vars
@@ -64,7 +64,7 @@ struct PlaceAnnotationView: View {
                 // LEGACY
                 ZStack {
                     Circle()
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 36, height: 36)
                     Circle()
                         .fill(color)
@@ -72,22 +72,22 @@ struct PlaceAnnotationView: View {
                     if let icon = icon {
                         IconView(icon: icon)
                             .sizeXS()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.backgroundPrimary)
                     }
                 }
             case .borderedRect:
                 ZStack {
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 36, height: 30)
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 34, height: 28)
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 32, height: 26)
                     if let icon = icon {
                         IconView(icon: icon)
@@ -96,7 +96,7 @@ struct PlaceAnnotationView: View {
                         Image("empty")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(.black.opacity(0.25))
+                            .foregroundStyle(.textPrimary.opacity(0.3))
                             .frame(width: 17, height: 17)
                     }
                 }
@@ -107,13 +107,13 @@ struct PlaceAnnotationView: View {
                                 Spacer()
                                 ZStack {
                                     Circle()
-                                        .fill(.black)
+                                        .fill(.textPrimary)
                                         .frame(width: 20, height: 20)
-                                        .shadow(color: .black.opacity(0.5),
+                                        .shadow(color: .textPrimary.opacity(0.5),
                                                 radius: 3,
                                                 x: -2, y: 2)
                                     Circle()
-                                        .fill(.white)
+                                        .fill(.backgroundPrimary)
                                         .frame(width: 19, height: 19)
                                     IconView(icon: iconExtra)
                                         .sizeCaption2()

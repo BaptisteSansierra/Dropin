@@ -114,7 +114,7 @@ struct PlaceDetailsView: View {
         ZStack {
             // TODO: create default mainButton / deleteButton / secondaryButton
             RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.red)
+                .foregroundStyle(.destructive)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_place")

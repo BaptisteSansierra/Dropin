@@ -46,7 +46,7 @@ struct TagDetailsView: View {
             
             deleteButton
         }
-        .background(Color(uiColor: UIColor.systemGroupedBackground))
+        .background(.backgroundSecondary)
         .alert("alert.remove_tag_title",
                isPresented: $showingRemoveAlert) {
             Button("common.cancel", role: .cancel) { }
@@ -78,7 +78,7 @@ struct TagDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 TextField("common.tag_name", text: $tag.name)
@@ -104,7 +104,7 @@ struct TagDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 HStack() {
@@ -148,7 +148,7 @@ struct TagDetailsView: View {
                             } label: {
                                 Text("common.unlink")
                             }
-                            .tint(.red)
+                            .tint(.destructive)
                         }
                     }
                 }
@@ -164,7 +164,7 @@ struct TagDetailsView: View {
     private var deleteButton: some View {
         ZStack {
             RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.red)
+                .foregroundStyle(.destructive)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_tag")

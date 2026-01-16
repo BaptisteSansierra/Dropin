@@ -46,13 +46,14 @@ struct ClusterAnnotationView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(.white)
+                .fill(.backgroundPrimary)
                 .frame(width: 36, height: 36)
             Circle()
                 .fill(color)
                 .frame(width: 30, height: 30)
             Text("\(count)")
-                .foregroundStyle(.white)
+                .font(.body)
+                .foregroundStyle(.backgroundPrimary)
         }
     }
     

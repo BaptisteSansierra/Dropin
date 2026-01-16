@@ -165,7 +165,7 @@ struct PlacesMapView: View {
             viewModel.createCreatePlacesView()
             //.presentationDetents([.medium, .large])
                 .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
-                .presentationBackground(.white)
+                .presentationBackground(.backgroundPrimary)
         })
         .onChange(of: viewModel.selectedPlaceId) {
             zoomOnPin()
@@ -174,7 +174,7 @@ struct PlacesMapView: View {
             createPlaceDetailsSheetView()
                 .presentationDetents([.medium, .large])
                 .presentationCornerRadius(20)
-                .presentationBackground(.white)
+                .presentationBackground(.backgroundPrimary)
         }
         .alert("common.loc_auth_missing", isPresented: $showAuthLocAlert) {
             Button("common.open_settings") {
@@ -201,7 +201,7 @@ struct PlacesMapView: View {
                             }
                     }
                 } else {
-                    MapIcoButton(systemImage: "exclamationmark.triangle", offset: CGPoint(x: 0, y: -1), imageFrame: CGSize(width: 15, height: 15), color: .red)
+                    MapIcoButton(systemImage: "exclamationmark.triangle", offset: CGPoint(x: 0, y: -1), imageFrame: CGSize(width: 15, height: 15), color: .warning)
                         .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
                         .onTapGesture {
                             showAuthLocAlert.toggle()

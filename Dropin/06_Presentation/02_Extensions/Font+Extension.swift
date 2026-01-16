@@ -9,6 +9,7 @@ import SwiftUI
 
 extension Font {
     // Large Title
+    static let largeTitleSemibold = Font.system(size: 34, weight: .semibold)
     static let largeTitleRegular = Font.system(size: 34, weight: .regular)
 
     // Title

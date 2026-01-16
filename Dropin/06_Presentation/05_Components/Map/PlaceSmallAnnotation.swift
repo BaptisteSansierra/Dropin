@@ -40,7 +40,7 @@ struct PlaceSmallAnnotationView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(.white)
+                .fill(.backgroundPrimary)
                 .frame(width: 16, height: 16)
             Circle()
                 .fill(color)

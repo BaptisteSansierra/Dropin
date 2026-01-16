@@ -37,8 +37,7 @@ struct LookupPlacesView: View {
                             placeholderView
                         }
                         if viewModel.resolving {
-                            Color.gray
-                                .opacity(0.25)
+                            Color.overlayAlphaLayer
                                 .ignoresSafeArea()
                             ProgressView()
                         }
@@ -106,10 +105,9 @@ struct LookupPlacesView: View {
             .listStyle(.inset)
             if viewModel.searching {
                 if viewModel.results.count > 0 {
-                    Color.gray
+                    Color.overlayAlphaLayer
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .ignoresSafeArea()
-                        .opacity(0.25)
                 }
                 VStack {
                     ProgressView()

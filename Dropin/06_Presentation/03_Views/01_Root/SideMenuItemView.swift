@@ -19,33 +19,29 @@ struct SideMenuItemView: View {
     private var label: LocalizedStringKey
     private var systemImage: String
     private var context: SideMenuContext
-//    private var textColor: Color {
-//        return context == currentSideMenuContext ? .white : .black
-//    }
-    private let textColor: Color = .black
         
     // MARK: - Body
     var body: some View {
         VStack {
             ZStack {
                 Rectangle()
-                    .foregroundStyle(Color.gray.opacity(0.2))
+                    .foregroundStyle(Color.backgroundSecondary)
                     .opacity(context == currentSideMenuContext ? 1 : 0)
                     .padding(.horizontal, 0)
                 
                 HStack(alignment: .center, spacing: 0) {
                     ZStack(alignment: .center) {
                         Rectangle()
-                            .strokeBorder(.red, style: StrokeStyle(lineWidth: 2))
+                            .strokeBorder(.pink, style: StrokeStyle(lineWidth: 2))
                             .frame(width: 100, height: 50)
                             .opacity(0)
                         Image(systemName: systemImage)
                             .font(.bodyLight)
-                            .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : textColor)
+                            .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : .textPrimary)
                     }
                     Text(label)
                         .font(context == currentSideMenuContext ? .bodyMedium : .bodyThin)
-                        .foregroundStyle(textColor)
+                        .foregroundStyle(.textPrimary)
                     Spacer()
                 }
             }

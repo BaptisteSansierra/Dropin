@@ -90,7 +90,7 @@ struct MarkerListView: View {
                                             .opacity(isSelected ? 1 : 0)
                                         IconView(icon: icon)
                                             .sizeCaption()
-                                            .foregroundStyle(isSelected ? .white : .gray)
+                                            .foregroundStyle(isSelected ? .backgroundPrimary : .textTertiary)
                                             .onTapGesture {
                                                 selected = icon
                                                 dismiss()
@@ -101,7 +101,7 @@ struct MarkerListView: View {
                                 }
                             }
                             .padding(.vertical, 10)
-                            .background(.white)
+                            .background(.backgroundPrimary)
                             .cornerRadius(15)
                             .padding(.horizontal, 20)
                         } header: {
@@ -121,7 +121,7 @@ struct MarkerListView: View {
                 }
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(.backgroundSecondary)
     }
     
     private var footerView: some View {
@@ -154,7 +154,7 @@ struct MockMarkerListSelectionView: View {
                     .sizeCaption2()
                 Text(icon.rawValue)
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.textTertiary)
             } else {
                 Text(verbatim: "common.no_item_selected")
             }
@@ -162,7 +162,7 @@ struct MockMarkerListSelectionView: View {
         .padding()
         .overlay {
             RoundedRectangle(cornerSize: 8)
-                .strokeBorder(.red, style: StrokeStyle(lineWidth: 4))
+                .strokeBorder(.pink, style: StrokeStyle(lineWidth: 4))
         }
         .frame(maxWidth: .infinity)
         .frame(height: 80)

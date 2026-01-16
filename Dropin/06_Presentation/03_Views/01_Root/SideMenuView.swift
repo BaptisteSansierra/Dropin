@@ -35,8 +35,7 @@ struct SideMenuView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             if navigationContext.showingSideMenu {
-                Color.black
-                    .opacity(0.35)
+                Color.overlayAlphaLayer
                     .ignoresSafeArea()
                     .onTapGesture {
                         navigationContext.showingSideMenu = false
@@ -44,12 +43,12 @@ struct SideMenuView: View {
                 HStack {
                     ZStack{
                         Rectangle()
-                            .fill(.white)
+                            .fill(.backgroundPrimary)
                             .frame(minWidth: 300, maxWidth: 340)
-                            .shadow(color: .black, radius: 5, x: 0, y: 3)
+                            .shadow(color: .textPrimary, radius: 5, x: 0, y: 3)
                         content
                             .frame(minWidth: 300, maxWidth: 340)
-                            .background(.white)
+                            .background(.backgroundPrimary)
                     }
                     .background(.clear)
                     Spacer()
@@ -158,7 +157,7 @@ struct SideMenuView: View {
                 HStack(alignment: .center) {
                     ZStack(alignment: .center) {
                         Circle()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.backgroundPrimary)
                             .frame(width: 60, height: 60)
                         DropinLogo(lineWidthMuliplier: 2, pinSizeMuliplier: 1.5)
                             .frame(width: 50, height: 50)
@@ -167,8 +166,8 @@ struct SideMenuView: View {
                     .padding(.trailing, 25)
                     
                     Text("Dropin")
-                        .foregroundStyle(.white)
-                        .font(.largeTitleRegular)
+                        .foregroundStyle(.backgroundPrimary)
+                        .font(.largeTitleSemibold)
 
                     Spacer()
                 }

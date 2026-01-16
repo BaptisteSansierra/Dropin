@@ -34,6 +34,24 @@ struct DropinApp: App {
                 //.modelContainer(modelContainer)  // DEBUG Purpose, to be removed
                 .task {
                     locationManager.start()
+
+#if false
+                    // Enable to generate new AppIcons + logo assets
+                    // TODO: this should be moved outside the app in a specific target
+                    
+                    // Generate
+                    IcoRenderer(variant: .logo)
+                    IcoRenderer(variant: .variant1)
+                    IcoRenderer(variant: .variant2)
+                    IcoRenderer(variant: .variant3)
+                    IcoRenderer(variant: .logo, colorScheme: .dark, bgColor: .black)
+                    IcoRenderer(variant: .variant1, colorScheme: .dark, bgColor: .black)
+                    IcoRenderer(variant: .variant2, colorScheme: .dark, bgColor: .black)
+                    IcoRenderer(variant: .variant3, colorScheme: .dark, bgColor: .black)
+                    
+                    IcoRenderer(variant: .logo, imageSize: 300, bgColor: .clear)
+                    IcoRenderer(variant: .logo, colorScheme: .dark, imageSize: 300, bgColor: .clear)
+#endif
                 }
         }
     }

@@ -122,7 +122,7 @@ struct TagSelectorView: View {
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(.white)
+                            Rectangle().fill(.backgroundPrimary)
                             Text("placeholder.tag_name")
                                 .textStyle(.bodyError)
                         }

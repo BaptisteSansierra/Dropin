@@ -42,7 +42,7 @@ struct MainView: View {
                 customTabView
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.white, for: .navigationBar)
+            .toolbarBackground(.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 DropinToolbar.Burger()
                 DropinToolbar.Logo()
@@ -223,7 +223,6 @@ private struct CenteredLabelStyle: LabelStyle {
             configuration.icon
                 .font(.subheadlineRegular)
                 .frame(height: 15)
-                //.border(.red, width: 1)
                 .padding(.bottom, 5)
             configuration.title
                 .font(.footnoteRegular)

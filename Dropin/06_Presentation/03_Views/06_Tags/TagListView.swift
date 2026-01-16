@@ -40,7 +40,7 @@ struct TagListView: View {
                             } label: {
                                 Label("common.delete", systemImage: "trash")
                             }
-                            .tint(.red)
+                            .tint(.destructive)
                         }
                         .onTapGesture {
                             viewModel.pushTagDetailsView(tagId: tag.id)
