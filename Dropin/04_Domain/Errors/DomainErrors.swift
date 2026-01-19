@@ -13,17 +13,19 @@ enum DomainError: Error {
     enum Place: Error {
         case alreadyExists
         case missingName
-        case missingSysImage
         case notFound
     }
     enum Tag: Error {
         case alreadyExists
         case missingName
+        case invalidColor
         case notFound
     }
     enum Group: Error {
         case alreadyExists
         case missingName
+        //case undefinedMarker  // fixed by making Icon an enum
+        case invalidColor
         case notFound
     }
 }

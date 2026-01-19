@@ -10,14 +10,18 @@ import SwiftUI
 @MainActor
 @Observable class TagListViewModel {
     
+    var coordinator: TagCoordinator
+
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var getTags: GetTags
     @ObservationIgnored private var deleteTag: DeleteTag
 
     init(_ appContainer: AppContainer,
+         coordinator: TagCoordinator,
          getTags: GetTags,
          deleteTag: DeleteTag) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.getTags = getTags
         self.deleteTag = deleteTag
     }
@@ -25,6 +29,11 @@ import SwiftUI
     // MARK: UI Child
     func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
         return appContainer.createTagDetailsView(tag: tag)
+    }
+
+    // MARK: Navigation
+    func pushTagDetailsView(tagId: String) {
+        coordinator.pushTagDetailsView(tagId: tagId)
     }
 
     // MARK: use cases

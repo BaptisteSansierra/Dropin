@@ -15,9 +15,9 @@ extension PlaceEntity {  // Mock extension
                              name: "La Chitarra",
                              coordinates: CLLocationCoordinate2D(latitude: 41.40622777528736, longitude: 2.1595467749244204),
                              address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
-                             systemImage: "fork.knife.circle",
                              tags: [],
                              group: nil,
+                             icon: .sf("fork.knife.circle"),
                              creationDate: Date()
                              )
 
@@ -28,9 +28,9 @@ extension PlaceEntity {  // Mock extension
                              //coordinates: CLLocationCoordinate2D(latitude: 41.405341,
                              //longitude: 2.159652,
                              address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
-                             systemImage: "fork.knife.circle",
                              tags: [],
                              group: nil,
+                             icon: .sf("fork.knife.circle"),
                              notes: "Don't forget your tupper",
                              phone: "931054947",
                              url: "http://lestresalacuina.com",
@@ -42,9 +42,9 @@ extension PlaceEntity {  // Mock extension
                              name: "Chiringuito Karamba",
                              coordinates: CLLocationCoordinate2D(latitude: 41.44511384541266, longitude: 2.2495646936392317),
                              address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
-                             systemImage: "fork.knife.circle",
                              tags: [],
                              group: nil,
+                             icon: .sf("fork.knife.circle"),
                              creationDate: Date()
                              )
 
@@ -52,9 +52,9 @@ extension PlaceEntity {  // Mock extension
                              name: "Continental Bar",
                              coordinates: CLLocationCoordinate2D(latitude: 41.40626764285292, longitude: 2.156492157860694),
                              address: "Carrer de la Providència, 30, /nGràcia, /n08024 Barcelona",
-                             systemImage: "wineglass",
                              tags: [],
                              group: nil,
+                             icon: .sf("wineglass"),
                              creationDate: Date()
                              )
 
@@ -62,9 +62,9 @@ extension PlaceEntity {  // Mock extension
                              name: "Bagdad café",
                              coordinates: CLLocationCoordinate2D(latitude: 33.321589923265904, longitude: 44.416811639303546),
                              address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
-                             systemImage: "pianokeys",
                              tags: [],
                              group: nil,
+                             icon: .sf("pianokeys"),
                              creationDate: Date()
                              )
 
@@ -73,9 +73,9 @@ extension PlaceEntity {  // Mock extension
                              name: "El Col·leccionista",
                              coordinates: CLLocationCoordinate2D(latitude: 41.40602900686343, longitude: 2.160639939265184),
                              address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
-                             systemImage: "figure.socialdance",
                              tags: [],
                              group: nil,
+                             icon: .sf("figure.socialdance"),
                              creationDate: Date()
                              )
 
@@ -83,9 +83,9 @@ extension PlaceEntity {  // Mock extension
                              name: "Molsa Biosí",
                              coordinates: CLLocationCoordinate2D(latitude: 41.403067387301924, longitude: 2.158858952034207),
                              address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
-                             systemImage: "carrot",
                              tags: [],
                              group: nil,
+                             icon: .sf("carrot"),
                              creationDate: Date()
                             )
 
@@ -94,9 +94,9 @@ extension PlaceEntity {  // Mock extension
                              name: "Sincronia Yoga",
                              coordinates: CLLocationCoordinate2D(latitude: 41.40068001375675, longitude: 2.155838283307449),
                              address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
-                             systemImage: "swirl.circle.righthalf.filled.inverse",
                              tags: [],
                              group: nil,
+                             icon: .sf("swirl.circle.righthalf.filled.inverse"),
                              creationDate: Date()
                              )
 
@@ -105,9 +105,9 @@ extension PlaceEntity {  // Mock extension
                              name: "Be Laundry Joanic",
                              coordinates: CLLocationCoordinate2D(latitude: 41.399426209480154, longitude: 2.154584065083631),
                              address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
-                             systemImage: "basket",
                              tags: [],
                              group: nil,
+                             icon: .sf("basket"),
                              creationDate: Date()
                              )
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9]

@@ -31,16 +31,39 @@ struct MainView: View {
     
     // MARK: - Body
     var body: some View {
-        @Bindable var navigationContext = navigationContext
-        
-        ZStack {
-            viewModel.createPlacesMapView()
-                .opacity(selectedTab == 0 ? 1 : 0)
+        NavigationStack(path: $viewModel.coordinator.path) {
+            ZStack {
+                viewModel.createPlacesMapView()
+                    .opacity(selectedTab == 0 ? 1 : 0)
+                
+                viewModel.createPlacesListView()
+                    .opacity(selectedTab == 1 ? 1 : 0)
+
+                customTabView
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.backgroundPrimary, for: .navigationBar)
+            .toolbar {
+                DropinToolbar.Burger()
+                DropinToolbar.Logo()
+                if selectedTab == 0 {
+                    DropinToolbar.AddPlace()
+                } else {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        listTrailingToolbarContent
+                    }
+                }
+            }
+            .navigationDestination(for: NavigationItem.self) { navigationItem in
+                resolveDestination(navigationItem: navigationItem)
+            }
+
             
-            viewModel.createPlacesListView()
-                .opacity(selectedTab == 1 ? 1 : 0)
-            
-            customTabView
+            // TODO: to be removed
+//            .navigationDestination(for: PlaceEntity.self) { place in
+//                // TODO: to be removed following func
+//                createPlaceDetailsView(place)
+//            }
         }
         .task {
             Task {
@@ -48,47 +71,13 @@ struct MainView: View {
             }
         }
         .accentColor(.dropinSecondary)
-        .alert("common.create_place",
-               isPresented: $navigationContext.showingCreatePlaceMenu,
-               actions: {
-            Button("common.ok") { }
-        }) {
-            Text("_TEMP_long_press_instructions")
-        }
+        /* obsolete TODO: remove
         .onChange(of: navigationContext.navigationPath) { oldValue, newValue in
             animateTabBar(oldNavigationPath: oldValue, newNavigationPath: newValue)
         }
-        /*
-        .confirmationDialog("Save a location", isPresented: $navigationContext.showingCreatePlaceMenu, titleVisibility: .visible) {
-            Button("From your current position") {
-                
-            }
-            Button("Drop a pin") {
-                
-            }
-            Button("Provide an address") {
-                // https://developer.apple.com/documentation/applemapsserverapi/-v1-searchautocomplete
-            }
-            Button("Provide coordinates") {
-                //
-            }
-            Button("From image library") {
-                //
-            }
-            Button("RANDOM COORDS") {
-                guard let loc = locationManager.lastKnownLocation else {
-                    print("Unknown loc")
-                    return
-                }
-                let latitude = loc.latitude + Double.random(in: -0.02...0.01)
-                let longitude = loc.longitude + Double.random(in: -0.02...0.01)
-                let item = SDPlace(name: "random\(Int.random(in: 100...999))", latitude: latitude, longitude: longitude, address: "")
-                modelContext.insert(item)
-            }
-        }
          */
     }
-
+    
     // MARK: subviews
 //    var currentView: some View {
 //        Group {
@@ -99,7 +88,30 @@ struct MainView: View {
 //            }
 //        }
 //    }
-        
+
+    @ViewBuilder
+    private var listTrailingToolbarContent: some View {
+        Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
+                        viewModel.grouped.toggle()
+        }
+        .tint(.dropinPrimary)
+        Menu("common.sort", systemImage: "arrow.up.arrow.down") {
+            Picker("common.sort", selection: $viewModel.sortMode) {
+                Text("common.sort.by_distance")
+                    .textStyle(.body)
+                    .tag(PlacesListViewModel.SortMode.distance)
+                Text("common.sort.by_name")
+                    .textStyle(.body)
+                    .tag(PlacesListViewModel.SortMode.alphabetically)
+                Text("common.sort.by_creation_date")
+                    .textStyle(.body)
+                    .tag(PlacesListViewModel.SortMode.creationDate)
+            }
+            .pickerStyle(.inline)
+        }
+        .tint(.dropinPrimary)
+    }
+
     private var customTabView: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -151,6 +163,7 @@ struct MainView: View {
     }
 
     // MARK: private methods
+    /* obsolete TODO: remove
     private func animateTabBar(oldNavigationPath: NavigationPath, newNavigationPath: NavigationPath) {
         if oldNavigationPath.count == 0 && newNavigationPath.count > 0 {
             withAnimation(.easeInOut) {
@@ -164,18 +177,55 @@ struct MainView: View {
             }
         }
     }
+     */
+
+    private func createPlaceDetailsView(_ placeId: String) -> PlaceDetailsView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
+            fatalError("couldn't find any place '\(placeId)' in list")
+        }
+        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
+    }
+
+    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == place.id }) else {
+            fatalError("couldn't find any place named '\(place.name)' in list")
+        }
+        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
+    }
+    
+    @ViewBuilder
+    private func resolveDestination(navigationItem: NavigationItem) -> some View {
+        switch navigationItem {
+            case .placeDetailsView(let placeID, _):
+                createPlaceDetailsView(placeID)
+            case .lookupPlacesView:
+                viewModel.createLookupPlacesView()
+            case .undefinedDummyView:
+                ZStack {
+                    Color.orange
+                    Text("To be implemented...")
+                }
+            default:
+                ZStack {
+                    Color.orange
+                    Text("Undefined navigation item")
+                }
+                .onAppear {
+                    assertionFailure("undefined navigation item \(navigationItem)")
+                }
+        }
+    }
 }
 
 private struct CenteredLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .center, spacing: 0) {
             configuration.icon
-                .font(.subheadline)
+                .font(.subheadlineRegular)
                 .frame(height: 15)
-                //.border(.red, width: 1)
                 .padding(.bottom, 5)
             configuration.title
-                .font(.footnote)
+                .font(.footnoteRegular)
         }
     }
 }

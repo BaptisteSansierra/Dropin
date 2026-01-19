@@ -104,7 +104,7 @@ struct PlaceDetailsView: View {
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("place_details.apply")
-                .foregroundStyle(.white)
+                .textStyle(.mainButton)
         }
         .padding(.bottom, 5)
         .onTapGesture { onApplyChanges() }
@@ -112,12 +112,13 @@ struct PlaceDetailsView: View {
 
     private var deleteButton: some View {
         ZStack {
+            // TODO: create default mainButton / deleteButton / secondaryButton
             RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.red)
+                .foregroundStyle(.destructive)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_place")
-                .foregroundStyle(.white)
+                .textStyle(.mainButton)
         }
         .padding(.bottom, 15)
         .onTapGesture { onPressDelete() }
@@ -151,7 +152,8 @@ struct PlaceDetailsView: View {
     private func performDelete() {
         Task {
             do {
-                navigationContext.navigationPath = NavigationPath()
+                viewModel.popView()
+                //navigationContext.navigationPath = NavigationPath()
                 // Delay the deletion so the parentview navigation path does not contain a stale model
                 try await Task.sleep(for: .seconds(0.5))
                 try await viewModel.deletePlace(place)

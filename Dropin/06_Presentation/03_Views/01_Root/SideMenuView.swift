@@ -10,7 +10,8 @@ import SwiftUI
 struct SideMenuView: View {
     
     // MARK: - States & Bindings
-    @Binding var currentSideMenuContext: SideMenuContext
+    @Binding private var currentSideMenuContext: SideMenuContext
+    @State private var logoVariant: DropinLogo.Variant = .logo
 
     // MARK: - Dependencies
     @Environment(NavigationContext.self) var navigationContext
@@ -35,15 +36,20 @@ struct SideMenuView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             if navigationContext.showingSideMenu {
+                Color.overlayAlphaLayer
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        navigationContext.showingSideMenu = false
+                    }
                 HStack {
                     ZStack{
                         Rectangle()
-                            .fill(.white)
-                            .frame(width: 300)
-                            .shadow(color: .black, radius: 5, x: 0, y: 3)
+                            .fill(.backgroundPrimary)
+                            .frame(minWidth: 300, maxWidth: 340)
+                            .shadow(color: .textPrimary, radius: 5, x: 0, y: 3)
                         content
-                            .frame(width: 300)
-                            .background(.white)
+                            .frame(minWidth: 300, maxWidth: 340)
+                            .background(.backgroundPrimary)
                     }
                     .background(.clear)
                     Spacer()
@@ -63,29 +69,67 @@ struct SideMenuView: View {
         VStack(spacing: 0) {
             header
                 .padding(0)
-            Spacer()
-                .frame(height: 80)
+//            Spacer()
+//                .frame(height: 80)
             
             SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
-                .padding(.bottom, 20)
+                .padding(.bottom, 0)
             
             SideMenuItemView(label: "common.groups",
                              systemImage: "folder",
                              context: .groups,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
-                .padding(.bottom, 20)
+                .padding(.bottom, 0)
 
             SideMenuItemView(label: "common.tags",
-                             systemImage: "tag",
+                             systemImage: "slider.horizontal.3",
                              context: .tags,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
-                .padding(.bottom, 20)
+                .padding(.bottom, 0)
+            
+            Divider()
+                .padding(.vertical, 5)
+            
+            SideMenuItemView(label: "common.favorites",
+                             systemImage: "star",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+            SideMenuItemView(label: "common.recents",
+                             systemImage: "clock",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+
+            Divider()
+                .padding(.vertical, 5)
+            
+            SideMenuItemView(label: "common.settings",
+                             systemImage: "slider.horizontal.3",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+            SideMenuItemView(label: "common.about",
+                             systemImage: "info.circle",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
+            SideMenuItemView(label: "common.reportproblem",
+                             systemImage: "exclamationmark.triangle",
+                             context: .toBeImplemnented,
+                             currentSideMenuContext: $currentSideMenuContext)
+                .frame(height: 60)
+                .padding(.bottom, 0)
 
             Spacer()
             
@@ -94,14 +138,12 @@ struct SideMenuView: View {
                 .frame(height: 0.5)
             
             Text("developed_by")
-                .font(.caption)
-                .fontWeight(.regular)
+                .font(.captionRegular)
                 .padding(.top, 20)
                 .padding(.bottom, 10)
 
             Text("_NOTTR_v\(appVersion)(\(appBuild))")
-                .font(.caption2)
-                .fontWeight(.light)
+                .font(.caption2Light)
                 .padding(.bottom, 20)
         }
     }
@@ -116,20 +158,26 @@ struct SideMenuView: View {
                 HStack(alignment: .center) {
                     ZStack(alignment: .center) {
                         Circle()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.backgroundPrimary)
                             .frame(width: 60, height: 60)
-                        DropinLogo(lineWidthMuliplier: 2, pinSizeMuliplier: 1.5)
+                        DropinLogo(variant: logoVariant,
+                                   lineWidthMuliplier: 2,
+                                   pinSizeMuliplier: 1.5)
                             .frame(width: 50, height: 50)
                     }
                     .padding(.leading, 25)
                     .padding(.trailing, 25)
-                    
+
                     Text("Dropin")
-                        .foregroundStyle(.white)
-                        .font(.largeTitle)
+                        .foregroundStyle(.backgroundPrimary)
+                        .font(.largeTitleSemibold)
 
                     Spacer()
                 }
+                .onTapGesture {
+                    logoVariant = DropinLogo.Variant.random(excluded: logoVariant)
+                }
+
                 Spacer()
             }
         }

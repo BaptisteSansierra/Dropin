@@ -17,20 +17,26 @@ struct PlaceAnnotation: MapContent {
     
     // MARK: - private vars
     private var place: PlaceUI
-
+    
     // MARK: - Body
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             
-            PlaceAnnotationView(sysImage: place.systemImage,
-                                color: place.groupColor)
-                .onTapGesture {
-                    selectedPlaceId = PlaceID(id: place.id)
-                }
+            PlaceAnnotationView(color: place.groupColor,
+                                icon: place.group?.icon,
+                                iconExtra: place.icon)
+            .onTapGesture {
+                selectedPlaceId = PlaceID(id: place.id)
+            }
         }
     }
     
     // MARK: - init
+    init(item: MapDisplayPlaceItem, selectedPlaceId: Binding<PlaceID?>) {
+        self.place = item.place
+        self._selectedPlaceId = selectedPlaceId
+    }
+    
     init(place: PlaceUI, selectedPlaceId: Binding<PlaceID?>) {
         self.place = place
         self._selectedPlaceId = selectedPlaceId
@@ -41,59 +47,148 @@ struct PlaceAnnotationView: View {
 
     private enum Style {
         case borderedRect
-        case plainCircle
+        case plainCircle // LEGACY
     }
     
     // MARK: - private vars
     private var style: Style = .borderedRect
-    private var sysImage: String
     private var color: Color
+    private var icon: Icon?
+    private var iconExtra: Icon?
 
     // MARK: - Body
     var body: some View {
 
         switch style {
             case .plainCircle:
+                // LEGACY
                 ZStack {
                     Circle()
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 36, height: 36)
                     Circle()
                         .fill(color)
                         .frame(width: 30, height: 30)
-                    Image(systemName: sysImage)
-                        .foregroundStyle(.white)
+                    if let icon = icon {
+                        IconView(icon: icon)
+                            .sizeXS()
+                            .foregroundStyle(.backgroundPrimary)
+                    }
                 }
             case .borderedRect:
                 ZStack {
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 36, height: 30)
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 34, height: 28)
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.white)
+                        .fill(.backgroundPrimary)
                         .frame(width: 32, height: 26)
-                    Image(systemName: sysImage)
+                    if let icon = icon {
+                        IconView(icon: icon)
+                            .sizeBody()
+                    } else {
+                        Image("empty")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(.textPrimary.opacity(0.3))
+                            .frame(width: 17, height: 17)
+                    }
                 }
+                .overlay(content: {
+                    if let iconExtra = iconExtra {
+                        VStack(spacing: 0) {
+                            HStack(spacing: 0) {
+                                Spacer()
+                                ZStack {
+                                    Circle()
+                                        .fill(.textPrimary)
+                                        .frame(width: 20, height: 20)
+                                        .shadow(color: .textPrimary.opacity(0.5),
+                                                radius: 3,
+                                                x: -2, y: 2)
+                                    Circle()
+                                        .fill(.backgroundPrimary)
+                                        .frame(width: 19, height: 19)
+                                    IconView(icon: iconExtra)
+                                        .sizeCaption2()
+                                }
+                            }
+                            Spacer()
+                        }
+                        .offset(x: 12, y: -12)
+                    }
+                })
         }
     }
     
     // MARK: - init
-    init(sysImage: String, color: Color = .dropinPrimary) {
-        self.sysImage = sysImage
+    init(color: Color = .dropinPrimary,
+         icon: Icon? = nil,
+         iconExtra: Icon? = nil) {
         self.color = color
+        self.icon = icon
+        self.iconExtra = iconExtra
     }
 }
 
-//#Preview {
-//    @Previewable @State var selectedPlaceId: PlaceID? = nil
-//    Map {
-//        PlaceAnnotation(place: AppContainer.mock().mockPlaceUIExample(),
-//                        selectedPlaceId: $selectedPlaceId )
-//    }
-//}
+#if DEBUG
+struct MockPlaceAnnotation: View {
+    var mock: MockContainer
+    @State var place1: PlaceUI
+    @State var place2: PlaceUI
+    @State var place3: PlaceUI
+    @State var place4: PlaceUI
+    @State var place5: PlaceUI
+    @State var selectedPlaceId: PlaceID? = nil
+
+    var body: some View {
+        Map {
+            PlaceAnnotation(place: place1, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: place2, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: place3, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: place4, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: place5, selectedPlaceId: $selectedPlaceId)
+        }
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        let group1 = mock.getGroupUI(0)
+        let group2 = mock.getGroupUI(1)
+
+        let place = mock.getPlaceUI()
+        self.place1 = place
+        self.place2 = place.copy()
+        self.place3 = place.copy()
+        self.place4 = place.copy()
+        self.place5 = place.copy()
+
+        self.place1.group = nil
+        self.place2.group = group1
+        self.place3.group = group2
+        self.place4.group = nil
+        self.place5.group = group2
+
+        self.place2.icon = .sf("duffle.bag")
+        self.place3.icon = nil
+        self.place4.icon = .sf("figure.seated.side.left.airbag.on")
+        self.place5.icon = .sf("ivfluid.bag")
+
+        self.place2.coordinates = place.coordinates.offset(x: 0, y: 0.05)
+        self.place3.coordinates = place.coordinates.offset(x: 0.05, y: 0)
+        self.place4.coordinates = place.coordinates.offset(x: 0.05, y: 0.05)
+        self.place5.coordinates = place.coordinates.offset(x: 0.025, y: 0.025)
+    }
+}
+
+#Preview {
+    MockPlaceAnnotation()
+}
+#endif

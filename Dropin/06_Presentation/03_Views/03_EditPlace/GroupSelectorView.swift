@@ -15,7 +15,21 @@ struct GroupSelectorView: View {
     @Binding private var place: PlaceUI
     @State private var createdGroupName: String = ""
     @State private var createdGroupColor: Color
+    @State private var createdGroupIcon: Icon?
     @State private var isShowingNameWarn = false
+    @State private var showingMarkerPicker = false
+    @State private var markerCircleOpacity: CGFloat = 1
+    @State private var markerPlaceholderOpacity: CGFloat
+    @State private var markerPlaceholderColor: Color
+    @State private var markerPlaceholderFont: Font
+
+    // MARK: - Dependencies
+    @Environment(\.dismiss) private var dismiss
+    
+    // MARK: - Private properties
+    private let markerPlaceholderOpacityDefault: CGFloat = 0.3
+    private let markerPlaceholderColorDefault: Color = .textPrimary
+    private let markerPlaceholderFontDefault: Font = .system(size: 15)
     private var selectedGroupId: Binding<String> {
         Binding<String>(
             get: {
@@ -32,14 +46,22 @@ struct GroupSelectorView: View {
             })
     }
     
-    // MARK: - Dependencies
-    @Environment(\.dismiss) private var dismiss
-    
+    // MARK: - init
+    init(viewModel: GroupSelectorViewModel, place: Binding<PlaceUI>) {
+        self._viewModel = State(initialValue: viewModel)
+        self._place = place
+        _createdGroupColor = State(initialValue: Color.random())
+        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
+        markerPlaceholderColor = markerPlaceholderColorDefault
+        markerPlaceholderFont = markerPlaceholderFontDefault
+    }
+
     // MARK: - Body
     var body: some View {
         VStack {
             HStack {
                 Text("group_selector.title")
+                    .textStyle(.body)
                     .padding()
             }
             .padding(.top)
@@ -59,15 +81,22 @@ struct GroupSelectorView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $showingMarkerPicker) {
+            MarkerListView(selected: $createdGroupIcon)
+        }
     }
     
     // MARK: - Subviews
     private var groupPickerView: some View {
         VStack {
             Picker("common.groups", selection: selectedGroupId) {
-                Text("group_selector.none").tag("")
+                Text("group_selector.none")
+                    .tag("")
+                    .textStyle(.body)
                 ForEach(viewModel.groups) { group in
-                    Text(group.name).tag(group.id)
+                    Text(group.name)
+                        .tag(group.id)
+                        .textStyle(.body)
                 }
             }
             .pickerStyle(.wheel)
@@ -78,17 +107,15 @@ struct GroupSelectorView: View {
     private var selectionView: some View {
         VStack {
             if let group = place.group {
-                GroupView(name: group.name,
-                          color: group.color,
-                          hasDestructiveBt: true,
-                          destructiveAction: {
+                GroupView(group: group,
+                          actionType: .remove,
+                          action: {
                     place.group = nil
                 })
 
             } else {
                 Text("group_selector.none_selected")
-                    .font(.callout)
-                    .foregroundStyle(.gray)
+                    .textStyle(.placeholder)
                     .padding()
             }
             Divider()
@@ -96,9 +123,9 @@ struct GroupSelectorView: View {
     }
     
     private var createGroupView: some View {
-        HStack() {
+        HStack(spacing: 0) {
             @Bindable var place = place
-
+            // Color picker
             ZStack {
                 ColorPicker("", selection: $createdGroupColor, supportsOpacity: false)
                     .labelsHidden()
@@ -107,48 +134,96 @@ struct GroupSelectorView: View {
                     .frame(width: 15, height: 15)
                     .foregroundStyle(createdGroupColor)
             }
+            .frame(width: 50)
+            .padding(.leading, 10)
+            // Marker picker
+            ZStack {
+                Circle()
+                    .strokeBorder(style: StrokeStyle(lineWidth: 2))
+                    .frame(width: 29, height: 29)
+                    .foregroundStyle(.dropinPrimary)
+                    .opacity(markerCircleOpacity)
+                    .onTapGesture {
+                        showingMarkerPicker.toggle()
+                    }
+                if let icon = createdGroupIcon {
+                    IconView(icon: icon)
+                        .sizeCaption()
+                        .foregroundStyle(.dropinPrimary)
+                } else {
+                    Image(systemName: "tag")
+                        .foregroundStyle(markerPlaceholderColor)
+                        .font(markerPlaceholderFont)
+                        .opacity(markerPlaceholderOpacity)
+                }
+            }
+            .frame(width: 50)
+            .padding(.vertical)
+            .padding(.trailing, 10)
+            // Group name
             TextField("group_selector.new", text: $createdGroupName)
+                .textStyle(.body)
+                //.border(.blue, width: 2)
                 .autocorrectionDisabled()
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(.white)
+                            Rectangle().fill(.backgroundPrimary)
                             Text("placeholder.group_name")
-                                .bold()
-                                .foregroundStyle(.red)
+                                .textStyle(.bodyError)
                         }
                     }
                 }
+
             Spacer()
             IcoButton(systemImage: "plus").onTapGesture {
-                guard !createdGroupName.isEmpty else {
-                    withAnimation(.linear(duration: 0.5)) {
-                        isShowingNameWarn.toggle()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            withAnimation(.linear(duration: 0.5)) {
-                                isShowingNameWarn.toggle()
-                            }
-                        }
-                    }
-                    return
-                }
-                Task {
-                    let newGroup = try await viewModel.createGroup(name: createdGroupName, color: createdGroupColor.hex)
-                    place.group = newGroup
-                    createdGroupName = ""
-                    createdGroupColor = Color.random()
-                }
+                createGroup()
             }
             .padding(.trailing, 15)
         }
 
     }
-    
-    // MARK: - init
-    init(viewModel: GroupSelectorViewModel, place: Binding<PlaceUI>) {
-        self._viewModel = State(initialValue: viewModel) 
-        self._place = place
-        _createdGroupColor = State(initialValue: Color.random())
+
+    // MARK: - private methods
+    private func createGroup() {
+        guard let groupIcon = createdGroupIcon else {
+            withAnimation(.linear(duration: 0.25)) {
+                markerCircleOpacity = 0
+                markerPlaceholderColor = .warning
+                markerPlaceholderFont = .system(size: 22)
+                markerPlaceholderOpacity = 1
+            } completion: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        markerCircleOpacity = 1
+                        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
+                        markerPlaceholderColor = markerPlaceholderColorDefault
+                        markerPlaceholderFont = markerPlaceholderFontDefault
+                    }
+                }
+            }
+            return
+        }
+        guard !createdGroupName.isEmpty else {
+            withAnimation(.linear(duration: 0.5)) {
+                isShowingNameWarn.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.linear(duration: 0.5)) {
+                        isShowingNameWarn.toggle()
+                    }
+                }
+            }
+            return
+        }
+        Task {
+            let newGroup = try await viewModel.createGroup(name: createdGroupName,
+                                                           color: createdGroupColor.hex,
+                                                           icon: groupIcon)
+            place.group = newGroup
+            createdGroupName = ""
+            createdGroupColor = Color.random()
+            createdGroupIcon = nil
+        }
     }
 }
 

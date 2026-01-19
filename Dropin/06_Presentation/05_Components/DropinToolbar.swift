@@ -8,20 +8,28 @@
 import SwiftUI
 
 struct LogoToolbarView: View {
+    
+    @State private var logoVariant: DropinLogo.Variant = .logo
+    
     var body: some View {
         HStack {
             Text("_NOTTR_Dr")
-                .font(.title)
-                .fontWeight(.bold)
+                .font(.titleBold)
+                .foregroundStyle(.textPrimary)
                 .padding(0)
                 .offset(x: 4, y: 0)
-            DropinLogo(lineWidthMuliplier: 4, pinSizeMuliplier: 1.5)
+            DropinLogo(variant: logoVariant,
+                       lineWidthMuliplier: 2,
+                       pinSizeMuliplier: 1.5)
                 .frame(width: 25, height: 25)
             Text("_NOTTR_pin")
-                .font(.title)
-                .fontWeight(.bold)
+                .font(.titleBold)
+                .foregroundStyle(.textPrimary)
                 .padding(0)
                 .offset(x: -4, y: 0)
+        }
+        .onTapGesture {
+            logoVariant = DropinLogo.Variant.random(excluded: logoVariant)
         }
     }
 }

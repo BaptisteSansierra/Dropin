@@ -14,6 +14,7 @@ struct GroupDetailsView: View {
     @Binding private var group: GroupUI
     @State private var groupColor: Color
     @State private var showingRemoveAlert: Bool = false
+    @State private var showingMarkerList: Bool = false
 
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
@@ -30,7 +31,7 @@ struct GroupDetailsView: View {
         VStack(alignment: .center) {
             HStack {
                 Spacer()
-                GroupView(name: group.name, color: group.color, hasDestructiveBt: false)
+                GroupView(group: group)
                 Spacer()
             }
             .padding(.top, 15)
@@ -40,13 +41,15 @@ struct GroupDetailsView: View {
 
             colorView
             
+            iconView
+            
             placesView
 
             Spacer()
             
             deleteButton
         }
-        .background(Color(uiColor: UIColor.systemGroupedBackground))
+        .background(.backgroundSecondary)
         .alert("alert.remove_group_title",
                isPresented: $showingRemoveAlert) {
             Button("common.cancel", role: .cancel) { }
@@ -67,23 +70,33 @@ struct GroupDetailsView: View {
                 Text("alert.remove_group_empty_body_\(group.name)")
             }
         }
+        .fullScreenCover(isPresented: $showingMarkerList) {
+            MarkerListView(selected: Binding<Icon>(
+                get: {
+                    return group.icon
+                }, set: { value in
+                    group.icon = value
+                    Task {
+                        try await viewModel.updateGroup(group)
+                    }
+                }))
+        }
     }
     
     // MARK: - Subviews
     private var nameView: some View {
         VStack(alignment: .leading) {
             Text("common.group_name")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 TextField("common.group_name", text: $group.name)
+                    .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
                     .padding(.horizontal, 40)
@@ -99,15 +112,13 @@ struct GroupDetailsView: View {
     private var colorView: some View {
         VStack(alignment: .leading) {
             Text("common.group_color")
-                .font(.caption)
-                .fontWeight(.medium)
+                .textStyle(.formSectionTitle2)
                 .padding(.leading, 40)
                 .padding(.top, 10)
-                .foregroundStyle(.gray)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .frame(height: 45)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 HStack() {
@@ -126,7 +137,42 @@ struct GroupDetailsView: View {
                             group.color = groupColor
                             updateGroup()
                         }
-
+                }
+            }
+        }
+    }
+    
+    private var iconView: some View {
+        VStack(alignment: .leading) {
+            Text("common.group_symbol")
+                .textStyle(.formSectionTitle2)
+                .padding(.leading, 40)
+                .padding(.top, 10)
+            ZStack {
+                RoundedRectangle(cornerSize: 8)
+                    .frame(height: 45)
+                    .foregroundStyle(.backgroundPrimary)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 20)
+                
+                HStack {
+                    ZStack(alignment: .center) {
+                        RoundedRectangle(cornerSize: 8)
+                            .strokeBorder(.textPrimary, style: StrokeStyle(lineWidth: 1))
+                            .frame(height: 25)
+                            .frame(width: 100)
+                            .foregroundStyle(.clear)
+                        IconView(icon: group.icon)
+                            .sizeCaption()
+                    }
+                    .padding(.leading, 40)
+                    Spacer()
+                    IcoButton(systemImage: "ellipsis", icoSize: 14)
+                        .padding(0)
+                        .onTapGesture {
+                            showingMarkerList.toggle()
+                        }
+                        .padding(.trailing, 40)
                 }
             }
         }
@@ -136,11 +182,9 @@ struct GroupDetailsView: View {
         VStack(alignment: .leading) {
             if group.places.count > 0 {
                 Text("common.related_places")
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .textStyle(.formSectionTitle2)
                     .padding(.leading, 40)
                     .padding(.top, 30)
-                    .foregroundStyle(.gray)
                 Divider()
                 List {
                     ForEach(group.places) { place in
@@ -153,17 +197,15 @@ struct GroupDetailsView: View {
                             } label: {
                                 Text("common.unlink")
                             }
-                            .tint(.red)
+                            .tint(.destructive)
                         }
                     }
                 }
             } else {
                 Text("common.no_related_places")
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .textStyle(.formSectionTitle2)
                     .padding(.leading, 40)
                     .padding(.top, 30)
-                    .foregroundStyle(.gray)
             }
         }
     }
@@ -171,11 +213,11 @@ struct GroupDetailsView: View {
     private var deleteButton: some View {
         ZStack {
             RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.red)
+                .foregroundStyle(.destructive)
                 .frame(width: DropinApp.ui.button.width,
                        height: DropinApp.ui.button.height)
             Text("common.delete_group")
-                .foregroundStyle(.white)
+                .textStyle(.mainButton)
         }
         .padding(.bottom, 15)
         .onTapGesture {
@@ -201,7 +243,6 @@ struct GroupDetailsView: View {
 
 struct MockGroupDetailsView: View {
     var mock: MockContainer
-    //@State private var groups: [GroupUI]
     @State private var group: GroupUI
 
     var body: some View {
@@ -211,7 +252,6 @@ struct MockGroupDetailsView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        //self.groups = mock.getAllGroupUI()
         self.group = mock.getGroupUI(0)
     }
 }

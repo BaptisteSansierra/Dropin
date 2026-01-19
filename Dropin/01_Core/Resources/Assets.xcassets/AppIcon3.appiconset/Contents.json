@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Dropin2.png",
+      "filename" : "export_variant2_light_1024.0_.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "export_variant2_dark_1024.0_.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

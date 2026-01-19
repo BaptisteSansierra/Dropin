@@ -54,6 +54,7 @@ struct TagSelectorView: View {
         Group {
             HStack {
                 Text("tag_selector.title")
+                    .textStyle(.body)
                     .padding()
             }
             Divider()
@@ -64,8 +65,7 @@ struct TagSelectorView: View {
         Group {
             let hasTags = viewModel.placeTags.count > 0
             Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
-                .font(.callout)
-                .foregroundStyle(.gray)
+                .textStyle(.placeholder)
                 .padding()
           
             if hasTags {
@@ -106,6 +106,7 @@ struct TagSelectorView: View {
     
     private var createTagView: some View {
         HStack() {
+            // Color picker
             ZStack {
                 ColorPicker("", selection: $createdTagColor, supportsOpacity: false)
                     .labelsHidden()
@@ -114,15 +115,16 @@ struct TagSelectorView: View {
                     .frame(width: 15, height: 15)
                     .foregroundStyle(createdTagColor)
             }
+            // Tag name
             TextField("tag_selector.new", text: $createdTagName)
+                .textStyle(.body)
                 .autocorrectionDisabled()
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(.white)
+                            Rectangle().fill(.backgroundPrimary)
                             Text("placeholder.tag_name")
-                                .bold()
-                                .foregroundStyle(.red)
+                                .textStyle(.bodyError)
                         }
                     }
                 }

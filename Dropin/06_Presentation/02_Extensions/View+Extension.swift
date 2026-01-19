@@ -2,38 +2,42 @@
 //  View+Extension.swift
 //  Dropin
 //
-//  Created by baptiste sansierra on 30/7/25.
+//  Created by baptiste sansierra on 16/1/26.
 //
 
 import SwiftUI
+import MapKit
 
 extension View {
     
-    // Using ViewModifier FirstAppear
-    func onFirstAppear(_ action: @escaping () -> ()) -> some View {
-        modifier(FirstAppear(action: action))
+    // Allow assert to be called within a map content builder
+    func assertionInMapContentBuilder(_ message: String) -> EmptyMapContent {
+        assertionFailure(message)
+        return EmptyMapContent()
     }
     
-    func customToolbar<Leading: View, Trailing: View, Title: View>(tabIndex: Int = 0,
-                                                                   @ViewBuilder leading: () -> Leading = { EmptyView() },
-                                                                   @ViewBuilder trailing: () -> Trailing = { EmptyView() },
-                                                                   @ViewBuilder title: () -> Title = { EmptyView() } ) -> some View {
-            
-        let leadingView = leading()
-        let trailingView = trailing()
-        let titleView = title()
+    // Allow assert to be called within a view builder
+    func assertionInViewBuilder(_ message: String) -> EmptyView {
+        assertionFailure(message)
+        return EmptyView()
+    }
+    
+    func commonErrorMessage(_ error: Error) -> String {
+        switch error {
+            case let urlError as URLError:
+                switch urlError.code {
+                    case .notConnectedToInternet:
+                        return "No internet connection"
+                    case .timedOut:
+                        return "Request timed out, check your internet connection"
+                    default:
+                        return "URLError: \(urlError.code)"
+                }
 
-        return modifier(CustomToolbar(tabIndex: tabIndex,
-                                      leading: leadingView is EmptyView ? nil : AnyView(leadingView),
-                                      trailing: trailingView is EmptyView ? nil : AnyView(trailingView),
-                                      title: titleView is EmptyView ? nil : AnyView(titleView)))
-
-                        
-//        let item = CustomToolbarContent(leading: leadingView is EmptyView ? nil : AnyView(leadingView),
-//                                        trailing: trailingView is EmptyView ? nil : AnyView(trailingView),
-//                                        title: titleView is EmptyView ? nil : AnyView(titleView))
-//        return self.preference(key: ToolbarContentPreference.self,
-//                               value: item)
-        
+            case let nsError as NSError where nsError.domain == NSURLErrorDomain:
+                return "NSURLDomainError: \(nsError.localizedDescription)"
+            default:
+                return "Unknown error: \(error.localizedDescription)"
+        }
     }
 }

@@ -22,12 +22,12 @@ struct PlaceNotesView: View {
         VStack {
             HStack(alignment: .top) {
                 Text("common.notes")
-                    .font(.title3)
-                    .foregroundStyle(.gray)
+                    .textStyle(.stringFieldTitle)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
                 Spacer()
             }
             TextField("placeholder.notes", text: $notes, axis: .vertical)
+                .textStyle(.stringFieldContent)
                 .lineLimit(2...6)
                 .padding(.horizontal)
                 .onChange(of: notes) { oldVal, newVal in

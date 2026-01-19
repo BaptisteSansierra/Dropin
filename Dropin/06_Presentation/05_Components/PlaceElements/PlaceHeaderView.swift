@@ -30,8 +30,9 @@ struct PlaceHeaderView: View {
                 
                 ZStack(alignment: .topLeading) {
                     let color = place.groupColor
-                    PlaceAnnotationView(sysImage: place.systemImage,
-                                        color: color)
+                    PlaceAnnotationView(color: color,
+                                        icon: place.group?.icon,
+                                        iconExtra: place.icon)
                     .padding()
                     IcoButton(systemImage: "ellipsis", icoSize: 14)
                         .padding(0)
@@ -42,12 +43,11 @@ struct PlaceHeaderView: View {
                 }
                 VStack(alignment: .leading) {
                     TextField(editEnabled ? "placeholder.place_name" : "common.na", text: $place.name)
-                        .font(.title)
+                        .textStyle(.title)
                         .autocorrectionDisabled()
                         .disabled(!editEnabled)
                     Text(place.address.isEmpty ? "" : place.address)
-                        .font(.callout)
-                        .foregroundStyle(.gray)
+                        .textStyle(.placeholder)
                         .onTapGesture(count: 2, perform: {
                             navigationContext.showingAddressToClipboard.toggle()
                             print("COPY TO CLIPBOARD: \(place.address)")

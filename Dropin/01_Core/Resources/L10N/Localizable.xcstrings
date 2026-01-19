@@ -68,21 +68,11 @@
         }
       }
     },
-    "_TEMP_long_press_instructions" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long press on the map to create a new place!\n\n\nMore ways to be implemented..."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long press on the map to create a new place!\n\n\nMore ways to be implemented..."
-          }
-        }
-      }
+    "%@" : {
+
+    },
+    "%lld" : {
+
     },
     "alert.address_copied_body" : {
       "localizations" : {
@@ -244,6 +234,16 @@
         }
       }
     },
+    "common.about" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        }
+      }
+    },
     "common.cancel" : {
       "localizations" : {
         "en" : {
@@ -260,18 +260,18 @@
         }
       }
     },
-    "common.create_place" : {
+    "common.clear_selection" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create a new place"
+            "value" : "Clear selection"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer un nouveau lieu"
+            "value" : "Effacer la sélection"
           }
         }
       }
@@ -356,6 +356,16 @@
         }
       }
     },
+    "common.favorites" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorites"
+          }
+        }
+      }
+    },
     "common.go" : {
       "localizations" : {
         "en" : {
@@ -416,6 +426,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nom du groupe"
+          }
+        }
+      }
+    },
+    "common.group_symbol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group symbol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symbole du groupe"
           }
         }
       }
@@ -529,6 +555,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nouveau"
+          }
+        }
+      }
+    },
+    "common.new_place" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New place"
           }
         }
       }
@@ -661,6 +698,16 @@
         }
       }
     },
+    "common.recents" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recents"
+          }
+        }
+      }
+    },
     "common.related_places" : {
       "localizations" : {
         "en" : {
@@ -673,6 +720,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux associés"
+          }
+        }
+      }
+    },
+    "common.reportproblem" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report a problem"
+          }
+        }
+      }
+    },
+    "common.save_new_place" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save a new place"
+          }
+        }
+      }
+    },
+    "common.settings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         }
       }
@@ -872,6 +949,25 @@
     "Dropin" : {
       "shouldTranslate" : false
     },
+    "Error" : {
+
+    },
+    "Error while fetching" : {
+
+    },
+    "error.no_connection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection"
+          }
+        }
+      }
+    },
+    "From image library (not implemented) " : {
+
+    },
     "group_list_view.num_places_%lld" : {
       "localizations" : {
         "en" : {
@@ -976,6 +1072,9 @@
         }
       }
     },
+    "Loading..." : {
+
+    },
     "markers.select" : {
       "localizations" : {
         "en" : {
@@ -988,6 +1087,49 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sélectionner un marqueur"
+          }
+        }
+      }
+    },
+    "menu.new_place.adress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From a name or an address"
+          }
+        }
+      }
+    },
+    "menu.new_place.contact" : {
+
+    },
+    "menu.new_place.coords" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From coordinates (not implemented)"
+          }
+        }
+      }
+    },
+    "menu.new_place.current" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From current position (not implemented)"
+          }
+        }
+      }
+    },
+    "menu.new_place.drop_pin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drop a pin (not implemented)"
           }
         }
       }
@@ -1055,6 +1197,9 @@
           }
         }
       }
+    },
+    "No result matching" : {
+
     },
     "place_details.apply" : {
       "localizations" : {
@@ -1239,6 +1384,18 @@
           }
         }
       }
+    },
+    "To be implemented" : {
+
+    },
+    "To be implemented..." : {
+
+    },
+    "Unavailable" : {
+
+    },
+    "Undefined navigation item" : {
+
     }
   },
   "version" : "1.0"

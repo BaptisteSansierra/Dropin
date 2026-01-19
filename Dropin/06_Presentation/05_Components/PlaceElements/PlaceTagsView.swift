@@ -22,8 +22,7 @@ struct PlaceTagsView: View {
             VStack {
                 HStack(alignment: .top) {
                     Text("common.tags")
-                        .font(.title3)
-                        .foregroundStyle(.gray)
+                        .textStyle(.stringFieldTitle)
                         .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
 
                     if place.tags.count > 0 {

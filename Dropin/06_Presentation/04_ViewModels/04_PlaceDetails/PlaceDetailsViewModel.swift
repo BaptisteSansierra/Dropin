@@ -10,6 +10,8 @@ import SwiftUI
 @MainActor
 @Observable class PlaceDetailsViewModel {
     
+    private var coordinator: MainCoordinator
+    
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var updatePlace: UpdatePlace
     @ObservationIgnored private var deletePlace: DeletePlace
@@ -19,6 +21,7 @@ import SwiftUI
     @ObservationIgnored private var createGroup: CreateGroup
     
     init(_ appContainer: AppContainer,
+         coordinator: MainCoordinator,
          updatePlace: UpdatePlace,
          deletePlace: DeletePlace,
          getTags: GetTags,
@@ -26,6 +29,7 @@ import SwiftUI
          getGroups: GetGroups,
          createGroup: CreateGroup) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.updatePlace = updatePlace
         self.deletePlace = deletePlace
         self.getTags = getTags
@@ -38,7 +42,12 @@ import SwiftUI
     func createPlaceDetailsContentView(place: Binding<PlaceUI>, editMode: Binding<PlaceEditMode>) -> PlaceDetailsContentView {
         return appContainer.createPlaceDetailsContentView(place: place, editMode: editMode)
     }
-    
+
+    // MARK: Navigation
+    func popView() {
+        coordinator.pop()
+    }
+
     // MARK: Use cases
     func deletePlace(_ place: PlaceUI) async throws {
         try await deletePlace.execute(PlaceMapper.toDomain(place))

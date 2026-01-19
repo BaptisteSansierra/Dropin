@@ -20,7 +20,13 @@ struct CreateGroup {
             throw DomainError.Group.missingName
         }
         if try await repository.exists(group) {
-            throw DomainError.Place.alreadyExists
+            throw DomainError.Group.alreadyExists
+        }
+//        if !group.icon.isValid {
+//            throw DomainError.Group.undefinedMarker
+//        }
+        if !group.color.isValidHexaColor {
+            throw DomainError.Group.invalidColor
         }
         return try await repository.create(group)
     }

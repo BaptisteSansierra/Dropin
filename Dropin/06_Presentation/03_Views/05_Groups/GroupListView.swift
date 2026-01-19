@@ -23,33 +23,35 @@ struct GroupListView: View {
     
     // MARK: - Body
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $viewModel.coordinator.path) {
             List {
                 ForEach(groups) { group in
                     if !group.databaseDeleted {
-                        NavigationLink(value: GroupMapper.toDomain(group)) {
-                            HStack {
-                                GroupView(name: group.name, color: group.color, hasDestructiveBt: false)
-                                Spacer()
-                                let nPlaces = group.places.count
-                                Text("group_list_view.num_places_\(nPlaces)")
+                        HStack {
+                            GroupView(group: group)
+                            Spacer()
+                            let nPlaces = group.places.count
+                            Text("group_list_view.num_places_\(nPlaces)")
+                                .textStyle(.placeholder)
+                        }
+                        .swipeActions {
+                            Button() {
+                                deleteGroup(group)
+                            } label: {
+                                Label("common.delete", systemImage: "trash")
                             }
-                            .swipeActions {
-                                Button() {
-                                    deleteGroup(group)
-                                } label: {
-                                    Label("common.delete", systemImage: "trash")
-                                }
-                                .tint(.red)
-                            }
+                            .tint(.destructive)
+                        }
+                        .onTapGesture {
+                            viewModel.pushGroupDetailsView(groupId: group.id)
                         }
                     }
                 }
             }
             .navigationTitle("common.groups")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: GroupEntity.self) { group in
-                createGroupDetailsView(group)
+            .navigationDestination(for: GroupNavigationItem.self) { navigationItem in
+                resolveDestination(navigationItem: navigationItem)
             }
             .task {
                 Task {
@@ -94,11 +96,32 @@ struct GroupListView: View {
         showingRemoveAlert = true
     }
     
-    private func createGroupDetailsView(_ group: GroupEntity) -> GroupDetailsView {
-        guard let index = groups.firstIndex(where: { $0.id == group.id }) else {
-            fatalError("couldn't find any group named '\(group.name)' in list")
+    private func createGroupDetailsView(_ groupId: String) -> GroupDetailsView {
+        guard let index = groups.firstIndex(where: { $0.id == groupId }) else {
+            fatalError("couldn't find any group id '\(groupId)' in list")
         }
         return viewModel.createGroupDetailsView(group: $groups[index])
+    }
+    
+    @ViewBuilder
+    private func resolveDestination(navigationItem: GroupNavigationItem) -> some View {
+        switch navigationItem {
+            case .groupDetails(let groupId):
+                createGroupDetailsView(groupId)
+            case .undefinedDummyView:
+                ZStack {
+                    Color.orange
+                    Text("To be implemented...")
+                }
+            default:
+                ZStack {
+                    Color.orange
+                    Text("Undefined navigation item")
+                }
+                .onAppear {
+                    assertionFailure("undefined navigation item \(navigationItem)")
+                }
+        }
     }
 }
 

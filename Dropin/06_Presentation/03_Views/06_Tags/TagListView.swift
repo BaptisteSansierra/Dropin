@@ -9,47 +9,49 @@ import SwiftUI
 import SwiftData
 
 struct TagListView: View {
-
+    
     // MARK: - State & Bindings
     @State private var viewModel: TagListViewModel
     @State private var tags: [TagUI] = [TagUI]()
     @State private var showingRemoveAlert: Bool = false
     @State private var tagToRemove: TagUI? = nil
-
+    
     // MARK: - init
     init(viewModel: TagListViewModel) {
         self.viewModel = viewModel
     }
-
+    
     // MARK: - Body
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $viewModel.coordinator.path) {
             List {
                 ForEach(tags) { tag in
                     if !tag.databaseDeleted {
-                        NavigationLink(value: TagMapper.toDomain(tag)) {
-                            HStack {
-                                TagView(name: tag.name, color: tag.color)
-                                Spacer()
-                                let nPlaces = tag.places.count
-                                Text("tag_list_view.num_places_\(nPlaces)")
+                        HStack {
+                            TagView(name: tag.name, color: tag.color)
+                            Spacer()
+                            let nPlaces = tag.places.count
+                            Text("tag_list_view.num_places_\(nPlaces)")
+                                .textStyle(.placeholder)
+                        }
+                        .swipeActions {
+                            Button() {
+                                deleteTag(tag)
+                            } label: {
+                                Label("common.delete", systemImage: "trash")
                             }
-                            .swipeActions {
-                                Button() {
-                                    deleteTag(tag)
-                                } label: {
-                                    Label("common.delete", systemImage: "trash")
-                                }
-                                .tint(.red)
-                            }
+                            .tint(.destructive)
+                        }
+                        .onTapGesture {
+                            viewModel.pushTagDetailsView(tagId: tag.id)
                         }
                     }
                 }
             }
             .navigationTitle("common.tags")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: TagEntity.self) { tag in
-                createTagDetailsView(tag)
+            .navigationDestination(for: TagNavigationItem.self) { navigationItem in
+                resolveDestination(navigationItem: navigationItem)
             }
             .task{
                 Task {
@@ -73,7 +75,7 @@ struct TagListView: View {
                             tagToRemove = nil
                             tags = try await viewModel.loadTags()
                         } catch {
-                            // TODO: handle error 
+                            // TODO: handle error
                             assertionFailure("couldn't delete tag")
                         }
                     }
@@ -87,18 +89,40 @@ struct TagListView: View {
             }
         }
     }
-
+    
     // MARK: - Actions
     private func deleteTag(_ tag: TagUI) {
         tagToRemove = tag
         showingRemoveAlert = true
     }
     
-    private func createTagDetailsView(_ tag: TagEntity) -> TagDetailsView {
-        guard let index = tags.firstIndex(where: { $0.id == tag.id }) else {
-            fatalError("couldn't find any tag named '\(tag.name)' in list")
+    private func createTagDetailsView(_ tagId: String) -> TagDetailsView {
+        guard let index = tags.firstIndex(where: { $0.id == tagId }) else {
+            fatalError("couldn't find any tag id '\(tagId)' in list")
         }
         return viewModel.createTagDetailsView(tag: $tags[index])
+    }
+    
+    @ViewBuilder
+    private func resolveDestination(navigationItem: TagNavigationItem) -> some View {
+        
+        switch navigationItem {
+            case .tagDetails(let tagId):
+                createTagDetailsView(tagId)
+            case .undefinedDummyView:
+                ZStack {
+                    Color.orange
+                    Text("To be implemented...")
+                }
+            default:
+                ZStack {
+                    Color.orange
+                    Text("Undefined navigation item")
+                }
+                .onAppear {
+                    assertionFailure("undefined navigation item \(navigationItem)")
+                }
+        }
     }
 }
 

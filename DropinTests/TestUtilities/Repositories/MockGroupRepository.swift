@@ -6,3 +6,40 @@
 //
 
 import Foundation
+@testable import Dropin
+
+@MainActor
+final class MockGroupRepository: GroupRepository {
+    
+    private var groups: [GroupEntity]
+
+    init(initialGroups: [GroupEntity] = []) {
+        self.groups = initialGroups
+    }
+    
+    func exists(_ place: GroupEntity) async throws -> Bool {
+        if let _ = groups.first(where: { $0.id == place.id }) {
+            return true
+        }
+        return false
+    }
+        
+    func create(_ group: GroupEntity) async throws {
+        groups.append(group)
+    }
+    
+    func delete(_ group: GroupEntity) async throws {
+        guard let index = groups.firstIndex(where: { $0.id == group.id }) else {
+            fatalError("shouldn't be reached, protected by UseCase")
+        }
+        print("Remove group at index \(index)")
+        groups.remove(at: index)
+    }
+    
+    func update(_ group: GroupEntity) async throws {
+    }
+    
+    func getAll() async throws -> [GroupEntity] {
+        return groups
+    }
+}

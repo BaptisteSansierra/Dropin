@@ -29,16 +29,7 @@ struct RootView: View {
     // MARK: - body
     var body: some View {
         ZStack {
-            Group {
-                switch viewModel.currentSideMenuContext {
-                    case .main:
-                        viewModel.createMainView()
-                    case .groups:
-                        viewModel.createGroupListView()
-                    case .tags:
-                        viewModel.createTagListView()
-                }
-            }
+            currentContentView
             SideMenuView(currentSideMenuContext: $viewModel.currentSideMenuContext)
         }
         .task {
@@ -47,6 +38,28 @@ struct RootView: View {
                 try await Task.sleep(for: .seconds(1))
                 viewModel.switchAppIcon()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var currentContentView: some View {
+        switch viewModel.currentSideMenuContext {
+            case .main:
+                viewModel.createMainView()
+            case .groups:
+                viewModel.createGroupListView()
+            case .tags:
+                viewModel.createTagListView()
+            case .toBeImplemnented:
+                NavigationStack {
+                    ContentUnavailableView("Unavailable",
+                                           systemImage: "wrench.and.screwdriver")
+                    .navigationTitle("To be implemented")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        DropinToolbar.Burger()
+                    }
+                }
         }
     }
 }

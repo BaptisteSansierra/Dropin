@@ -24,27 +24,26 @@ struct PlaceRowView: View {
     // MARK: - Body
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            PlaceAnnotationView(sysImage: place.systemImage,
-                                color: place.groupColor)
+            PlaceAnnotationView(color: place.groupColor,
+                                icon: place.group?.icon,
+                                iconExtra: place.icon)
                 .padding(.trailing)
                 .offset(x: 0, y: 5)
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(place.name)
-                        .font(.body)
+                        .textStyle(.cellTitle)
                         .allowsHitTesting(true)
                     Spacer()
                     Text(locationManager.distanceStringTo(place.coordinates) ?? "")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
+                        .textStyle(.cellDetail)
                 }
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .foregroundStyle(.clear)
                         .frame(height: 40)
                     Text(place.address.isEmpty ? "" : place.address)
-                        .font(.caption2)
-                        .foregroundStyle(.gray)
+                        .textStyle(.cellSubtitle)
                         .multilineTextAlignment(.leading)
                 }
                 ScrollView(.horizontal) {

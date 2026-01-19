@@ -18,6 +18,7 @@ import SwiftUI
     }
 
     // MARK: Properties
+    private(set) var coordinator: MainCoordinator
     var sortedPlaces: [PlaceUI] = []
     var groupedSortedPlaces: [String: [PlaceUI]] = [:] // places grouped by group (key=group identifier)
     var ungroupedSortedPlaces: [PlaceUI] = []
@@ -32,8 +33,13 @@ import SwiftUI
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored private let locationManager: LocationManager
     
-    init(_ appContainer: AppContainer, locationManager: LocationManager, getPlaces: GetPlaces, createPlace: CreatePlace) {
+    init(_ appContainer: AppContainer,
+         coordinator: MainCoordinator,
+         locationManager: LocationManager,
+         getPlaces: GetPlaces,
+         createPlace: CreatePlace) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.getPlaces = getPlaces
         self.createPlace = createPlace
         self.locationManager = locationManager
@@ -52,6 +58,18 @@ import SwiftUI
         sortGroupedPlaces(places)
     }
 
+    // MARK: Navigation
+    func pushPlaceDetailsView(placeId: String) {
+        coordinator.pushPlaceDetailsView(placeId: placeId)
+    }
+
+    // MARK: - Use cases
+    func loadPlaces() async throws -> [PlaceUI] {
+        let domainPlaces = try await getPlaces.execute()
+        return domainPlaces.map { PlaceMapper.toUI($0) }
+    }
+
+    // MARK: - private methods
     private func sortGroupedPlaces(_ places: [PlaceUI]) {
         groupedSortedPlaces.removeAll()
         ungroupedSortedPlaces.removeAll()
@@ -110,15 +128,9 @@ import SwiftUI
     }
 
     // MARK: - UI child
-    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
-        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
-    }
+//    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
+//        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
+//    }
 
-    // MARK: - Use cases
-    func loadPlaces() async throws -> [PlaceUI] {
-        let domainPlaces = try await getPlaces.execute()
-        return domainPlaces.map { PlaceMapper.toUI($0) }
-    }
 
-    // MARK: - private methods
 }

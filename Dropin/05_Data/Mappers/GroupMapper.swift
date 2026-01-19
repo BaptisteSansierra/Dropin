@@ -16,8 +16,9 @@ public enum GroupMapper {
         }
         let group = GroupEntity(id: sdGroup.identifier,
                                 name: sdGroup.name,
-                                places: places,
                                 color: sdGroup.color,
+                                icon: sdGroup.icon,
+                                places: places,
                                 creationDate: sdGroup.creationDate)
         if !skipRelationships {
             for i in 0..<places.count {
@@ -30,6 +31,7 @@ public enum GroupMapper {
     static func toData(_ group: GroupEntity) -> SDGroup {
         return SDGroup(identifier: group.id,
                        name: group.name,
-                       color: group.color)
+                       color: group.color,
+                       icon: group.icon)
     }
 }

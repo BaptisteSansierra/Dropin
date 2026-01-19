@@ -17,9 +17,7 @@ struct TagView: View {
     // MARK: - Body
     var body: some View {
         Text(name)
-            .font(.footnote)
-            .bold()
-            .foregroundColor(.white)
+            .textStyle(.tagSticker)
             .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
             .background(color)
             .cornerRadius(6)

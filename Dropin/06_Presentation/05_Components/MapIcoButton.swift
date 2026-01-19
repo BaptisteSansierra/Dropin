@@ -22,7 +22,7 @@ struct MapIcoButton: View {
         HStack {
             ZStack {
                 Circle()
-                    .fill(.white)
+                    .fill(.backgroundPrimary)
                     .stroke(color, style: StrokeStyle(lineWidth: 1))
                 Image(systemName: systemImage)
                     .resizable()
@@ -34,9 +34,9 @@ struct MapIcoButton: View {
             .frame(width: 30, height: 30)
             if let rightCaption = rightCaption {
                 Text(rightCaption)
-                    .font(.caption2)
+                    .textStyle(.caption2)
                     .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
-                    .background(.white)
+                    .background(.backgroundPrimary)
                     .cornerRadius(5)
                     .overlay {
                         RoundedRectangle(cornerRadius: 5)

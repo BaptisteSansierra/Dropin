@@ -10,14 +10,18 @@ import SwiftUI
 @MainActor
 @Observable class GroupListViewModel {
     
+    var coordinator: GroupCoordinator
+    
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var getGroups: GetGroups
     @ObservationIgnored private var deleteGroup: DeleteGroup
 
     init(_ appContainer: AppContainer,
+         coordinator: GroupCoordinator,
          getGroups: GetGroups,
          deleteGroup: DeleteGroup) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.getGroups = getGroups
         self.deleteGroup = deleteGroup
     }
@@ -25,6 +29,11 @@ import SwiftUI
     // MARK: UI Child
     func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
         return appContainer.createGroupDetailsView(group: group)
+    }
+
+    // MARK: Navigation
+    func pushGroupDetailsView(groupId: String) {
+        coordinator.pushGroupDetailsView(groupId: groupId)
     }
 
     // MARK: use cases

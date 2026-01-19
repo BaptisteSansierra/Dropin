@@ -15,9 +15,6 @@ struct PlacesListView: View {
     @Binding private var places: [PlaceUI]
     @State private var renderList = false
 
-    // MARK: - Dependencies
-    @Environment(NavigationContext.self) private var navigationContext
-
     // MARK: - Init
     init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
         self.viewModel = viewModel
@@ -26,56 +23,46 @@ struct PlacesListView: View {
 
     // MARK: - Body
     var body: some View {
-        
-        @Bindable var navigationContext = navigationContext
-        
-        NavigationStack(path: $navigationContext.navigationPath) {
-
-            Group {
-                if viewModel.loading || !renderList {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                } else {
-                    List {
-                        // Show places without groups (empty if #2)
-                        if !viewModel.grouped { flatList }
-                        // Show grouped places (empty if #1)
-                        else { groupedList }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .listStyle(.grouped)
-                    // TODO: to be implemented
-                    //.searchable(text: $viewModel.searchText)
-                    .searchPresentationToolbarBehavior(.avoidHidingContent)
-                    .refreshable {
-                        Task {
-                            try await self.viewModel.loadPlaces()
-                        }
-                    }
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear
-                            .frame(height: 15)
-                    }
+        Group {
+            if viewModel.loading || !renderList {
+                ProgressView()
+                    .progressViewStyle(.circular)
+            } else {
+                List {
+                    // Show places without groups (empty if #2)
+                    if !viewModel.grouped { flatList }
+                    // Show grouped places (empty if #1)
+                    else { groupedList }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .listStyle(.grouped)
+                // TODO: to be implemented?
+                //.searchable(text: $viewModel.searchText)
+//                    .searchPresentationToolbarBehavior(.avoidHidingContent)
+//                    .refreshable {
+//                        Task {
+//                            try await self.viewModel.loadPlaces()
+//                        }
+//                    }
+//                    .safeAreaInset(edge: .bottom) {
+//                        Color.clear
+//                            .frame(height: 15)
+//                    }
             }
-            .task {
-                //try? await Task.sleep(for: .seconds(0.5))
-                try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
-                renderList = true
-                Task {
-                    viewModel.updateSorting(places)
-                }
-            }
-            // TO RESTORE
-            //            .onChange(of: places) {
-            //                viewModel.updateSorting(places)
-            //            }
-            .onChange(of: viewModel.grouped) {
+        }
+        .task {
+            try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
+            renderList = true
+            Task {
                 viewModel.updateSorting(places)
             }
-            .onChange(of: viewModel.sortMode) {
-                viewModel.updateSorting(places)
-            }
+        }
+        .onChange(of: viewModel.grouped) {
+            viewModel.updateSorting(places)
+        }
+        .onChange(of: viewModel.sortMode) {
+            viewModel.updateSorting(places)
+        }
 
 //            .customToolbar(tabIndex: 1,
 //                           leading: {
@@ -87,23 +74,24 @@ struct PlacesListView: View {
 //            }
             
             
-            .navigationDestination(for: PlaceEntity.self) { place in
-                createPlaceDetailsView(place)
-            }
-            .navigationBarTitleDisplayMode(.inline)
+//            .navigationDestination(for: PlaceEntity.self) { place in
+//                createPlaceDetailsView(place)
+//            }
+//            .navigationBarTitleDisplayMode(.inline)
 
-            .toolbar {
-                DropinToolbar.Burger()
-                DropinToolbar.Logo()
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    trailingToolbarContent
-                }
-            }
+//            .toolbar {
+//                DropinToolbar.Burger()
+//                DropinToolbar.Logo()
+//                ToolbarItemGroup(placement: .topBarTrailing) {
+//                    trailingToolbarContent
+//                }
+//            }
             
-        }
+        //}
     }
 
     // MARK: - Subviews
+    /*
     private var trailingToolbarContent: some View {
         Group {
             Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
@@ -124,13 +112,11 @@ struct PlacesListView: View {
             .tint(.dropinPrimary)
         }
     }
+     */
 
     private var flatList: some View {
         ForEach(viewModel.sortedPlaces) { place in
-            NavigationLink(value: PlaceMapper.toDomain(place)) {
-                PlaceRowView(place: place)
-                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-            }
+            placeRowView(place)
         }
     }
 
@@ -144,10 +130,7 @@ struct PlacesListView: View {
                    let groupName = firstPlace.group?.name {
                     Section(groupName) {
                         ForEach(groupPlaces) { place in
-                            NavigationLink(value: PlaceMapper.toDomain(place)) {
-                                PlaceRowView(place: place)
-                                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                            }
+                            placeRowView(place)
                         }
                     }
                 }
@@ -155,23 +138,29 @@ struct PlacesListView: View {
             if viewModel.ungroupedSortedPlaces.count > 0 {
                 Section("common.not_grouped") {
                     ForEach(viewModel.ungroupedSortedPlaces) { place in
-                        NavigationLink(value: PlaceMapper.toDomain(place)) {
-                            PlaceRowView(place: place)
-                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                        }
+                        placeRowView(place)
                     }
                 }
             }
         }
     }
     
-    // MARK: private methods
-    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
-            fatalError("couldn't find any place named '\(place.name)' in list")
-        }
-        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
+    private func placeRowView(_ place: PlaceUI) -> some View {
+        PlaceRowView(place: place)
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+            .onTapGesture {
+                viewModel.pushPlaceDetailsView(placeId: place.id)
+            }
     }
+
+    
+    // MARK: private methods
+//    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
+//        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+//            fatalError("couldn't find any place named '\(place.name)' in list")
+//        }
+//        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
+//    }
 }
 
 
