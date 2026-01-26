@@ -22,17 +22,23 @@ struct IcoButton: View {
             Circle()
                 .foregroundStyle(.backgroundPrimary)
                 .frame(width: size, height: size)
+                .shadow(color: .textPrimary.opacity(0.5),
+                        radius: 5,
+                        x: 2,
+                        y: 2)
             Image(systemName: systemImage)
                 .resizable()
                 .scaledToFit()
                 .frame(width: icoSize, height: icoSize)
                 .foregroundStyle(icoColor)
         }
-        .shadow(color: .textPrimary, radius: 5, x: 2, y: 2)
     }
 
     // MARK: - init
-    init(systemImage: String, size: CGFloat = 25, icoSize: CGFloat = 15, icoColor: Color = .dropinPrimary) {
+    init(systemImage: String,
+         size: CGFloat = 25,
+         icoSize: CGFloat = 15,
+         icoColor: Color = .dropinPrimary) {
         self.systemImage = systemImage
         self.size = size
         self.icoSize = icoSize

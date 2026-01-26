@@ -11,13 +11,16 @@ import SwiftUI
 @Observable class GroupDetailsViewModel {
     
     @ObservationIgnored private var appContainer: AppContainer
+    @ObservationIgnored var locationManager: LocationManager
     @ObservationIgnored private var updateGroup: UpdateGroup
     @ObservationIgnored private var deleteGroup: DeleteGroup
 
     init(_ appContainer: AppContainer,
+         locationManager: LocationManager,
          updateGroup: UpdateGroup,
          deleteGroup: DeleteGroup) {
         self.appContainer = appContainer
+        self.locationManager = locationManager
         self.updateGroup = updateGroup
         self.deleteGroup = deleteGroup
     }

@@ -18,15 +18,13 @@ struct DropinApp: App {
     // MARK: - Properties
     private var appContainer: AppContainer
     private var modelContainer: ModelContainer
-    private var locationManager = LocationManager()  // TODO: locationManager could be moved on AppContainer ?
 
     // MARK: - Body
     var body: some Scene {
         WindowGroup {
             appContainer.createRootView()
-                .environment(locationManager)
                 .task {
-                    locationManager.start()
+                    appContainer.startLocationManager()
 
 #if false
                     // Enable to generate new AppIcons + logo assets
@@ -84,8 +82,7 @@ struct DropinApp: App {
             #endif
             
             // Create app container
-            appContainer = AppContainer(modelContext: modelContainer.mainContext,
-                                        locationManager: locationManager)
+            appContainer = AppContainer(modelContext: modelContainer.mainContext)
             self.modelContainer = modelContainer
 
         } catch {

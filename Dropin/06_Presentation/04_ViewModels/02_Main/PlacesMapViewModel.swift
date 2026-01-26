@@ -38,6 +38,8 @@ struct Bucket {
     // MARK: Properties
     private(set) var coordinator: MainCoordinator
 
+    var locationManager: LocationManager
+
     //var places: [PlaceUI] = [PlaceUI]()
     var tmpPlace: PlaceUI? = nil   // Used for creating a new place
     /// `selectedPlaceId` is defined when a place annotation is selected on the map, toggle the corresponding sheet
@@ -76,10 +78,12 @@ struct Bucket {
     
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
+         locationManager: LocationManager,
          getPlaces: GetPlaces,
          createPlace: CreatePlace) {
         self.appContainer = appContainer
         self.coordinator = coordinator
+        self.locationManager = locationManager
         self.getPlaces = getPlaces
         self.createPlace = createPlace
         self.mapSettings = MapSettings()

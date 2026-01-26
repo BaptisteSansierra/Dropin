@@ -16,10 +16,14 @@ final class MockContainer {
     var mockModelContainer: ModelContainer
     var mockModelContext: ModelContext
     var appContainer: AppContainer
-    var locationManager: LocationManager = LocationManager()
+
+    let locationManager: LocationManager = LocationManager()
     let addressLookupService: AddressLookupService
+    let reachabilityService: ReachabilityService = ReachabilityService()
 
     init() {
+        addressLookupService = AddressLookupService(locationManager: locationManager)
+
         do {
             // Create a mock database
             let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
@@ -30,15 +34,16 @@ final class MockContainer {
             
             self.mockModelContainer = mockModelContainer
             self.mockModelContext = mockModelContext
-            self.appContainer = AppContainer(modelContext: mockModelContext, locationManager: locationManager)
+            self.appContainer = AppContainer(modelContext: mockModelContext,
+                                             locationManager: locationManager,
+                                             addressLookupService: addressLookupService,
+                                             reachabilityService: reachabilityService)
             
             try AppContainer.insertMockData(modelContext: mockModelContext)
             
         } catch {
             fatalError("couldn't create mock data \(error)")
         }
-        
-        addressLookupService = AddressLookupService(locationManager: locationManager)
     }
 
     func getAllPlaceUI() -> [PlaceUI] {

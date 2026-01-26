@@ -101,9 +101,11 @@ struct CreatePlaceView: View {
                     do {
                         try await viewModel.save(place: place)
                         dismiss()
+                    } catch DomainError.Place.missingName {
+                        fatalError("TODO: handle missing name")
                     } catch {
                         // TODO: handle failure
-                        fatalError("couldn't save place in DB")
+                        fatalError("couldn't save place in DB: \(error)")
                     }
                 }
             }

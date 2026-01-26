@@ -10,15 +10,17 @@ import SwiftUI
 /// Place representation as list row 
 struct PlaceRowView: View {
     
-    // MARK: - Dependencies
-    @Environment(LocationManager.self) var locationManager
+    // MARK: - States & Bindings
+    private var locationManager: LocationManager
     
     // MARK: - private vars
     private var place: PlaceUI
 
     // MARK: - init
-    init(place: PlaceUI) {
+    init(place: PlaceUI,
+         locationManager: LocationManager) {
         self.place = place
+        self.locationManager = locationManager
     }
 
     // MARK: - Body
@@ -68,12 +70,11 @@ struct MockPlaceRowView: View {
 
     var body: some View {
         List {
-            PlaceRowView(place: place1)
+            PlaceRowView(place: place1, locationManager: mock.locationManager)
                 .listRowSeparator(.hidden)
-            PlaceRowView(place: place2)
+            PlaceRowView(place: place2, locationManager: mock.locationManager)
                 .listRowSeparator(.hidden)
         }
-        .environment(LocationManager())
         .listStyle(.grouped)
     }
     

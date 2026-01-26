@@ -31,7 +31,7 @@ import SwiftUI
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let getPlaces: GetPlaces
     @ObservationIgnored private let createPlace: CreatePlace
-    @ObservationIgnored private let locationManager: LocationManager
+    @ObservationIgnored let locationManager: LocationManager
     
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,

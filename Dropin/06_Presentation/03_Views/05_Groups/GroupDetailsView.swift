@@ -188,7 +188,7 @@ struct GroupDetailsView: View {
                 Divider()
                 List {
                     ForEach(group.places) { place in
-                        PlaceRowView(place: place)
+                        PlaceRowView(place: place, locationManager: viewModel.locationManager)
                         .swipeActions(allowsFullSwipe: false) {
                             Button() {
                                 guard let idx = group.places.firstIndex(where: { place.id == $0.id }) else { return }
@@ -259,7 +259,6 @@ struct MockGroupDetailsView: View {
 #Preview {
     NavigationStack {
         MockGroupDetailsView()
-            .environment(LocationManager())
     }
 }
 

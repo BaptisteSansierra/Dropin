@@ -26,20 +26,45 @@ final class AppContainer {
     private let addressLookupService: AddressLookupService
     private let reachabilityService: ReachabilityService
 
-    init(modelContext: ModelContext, locationManager: LocationManager) {
+    init(modelContext: ModelContext) {
+        // Repos
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
-        
+        // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
-        
-        self.locationManager = locationManager
+        // Services
+        locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
         reachabilityService = ReachabilityService()
     }
     
+    /// Used by mock container which owns the services for convenience purpose
+    init(modelContext: ModelContext,
+         locationManager: LocationManager,
+         addressLookupService: AddressLookupService,
+         reachabilityService: ReachabilityService) {
+        // Repos
+        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
+        tagRepository = TagRepositoryImpl(modelContext: modelContext)
+        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        // Coordinators
+        mainCoordinator = MainCoordinator()
+        tagCoordinator = TagCoordinator()
+        groupCoordinator = GroupCoordinator()
+        // Services
+        self.locationManager = locationManager
+        self.addressLookupService = addressLookupService
+        self.reachabilityService = reachabilityService
+    }
+    
+    func startLocationManager() {
+        locationManager.start()
+    }
+
+    // MARK: - create views
     func createRootView() -> RootView {
         let vm = RootViewModel(self)
         return RootView(viewModel: vm)
@@ -55,6 +80,7 @@ final class AppContainer {
     func createPlacesMapView(places: Binding<[PlaceUI]>, showingCreatePlaceMenu: Binding<Bool>) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
+                                    locationManager: locationManager,
                                     getPlaces: GetPlaces(repository: placeRepository),
                                     createPlace: CreatePlace(repository: placeRepository))
         return PlacesMapView(viewModel: vm,
@@ -140,6 +166,7 @@ final class AppContainer {
     
     func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
         let vm = TagDetailsViewModel(self,
+                                     locationManager: locationManager,
                                      updateTag: UpdateTag(repository: tagRepository),
                                      deleteTag: DeleteTag(repository: tagRepository))
         return TagDetailsView(viewModel: vm, tag: tag)
@@ -155,6 +182,7 @@ final class AppContainer {
     
     func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
         let vm = GroupDetailsViewModel(self,
+                                       locationManager: locationManager,
                                        updateGroup: UpdateGroup(repository: groupRepository),
                                        deleteGroup: DeleteGroup(repository: groupRepository))
         return GroupDetailsView(viewModel: vm, group: group)

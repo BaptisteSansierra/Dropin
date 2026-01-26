@@ -137,7 +137,7 @@ struct PlacesListView: View {
     }
     
     private func placeRowView(_ place: PlaceUI) -> some View {
-        PlaceRowView(place: place)
+        PlaceRowView(place: place, locationManager: viewModel.locationManager)
             .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
             .onTapGesture {
                 viewModel.pushPlaceDetailsView(placeId: place.id)
@@ -175,7 +175,6 @@ struct MockPlacesListView: View {
     NavigationStack {
         TabView {
             MockPlacesListView()
-                .environment(LocationManager())
                 .tabItem {
                     Label("common.map", systemImage: "map")
                 }

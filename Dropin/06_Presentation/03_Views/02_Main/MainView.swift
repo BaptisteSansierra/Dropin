@@ -219,7 +219,6 @@ struct MockMainView: View {
 
 #Preview {
     MockMainView()
-        .environment(LocationManager())
 }
 
 #endif

@@ -139,7 +139,7 @@ struct TagDetailsView: View {
                 Divider()
                 List {
                     ForEach(tag.places) { place in
-                        PlaceRowView(place: place)
+                        PlaceRowView(place: place, locationManager: viewModel.locationManager)
                         .swipeActions(allowsFullSwipe: false) {
                             Button() {
                                 guard let idx = tag.places.firstIndex(where: { place.id == $0.id }) else { return }
@@ -210,7 +210,6 @@ struct MockTagDetailsView: View {
 #Preview {
     NavigationStack {
         MockTagDetailsView()
-            .environment(LocationManager())
     }
 }
 

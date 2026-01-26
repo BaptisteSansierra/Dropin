@@ -23,11 +23,6 @@ struct PlacesMapView: View {
     @State private var longPressGestureCanceled = false
     @State private var longPressGestureLocation: CGPoint?
     @State private var longPressTimer = Timer.publish(every: 100, on: .main, in: .common).autoconnect()
-
-    // MARK: - Dependencies
-    @Environment(LocationManager.self) private var locationManager
-
-    // TODO: locationManager to be moved in viewModel and injected as well as others...
     
     // MARK: - private var
     private let zoomMapDuration: TimeInterval = 10
@@ -192,8 +187,8 @@ struct PlacesMapView: View {
             Spacer()
             HStack {
                 Spacer()
-                if let locauthorized = locationManager.authorized, locauthorized {
-                    if let userLoc = locationManager.lastKnownLocation {
+                if let locauthorized = viewModel.locationManager.authorized, locauthorized {
+                    if let userLoc = viewModel.locationManager.lastKnownLocation {
                         MapIcoButton(systemImage: "location.fill", offset: CGPoint(x: -1, y: 1), imageFrame: CGSize(width: 15, height: 15))
                             .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
                             .onTapGesture {
@@ -344,7 +339,7 @@ struct PlacesMapView: View {
         // Get user position if defined
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             // NOTE: Randomly crashing at startup if not in async, to be investigated
-            guard let currentLoc = locationManager.lastKnownLocation else { return }
+            guard let currentLoc = viewModel.locationManager.lastKnownLocation else { return }
             viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: currentLoc, distance: 10000))
         }
     }
@@ -462,7 +457,6 @@ struct MockPlacesMapView: View {
 #Preview {
     NavigationStack {
         MockPlacesMapView()
-            .environment(LocationManager())
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
     }

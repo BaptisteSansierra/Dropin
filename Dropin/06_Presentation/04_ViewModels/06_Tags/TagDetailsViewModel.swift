@@ -11,13 +11,16 @@ import SwiftUI
 @Observable class TagDetailsViewModel {
     
     @ObservationIgnored private var appContainer: AppContainer
+    @ObservationIgnored var locationManager: LocationManager
     @ObservationIgnored private var updateTag: UpdateTag
     @ObservationIgnored private var deleteTag: DeleteTag
 
     init(_ appContainer: AppContainer,
+         locationManager: LocationManager,
          updateTag: UpdateTag,
          deleteTag: DeleteTag) {
         self.appContainer = appContainer
+        self.locationManager = locationManager
         self.updateTag = updateTag
         self.deleteTag = deleteTag
     }

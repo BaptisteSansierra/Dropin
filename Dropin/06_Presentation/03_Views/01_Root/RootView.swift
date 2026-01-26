@@ -78,7 +78,6 @@ struct MockRootView: View {
 
 #Preview {
     MockRootView()
-        .environment(LocationManager())
 }
 
 #endif
