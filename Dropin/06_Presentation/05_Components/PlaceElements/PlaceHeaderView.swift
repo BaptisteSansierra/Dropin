@@ -11,17 +11,31 @@ import UniformTypeIdentifiers
 struct PlaceHeaderView: View {
     
     // MARK: - State & Bindings
+    /// show/hide the copied to clipboard alert
+    @State private var showingAddressToClipboard: Bool = false
     @Binding private var place: PlaceUI
     @Binding private var showingMarkerList: Bool
     @Binding private var showPhoneField: Bool
     @Binding private var showUrlField: Bool
     @Binding private var showNotesField: Bool
 
-    // MARK: - Dependencies
-    @Environment(NavigationContext.self) var navigationContext
-
     // MARK: - private var
     private var editEnabled: Bool
+    
+    // MARK: - init
+    init(place: Binding<PlaceUI>,
+         showingMarkerList: Binding<Bool>,
+         showPhoneField: Binding<Bool>,
+         showUrlField: Binding<Bool>,
+         showNotesField: Binding<Bool>,
+         editEnabled: Bool) {
+        self._place = place
+        self._showingMarkerList = showingMarkerList
+        self._showPhoneField = showPhoneField
+        self._showUrlField = showUrlField
+        self._showNotesField = showNotesField
+        self.editEnabled = editEnabled
+    }
     
     // MARK: - Body
     var body: some View {
@@ -48,17 +62,12 @@ struct PlaceHeaderView: View {
                         .disabled(!editEnabled)
                     Text(place.address.isEmpty ? "" : place.address)
                         .textStyle(.placeholder)
+                        .onLongPressGesture {
+                            copyAddressToClipboard()
+                        }
                         .onTapGesture(count: 2, perform: {
-                            navigationContext.showingAddressToClipboard.toggle()
-                            print("COPY TO CLIPBOARD: \(place.address)")
-                            UIPasteboard.general.string = place.address
+                            copyAddressToClipboard()
                         })
-//                        .onLongPressGesture {
-//                            navigationContext.showingAddressToClipboard.toggle()
-//                            print("COPY TO CLIPBOARD: \(place.address)")
-//                            UIPasteboard.general.string = place.address
-////                            UIPasteboard.general.setValue(place.address, forPasteboardType: UTType.plainText.identifier)
-//                        }
                 }
             }
             .padding(EdgeInsets(top: 15,
@@ -74,6 +83,14 @@ struct PlaceHeaderView: View {
             Divider()
                 .padding(.horizontal)
         }
+        .alert("alert.address_copied_title",
+               isPresented: $showingAddressToClipboard,
+               actions: {
+            Button("common.ok", role: .cancel) { }
+        },
+               message: {
+            Text("alert.address_copied_body")
+        })
     }
     
     // MARK: - Subviews
@@ -117,19 +134,43 @@ struct PlaceHeaderView: View {
         }
     }
     
-    // MARK: - init    
-    init(place: Binding<PlaceUI>,
-         showingMarkerList: Binding<Bool>,
-         showPhoneField: Binding<Bool>,
-         showUrlField: Binding<Bool>,
-         showNotesField: Binding<Bool>,
-         editEnabled: Bool) {
-        self._place = place
-        self._showingMarkerList = showingMarkerList
-        self._showPhoneField = showPhoneField
-        self._showUrlField = showUrlField
-        self._showNotesField = showNotesField
-        self.editEnabled = editEnabled
+    // MARK: private methods
+    private func copyAddressToClipboard() {
+        showingAddressToClipboard.toggle()
+        print("COPY TO CLIPBOARD: \(place.address)")
+        UIPasteboard.general.string = place.address
     }
 }
 
+#if DEBUG
+struct MockPlaceHeaderView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
+    @State var showingMarkerList: Bool = true
+    @State var showPhoneField: Bool = false
+    @State var showUrlField: Bool = false
+    @State var showNotesField: Bool = true
+
+    var body: some View {
+        PlaceHeaderView(place: $place,
+                        showingMarkerList: $showingMarkerList,
+                        showPhoneField: $showPhoneField,
+                        showUrlField: $showUrlField,
+                        showNotesField: $showNotesField,
+                        editEnabled: true)
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(1)
+    }
+}
+
+#Preview {
+    NavigationStack {
+        MockPlaceHeaderView()
+    }
+}
+
+#endif

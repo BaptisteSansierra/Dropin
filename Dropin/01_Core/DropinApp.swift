@@ -16,7 +16,6 @@ import CoreLocation
 struct DropinApp: App {
     
     // MARK: - App states
-    @State private var navigationContext = NavigationContext()
     @State private var mapSettings = MapSettings()
 
     // MARK: - Properties
@@ -29,7 +28,6 @@ struct DropinApp: App {
         WindowGroup {
             appContainer.createRootView()
                 .environment(locationManager)
-                .environment(navigationContext)
                 .environment(mapSettings)
                 //.modelContainer(modelContainer)  // DEBUG Purpose, to be removed
                 .task {

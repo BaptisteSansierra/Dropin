@@ -50,6 +50,8 @@ struct Bucket {
 //            }
         }
     }
+    
+    // Clustering
     var selectedCluster: MapDisplayClusterItem?
     
     var mapItems: [MapDisplayItem] = [MapDisplayItem]()
@@ -58,7 +60,7 @@ struct Bucket {
     
     var buckets = [Bucket]()
     var debugDisplayBuckets = false
-
+    
     
 //    var mapPlaceItems: [MapDisplayPlaceItem] = [MapDisplayPlaceItem]()
 //    var mapClusterItems: [MapDisplayClusterItem] = [MapDisplayClusterItem]()

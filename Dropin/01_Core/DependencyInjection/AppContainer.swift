@@ -45,19 +45,21 @@ final class AppContainer {
         return RootView(viewModel: vm)
     }
     
-    func createMainView() -> MainView {
+    func createMainView(showingSideMenu: Binding<Bool>) -> MainView {
         let vm = MainViewModel(self,
                                coordinator: mainCoordinator,
                                getPlaces: GetPlaces(repository: placeRepository))
-        return MainView(viewModel: vm)
+        return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
-    func createPlacesMapView(places: Binding<[PlaceUI]>) -> PlacesMapView {
+    func createPlacesMapView(places: Binding<[PlaceUI]>, showingCreatePlaceMenu: Binding<Bool>) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
                                     getPlaces: GetPlaces(repository: placeRepository),
                                     createPlace: CreatePlace(repository: placeRepository))
-        return PlacesMapView(viewModel: vm, places: places)
+        return PlacesMapView(viewModel: vm,
+                             places: places,
+                             showingCreatePlaceMenu: showingCreatePlaceMenu)
     }
     
     func createPlacesListView(places: Binding<[PlaceUI]>) -> PlacesListView {
@@ -98,7 +100,8 @@ final class AppContainer {
                                             createTags: CreateTag(repository: tagRepository),
                                             getGroups: GetGroups(repository: groupRepository),
                                             createGroup: CreateGroup(repository: groupRepository))
-        return PlaceDetailsSheetView(viewModel: vm, place: place)
+        return PlaceDetailsSheetView(viewModel: vm,
+                                     place: place)
     }
 
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
@@ -127,12 +130,12 @@ final class AppContainer {
                                        editMode: editMode)
     }
     
-    func createTagListView() -> TagListView {
+    func createTagListView(showingSideMenu: Binding<Bool>) -> TagListView {
         let vm = TagListViewModel(self,
                                   coordinator: tagCoordinator,
                                   getTags: GetTags(repository: tagRepository),
                                   deleteTag: DeleteTag(repository: tagRepository))
-        return TagListView(viewModel: vm)
+        return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
     func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
@@ -142,12 +145,12 @@ final class AppContainer {
         return TagDetailsView(viewModel: vm, tag: tag)
     }
 
-    func createGroupListView() -> GroupListView {
+    func createGroupListView(showingSideMenu: Binding<Bool>) -> GroupListView {
         let vm = GroupListViewModel(self,
                                     coordinator: groupCoordinator,
                                     getGroups: GetGroups(repository: groupRepository),
                                     deleteGroup: DeleteGroup(repository: groupRepository))
-        return GroupListView(viewModel: vm)
+        return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
     func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {

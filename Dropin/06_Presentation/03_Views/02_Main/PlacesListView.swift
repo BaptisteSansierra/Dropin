@@ -64,15 +64,6 @@ struct PlacesListView: View {
             viewModel.updateSorting(places)
         }
 
-//            .customToolbar(tabIndex: 1,
-//                           leading: {
-//                BurgerToolbarView()
-//            }, trailing: {
-//                trailingToolbarContent
-//            }) {
-//                LogoToolbarView()
-//            }
-            
             
 //            .navigationDestination(for: PlaceEntity.self) { place in
 //                createPlaceDetailsView(place)
@@ -185,7 +176,6 @@ struct MockPlacesListView: View {
         TabView {
             MockPlacesListView()
                 .environment(LocationManager())
-                .environment(NavigationContext())
                 .tabItem {
                     Label("common.map", systemImage: "map")
                 }

@@ -14,6 +14,7 @@ struct CreatePlaceView: View {
     // MARK: - State & Bindings
     @State private var viewModel: CreatePlaceViewModel
     @State private var place: PlaceUI
+    // TODO: move states to view model
     @State private var showingMarkerList = false
     @State private var showingTagsSelector = false
     @State private var showingGroupSelector = false
@@ -165,7 +166,6 @@ struct MockCreatePlaceView: View {
 
 #Preview {
     MockCreatePlaceView()
-        .environment(NavigationContext())
 }
 
 #endif

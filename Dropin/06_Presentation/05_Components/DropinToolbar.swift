@@ -35,24 +35,35 @@ struct LogoToolbarView: View {
 }
 
 struct BurgerToolbarView: View {
-    @Environment(NavigationContext.self) var navigationContext
+    
+    @Binding private var showingSideMenu: Bool
+
     var body: some View {
         Button("", systemImage: "line.3.horizontal") {
-            navigationContext.showingSideMenu.toggle()
+            showingSideMenu.toggle()
         }
         .tint(.dropinPrimary)
+    }
+    
+    init(showingSideMenu: Binding<Bool>) {
+        self._showingSideMenu = showingSideMenu
     }
 }
 
 struct AddPlaceToolbarView: View {
-    @Environment(NavigationContext.self) var navigationContext
+    @Binding private var showingCreatePlaceMenu: Bool
+    
     var body: some View {
         HStack {
             Button("", systemImage: "plus") {
-                navigationContext.showingCreatePlaceMenu.toggle()
+                showingCreatePlaceMenu.toggle()
             }
             .tint(.dropinPrimary)
         }
+    }
+    
+    init(showingCreatePlaceMenu: Binding<Bool>) {
+        self._showingCreatePlaceMenu = showingCreatePlaceMenu
     }
 }
 
@@ -71,25 +82,39 @@ struct DropinToolbar {
     
     /// Left burger button, toggling sidebar
     struct Burger: ToolbarContent {
+        @Binding private var showingSideMenu: Bool
+
         var body: some ToolbarContent {
             ToolbarItem(placement: .topBarLeading) {
-                BurgerToolbarView()
+                BurgerToolbarView(showingSideMenu: $showingSideMenu)
             }
+        }
+        
+        init(showingSideMenu: Binding<Bool>) {
+            self._showingSideMenu = showingSideMenu
         }
     }
     
     /// Right (+) button, toggling add place options
     struct AddPlace: ToolbarContent {
+        @Binding private var showingCreatePlaceMenu: Bool
+
         var body: some ToolbarContent {
             ToolbarItem(placement: .topBarTrailing) {
-                AddPlaceToolbarView()
+                AddPlaceToolbarView(showingCreatePlaceMenu: $showingCreatePlaceMenu)
             }
+        }
+        
+        init(showingCreatePlaceMenu: Binding<Bool>) {
+            self._showingCreatePlaceMenu = showingCreatePlaceMenu
         }
     }
 }
 
 
 #Preview {
+    @Previewable @State var showingSideMenu: Bool = false
+    @Previewable @State var showingCreatePlaceMenu: Bool = false
     NavigationStack {
         VStack {
             Text("111")
@@ -100,9 +125,8 @@ struct DropinToolbar {
             DropinToolbar.Logo()
         }
         .toolbar {
-            DropinToolbar.Burger()
-            DropinToolbar.AddPlace()
+            DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+            DropinToolbar.AddPlace(showingCreatePlaceMenu: $showingCreatePlaceMenu)
         }
     }
-    .environment(NavigationContext())
 }

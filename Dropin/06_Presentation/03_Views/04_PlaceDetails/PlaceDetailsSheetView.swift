@@ -17,11 +17,16 @@ struct PlaceDetailsSheetView: View {
 
     // MARK: - Dependencies
     @Environment(\.dismiss) var dismiss
-    @Environment(NavigationContext.self) var navigationContext
 
+    // MARK: - init
+    init(viewModel: PlaceDetailsSheetViewModel,
+         place: Binding<PlaceUI>) {
+        self.viewModel = viewModel
+        self._place = place
+    }
+    
     // MARK: - Body
     var body: some View {
-        @Bindable var navigationContext = navigationContext
 
         VStack(alignment: .center, spacing: 0) {
             viewModel.createPlaceDetailsContentView(place: $place, editMode: $editMode)
@@ -67,14 +72,6 @@ struct PlaceDetailsSheetView: View {
                 routeThrowWaze()
             }
         })
-        .alert("alert.address_copied_title",
-               isPresented: $navigationContext.showingAddressToClipboard,
-               actions: {
-            Button("common.ok", role: .cancel) { }
-        },
-               message: {
-            Text("alert.address_copied_body")
-        })
     }
     
     private var footer: some View {
@@ -102,12 +99,6 @@ struct PlaceDetailsSheetView: View {
         }
     }
 
-    // MARK: - init
-    init(viewModel: PlaceDetailsSheetViewModel, place: Binding<PlaceUI>) {
-        self.viewModel = viewModel
-        self._place = place
-    }
-    
     // MARK: - Actions
     private func onPressGo() {
         showingNavigationDialog.toggle()
@@ -116,7 +107,6 @@ struct PlaceDetailsSheetView: View {
     private func onPressEdit() {
         dismiss()
         viewModel.pushPlaceDetailsView(placeId: place.id)
-        //navigationContext.navigationPath.append(PlaceMapper.toDomain(place))
     }
     
     private func routeThrowGoogle() {
@@ -157,7 +147,6 @@ struct MockPlaceDetailsSheetView: View {
 #Preview {
     NavigationStack {
         MockPlaceDetailsSheetView()
-            .environment(NavigationContext())
     }
 }
 

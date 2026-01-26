@@ -15,6 +15,7 @@ struct PlacesMapView: View {
     // MARK: - State & Bindings
     @State private var viewModel: PlacesMapViewModel
     @Binding private var places: [PlaceUI]
+    @Binding private var showingCreatePlaceMenu: Bool
     @State private var showingLongPressCreateSheet = false
     @State private var showAuthLocAlert = false
     // Long press behaviour
@@ -26,7 +27,6 @@ struct PlacesMapView: View {
     // MARK: - Dependencies
     @Environment(LocationManager.self) private var locationManager
     @Environment(MapSettings.self) private var mapSettings
-    @Environment(NavigationContext.self) private var navigationContext
 
     // TODO: locationManager to be moved in viewModel and injected as well as others...
     
@@ -35,9 +35,12 @@ struct PlacesMapView: View {
     private var createPlaceSheetDefaultDetent: CGFloat = 0.6
 
     // MARK: - Init
-    init(viewModel: PlacesMapViewModel, places: Binding<[PlaceUI]>) {
+    init(viewModel: PlacesMapViewModel,
+         places: Binding<[PlaceUI]>,
+         showingCreatePlaceMenu: Binding<Bool>) {
         self.viewModel = viewModel
         self._places = places
+        self._showingCreatePlaceMenu = showingCreatePlaceMenu
     }
 
     // MARK: - Body
@@ -47,8 +50,6 @@ struct PlacesMapView: View {
 
     // MARK: - Subviews
     private var mapReaderView: some View {
-        @Bindable var navigationContext = navigationContext
-
         return MapReader { proxy in
             mapView(proxy: proxy)
         }
@@ -57,7 +58,7 @@ struct PlacesMapView: View {
                 .frame(height: 40)
         })
         .confirmationDialog("common.save_new_place",
-                            isPresented: $navigationContext.showingCreatePlaceMenu,
+                            isPresented: $showingCreatePlaceMenu,
                             titleVisibility: .visible,
                             actions: createNewPlaceActions)
         .presentationCompactAdaptation(.sheet)
@@ -445,9 +446,11 @@ struct PlacesMapView: View {
 struct MockPlacesMapView: View {
     var mock: MockContainer
     @State var places: [PlaceUI]
+    @State var showingCreatePlaceMenu: Bool = false
 
     var body: some View {
-        mock.appContainer.createPlacesMapView(places: $places)
+        mock.appContainer.createPlacesMapView(places: $places,
+                                              showingCreatePlaceMenu: $showingCreatePlaceMenu)
     }
     
     init() {
@@ -462,7 +465,6 @@ struct MockPlacesMapView: View {
         MockPlacesMapView()
             .environment(LocationManager())
             .environment(MapSettings())
-            .environment(NavigationContext())
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
     }

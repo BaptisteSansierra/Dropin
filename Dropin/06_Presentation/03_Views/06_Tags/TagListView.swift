@@ -15,10 +15,12 @@ struct TagListView: View {
     @State private var tags: [TagUI] = [TagUI]()
     @State private var showingRemoveAlert: Bool = false
     @State private var tagToRemove: TagUI? = nil
-    
+    @Binding private var showingSideMenu: Bool
+        
     // MARK: - init
-    init(viewModel: TagListViewModel) {
+    init(viewModel: TagListViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
+        self._showingSideMenu = showingSideMenu
     }
     
     // MARK: - Body
@@ -59,7 +61,7 @@ struct TagListView: View {
                 }
             }
             .toolbar {
-                DropinToolbar.Burger()
+                DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
             }
             .alert("alert.remove_tag_title",
                    isPresented: $showingRemoveAlert,
@@ -130,10 +132,11 @@ struct TagListView: View {
 #if DEBUG
 
 struct MockTagListView: View {
+    @State private var showingSideMenu: Bool = false
     var mock: MockContainer
 
     var body: some View {
-        mock.appContainer.createTagListView()
+        mock.appContainer.createTagListView(showingSideMenu: $showingSideMenu)
     }
     
     init() {
@@ -145,7 +148,6 @@ struct MockTagListView: View {
 #Preview {
     NavigationStack {
         MockTagListView()
-            .environment(NavigationContext())
     }
 }
 

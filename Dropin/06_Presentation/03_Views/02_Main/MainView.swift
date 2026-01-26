@@ -11,22 +11,16 @@ struct MainView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: MainViewModel
-    @State private var toolbarContents: [Int: CustomToolbarContent] = [:]
     @State private var selectedTab: Int = 0
     @State private var tabViewOffsetY: CGFloat = 0
     @State private var tabViewOpacity: CGFloat = 1
     
-    // MARK: - Dependencies
-    @Environment(NavigationContext.self) private var navigationContext
-
-    // MARK: - Properties
-    private var currentToolbar: CustomToolbarContent? {
-        toolbarContents[selectedTab]
-    }
-    
+    @Binding private var showingSideMenu: Bool
+        
     // MARK: - Init
-    init(viewModel: MainViewModel) {
+    init(viewModel: MainViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
+        self._showingSideMenu = showingSideMenu
     }
     
     // MARK: - Body
@@ -44,10 +38,10 @@ struct MainView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.backgroundPrimary, for: .navigationBar)
             .toolbar {
-                DropinToolbar.Burger()
+                DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
                 DropinToolbar.Logo()
                 if selectedTab == 0 {
-                    DropinToolbar.AddPlace()
+                    DropinToolbar.AddPlace(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
                 } else {
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         listTrailingToolbarContent
@@ -57,13 +51,6 @@ struct MainView: View {
             .navigationDestination(for: NavigationItem.self) { navigationItem in
                 resolveDestination(navigationItem: navigationItem)
             }
-
-            
-            // TODO: to be removed
-//            .navigationDestination(for: PlaceEntity.self) { place in
-//                // TODO: to be removed following func
-//                createPlaceDetailsView(place)
-//            }
         }
         .task {
             Task {
@@ -71,24 +58,9 @@ struct MainView: View {
             }
         }
         .accentColor(.dropinSecondary)
-        /* obsolete TODO: remove
-        .onChange(of: navigationContext.navigationPath) { oldValue, newValue in
-            animateTabBar(oldNavigationPath: oldValue, newNavigationPath: newValue)
-        }
-         */
     }
     
     // MARK: subviews
-//    var currentView: some View {
-//        Group {
-//            if selectedTab == 0 {
-//                viewModel.createPlacesMapView()
-//            } else {
-//                viewModel.createPlacesListView()
-//            }
-//        }
-//    }
-
     @ViewBuilder
     private var listTrailingToolbarContent: some View {
         Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
@@ -232,10 +204,11 @@ private struct CenteredLabelStyle: LabelStyle {
 
 #if DEBUG
 struct MockMainView: View {
+    @State private var showingSideMenu: Bool = false
     var mock: MockContainer
 
     var body: some View {
-        mock.appContainer.createMainView()
+        mock.appContainer.createMainView(showingSideMenu: $showingSideMenu)
     }
     
     init() {
@@ -248,7 +221,6 @@ struct MockMainView: View {
     MockMainView()
         .environment(LocationManager())
         .environment(MapSettings())
-        .environment(NavigationContext())
 }
 
 #endif

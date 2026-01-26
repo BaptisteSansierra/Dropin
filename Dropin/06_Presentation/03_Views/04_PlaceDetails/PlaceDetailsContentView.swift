@@ -20,6 +20,7 @@ struct PlaceDetailsContentView: View {
     @State private var viewModel: PlaceDetailsContentViewModel
     @Binding private var place: PlaceUI
     @Binding private var editMode: PlaceEditMode
+    // TODO: move states to view model
     @State private var showingMarkerList = false
     @State private var showingTagsSelector = false
     @State private var showingGroupSelector = false
@@ -142,7 +143,6 @@ struct MockPlaceDetailsContentView: View {
 
 #Preview {
     MockPlaceDetailsContentView()
-        .environment(NavigationContext())
 }
 
 #endif

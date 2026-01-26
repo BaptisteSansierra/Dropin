@@ -10,11 +10,9 @@ import SwiftUI
 struct SideMenuView: View {
     
     // MARK: - States & Bindings
+    @Binding private var showingSideMenu: Bool
     @Binding private var currentSideMenuContext: SideMenuContext
     @State private var logoVariant: DropinLogo.Variant = .logo
-
-    // MARK: - Dependencies
-    @Environment(NavigationContext.self) var navigationContext
 
     // MARK: - private properties
     private var appVersion: String = ""
@@ -22,7 +20,9 @@ struct SideMenuView: View {
     private var edgeTransition: AnyTransition = .move(edge: .leading)
 
     // MARK: - init
-    init(currentSideMenuContext: Binding<SideMenuContext>) {
+    init(showingSideMenu: Binding<Bool>,
+         currentSideMenuContext: Binding<SideMenuContext>) {
+        self._showingSideMenu = showingSideMenu
         self._currentSideMenuContext = currentSideMenuContext
         if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
             appVersion = version
@@ -35,11 +35,11 @@ struct SideMenuView: View {
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .bottom) {
-            if navigationContext.showingSideMenu {
+            if showingSideMenu {
                 Color.overlayAlphaLayer
                     .ignoresSafeArea()
                     .onTapGesture {
-                        navigationContext.showingSideMenu = false
+                        showingSideMenu = false
                     }
                 HStack {
                     ZStack{
@@ -61,7 +61,7 @@ struct SideMenuView: View {
         .gesture(leftSwipeGesture)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .ignoresSafeArea()
-        .animation(.easeInOut, value: navigationContext.showingSideMenu)
+        .animation(.easeInOut, value: showingSideMenu)
     }
     
     // MARK: - Subviews
@@ -75,6 +75,7 @@ struct SideMenuView: View {
             SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
@@ -82,6 +83,7 @@ struct SideMenuView: View {
             SideMenuItemView(label: "common.groups",
                              systemImage: "folder",
                              context: .groups,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
@@ -89,6 +91,7 @@ struct SideMenuView: View {
             SideMenuItemView(label: "common.tags",
                              systemImage: "slider.horizontal.3",
                              context: .tags,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
@@ -99,12 +102,14 @@ struct SideMenuView: View {
             SideMenuItemView(label: "common.favorites",
                              systemImage: "star",
                              context: .toBeImplemnented,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
             SideMenuItemView(label: "common.recents",
                              systemImage: "clock",
                              context: .toBeImplemnented,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
@@ -115,18 +120,21 @@ struct SideMenuView: View {
             SideMenuItemView(label: "common.settings",
                              systemImage: "slider.horizontal.3",
                              context: .toBeImplemnented,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
             SideMenuItemView(label: "common.about",
                              systemImage: "info.circle",
                              context: .toBeImplemnented,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
             SideMenuItemView(label: "common.reportproblem",
                              systemImage: "exclamationmark.triangle",
                              context: .toBeImplemnented,
+                             showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)
                 .padding(.bottom, 0)
@@ -190,7 +198,7 @@ struct SideMenuView: View {
             let horizontalAmount = value.translation.width
             let verticalAmount = value.translation.height
             guard abs(horizontalAmount) > abs(verticalAmount) && horizontalAmount < 0 else { return }
-            navigationContext.showingSideMenu = false
+            showingSideMenu = false
         }
     }
 }
@@ -198,19 +206,17 @@ struct SideMenuView: View {
 #if DEBUG
 
 struct MockSideMenuView: View {
+    @State var showingSideMenu: Bool
     @State var sideMenuContext: SideMenuContext
-    @State var navigationContext: NavigationContext
     
     var body: some View {
-        SideMenuView(currentSideMenuContext: $sideMenuContext)
-            .environment(navigationContext)
+        SideMenuView(showingSideMenu: $showingSideMenu,
+                     currentSideMenuContext: $sideMenuContext)
     }
     
     init() {
-        self.navigationContext = NavigationContext()
+        self.showingSideMenu = false
         self.sideMenuContext = .main
-        
-        self.navigationContext.showingSideMenu = true
     }
 }
 

@@ -21,6 +21,14 @@ enum SideMenuContext {
     var currentSideMenuContext: SideMenuContext = .main
     /// show/hide the side menu
     var showingSideMenu: Bool = false
+    
+    var bindedShowingSideMenu: Binding<Bool> { Binding<Bool> {
+        return self.showingSideMenu
+    } set: { b in
+        self.showingSideMenu = b
+    }}
+
+    
 
     @ObservationIgnored private var appContainer: AppContainer
     
@@ -29,15 +37,15 @@ enum SideMenuContext {
     }
     
     func createMainView() -> MainView {
-        return appContainer.createMainView()
+        return appContainer.createMainView(showingSideMenu: bindedShowingSideMenu)
     }
 
     func createGroupListView() -> GroupListView {
-        return appContainer.createGroupListView()
+        return appContainer.createGroupListView(showingSideMenu: bindedShowingSideMenu)
     }
 
     func createTagListView() -> TagListView {
-        return appContainer.createTagListView()
+        return appContainer.createTagListView(showingSideMenu: bindedShowingSideMenu)
     }
     
     func switchAppIcon() {

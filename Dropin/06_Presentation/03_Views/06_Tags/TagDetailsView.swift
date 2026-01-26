@@ -210,7 +210,6 @@ struct MockTagDetailsView: View {
 #Preview {
     NavigationStack {
         MockTagDetailsView()
-            .environment(NavigationContext())
             .environment(LocationManager())
     }
 }

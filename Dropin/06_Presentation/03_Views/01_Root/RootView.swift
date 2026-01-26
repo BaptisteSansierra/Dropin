@@ -17,9 +17,6 @@ struct RootView: View {
     @State private var contentScale: CGSize = CGSize(width: 1, height: 1)
     
     @State private var menuVisible: Bool = false
-
-    // MARK: - Dependencies
-    @Environment(NavigationContext.self) var navigationContext
     
     // MARK: - init
     init(viewModel: RootViewModel) {
@@ -30,7 +27,8 @@ struct RootView: View {
     var body: some View {
         ZStack {
             currentContentView
-            SideMenuView(currentSideMenuContext: $viewModel.currentSideMenuContext)
+            SideMenuView(showingSideMenu: $viewModel.showingSideMenu,
+                         currentSideMenuContext: $viewModel.currentSideMenuContext)
         }
         .task {
             // Make life fun, switch app icon
@@ -57,7 +55,7 @@ struct RootView: View {
                     .navigationTitle("To be implemented")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        DropinToolbar.Burger()
+                        DropinToolbar.Burger(showingSideMenu: $viewModel.showingSideMenu)
                     }
                 }
         }
@@ -82,7 +80,6 @@ struct MockRootView: View {
     MockRootView()
         .environment(LocationManager())
         .environment(MapSettings())
-        .environment(NavigationContext())
 }
 
 #endif

@@ -14,11 +14,13 @@ struct GroupListView: View {
     @State private var viewModel: GroupListViewModel
     @State private var groups: [GroupUI] = [GroupUI]()
     @State private var showingRemoveAlert: Bool = false
-    @State private var groupToRemove: GroupUI? = nil
-    
+    @State private var groupToRemove: GroupUI? = nil    
+    @Binding private var showingSideMenu: Bool
+        
     // MARK: - init
-    init(viewModel: GroupListViewModel) {
+    init(viewModel: GroupListViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
+        self._showingSideMenu = showingSideMenu
     }
     
     // MARK: - Body
@@ -59,7 +61,7 @@ struct GroupListView: View {
                 }
             }
             .toolbar {
-                DropinToolbar.Burger()
+                DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
             }
             .alert("alert.remove_group_title",
                    isPresented: $showingRemoveAlert,
@@ -129,10 +131,11 @@ struct GroupListView: View {
 #if DEBUG
 
 struct MockGroupListView: View {
+    @State private var showingSideMenu: Bool = false
     var mock: MockContainer
 
     var body: some View {
-        mock.appContainer.createGroupListView()
+        mock.appContainer.createGroupListView(showingSideMenu: $showingSideMenu)
     }
     
     init() {
@@ -144,7 +147,6 @@ struct MockGroupListView: View {
 #Preview {
     NavigationStack {
         MockGroupListView()
-            .environment(NavigationContext())
     }
 }
 

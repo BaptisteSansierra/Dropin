@@ -259,7 +259,6 @@ struct MockGroupDetailsView: View {
 #Preview {
     NavigationStack {
         MockGroupDetailsView()
-            .environment(NavigationContext())
             .environment(LocationManager())
     }
 }

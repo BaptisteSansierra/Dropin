@@ -18,11 +18,9 @@ struct PlaceDetailsView: View {
 
     // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext
-    @Environment(NavigationContext.self) var navigationContext
 
     // MARK: - Body
     var body: some View {
-        @Bindable var navigationContext = navigationContext
         
         VStack {
             viewModel.createPlaceDetailsContentView(place: $place, editMode: $editMode)
@@ -65,14 +63,6 @@ struct PlaceDetailsView: View {
             Button("common.cancel", role: .cancel) { }
         }, message: {
             Text("alert.delete_place_msg")
-        })
-        .alert("alert.address_copied_title",
-               isPresented: $navigationContext.showingAddressToClipboard,
-               actions: {
-            Button("common.ok", role: .cancel) { }
-        },
-               message: {
-            Text("alert.address_copied_body")
         })
         .onChange(of: editMode) { oldValue, newValue in
             switch editMode {
@@ -153,7 +143,6 @@ struct PlaceDetailsView: View {
         Task {
             do {
                 viewModel.popView()
-                //navigationContext.navigationPath = NavigationPath()
                 // Delay the deletion so the parentview navigation path does not contain a stale model
                 try await Task.sleep(for: .seconds(0.5))
                 try await viewModel.deletePlace(place)
@@ -183,7 +172,6 @@ struct MockPlaceDetailsView: View {
 #Preview {
     NavigationStack {
         MockPlaceDetailsView()
-            .environment(NavigationContext())
     }
 }
 

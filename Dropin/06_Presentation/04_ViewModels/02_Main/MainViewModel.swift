@@ -13,6 +13,9 @@ import SwiftUI
     
     var coordinator: MainCoordinator
     var places: [PlaceUI] = [PlaceUI]()
+    
+    /// show/hide the 'create new place' menu
+    var showingCreatePlaceMenu: Bool = false
 
     // /////////////////////
     // Moved from PlacesListViewModel in order to define ToolBar in MainView
@@ -49,7 +52,14 @@ import SwiftUI
             }, set: { value in
                 self.places = value
             })
-        return appContainer.createPlacesMapView(places: bindingPlaces)
+        let bindingShowingCreatePlaceMenu = Binding<Bool>(
+            get: {
+                return self.showingCreatePlaceMenu
+            }, set: { value in
+                self.showingCreatePlaceMenu = value
+            })
+        return appContainer.createPlacesMapView(places: bindingPlaces,
+                                                showingCreatePlaceMenu: bindingShowingCreatePlaceMenu)
     }
     
     func createPlacesListView() -> PlacesListView {
