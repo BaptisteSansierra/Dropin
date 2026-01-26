@@ -79,7 +79,6 @@ struct MockRootView: View {
 #Preview {
     MockRootView()
         .environment(LocationManager())
-        .environment(MapSettings())
 }
 
 #endif

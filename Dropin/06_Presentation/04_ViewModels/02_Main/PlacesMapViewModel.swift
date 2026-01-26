@@ -51,6 +51,8 @@ struct Bucket {
         }
     }
     
+    var mapSettings: MapSettings
+    
     // Clustering
     var selectedCluster: MapDisplayClusterItem?
     
@@ -80,6 +82,7 @@ struct Bucket {
         self.coordinator = coordinator
         self.getPlaces = getPlaces
         self.createPlace = createPlace
+        self.mapSettings = MapSettings()
     }
     
     func preparePlaceFromCoords(coords: CLLocationCoordinate2D) -> PlaceUI {
@@ -286,5 +289,76 @@ struct Bucket {
         tmpPlace = nil
         //buildingPlace = false
         creationMode = .undefined
+    }
+}
+
+// TODO: move this
+
+/// MapSettings owns the main map display settings values
+@MainActor
+@Observable class MapSettings {
+    
+    // MARK: - Computed properties
+    var selectedMapStyle: MapStyle {
+        if satellite {
+            return .hybrid(elevation: .flat,
+                           pointsOfInterest: hidePointsOfInterest ? PointOfInterestCategories.including([MKPointOfInterestCategory.publicTransport]) : .all,
+                           showsTraffic: false)
+        }
+        return .standard(elevation: .flat,
+                         pointsOfInterest: hidePointsOfInterest ? PointOfInterestCategories.including([MKPointOfInterestCategory.publicTransport]) : .all,
+                         showsTraffic: false)
+    }
+    
+    // MARK: - Published properties
+    /// `position` can be used to set the main map camera position
+    var position: MapCameraPosition = .automatic
+    /// `currentCameraCenter` can be used to get the main map current camera center
+    var currentCameraCenter = CLLocationCoordinate2D()
+    /// `currentCameraDistance` can be used to get the main map current camera distance
+    var currentCameraDistance: Double = 0
+    /// `currentRegionSpan` can be used to get the main map current region span distance
+    var currentRegionSpan = MKCoordinateSpan()
+    /// `hidePointsOfInterest` show/hide the POI in the main map
+    var hidePointsOfInterest: Bool = true
+    /// `satellite` enable/disable the satellite view in the main map
+    var satellite: Bool = false {
+        didSet {
+            saveSettings()
+        }
+    }
+    /// `settingsShown` show/hide the settings menu in the main map
+    var settingsShown: Bool = false {
+        didSet {
+            saveSettings()
+        }
+    }
+    
+    // MARK: - Init
+    init() {
+        loadSettings()
+    }
+    
+    // MARK: - private methods
+    private func loadSettings() {
+        let ud = UserDefaults.standard
+        // Hide Points Of Interest
+        if let v = ud.value(forKey: DropinApp.userDefaultsKeys.mapHidePointsOfInterest) as? Bool {
+            hidePointsOfInterest = v
+        } else {
+            ud.set(hidePointsOfInterest, forKey: DropinApp.userDefaultsKeys.mapHidePointsOfInterest)
+        }
+        // Satellite
+        if let v = ud.value(forKey: DropinApp.userDefaultsKeys.mapSatellite) as? Bool {
+            satellite = v
+        } else {
+            ud.set(satellite, forKey: DropinApp.userDefaultsKeys.mapSatellite)
+        }
+    }
+    
+    private func saveSettings() {
+        let ud = UserDefaults.standard
+        ud.set(hidePointsOfInterest, forKey: DropinApp.userDefaultsKeys.mapHidePointsOfInterest)
+        ud.set(satellite, forKey: DropinApp.userDefaultsKeys.mapSatellite)
     }
 }

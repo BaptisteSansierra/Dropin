@@ -26,7 +26,6 @@ struct PlacesMapView: View {
 
     // MARK: - Dependencies
     @Environment(LocationManager.self) private var locationManager
-    @Environment(MapSettings.self) private var mapSettings
 
     // TODO: locationManager to be moved in viewModel and injected as well as others...
     
@@ -118,9 +117,8 @@ struct PlacesMapView: View {
     }
 
     private func mapView(proxy: MapProxy) -> some View {
-        @Bindable var mapSettings = mapSettings
         
-        return Map(position: $mapSettings.position) {
+        return Map(position: $viewModel.mapSettings.position) {
             mapContent
             UserAnnotation()
         }
@@ -137,7 +135,7 @@ struct PlacesMapView: View {
         .mapControls {
             MapCompass()
         }
-        .mapStyle(mapSettings.selectedMapStyle)
+        .mapStyle(viewModel.mapSettings.selectedMapStyle)
         .selectionDisabled(false)
         .onMapCameraChange(frequency: .continuous) { _ in
             // Cancel long press timer when moving map camera
@@ -150,8 +148,9 @@ struct PlacesMapView: View {
             onFirstAppear()
         }
         .overlay {
-            MapSettingsOverlay()
-                .environment(mapSettings)
+            MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown,
+                               hidePointsOfInterest: $viewModel.mapSettings.hidePointsOfInterest,
+                               satellite: $viewModel.mapSettings.satellite)
         }
         .overlay {
             zoomOnUserOverlay
@@ -198,7 +197,7 @@ struct PlacesMapView: View {
                         MapIcoButton(systemImage: "location.fill", offset: CGPoint(x: -1, y: 1), imageFrame: CGSize(width: 15, height: 15))
                             .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
                             .onTapGesture {
-                                mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
+                                viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
                             }
                     }
                 } else {
@@ -319,8 +318,8 @@ struct PlacesMapView: View {
                         longPressGestureCanceled = true
                     }
                 } else {
-                    if mapSettings.settingsShown {
-                        mapSettings.settingsShown = false
+                    if viewModel.mapSettings.settingsShown {
+                        viewModel.mapSettings.settingsShown = false
                     }
                     longPressGestureDateStart = Date.now
                     longPressGestureCanceled = false
@@ -346,7 +345,7 @@ struct PlacesMapView: View {
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             // NOTE: Randomly crashing at startup if not in async, to be investigated
             guard let currentLoc = locationManager.lastKnownLocation else { return }
-            self.mapSettings.position = .camera(MapCamera(centerCoordinate: currentLoc, distance: 10000))
+            viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: currentLoc, distance: 10000))
         }
     }
     
@@ -375,11 +374,11 @@ struct PlacesMapView: View {
     }
     
     private func updateCameraCache(_ context : MapCameraUpdateContext) {
-        mapSettings.currentCameraCenter = context.camera.centerCoordinate
-        mapSettings.currentCameraDistance = context.camera.distance
-        mapSettings.currentRegionSpan = context.region.span
+        viewModel.mapSettings.currentCameraCenter = context.camera.centerCoordinate
+        viewModel.mapSettings.currentCameraDistance = context.camera.distance
+        viewModel.mapSettings.currentRegionSpan = context.region.span
         // Enable clustering if camera is far enough
-        viewModel.clusteringEnabled = mapSettings.currentCameraDistance > 1000
+        viewModel.clusteringEnabled = viewModel.mapSettings.currentCameraDistance > 1000
         
         //print("Current zoom = \(mapSettings.currentCameraDistance)")
         
@@ -391,19 +390,19 @@ struct PlacesMapView: View {
         let region = MKCoordinateRegion(center: cluster.center,
                                         span: cluster.span)
         withAnimation(.easeInOut(duration: zoomMapDuration)) {
-            mapSettings.position = .region(region)
+            viewModel.mapSettings.position = .region(region)
         }
     }
     
     private func zoomOnPlace(_ place: PlaceUI) {
-        let latitudeDeltaOverSheet = mapSettings.currentRegionSpan.latitudeDelta * (1 - createPlaceSheetDefaultDetent)
-        let offset = mapSettings.currentRegionSpan.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
+        let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegionSpan.latitudeDelta * (1 - createPlaceSheetDefaultDetent)
+        let offset = viewModel.mapSettings.currentRegionSpan.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
         // Offset the new place coords so it's visible on the map despite the sheet appearing
         let coords = CLLocationCoordinate2D(latitude: place.coordinates.latitude - offset,
                                             longitude: place.coordinates.longitude)
         withAnimation(.easeInOut(duration: zoomMapDuration)) {
-            mapSettings.position = .camera(MapCamera(centerCoordinate: coords,
-                                                     distance: mapSettings.currentCameraDistance))
+            viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: coords,
+                                                               distance: viewModel.mapSettings.currentCameraDistance))
         }
     }
     
@@ -430,8 +429,8 @@ struct PlacesMapView: View {
 
     private func reloadData() {
         viewModel.gridBasedClustering(places,
-                                      center: mapSettings.currentCameraCenter,
-                                      span: mapSettings.currentRegionSpan)
+                                      center: viewModel.mapSettings.currentCameraCenter,
+                                      span: viewModel.mapSettings.currentRegionSpan)
     }
         
 //    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
@@ -464,7 +463,6 @@ struct MockPlacesMapView: View {
     NavigationStack {
         MockPlacesMapView()
             .environment(LocationManager())
-            .environment(MapSettings())
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
     }

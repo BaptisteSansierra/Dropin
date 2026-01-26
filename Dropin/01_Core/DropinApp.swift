@@ -15,9 +15,6 @@ import CoreLocation
 @main
 struct DropinApp: App {
     
-    // MARK: - App states
-    @State private var mapSettings = MapSettings()
-
     // MARK: - Properties
     private var appContainer: AppContainer
     private var modelContainer: ModelContainer
@@ -28,8 +25,6 @@ struct DropinApp: App {
         WindowGroup {
             appContainer.createRootView()
                 .environment(locationManager)
-                .environment(mapSettings)
-                //.modelContainer(modelContainer)  // DEBUG Purpose, to be removed
                 .task {
                     locationManager.start()
 
@@ -157,5 +152,7 @@ extension DropinApp {
         }
     }
     struct userDefaultsKeys {
+        static let mapHidePointsOfInterest = "map.hidePointsOfInterest"
+        static let mapSatellite = "map.satellite"
     }
 }

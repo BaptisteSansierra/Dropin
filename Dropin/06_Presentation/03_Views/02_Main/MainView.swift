@@ -220,7 +220,6 @@ struct MockMainView: View {
 #Preview {
     MockMainView()
         .environment(LocationManager())
-        .environment(MapSettings())
 }
 
 #endif
