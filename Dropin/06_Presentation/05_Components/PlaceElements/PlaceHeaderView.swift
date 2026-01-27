@@ -8,6 +8,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+// TODO: obsolete: to be removed
+
 struct PlaceHeaderView: View {
     
     // MARK: - State & Bindings

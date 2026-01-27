@@ -20,6 +20,7 @@ struct PlaceDetailsContentView: View {
     @State private var viewModel: PlaceDetailsContentViewModel
     @Binding private var place: PlaceUI
     @Binding private var editMode: PlaceEditMode
+    @FocusState private var isNameFocused
     // TODO: move states to view model
     @State private var showingMarkerList = false
     @State private var showingTagsSelector = false
@@ -56,12 +57,16 @@ struct PlaceDetailsContentView: View {
     var body: some View {
         VStack {
             ScrollView {
-                PlaceHeaderView(place: $place,
-                                showingMarkerList: $showingMarkerList,
-                                showPhoneField: $showPhoneField,
-                                showUrlField: $showUrlField,
-                                showNotesField: $showNotesField,
-                                editEnabled: editMode == .edit)
+//                PlaceHeaderView(place: $place,
+//                                showingMarkerList: $showingMarkerList,
+//                                showPhoneField: $showPhoneField,
+//                                showUrlField: $showUrlField,
+//                                showNotesField: $showNotesField,
+//                                editEnabled: editMode == .edit)
+                PlaceHeaderViewV2(place: $place,
+                                  showingMarkerList: $showingMarkerList,
+                                  editEnabled: editMode == .edit,
+                                  isNameFocused: $isNameFocused)
                 PlaceStringFieldView(field: phone,
                                      showField: $showPhoneField,
                                      name: "common.phone",
