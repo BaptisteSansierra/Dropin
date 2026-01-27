@@ -97,12 +97,39 @@ final class AppContainer {
         return PlacesListView(viewModel: vm, places: places)
     }
     
-    func createCreatePlaceView(place: PlaceUI) -> CreatePlaceView {
-        let vm = CreatePlaceViewModel(self,
-                                      createPlace: CreatePlace(repository: placeRepository))
-        return CreatePlaceView(viewModel: vm, place: place)
+//    func createCreatePlaceView(place: PlaceUI) -> CreatePlaceView {
+//        let vm = CreatePlaceViewModel(self,
+//                                      createPlace: CreatePlace(repository: placeRepository))
+//        return CreatePlaceView(viewModel: vm, place: place)
+//    }
+
+    func createCreatePlaceQuickView(place: PlaceUI) -> CreatePlaceQuickView {
+        let vm = CreatePlaceQuickViewModel(self,
+                                           coordinator: mainCoordinator,
+                                           createPlace: CreatePlace(repository: placeRepository))
+        return CreatePlaceQuickView(viewModel: vm, place: place)
     }
-    
+
+    func createCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
+                                   address: String,
+                                   name: String,
+                                   marker: String?,
+                                   tags: [String],
+                                   group: String?) -> CreatePlaceFullView {
+        let vm = CreatePlaceFullViewModel(self,
+                                          coordinator: mainCoordinator,
+                                          createPlace: CreatePlace(repository: placeRepository),
+                                          getTag: GetTag(repository: tagRepository),
+                                          getGroup: GetGroup(repository: groupRepository))
+        return CreatePlaceFullView(viewModel: vm,
+                                   coordinates: coordinates,
+                                   address: address,
+                                   name: name,
+                                   marker: marker,
+                                   tags: tags,
+                                   group: group)
+    }
+
     func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
                                       getTags: GetTags(repository: tagRepository),
@@ -196,12 +223,13 @@ final class AppContainer {
         return LookupPlacesView(viewModel: vm)
     }
     
-    func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem) -> LookupPlaceView {
+    func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem,
+                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
         let vm = LookupPlaceViewModel(self,
                                       coordinator: mainCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
                                       lookupResolvedItem: lookupResolvedItem)
-        return LookupPlaceView(viewModel: vm)
+        return LookupPlaceView(viewModel: vm, status: status)
     }
 }
 

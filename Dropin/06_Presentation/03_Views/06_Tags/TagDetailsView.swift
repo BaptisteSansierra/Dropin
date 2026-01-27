@@ -162,18 +162,10 @@ struct TagDetailsView: View {
     }
     
     private var deleteButton: some View {
-        ZStack {
-            RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.destructive)
-                .frame(width: DropinApp.ui.button.width,
-                       height: DropinApp.ui.button.height)
-            Text("common.delete_tag")
-                .textStyle(.mainButton)
-        }
-        .padding(.bottom, 15)
-        .onTapGesture {
+        DestructiveButton(text: "common.delete_tag") {
             showingRemoveAlert = true
         }
+        .padding(.bottom, 15)
     }
     
     // MARK: private methods

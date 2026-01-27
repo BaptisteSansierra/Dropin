@@ -176,7 +176,7 @@ struct GroupSelectorView: View {
                 }
 
             Spacer()
-            IcoButton(systemImage: "plus").onTapGesture {
+            IcoButton(systemImage: "plus") {
                 createGroup()
             }
             .padding(.trailing, 15)

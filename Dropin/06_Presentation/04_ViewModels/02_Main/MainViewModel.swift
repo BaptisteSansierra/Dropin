@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreLocation
 
 @MainActor
 @Observable class MainViewModel {
@@ -78,6 +79,20 @@ import SwiftUI
 
     func createLookupPlacesView() -> LookupPlacesView {
         return appContainer.createLookupPlacesView()
+    }
+    
+    func createCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
+                                   address: String,
+                                   name: String,
+                                   marker: String?,
+                                   tags: [String],
+                                   group: String?) -> CreatePlaceFullView {
+        return appContainer.createCreatePlaceFullView(coordinates: coordinates,
+                                                      address: address,
+                                                      name: name,
+                                                      marker: marker,
+                                                      tags: tags,
+                                                      group: group)
     }
 
     // MARK: Use cases

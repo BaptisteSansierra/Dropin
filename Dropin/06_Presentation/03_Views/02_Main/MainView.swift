@@ -172,15 +172,23 @@ struct MainView: View {
                 createPlaceDetailsView(placeID)
             case .lookupPlacesView:
                 viewModel.createLookupPlacesView()
+            case .createPlaceFullView(let coordinates, let address, let name, let marker, let tags, let group):
+                viewModel.createCreatePlaceFullView(coordinates: coordinates,
+                                                    address: address,
+                                                    name: name,
+                                                    marker: marker,
+                                                    tags: tags,
+                                                    group: group)
+            // development cases
             case .undefinedDummyView:
                 ZStack {
                     Color.orange
-                    Text("To be implemented...")
+                    Text(verbatim: "To be implemented...")
                 }
             default:
                 ZStack {
                     Color.orange
-                    Text("Undefined navigation item")
+                    Text(verbatim: "Undefined navigation item")
                 }
                 .onAppear {
                     assertionFailure("undefined navigation item \(navigationItem)")

@@ -256,11 +256,11 @@ struct Bucket {
     }
     
     // MARK: - UI child
-    func createCreatePlacesView() -> CreatePlaceView {
+    func createCreatePlacesView() -> CreatePlaceQuickView {
         guard let tmpPlace = tmpPlace else {
             fatalError("temporary place undefined")
         }
-        return appContainer.createCreatePlaceView(place: tmpPlace)
+        return appContainer.createCreatePlaceQuickView(place: tmpPlace)
     }
         
 //    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
@@ -277,7 +277,8 @@ struct Bucket {
 
     // MARK: - Use cases
     func loadPlaces() async throws -> [PlaceUI] {
-        let domainPlaces = try await getPlaces.execute()
+        var domainPlaces = try await getPlaces.execute()
+        domainPlaces = domainPlaces.filter { !$0.databaseDeleted }
         let places = domainPlaces.map { PlaceMapper.toUI($0) }
         // check selectedPlaceId is nil or valid after loading places
         if let selectedPlaceId = selectedPlaceId {

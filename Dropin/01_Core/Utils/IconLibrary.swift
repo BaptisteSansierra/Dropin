@@ -5,13 +5,12 @@
 //  Created by baptiste sansierra on 1/11/25.
 //
 
-import Foundation
+import SwiftUI
 
 struct IconLibrary {
-    
-    static let categories: [(name: String, icons: [Icon])] = [
-        // TODO : L10N category names
-        ("Food & Drinks", [
+
+    static let categories: [(nameKey: String, icons: [Icon])] = [
+        ("category.food_drinks", [
             // Food
             .sf("fork.knife"),
             .fa("pizza-slice"),
@@ -29,7 +28,7 @@ struct IconLibrary {
             .sf("waterbottle"),
             ]),
         
-        ("Entertainment", [
+        ("category.entertainment", [
             .sf("music.note"),
             .sf("pianokeys"),
             .fa("microphone"),
@@ -42,7 +41,7 @@ struct IconLibrary {
             .sf("opticaldisc"),
             ]),
 
-        ("Services", [
+        ("category.services", [
             .sf("cross.case"),               // medic
             .sf("stethoscope"),              // medic
             .fa("spa"),                      // spa
@@ -55,7 +54,7 @@ struct IconLibrary {
             .sf("parkingsign.circle"),       // Parking
             ]),
 
-        ("Shopping", [
+        ("category.shopping", [
             .sf("cart"),                   // Supermarché
             .sf("basket"),                 // Épicerie/Marché
             .sf("bag"),                    // Shopping général
@@ -67,7 +66,7 @@ struct IconLibrary {
             .sf("bag"),                    // Centre commercial
         ]),
 
-        ("Sports & Fitness", [
+        ("category.sports", [
                // Ball sports
             .sf("basketball"),
             .sf("soccerball"),
@@ -94,7 +93,7 @@ struct IconLibrary {
             .sf("sportscourt"),            // Terrain de sport
            ]),
            
-        ("Nature & Outdoors", [
+        ("category.nature", [
             .sf("tree"),                   // Parc/Forêt
             .sf("leaf"),                   // Jardin
             .sf("mountain.2"),             // Montagne
@@ -104,7 +103,7 @@ struct IconLibrary {
             .sf("figure.fishing"),         // Pêche
            ]),
            
-        ("Culture & Education", [
+        ("category.education", [
             .sf("building.columns"),       // Musée/Monument
             .sf("photo.artframe"),         // Galerie d'art
             .sf("graduationcap"),          // École/Université
@@ -115,7 +114,7 @@ struct IconLibrary {
             .fa("palette"),                //
            ]),
 
-        ("People", [
+        ("category.people", [
             .sf("figure.2.and.child.holdinghands"),  // Famille avec enfants
             .sf("figure.and.child.holdinghands"),     // Parent-enfant
             .sf("house.and.flag"),                    // Maison familiale
@@ -128,7 +127,7 @@ struct IconLibrary {
             .sf("person.fill"),                       // Personne générique
         ]),
         
-        ("Transport", [
+        ("category.transport", [
             .sf("car"),                    // Location voiture
             .sf("bus"),                    // Arrêt de bus
             .sf("tram"),                   // Tramway
@@ -138,7 +137,7 @@ struct IconLibrary {
             .sf("bicycle"),                // Vélo location
            ]),
            
-        ("Accommodation", [
+        ("category.accommodation", [
             .sf("bed.double"),             // Hôtel
             .sf("house"),                  // Maison/AirBnB
             .sf("building"),               // Appartement
@@ -146,7 +145,7 @@ struct IconLibrary {
             .sf("figure.roll"),            // Accessibility
            ]),
            
-        ("Special", [
+        ("category.special", [
             .sf("star"),                   // Favori/Important
             .sf("heart"),                  // Coup de cœur
             .sf("flag"),                   // À visiter

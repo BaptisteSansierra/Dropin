@@ -114,12 +114,12 @@ struct TagListView: View {
             case .undefinedDummyView:
                 ZStack {
                     Color.orange
-                    Text("To be implemented...")
+                    Text(verbatim: "To be implemented...")
                 }
             default:
                 ZStack {
                     Color.orange
-                    Text("Undefined navigation item")
+                    Text(verbatim: "Undefined navigation item")
                 }
                 .onAppear {
                     assertionFailure("undefined navigation item \(navigationItem)")

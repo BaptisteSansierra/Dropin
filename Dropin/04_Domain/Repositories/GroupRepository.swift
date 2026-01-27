@@ -14,4 +14,5 @@ protocol GroupRepository {
     func delete(_ group: GroupEntity) async throws
     func update(_ group: GroupEntity) async throws
     func getAll() async throws -> [GroupEntity]
+    func get(_ id: String) async throws -> GroupEntity
 }

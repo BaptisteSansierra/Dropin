@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 31/7/25.
 //
 
+#if false
+
 import SwiftUI
 import CoreLocation
 import SwiftData
@@ -112,16 +114,16 @@ struct CreatePlaceView: View {
             .padding()
         }
         .task {
-            fetchAddress()
+            await fetchAddress()
         }
         .sheet(isPresented: $showingTagsSelector) {
-            viewModel.createTagSelectorViewModel(place: $place)
+            viewModel.createTagSelectorView(place: $place)
                 .padding(.top, 20)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showingGroupSelector) {
-            viewModel.createGroupSelectorViewModel(place: $place)
+            viewModel.createGroupSelectorView(place: $place)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
         }
@@ -131,21 +133,16 @@ struct CreatePlaceView: View {
     }
         
     // MARK: - Actions
-    private func fetchAddress() {
-        // TODO: convert to async by using continuation (withCheckedContinuation)
-
+    private func fetchAddress() async {
         print("Fetch address from coords : \(place.coordinates)")
         
         // Fetch address from coords
         place.address = String(localized: "create_place.fetching")
-        LocationManager.lookUpAddress(coords: place.coordinates) { address in
-            guard let address = address else {
-                self.place.address = String(localized: "common.na")
-                return
-            }
-            self.place.address = address
-            print("Address fetched : \(address)")
-
+        
+        do {
+            self.place.address = try await LocationManager.lookUpAddress(coords: place.coordinates)
+        } catch {
+            self.place.address = String(localized: "common.na")
         }
     }
 }
@@ -169,5 +166,7 @@ struct MockCreatePlaceView: View {
 #Preview {
     MockCreatePlaceView()
 }
+
+#endif
 
 #endif

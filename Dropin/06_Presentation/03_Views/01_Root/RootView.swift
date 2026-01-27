@@ -50,9 +50,9 @@ struct RootView: View {
                 viewModel.createTagListView()
             case .toBeImplemnented:
                 NavigationStack {
-                    ContentUnavailableView("Unavailable",
+                    Text(verbatim: "Unavailable")
+                    ContentUnavailableView("",
                                            systemImage: "wrench.and.screwdriver")
-                    .navigationTitle("To be implemented")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         DropinToolbar.Burger(showingSideMenu: $viewModel.showingSideMenu)

@@ -88,30 +88,13 @@ struct PlaceDetailsView: View {
     
     // MARK: - Subviews
     private var applyButton: some View {
-        ZStack {
-            RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.dropinPrimary)
-                .frame(width: DropinApp.ui.button.width,
-                       height: DropinApp.ui.button.height)
-            Text("place_details.apply")
-                .textStyle(.mainButton)
-        }
-        .padding(.bottom, 5)
-        .onTapGesture { onApplyChanges() }
+        MainButton(text: "place_details.apply", action: onApplyChanges)
+            .padding(.bottom, 5)
     }
 
     private var deleteButton: some View {
-        ZStack {
-            // TODO: create default mainButton / deleteButton / secondaryButton
-            RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.destructive)
-                .frame(width: DropinApp.ui.button.width,
-                       height: DropinApp.ui.button.height)
-            Text("common.delete_place")
-                .textStyle(.mainButton)
-        }
-        .padding(.bottom, 15)
-        .onTapGesture { onPressDelete() }
+        DestructiveButton(text: "common.delete_place", action: onPressDelete)
+            .padding(.bottom, 15)
     }
 
     // MARK: - init
@@ -142,8 +125,13 @@ struct PlaceDetailsView: View {
     private func performDelete() {
         Task {
             do {
-                viewModel.popView()
                 // Delay the deletion so the parentview navigation path does not contain a stale model
+                // Parent view needs to be able to 'resolveNavigationDestination' til child is not fully dismissed
+                // Mark the place as deleted meanwhile
+
+                place.databaseDeleted = true
+                try await viewModel.updatePlace(place)
+                viewModel.popView()
                 try await Task.sleep(for: .seconds(0.5))
                 try await viewModel.deletePlace(place)
             } catch {

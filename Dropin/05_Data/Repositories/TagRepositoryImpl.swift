@@ -55,17 +55,26 @@ public final class TagRepositoryImpl: TagRepository {
         return sdTags.map { TagMapper.toDomain($0) }
     }
     
+    func get(_ id: String) async throws -> TagEntity {
+        let sdTag = try await retrieveTag(tagId: id)
+        return TagMapper.toDomain(sdTag)
+    }
+        
     // MARK: private methods
     private func retrieveTag(domainTag: TagEntity) async throws -> SDTag {
         let tagId = domainTag.id
+        return try await retrieveTag(tagId: tagId)
+    }
+
+    private func retrieveTag(tagId: String) async throws -> SDTag {
         let predicate = #Predicate<SDTag> { $0.identifier == tagId }
         let descriptor = FetchDescriptor<SDTag>(predicate: predicate)
         let sdTags = try modelContext.fetch(descriptor)
         guard let result = sdTags.first else {
-            throw DataError.notFound(msg: "couldn't find SDPlace with id \(domainTag.id)")
+            throw DataError.notFound(msg: "couldn't find SDPlace with id \(tagId)")
         }
         guard sdTags.count < 2 else {
-            throw DataError.duplicate(msg: "found \(sdTags.count) SDPlaces with id \(domainTag.id)")
+            throw DataError.duplicate(msg: "found \(sdTags.count) SDPlaces with id \(tagId)")
         }
         return result
     }

@@ -10,13 +10,20 @@ import Contacts
 
 struct LookupPlaceView: View {
     
+    enum PresentationStatus {
+        case cancelled
+        case validated
+        case pending
+    }
+    
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlaceViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Binding private var status: PresentationStatus
 
     // MARK: - init
-    init(viewModel: LookupPlaceViewModel) {
+    init(viewModel: LookupPlaceViewModel, status: Binding<LookupPlaceView.PresentationStatus>) {
         self.viewModel = viewModel
+        self._status = status
     }
     
     // MARK: - body
@@ -76,7 +83,7 @@ struct LookupPlaceView: View {
     // MARK: - subviews
     private var loadingView: some View {
         VStack {
-            Text("Loading...")
+            Text("common.loading.susp")
                 .textStyle(.body)
             ProgressView()
         }
@@ -96,18 +103,14 @@ struct LookupPlaceView: View {
                         Spacer()
                         MapIcoButton(systemImage: "plus",
                                      imageFrame: CGSize(width: 15, height: 15),
-                                     color: viewModel.cameraDistance < 125 ? .disabled : .dropinPrimary )
+                                     color: viewModel.cameraDistance < 125 ? .disabled : .dropinPrimary,
+                                     action: { viewModel.zoomIn() })
                             .padding(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10))
-                            .onTapGesture {
-                                viewModel.zoomIn()
-                            }
                         MapIcoButton(systemImage: "minus",
                                      imageFrame: CGSize(width: 15, height: 15),
-                                     color: viewModel.cameraDistance >= 32_768_000 ? .disabled : .dropinPrimary)
+                                     color: viewModel.cameraDistance >= 32_768_000 ? .disabled : .dropinPrimary,
+                                     action: { viewModel.zoomOut() })
                             .padding(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10))
-                            .onTapGesture {
-                                viewModel.zoomOut()
-                            }
                     }
                 }
             }
@@ -198,12 +201,12 @@ struct LookupPlaceView: View {
     }
     
     private func confirm() {
-        dismiss()
-        viewModel.pushCreatePlaceView()
+        status = .validated
+        viewModel.pushCreatePlaceFullView()
     }
     
     private func cancel() {
-        dismiss()
+        status = .cancelled
     }
 }
 
@@ -218,19 +221,21 @@ struct MockLookupPlaceView: View {
     @State private var results: [LookupResult] = []
     @State private var lookupResolvedItem: LookupResolvedItem?
     @State private var lookupError: Error?
+    @State private var status: LookupPlaceView.PresentationStatus = .pending
 
     var body: some View {
         VStack {
             if let error = lookupError {
                 VStack {
-                    Text("Error")
+                    Text(verbatim: "Error")
                     Text(error.localizedDescription)
                 }
             } else if let lookupResolvedItem = lookupResolvedItem {
-                mock.appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem)
+                mock.appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem,
+                                                        status: $status)
             } else {
                 VStack {
-                    Text("Loading...")
+                    Text(verbatim: "Loading...")
                     ProgressView()
                 }
             }

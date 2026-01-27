@@ -58,7 +58,7 @@ struct TextStyleModifier: ViewModifier {
             case .secondaryButton:
                 .bodySemibold
             case .stringFieldTitle:
-                .title3Regular
+                .subheadlineRegular
             case .stringFieldContent:
                 .bodyRegular
             case .cellTitle:
@@ -138,6 +138,9 @@ struct TextStyleModifier: ViewModifier {
             Text("title")
                 .font(.titleRegular)
 
+            Text("title3")
+                .font(.title3Regular)
+
             Text("body bold")
                 .font(.bodyBold)
             Text("body semibold")
@@ -192,6 +195,12 @@ struct TextStyleModifier: ViewModifier {
                 .background(.dropinPrimary)
             Text("secondaryButton")
                 .textStyle(.secondaryButton)
+
+            Text("stringFieldTitle")
+                .textStyle(.stringFieldTitle)
+            Text("stringFieldContent")
+                .textStyle(.stringFieldContent)
+
             Text("cellTitle")
                 .textStyle(.cellTitle)
             Text("cellSubTitle")

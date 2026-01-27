@@ -53,6 +53,7 @@ struct DropinApp: App {
             let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
+            /*
             // If empty database, populate with mock data
             do {
                 let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
@@ -78,7 +79,7 @@ struct DropinApp: App {
                     }
                 }
             }
-            
+            */
             #endif
             
             // Create app container

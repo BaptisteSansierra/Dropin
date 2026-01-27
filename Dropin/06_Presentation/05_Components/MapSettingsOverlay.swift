@@ -41,11 +41,8 @@ struct MapSettingsOverlay: View {
     // MARK: - Subviews
     private var gearButton: some View {
         HStack {
-            MapIcoButton(systemImage: "gear")
+            MapIcoButton(systemImage: "gear", action: { settingsShown.toggle() })
                 .padding(EdgeInsets(top: 15, leading: 10, bottom: 0, trailing: 10))
-                .onTapGesture {
-                    settingsShown.toggle()
-                }
             Spacer()
         }
     }
@@ -57,12 +54,12 @@ struct MapSettingsOverlay: View {
             let sysImg = "mappin" // mapSettings.hidePointsOfInterest ? "mappin" : "mappin.slash"
             MapIcoButton(systemImage: sysImg,
                          imageFrame: CGSize(width: 15, height: 15),
-                         rightCaption: poiCaption)
+                         rightCaption: poiCaption,
+                         action: {
+                hidePointsOfInterest.toggle()
+                settingsShown = false
+            })
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 0))
-                .onTapGesture {
-                    hidePointsOfInterest.toggle()
-                    settingsShown = false
-                }
                 .offset(x: 0, y: settingsOffsetY)
                 .opacity(settingsOpacity)
                 .animation(.linear(duration: 0.2), value: settingsOpacity)
@@ -77,12 +74,12 @@ struct MapSettingsOverlay: View {
             let mapModeCaption = satellite ? "Default" : "Satellite"
             MapIcoButton(systemImage: "square.2.layers.3d",
                          imageFrame: CGSize(width: 15, height: 15),
-                         rightCaption: mapModeCaption)
+                         rightCaption: mapModeCaption,
+                         action: {
+                satellite.toggle()
+                settingsShown = false
+            })
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 0))
-                .onTapGesture {
-                    satellite.toggle()
-                    settingsShown = false
-                }
                 .offset(x: 0, y: settingsOffsetY)
                 .opacity(settingsOpacity)
                 .animation(.linear(duration: 0.2), value: settingsOpacity)

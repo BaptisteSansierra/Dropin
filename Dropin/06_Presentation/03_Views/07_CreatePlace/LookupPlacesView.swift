@@ -12,41 +12,60 @@ struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
+    @State private var resultOffset: CGFloat
+    @State private var resultStatus: LookupPlaceView.PresentationStatus = .pending
+    @State private var resultBgOpacity: CGFloat = 0
 
     // MARK: - init
     init(viewModel: LookupPlacesViewModel) {
         self.viewModel = viewModel
+        self.resultOffset = UIScreen.main.bounds.height
     }
 
     // MARK: - Body
     var body: some View {
-        VStack(spacing: 0) {
-            SearchTextFieldView(text: $viewModel.query,
-                                placeholder: "Search a name or an address")
-            .padding(.horizontal)
-            .padding(.bottom, 20)
-            Divider()
-            if viewModel.reachabilityService.isConnected {
-                if let _ = viewModel.lookupError {
-                    errorView
-                } else {
-                    ZStack {
-                        if viewModel.results.count > 0 || viewModel.searching {
-                            resultsView
-                        } else {
-                            placeholderView
-                        }
-                        if viewModel.resolving {
-                            Color.overlayAlphaLayer
-                                .ignoresSafeArea()
-                            ProgressView()
+        ZStack {
+            VStack(spacing: 0) {
+                SearchTextFieldView(text: $viewModel.query,
+                                    placeholder: "Search a name or an address")
+                .padding(.horizontal)
+                .padding(.bottom, 20)
+                Divider()
+                if viewModel.reachabilityService.isConnected {
+                    if let _ = viewModel.lookupError {
+                        errorView
+                    } else {
+                        ZStack {
+                            if viewModel.results.count > 0 || viewModel.searching {
+                                resultsView
+                            } else {
+                                placeholderView
+                            }
+                            if viewModel.resolving {
+//                                Color.overlayAlphaLayer
+//                                    .ignoresSafeArea()
+//                                RoundedRectangle(cornerSize: 8)
+//                                    .frame(width: 100, height: 100)
+//                                    .foregroundStyle(.backgroundPrimary)
+//                                    .shadow(radius: 5)
+//                                ProgressView()
+                                loadingView
+                            }
                         }
                     }
+                } else {
+                    noConnectionView
                 }
-            } else {
-                noConnectionView
+                Spacer()
             }
-            Spacer()
+            if let resolvedPlace = $viewModel.resolvedPlace.wrappedValue {
+                Color.overlayAlphaLayer
+                    .opacity(resultBgOpacity)
+                    .ignoresSafeArea()
+                viewModel.createLookupPlaceView(resolvedPlace,
+                                                status: $resultStatus)
+                    .offset(x: 0, y: resultOffset)
+            }
         }
         .navigationTitle("common.save_new_place")
         .navigationBarTitleDisplayMode(.inline)
@@ -59,11 +78,47 @@ struct LookupPlacesView: View {
             viewModel.query = "ddd"
             #endif
         }
-        .sheet(item: $viewModel.resolvedPlace,
-               content: { item in
-            viewModel.createLookupPlaceView(item)
-                .presentationBackground(.ultraThinMaterial)
-        })
+        
+//        .sheet(item: $viewModel.resolvedPlace,
+//               content: { item in
+//            viewModel.createLookupPlaceView(item)
+//                .presentationBackground(.ultraThinMaterial)
+//        })
+
+        .onChange(of: resultStatus) { oldValue, newValue in
+            switch newValue {
+                case .cancelled:
+                    withAnimation {
+                        resultOffset = UIScreen.main.bounds.height
+                        resultBgOpacity = 0
+                    } completion: {
+                        viewModel.resolvedPlaceComputed = false
+                        viewModel.resolvedPlace = nil
+                        resultStatus = .pending
+                    }
+                case .validated:
+                    Task {
+                        try await Task.sleep(for: .seconds(0.5))
+                        resultOffset = UIScreen.main.bounds.height
+                        resultBgOpacity = 0
+                        viewModel.resolvedPlaceComputed = false
+                        viewModel.resolvedPlace = nil
+                        resultStatus = .pending
+                    }
+                default:
+                    ()
+            }
+        }
+        .onChange(of: viewModel.resolvedPlaceComputed) { oldValue, newValue in
+            if !oldValue && newValue {
+                resultStatus = .pending
+                withAnimation {
+                    resultOffset = 0
+                    resultBgOpacity = 1
+
+                }
+            }
+        }
         .onChange(of: viewModel.reachabilityService.isConnected) { oldValue, newValue in
             if newValue {
                 viewModel.updateQuery()
@@ -76,7 +131,7 @@ struct LookupPlacesView: View {
     // MARK: - Subviews
     private var errorView: some View {
         ContentUnavailableView {
-            Label("Error while fetching", systemImage: "exclamationmark.triangle")
+            Label("error.fetching", systemImage: "exclamationmark.triangle")
         } description: {
             if let error = viewModel.lookupError {
                 Text(error.localizedDescription)
@@ -104,17 +159,18 @@ struct LookupPlacesView: View {
             }
             .listStyle(.inset)
             if viewModel.searching {
-                if viewModel.results.count > 0 {
-                    Color.overlayAlphaLayer
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .ignoresSafeArea()
-                }
-                VStack {
-                    ProgressView()
-                        .frame(height: 100)
-                    Spacer()
-                }
+                loadingView
             }
+        }
+    }
+    
+    private var loadingView: some View {
+        ZStack {
+            RoundedRectangle(cornerSize: 8)
+                .frame(width: 100, height: 100)
+                .foregroundStyle(.backgroundPrimary)
+                .shadow(radius: 5)
+            ProgressView()
         }
     }
     
@@ -122,7 +178,7 @@ struct LookupPlacesView: View {
     private var placeholderView: some View {
         if viewModel.query.count > 2 {
             ContentUnavailableView {
-                Label("No result matching", systemImage: "chart.xyaxis.line")
+                Label("error.no_matching_results", systemImage: "chart.xyaxis.line")
             }
         } else {
             EmptyView()

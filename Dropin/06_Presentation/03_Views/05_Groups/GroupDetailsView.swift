@@ -167,11 +167,10 @@ struct GroupDetailsView: View {
                     }
                     .padding(.leading, 40)
                     Spacer()
-                    IcoButton(systemImage: "ellipsis", icoSize: 14)
+                    IcoButton(systemImage: "ellipsis",
+                              icoSize: 14,
+                              action: { showingMarkerList.toggle() })
                         .padding(0)
-                        .onTapGesture {
-                            showingMarkerList.toggle()
-                        }
                         .padding(.trailing, 40)
                 }
             }
@@ -211,18 +210,10 @@ struct GroupDetailsView: View {
     }
     
     private var deleteButton: some View {
-        ZStack {
-            RoundedRectangle(cornerSize: 8)
-                .foregroundStyle(.destructive)
-                .frame(width: DropinApp.ui.button.width,
-                       height: DropinApp.ui.button.height)
-            Text("common.delete_group")
-                .textStyle(.mainButton)
-        }
-        .padding(.bottom, 15)
-        .onTapGesture {
+        DestructiveButton(text: "common.delete_group") {
             showingRemoveAlert = true
         }
+        .padding(.bottom, 15)
     }
 
     // MARK: private methods

@@ -16,14 +16,23 @@ struct PlaceTagsView: View {
     // MARK: - private vars
     private var editEnabled: Bool
 
+    // MARK: - init
+    init(place: Binding<PlaceUI>,
+         showingTagsSelector: Binding<Bool>,
+         editEnabled: Bool) {
+        self._place = place
+        self._showingTagsSelector = showingTagsSelector
+        self.editEnabled = editEnabled
+    }
+
     // MARK: - Body
     var body: some View {
         Group {
             VStack {
-                HStack(alignment: .top) {
+                HStack(alignment: .center) {
                     Text("common.tags")
                         .textStyle(.stringFieldTitle)
-                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
+                        .padding(.leading, 10)
 
                     if place.tags.count > 0 {
                         FlowLayout(alignment: .leading) {
@@ -35,35 +44,46 @@ struct PlaceTagsView: View {
                         .padding([.leading, .trailing, /*.bottom, .top*/])
                     }
                     Spacer()
-                    IcoButton(systemImage: "ellipsis", icoSize: 14)
+                    IcoButton(systemImage: "ellipsis",
+                              icoSize: 14,
+                              action: { showingTagsSelector.toggle() })
                         .padding(.trailing, 15)
-                        .onTapGesture {
-                            showingTagsSelector.toggle()
-                        }
                         .opacity(editEnabled ? 1 : 0)
                 }
             }
+            .padding(.vertical, 10)
             Divider()
                 .padding(.horizontal)
         }
     }
+}
+
+#if DEBUG
+struct MockPlaceTagsView: View {
+    var mock: MockContainer
+    @State var place: PlaceUI
+    @State var showingTagsSelector: Bool = true
+
+    var body: some View {
+        VStack {
+            Divider()
+            PlaceTagsView(place: $place,
+                          showingTagsSelector: $showingTagsSelector,
+                          editEnabled: true)
+        }
+    }
     
-    // MARK: - init
-    init(place: Binding<PlaceUI>,
-         showingTagsSelector: Binding<Bool>,
-         editEnabled: Bool) {
-        self._place = place
-        self._showingTagsSelector = showingTagsSelector
-        self.editEnabled = editEnabled
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.place = mock.getPlaceUI(6)
     }
 }
 
-//#if DEBUG
-//#Preview {
-//    @Previewable @State var place = AppContainer.mock().mockPlaceUIExample()
-//    @Previewable @State var showingTagsSelector = true
-//    PlaceTagsView(place: $place,
-//                  showingTagsSelector: $showingTagsSelector,
-//                  editEnabled: true)
-//}
-//#endif
+#Preview {
+    NavigationStack {
+        MockPlaceTagsView()
+    }
+}
+
+#endif

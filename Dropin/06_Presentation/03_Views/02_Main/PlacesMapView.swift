@@ -16,6 +16,7 @@ struct PlacesMapView: View {
     @State private var viewModel: PlacesMapViewModel
     @Binding private var places: [PlaceUI]
     @Binding private var showingCreatePlaceMenu: Bool
+    // TODO: move states to view model
     @State private var showingLongPressCreateSheet = false
     @State private var showAuthLocAlert = false
     // Long press behaviour
@@ -40,6 +41,9 @@ struct PlacesMapView: View {
     // MARK: - Body
     var body: some View {
         mapReaderView
+            .onAppear {
+                onAppearCallback()
+            }
     }
 
     // MARK: - Subviews
@@ -96,7 +100,7 @@ struct PlacesMapView: View {
         } label: {
             // Does this make sense ?
             // only when image supported maybe
-            Text("From image library (not implemented) ")
+            Text("menu.new_place.image_library")
                 .textStyle(.body)
         }
 //        Button("RANDOM COORDS") {
@@ -152,9 +156,9 @@ struct PlacesMapView: View {
         }
         .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
             viewModel.discardCreation()
+            // Load the possible created place
             Task {
-                places = try await viewModel.loadPlaces()
-                reloadData()
+                await reloadPlaces()
             }
         }, content: {
             viewModel.createCreatePlacesView()
@@ -189,18 +193,21 @@ struct PlacesMapView: View {
                 Spacer()
                 if let locauthorized = viewModel.locationManager.authorized, locauthorized {
                     if let userLoc = viewModel.locationManager.lastKnownLocation {
-                        MapIcoButton(systemImage: "location.fill", offset: CGPoint(x: -1, y: 1), imageFrame: CGSize(width: 15, height: 15))
-                            .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
-                            .onTapGesture {
-                                viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
-                            }
+                        MapIcoButton(systemImage: "location.fill",
+                                     offset: CGPoint(x: -1, y: 1),
+                                     imageFrame: CGSize(width: 15, height: 15)) {
+                            viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
+                        }
+                        .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
                     }
                 } else {
-                    MapIcoButton(systemImage: "exclamationmark.triangle", offset: CGPoint(x: 0, y: -1), imageFrame: CGSize(width: 15, height: 15), color: .warning)
-                        .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
-                        .onTapGesture {
-                            showAuthLocAlert.toggle()
-                        }
+                    MapIcoButton(systemImage: "exclamationmark.triangle",
+                                 offset: CGPoint(x: 0, y: -1),
+                                 imageFrame: CGSize(width: 15, height: 15),
+                                 color: .warning) {
+                        showAuthLocAlert.toggle()
+                    }
+                    .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
                 }
             }
         }
@@ -378,7 +385,7 @@ struct PlacesMapView: View {
         //print("Current zoom = \(mapSettings.currentCameraDistance)")
         
         // Compute places under camera
-        reloadData()
+        updateClustering()
     }
     
     private func zoomOnCluster(_ cluster: MapDisplayClusterItem) {
@@ -422,18 +429,37 @@ struct PlacesMapView: View {
         return viewModel.createPlaceDetailsSheetView(place: $places[index])
     }
 
-    private func reloadData() {
+    private func reloadPlaces() async {
+        do {
+            places = try await viewModel.loadPlaces()
+            updateClustering()
+        } catch {
+            assertionFailure("couldn't reload places")
+        }
+    }
+
+    private func updateClustering() {
         viewModel.gridBasedClustering(places,
                                       center: viewModel.mapSettings.currentCameraCenter,
                                       span: viewModel.mapSettings.currentRegionSpan)
     }
-        
-//    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-//        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
-//            fatalError("couldn't find any place named '\(place.name)' in list")
-//        }
-//        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
-//    }
+    
+    private func onAppearCallback() {
+        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
+            print("Navigation history EMPTY")
+            return
+        }
+        switch lastNavigationSource {
+            case .createPlaceFullView:
+                Task {
+                    await reloadPlaces()
+                }
+            default:
+                ()
+        }
+
+    }
+    
 }
 
 #if DEBUG

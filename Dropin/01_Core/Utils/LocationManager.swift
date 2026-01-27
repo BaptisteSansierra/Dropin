@@ -8,6 +8,10 @@
 import CoreLocation
 import Contacts
 
+enum LocationManagerError: Error {
+    case lookupFailure
+}
+
 /// `LocationManager` owns the current location and CoreLocation authorization status
 /// It also handles location utilities such as address from coordinates and so onj
 @Observable class LocationManager: NSObject {
@@ -106,8 +110,21 @@ extension LocationManager {
 
 // MARK: - address utils
 extension LocationManager {
-    
-    static func lookUpAddress(coords: CLLocationCoordinate2D, completion: @escaping (String?)->() ) {
+
+    static func lookUpAddress(coords: CLLocationCoordinate2D) async throws -> String {
+        return try await withCheckedThrowingContinuation { continuation in
+            lookUpAddressWithCompletion(coords: coords) { result in
+                if let value = result {
+                    continuation.resume(returning: value)
+                } else {
+                    continuation.resume(throwing: LocationManagerError.lookupFailure)
+                }
+            }
+        }
+    }
+
+    // TODO: make it private after replaced
+    static private func lookUpAddressWithCompletion(coords: CLLocationCoordinate2D, completion: @Sendable @escaping (String?)->() ) {
         let location = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location, completionHandler: { placemarks, error in

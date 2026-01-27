@@ -1,40 +1,34 @@
 //
-//  PlaceHeaderView.swift
+//  PlaceHeaderViewV2.swift
 //  Dropin
 //
-//  Created by baptiste sansierra on 12/8/25.
+//  Created by baptiste sansierra on 26/1/26.
 //
 
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct PlaceHeaderView: View {
+struct PlaceHeaderViewV2: View {
     
     // MARK: - State & Bindings
     /// show/hide the copied to clipboard alert
     @State private var showingAddressToClipboard: Bool = false
     @Binding private var place: PlaceUI
     @Binding private var showingMarkerList: Bool
-    @Binding private var showPhoneField: Bool
-    @Binding private var showUrlField: Bool
-    @Binding private var showNotesField: Bool
-
+    private var isNameFocused: FocusState<Bool>.Binding
+    
     // MARK: - private var
     private var editEnabled: Bool
     
     // MARK: - init
     init(place: Binding<PlaceUI>,
          showingMarkerList: Binding<Bool>,
-         showPhoneField: Binding<Bool>,
-         showUrlField: Binding<Bool>,
-         showNotesField: Binding<Bool>,
-         editEnabled: Bool) {
+         editEnabled: Bool,
+         isNameFocused: FocusState<Bool>.Binding) {
         self._place = place
         self._showingMarkerList = showingMarkerList
-        self._showPhoneField = showPhoneField
-        self._showUrlField = showUrlField
-        self._showNotesField = showNotesField
         self.editEnabled = editEnabled
+        self.isNameFocused = isNameFocused
     }
     
     // MARK: - Body
@@ -59,6 +53,7 @@ struct PlaceHeaderView: View {
                         .textStyle(.title)
                         .autocorrectionDisabled()
                         .disabled(!editEnabled)
+                        .focused(isNameFocused)
                     Text(place.address.isEmpty ? "" : place.address)
                         .textStyle(.placeholder)
                         .onLongPressGesture {
@@ -71,16 +66,8 @@ struct PlaceHeaderView: View {
             }
             .padding(EdgeInsets(top: 15,
                                 leading: 15,
-                                bottom: !showPhoneField || !showUrlField || !showNotesField ? 0 : 15,
+                                bottom: 0,
                                 trailing: 15))
-            
-            if editEnabled {
-                headerOptionalsView
-                    .padding(0)
-            }
-            
-            Divider()
-                .padding(.horizontal)
         }
         .alert("alert.address_copied_title",
                isPresented: $showingAddressToClipboard,
@@ -93,41 +80,7 @@ struct PlaceHeaderView: View {
     }
     
     // MARK: - Subviews
-    private var headerOptionalsView: some View {
-        HStack {
-            if !showPhoneField {
-                IcoButton(systemImage: "phone",
-                          icoSize: 14,
-                          action: { withAnimation { showPhoneField.toggle() } })
-                    .padding(.horizontal, 15)
-                    .padding(.top, 5)
-                    .padding(.bottom, 10)
-            }
-            if !showUrlField {
-                IcoButton(systemImage: "link",
-                          icoSize: 14,
-                          action: { withAnimation { showUrlField.toggle() } })
-                    .padding(.horizontal, 15)
-                    .padding(.top, 5)
-                    .padding(.bottom, 10)
-            }
-            if !showNotesField {
-                IcoButton(systemImage: "note.text",
-                          icoSize: 14,
-                          action: {
-                    withAnimation {
-                        showNotesField.toggle()
-                        //scrollPosition.scrollTo(edge: .bottom)
-                        // TODO: add a onChange in upperView to scoll to notes
-                    }
-                })
-                .padding(.horizontal, 15)
-                .padding(.top, 5)
-                .padding(.bottom, 10)
-            }
-        }
-    }
-    
+
     // MARK: private methods
     private func copyAddressToClipboard() {
         showingAddressToClipboard.toggle()
@@ -137,21 +90,17 @@ struct PlaceHeaderView: View {
 }
 
 #if DEBUG
-struct MockPlaceHeaderView: View {
+struct MockPlaceHeaderViewV2: View {
     var mock: MockContainer
     @State var place: PlaceUI
     @State var showingMarkerList: Bool = true
-    @State var showPhoneField: Bool = false
-    @State var showUrlField: Bool = false
-    @State var showNotesField: Bool = true
+    @FocusState var isNameFocused
 
     var body: some View {
-        PlaceHeaderView(place: $place,
-                        showingMarkerList: $showingMarkerList,
-                        showPhoneField: $showPhoneField,
-                        showUrlField: $showUrlField,
-                        showNotesField: $showNotesField,
-                        editEnabled: true)
+        PlaceHeaderViewV2(place: $place,
+                          showingMarkerList: $showingMarkerList,
+                          editEnabled: true,
+                          isNameFocused: $isNameFocused)
     }
     
     init() {
@@ -163,7 +112,7 @@ struct MockPlaceHeaderView: View {
 
 #Preview {
     NavigationStack {
-        MockPlaceHeaderView()
+        MockPlaceHeaderViewV2()
     }
 }
 

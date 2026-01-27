@@ -86,6 +86,7 @@ struct LookupResolvedItem: Identifiable {
 
     private(set) var resolving = false
     var resolvedPlace: LookupResolvedItem?
+    var resolvedPlaceComputed: Bool = false
     private(set) var resolveError: Error?
 
     // MARK: un-tracked properties
@@ -116,8 +117,10 @@ struct LookupResolvedItem: Identifiable {
     }
     
     // MARK: - UI child
-    func createLookupPlaceView(_ lookupResolvedItem: LookupResolvedItem) -> LookupPlaceView {
-        return appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem)
+    func createLookupPlaceView(_ lookupResolvedItem: LookupResolvedItem,
+                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
+        return appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem,
+                                                  status: status)
     }
     
     // MARK: - public methods
@@ -132,6 +135,7 @@ struct LookupResolvedItem: Identifiable {
                 throw error
             }
             resolvedPlace = try resolvedPlaceFromMapItem(item)
+            resolvedPlaceComputed = true
             
             resolving = false
             //showContent = true

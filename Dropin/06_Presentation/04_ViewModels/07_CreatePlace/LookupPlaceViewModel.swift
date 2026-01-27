@@ -38,8 +38,13 @@ import MapKit
     }
 
     // MARK: - Navigation
-    func pushCreatePlaceView() {
-        coordinator.pushUndefinedDummyView()
+    func pushCreatePlaceFullView() {
+        coordinator.pushCreatePlaceFullView(coordinates: lookupResolvedItem.coordinates,
+                                            address: lookupResolvedItem.address,
+                                            name: lookupResolvedItem.name ?? "",
+                                            marker: nil,
+                                            tags: [],
+                                            group: nil)
     }
 
     // MARK: - Actions

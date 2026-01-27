@@ -55,17 +55,26 @@ public final class GroupRepositoryImpl: GroupRepository {
         return sdGroups.map { GroupMapper.toDomain($0) }
     }
     
+    func get(_ id: String) async throws -> GroupEntity {
+        let sdGroup = try await retrieveGroup(groupId: id)
+        return GroupMapper.toDomain(sdGroup)
+    }
+    
     // MARK: private methods
     private func retrieveGroup(domainGroup: GroupEntity) async throws -> SDGroup {
         let groupId = domainGroup.id
+        return try await retrieveGroup(groupId: groupId)
+    }
+    
+    private func retrieveGroup(groupId: String) async throws -> SDGroup {
         let predicate = #Predicate<SDGroup> { $0.identifier == groupId }
         let descriptor = FetchDescriptor<SDGroup>(predicate: predicate)
         let sdGroups = try modelContext.fetch(descriptor)
         guard let result = sdGroups.first else {
-            throw DataError.notFound(msg: "couldn't find SDPlace with id \(domainGroup.id)")
+            throw DataError.notFound(msg: "couldn't find SDPlace with id \(groupId)")
         }
         guard sdGroups.count < 2 else {
-            throw DataError.duplicate(msg: "found \(sdGroups.count) SDPlaces with id \(domainGroup.id)")
+            throw DataError.duplicate(msg: "found \(sdGroups.count) SDPlaces with id \(groupId)")
         }
         return result
     }

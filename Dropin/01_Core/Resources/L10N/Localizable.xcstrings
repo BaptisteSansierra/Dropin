@@ -138,6 +138,26 @@
         }
       }
     },
+    "alert.missing_name.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please provide a name for this new place"
+          }
+        }
+      }
+    },
+    "alert.missing_name.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Give place a name"
+          }
+        }
+      }
+    },
     "alert.remove_group_body_%@_%lld" : {
       "localizations" : {
         "en" : {
@@ -230,6 +250,127 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer le tag ?"
+          }
+        }
+      }
+    },
+    "category.accommodation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accommodation"
+          }
+        }
+      }
+    },
+    "category.education" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Culture & Education"
+          }
+        }
+      }
+    },
+    "category.entertainment" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entertainment"
+          }
+        }
+      }
+    },
+    "category.food_drinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food & Drinks"
+          }
+        }
+      }
+    },
+    "category.nature" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nature & Outdoors"
+          }
+        }
+      }
+    },
+    "category.people" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "People"
+          }
+        }
+      }
+    },
+    "category.services" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services"
+          }
+        }
+      }
+    },
+    "category.shopping" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shopping"
+          }
+        }
+      }
+    },
+    "category.special" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Special"
+          }
+        }
+      }
+    },
+    "category.sports" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sports & Fitness"
+          }
+        }
+      }
+    },
+    "category.transport" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport"
           }
         }
       }
@@ -474,6 +615,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liste"
+          }
+        }
+      }
+    },
+    "common.loading.susp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
           }
         }
       }
@@ -914,6 +1065,16 @@
         }
       }
     },
+    "create_place.moreOptions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More options"
+          }
+        }
+      }
+    },
     "create_place.save" : {
       "localizations" : {
         "en" : {
@@ -949,11 +1110,15 @@
     "Dropin" : {
       "shouldTranslate" : false
     },
-    "Error" : {
-
-    },
-    "Error while fetching" : {
-
+    "error.fetching" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error while fetching"
+          }
+        }
+      }
     },
     "error.no_connection" : {
       "localizations" : {
@@ -965,8 +1130,15 @@
         }
       }
     },
-    "From image library (not implemented) " : {
-
+    "error.no_matching_results" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No result matching"
+          }
+        }
+      }
     },
     "group_list_view.num_places_%lld" : {
       "localizations" : {
@@ -1072,9 +1244,6 @@
         }
       }
     },
-    "Loading..." : {
-
-    },
     "markers.select" : {
       "localizations" : {
         "en" : {
@@ -1102,7 +1271,14 @@
       }
     },
     "menu.new_place.contact" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From contact (not implemented)"
+          }
+        }
+      }
     },
     "menu.new_place.coords" : {
       "localizations" : {
@@ -1130,6 +1306,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Drop a pin (not implemented)"
+          }
+        }
+      }
+    },
+    "menu.new_place.image_library" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From image library (not implemented)"
           }
         }
       }
@@ -1197,9 +1383,6 @@
           }
         }
       }
-    },
-    "No result matching" : {
-
     },
     "place_details.apply" : {
       "localizations" : {
@@ -1384,18 +1567,6 @@
           }
         }
       }
-    },
-    "To be implemented" : {
-
-    },
-    "To be implemented..." : {
-
-    },
-    "Unavailable" : {
-
-    },
-    "Undefined navigation item" : {
-
     }
   },
   "version" : "1.0"

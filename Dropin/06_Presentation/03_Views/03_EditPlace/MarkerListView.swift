@@ -74,7 +74,7 @@ struct MarkerListView: View {
         ScrollView {
             ScrollViewReader { proxy in
                 LazyVStack() {
-                    ForEach(IconLibrary.categories, id: \.self.name) { categoryItem in
+                    ForEach(IconLibrary.categories, id: \.self.nameKey) { categoryItem in
                         Section {
                             LazyVGrid(columns: columns, spacing: 20) {
                                 ForEach(categoryItem.icons, id: \.self) { icon in
@@ -105,7 +105,7 @@ struct MarkerListView: View {
                             .cornerRadius(15)
                             .padding(.horizontal, 20)
                         } header: {
-                            Text(categoryItem.name)
+                            Text(LocalizedStringKey(categoryItem.nameKey))
                                 .textStyle(.formSectionTitle)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .textCase(.uppercase)

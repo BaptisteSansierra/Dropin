@@ -66,17 +66,17 @@ struct GroupView: View {
     }
     
     private var removeButton: some View {
-        IcoButton(systemImage: "multiply", icoSize: 10, icoColor: .destructive)
-            .onTapGesture {
-                action?()
-            }
+        IcoButton(systemImage: "multiply",
+                  icoSize: 10,
+                  icoColor: .destructive,
+                  action: { action?() })
     }
 
     private var editButton: some View {
-        IcoButton(systemImage: "ellipsis", icoSize: 10, icoColor: .dropinPrimary)
-            .onTapGesture {
-                action?()
-            }
+        IcoButton(systemImage: "ellipsis",
+                  icoSize: 10,
+                  icoColor: .dropinPrimary,
+                  action: { action?() })
     }
 
     private var actionButton: some View {

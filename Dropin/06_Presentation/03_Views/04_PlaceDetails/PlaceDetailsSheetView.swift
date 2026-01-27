@@ -77,25 +77,11 @@ struct PlaceDetailsSheetView: View {
     private var footer: some View {
         HStack(alignment: .center, spacing: 15) {
             // Go button
-            ZStack {
-                RoundedRectangle(cornerSize: 8)
-                    .foregroundStyle(.dropinPrimary)
-                    .frame(height: DropinApp.ui.button.height)
-                Text("common.go")
-                    .textStyle(.mainButton)
-            }
-            .padding(.leading, 15)
-            .onTapGesture { onPressGo() }
+            MainButton(text: "common.go", maxWidth: nil, action: onPressGo)
+                .padding(.leading, 15)
             // Edit button
-            ZStack {
-                RoundedRectangle(cornerSize: 8)
-                    .foregroundStyle(.dropinPrimary)
-                    .frame(height: DropinApp.ui.button.height)
-                Text("common.edit")
-                    .textStyle(.mainButton)
-            }
-            .padding(.trailing, 15)
-            .onTapGesture { onPressEdit() }
+            MainButton(text: "common.edit", maxWidth: nil, action: onPressEdit)
+                .padding(.trailing, 15)
         }
     }
 

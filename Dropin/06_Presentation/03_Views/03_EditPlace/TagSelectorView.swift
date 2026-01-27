@@ -129,7 +129,7 @@ struct TagSelectorView: View {
                     }
                 }
             Spacer()
-            IcoButton(systemImage: "plus").onTapGesture {
+            IcoButton(systemImage: "plus") {
                 guard !createdTagName.isEmpty else {
                     withAnimation(.linear(duration: 0.5)) {
                         isShowingNameWarn.toggle()
