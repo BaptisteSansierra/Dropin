@@ -14,6 +14,7 @@ struct TextStyleModifier: ViewModifier {
         case body
         case bodyWarning
         case bodyError
+        case caption
         case caption2
         case placeholder
         case mainButton
@@ -49,6 +50,8 @@ struct TextStyleModifier: ViewModifier {
                 .bodyBold
             case .bodyError:
                 .bodyBold
+            case .caption:
+                .captionRegular
             case .caption2:
                 .caption2Regular
             case .placeholder:
@@ -90,6 +93,8 @@ struct TextStyleModifier: ViewModifier {
                 .warning
             case .bodyError:
                 .destructive
+            case .caption:
+                .textPrimary
             case .caption2:
                 .textPrimary
             case .placeholder:
