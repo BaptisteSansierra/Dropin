@@ -8,7 +8,10 @@
 import SwiftUI
 
 @MainActor
-@Observable class TagUI: Identifiable {
+@Observable class TagUI: Identifiable, @MainActor Equatable {
+//@MainActor
+//struct TagUI: Identifiable, @MainActor Equatable {
+
     let id: String
     var name: String
     var color: Color
@@ -17,6 +20,10 @@ import SwiftUI
     // following propertie are not part of the DB model
     /// When  databaseDeleted is true, UI objects should be ignored
     var databaseDeleted: Bool = false
+
+    static func == (lhs: TagUI, rhs: TagUI) -> Bool {
+        lhs.id == rhs.id
+    }
 
     init(id: String, name: String, color: String, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
         self.id = id

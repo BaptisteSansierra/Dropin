@@ -26,9 +26,12 @@ extension PlaceMapper {
                               tags: tagsUI,
                               group: groupUI,
                               icon: place.icon,
-                              notes: place.notes,
+                              rating: place.rating,
                               phone: place.phone,
+                              email: place.email,
                               url: place.url,
+                              notes: place.notes,
+                              images: place.images,
                               creationDate: place.creationDate,
                               databaseDeleted: place.databaseDeleted)
         if !skipRelationships {
@@ -56,9 +59,12 @@ extension PlaceMapper {
                                 tags: tags,
                                 group: group,
                                 icon: placeUI.icon,
-                                notes: placeUI.notes,
+                                rating: placeUI.rating,
                                 phone: placeUI.phone,
+                                email: placeUI.email,
                                 url: placeUI.url,
+                                notes: placeUI.notes,
+                                images: placeUI.images,
                                 creationDate: placeUI.creationDate,
                                 databaseDeleted: placeUI.databaseDeleted)
         if !skipRelationships {

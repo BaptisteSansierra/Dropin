@@ -18,11 +18,14 @@ final class SDPlace {
     @Relationship(deleteRule: .nullify, inverse: \SDTag.places) var tags: [SDTag]
     @Relationship(deleteRule: .nullify, inverse: \SDGroup.places) var group: SDGroup?
     var icon: Icon? = nil
-    var notes: String?
-    var phone: String?
-    var url: String?
-    @Attribute(.externalStorage) var image: Data?
     var creationDate: Date
+    // Metadata
+    var rating: Float? = nil
+    var phone: [String]
+    var email: [String]
+    var url: [String]
+    var notes: String?
+    @Attribute(.externalStorage) var images: [Data]
     
     init(identifier: String,
          name: String,
@@ -32,9 +35,12 @@ final class SDPlace {
          tags: [SDTag] = [],
          group: SDGroup? = nil,
          icon: Icon? = nil,
+         rating: Float? = nil,
+         phone: [String] = [],
+         email: [String] = [],
+         url: [String] = [],
          notes: String? = nil,
-         phone: String? = nil,
-         url: String? = nil) {
+         images: [Data] = []) {
         self.identifier = identifier
         self.creationDate = Date()
         self.name = name
@@ -44,13 +50,18 @@ final class SDPlace {
         self.tags = tags
         self.group = group
         self.icon = icon
-        self.notes = notes
+        self.rating = rating
         self.phone = phone
+        self.email = email
         self.url = url
+        self.notes = notes
+        self.images = images
     }
 }
 
 #if DEBUG
+
+import ContactFieldKit
 
 extension SDPlace {  // Mock extension
     
@@ -66,17 +77,19 @@ extension SDPlace {  // Mock extension
 
         let l2 = SDPlace(identifier: UUID().uuidString,
                          name: "Les Tres a la Cuina",
-                        latitude: 41.40522138362398,
-                        longitude: 2.1598304185317847,
-                        // Apple
-                        //latitude: 41.405341,
-                        //longitude: 2.159652,
-                        address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
-                        tags: [],
-                        group: nil,
-                        notes: "Don't forget your tupper",
-                        phone: "931054947",
-                        url: "http://lestresalacuina.com")
+                         latitude: 41.40522138362398,
+                         longitude: 2.1598304185317847,
+                         // Apple
+                         //latitude: 41.405341,
+                         //longitude: 2.159652,
+                         address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
+                         tags: [],
+                         group: nil,
+                         phone: [ContactItem(value: "931054947", label: ContactLabel(kind: .phone, label: .mobile)).rawValue,
+                                 ContactItem(value: "633029920", label: ContactLabel(kind: .phone, label: .home)).rawValue],
+                         email: [ContactItem(value: "tres.a.la@cuina.es", label: ContactLabel(kind: .email, label: .work)).rawValue],
+                         url: [ContactItem(value: "http://lestresalacuina.com", label: ContactLabel(kind: .url, label: .url)).rawValue],
+                         notes: "Don't forget your tupper")
         
         let l3 = SDPlace(identifier: UUID().uuidString,
                          name: "Chiringuito Karamba",
@@ -98,7 +111,7 @@ extension SDPlace {  // Mock extension
                          name: "Bagdad café",
                          latitude: 33.321589923265904,
                          longitude: 44.416811639303546,
-                         address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
+                         address: "Rasafi Street,\nBaghdad,\nBaghdad Governorate, Irak",
                          tags: [],
                          group: nil,
                          icon: .sf("pianokeys"))

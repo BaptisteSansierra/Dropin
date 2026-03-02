@@ -55,6 +55,18 @@ struct PlaceAnnotationView: View {
     private var color: Color
     private var icon: Icon?
     private var iconExtra: Icon?
+    private var size: CGFloat
+
+    // MARK: - init
+    init(color: Color = .dropinPrimary,
+         icon: Icon? = nil,
+         iconExtra: Icon? = nil,
+         size: CGFloat = 36) {
+        self.color = color
+        self.icon = icon
+        self.iconExtra = iconExtra
+        self.size = size
+    }
 
     // MARK: - Body
     var body: some View {
@@ -65,10 +77,10 @@ struct PlaceAnnotationView: View {
                 ZStack {
                     Circle()
                         .fill(.backgroundPrimary)
-                        .frame(width: 36, height: 36)
+                        .frame(width: size, height: size)
                     Circle()
                         .fill(color)
-                        .frame(width: 30, height: 30)
+                        .frame(width: size * 30 / 36, height: size * 30 / 36)
                     if let icon = icon {
                         IconView(icon: icon)
                             .sizeXS()
@@ -80,60 +92,55 @@ struct PlaceAnnotationView: View {
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                         .fill(.backgroundPrimary)
-                        .frame(width: 36, height: 30)
+                        .frame(width: size, height: size * 30 / 36)
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                         .fill(.backgroundPrimary)
-                        .frame(width: 34, height: 28)
+                        .frame(width: size * 34 / 36, height: size * 28 / 36)
                     RoundedRectangle(cornerSize: 5)
                         .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                         .fill(.backgroundPrimary)
-                        .frame(width: 32, height: 26)
+                        .frame(width: size * 32 / 36, height: size * 26 / 36)
                     if let icon = icon {
                         IconView(icon: icon)
-                            .sizeBody()
+                            .size(size * 18 / 36)
                     } else {
                         Image("empty")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .foregroundStyle(.textPrimary.opacity(0.3))
-                            .frame(width: 17, height: 17)
+                            .frame(width: size * 17 / 36, height: size * 17 / 36)
                     }
                 }
                 .overlay(content: {
                     if let iconExtra = iconExtra {
+                        
+                        
                         VStack(spacing: 0) {
                             HStack(spacing: 0) {
                                 Spacer()
-                                ZStack {
-                                    Circle()
-                                        .fill(.textPrimary)
-                                        .frame(width: 20, height: 20)
-                                        .shadow(color: .textPrimary.opacity(0.5),
-                                                radius: 3,
-                                                x: -2, y: 2)
-                                    Circle()
-                                        .fill(.backgroundPrimary)
-                                        .frame(width: 19, height: 19)
-                                    IconView(icon: iconExtra)
-                                        .sizeCaption2()
-                                }
+                                PlaceIconView(icon: iconExtra, size: size * 20 / 36)
+
+//                                ZStack {
+//                                    Circle()
+//                                        .fill(.textPrimary)
+//                                        .frame(width: 20, height: 20)
+//                                        .shadow(color: .textPrimary.opacity(0.5),
+//                                                radius: 3,
+//                                                x: -2, y: 2)
+//                                    Circle()
+//                                        .fill(.backgroundPrimary)
+//                                        .frame(width: 19, height: 19)
+//                                    IconView(icon: iconExtra)
+//                                        .sizeCaption2()
+//                                }
                             }
                             Spacer()
                         }
-                        .offset(x: 12, y: -12)
+                        .offset(x: size * 12 / 36, y: size * -12 / 36)
                     }
                 })
         }
-    }
-    
-    // MARK: - init
-    init(color: Color = .dropinPrimary,
-         icon: Icon? = nil,
-         iconExtra: Icon? = nil) {
-        self.color = color
-        self.icon = icon
-        self.iconExtra = iconExtra
     }
 }
 

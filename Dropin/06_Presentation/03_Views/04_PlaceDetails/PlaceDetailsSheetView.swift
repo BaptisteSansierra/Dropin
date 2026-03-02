@@ -63,13 +63,13 @@ struct PlaceDetailsSheetView: View {
                             isPresented: $showingNavigationDialog,
                             actions: {
             Button("navigate_link_google") {
-                routeThrowGoogle()
+                //routeThrowGoogle()
             }
             Button("navigate_link_apple") {
-                routeThrowApple()
+                //routeThrowApple()
             }
             Button("navigate_link_waze") {
-                routeThrowWaze()
+                //routeThrowWaze()
             }
         })
     }
@@ -93,24 +93,6 @@ struct PlaceDetailsSheetView: View {
     private func onPressEdit() {
         dismiss()
         viewModel.pushPlaceDetailsView(placeId: place.id)
-    }
-    
-    private func routeThrowGoogle() {
-        //guard let url = URL(string: "comgooglemaps://?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
-        guard let url = URL(string:"comgooglemaps://?daddr=\(place.address)") else { return }
-        UIApplication.shared.open(url)
-    }
-
-    private func routeThrowApple() {
-        //guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
-        guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.address)") else { return }
-        UIApplication.shared.open(url)
-    }
-
-    private func routeThrowWaze() {
-        guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude)-\(place.coordinates.longitude)&navigate=yes") else { return }
-        //guard let url = URL(string:"https://www.waze.com/ul?ll=\(place.address)") else { return }
-        UIApplication.shared.open(url)
     }
 }
 

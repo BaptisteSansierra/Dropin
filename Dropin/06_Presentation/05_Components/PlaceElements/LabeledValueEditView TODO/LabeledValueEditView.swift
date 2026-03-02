@@ -5,6 +5,7 @@
 //  Created by baptiste sansierra on 29/1/26.
 //
 
+#if false
 import SwiftUI
 import NoFlyZone
 
@@ -428,15 +429,14 @@ struct MockLabeledValueEditView: View {
     }
     
     init() {
-        self.phones = [EntityLabeledValue(phone: "0546738493", label: .home),
-                       EntityLabeledValue(phone: "0646738493", label: .mobile),
-                       EntityLabeledValue(phone: "0646738493", label: .custom("long long long label")),
-                       EntityLabeledValue(phone: "0646738493", label: .custom("very long ery long very long very long label")),
-                       EntityLabeledValue(phone: "+330646738493", label: .custom("fax"))]
+        self.phones = [EntityLabeledValue(phone: "+12125557483", label: .home),
+                       EntityLabeledValue(phone: "+16465552917", label: .mobile),
+                       EntityLabeledValue(phone: "+13125556042", label: .custom("work")),
+                       EntityLabeledValue(phone: "+14155558831", label: .custom("club"))]
             .map { LabeledValueRowUI(entityLabeledValue: $0) }
-        self.emails = [EntityLabeledValue(email: "aa.bb@cc.dd", label: .email)]
+        self.emails = [EntityLabeledValue(email: "john.doe@home.com", label: .email)]
             .map { LabeledValueRowUI(entityLabeledValue: $0) }
-        self.urls = []
+        self.urls = [EntityLabeledValue(url: "john.doe.home.com", label: .url)]
             .map { LabeledValueRowUI(entityLabeledValue: $0) }
     }
     
@@ -468,3 +468,6 @@ struct MockLabeledValueEditView: View {
 }
 
 #endif
+
+#endif
+

@@ -16,6 +16,20 @@ extension View {
     }
     
     func textStyle(_ style: TextStyleModifier.Style) -> some View {
-        self.modifier(TextStyleModifier(style: style))
+        modifier(TextStyleModifier(style: style))
+    }
+    
+//    func `if`<Content: View>(_ condition: Bool, action: @escaping (Self)->Content ) -> some View {
+//        modifier(IfModifier(condition: condition, action: action))
+//    }
+    
+    
+    @ViewBuilder
+    func `if`<Content: View>(_ condition: Bool, action: (Self) -> Content) -> some View {
+        if condition {
+            action(self)
+        } else {
+            self
+        }
     }
 }

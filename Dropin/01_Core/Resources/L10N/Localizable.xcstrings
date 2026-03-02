@@ -68,6 +68,9 @@
         }
       }
     },
+    "·" : {
+
+    },
     "%@" : {
 
     },
@@ -254,6 +257,9 @@
         }
       }
     },
+    "Are you sure you want to discard your changes ?" : {
+
+    },
     "category.accommodation" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -385,6 +391,44 @@
         }
       }
     },
+    "common.additional_icon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Additional icon"
+          }
+        }
+      }
+    },
+    "common.address" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
+          }
+        }
+      }
+    },
+    "common.call" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appeler"
+          }
+        }
+      }
+    },
     "common.cancel" : {
       "localizations" : {
         "en" : {
@@ -413,6 +457,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effacer la sélection"
+          }
+        }
+      }
+    },
+    "common.copy_address" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy address"
+          }
+        }
+      }
+    },
+    "common.copy_coordinates" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy coordinates"
           }
         }
       }
@@ -481,6 +545,26 @@
         }
       }
     },
+    "common.directions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directions"
+          }
+        }
+      }
+    },
+    "common.done" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
     "common.edit" : {
       "localizations" : {
         "en" : {
@@ -493,6 +577,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Éditer"
+          }
+        }
+      }
+    },
+    "common.email" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
           }
         }
       }
@@ -693,6 +788,27 @@
         }
       }
     },
+    "common.name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "common.navigate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigate"
+          }
+        }
+      }
+    },
     "common.new" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -733,6 +849,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun lieu apparenté"
+          }
+        }
+      }
+    },
+    "common.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
           }
         }
       }
@@ -827,7 +954,7 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Téléphone"
           }
         }
@@ -845,6 +972,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux"
+          }
+        }
+      }
+    },
+    "common.rating" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rating"
           }
         }
       }
@@ -901,6 +1039,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        }
+      }
+    },
+    "common.share" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
           }
         }
       }
@@ -1049,6 +1197,22 @@
         }
       }
     },
+    "common.website" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Website"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Site web"
+          }
+        }
+      }
+    },
     "create_place.fetching" : {
       "localizations" : {
         "en" : {
@@ -1106,6 +1270,9 @@
           }
         }
       }
+    },
+    "Discard Changes" : {
+
     },
     "Dropin" : {
       "shouldTranslate" : false
@@ -1212,22 +1379,6 @@
         }
       }
     },
-    "group_selector.none_selected" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No group selected"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas de groupe sélectionné"
-          }
-        }
-      }
-    },
     "group_selector.title" : {
       "localizations" : {
         "en" : {
@@ -1243,6 +1394,9 @@
           }
         }
       }
+    },
+    "Keep Editing" : {
+
     },
     "markers.select" : {
       "localizations" : {
@@ -1325,12 +1479,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Directions"
+            "value" : "Navigate"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Itinéraire"
           }
         }
@@ -1412,6 +1566,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au groupe"
+          }
+        }
+      }
+    },
+    "placeholder.no_contact.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No contact data available, edit the place to add some phone numbers, emails or urls"
+          }
+        }
+      }
+    },
+    "placeholder.no_contact.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No contact"
+          }
+        }
+      }
+    },
+    "placeholder.no_group" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No group"
+          }
+        }
+      }
+    },
+    "placeholder.no_icon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No icon"
+          }
+        }
+      }
+    },
+    "placeholder.no_rating" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No rating"
+          }
+        }
+      }
+    },
+    "placeholder.no_tags" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tag selected"
           }
         }
       }
@@ -1500,22 +1718,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "tag_selector.empty" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No tag selected"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun tag sélectionné"
           }
         }
       }

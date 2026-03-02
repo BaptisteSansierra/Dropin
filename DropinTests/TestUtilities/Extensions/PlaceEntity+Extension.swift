@@ -7,6 +7,8 @@
 
 import Foundation
 import CoreLocation
+import ContactFieldKit
+
 @testable import Dropin
 
 extension PlaceEntity {  // Mock extension
@@ -31,9 +33,10 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("fork.knife.circle"),
+                             phone: [EntityLabeledValue(phone: "931054947", label: .phone)],
+                             email: [],
+                             url: [EntityLabeledValue(url: "http://lestresalacuina.com", label: .url)],
                              notes: "Don't forget your tupper",
-                             phone: "931054947",
-                             url: "http://lestresalacuina.com",
                              creationDate: Date(),
                              )
 

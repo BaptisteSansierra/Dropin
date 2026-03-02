@@ -23,6 +23,29 @@ struct GroupView: View {
     private var action: (() -> Void)?
     private var actionType: ActionType
 
+    // MARK: - init
+    init(name: String,
+         color: Color,
+         icon: Icon?,
+         actionType: ActionType = .none,
+         action: (() -> Void)? = nil) {
+        self.name = name
+        self.color = color
+        self.icon = icon
+        self.actionType = actionType
+        self.action = action
+    }
+
+    init(group: GroupUI,
+         actionType: ActionType = .none,
+         action: (() -> Void)? = nil) {
+        self.name = group.name
+        self.color = group.color
+        self.icon = group.icon
+        self.actionType = actionType
+        self.action = action
+    }
+    
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -90,29 +113,6 @@ struct GroupView: View {
                     EmptyView()
             }
         }
-    }
-
-    // MARK: - init
-    init(name: String,
-         color: Color,
-         icon: Icon?,
-         actionType: ActionType = .none,
-         action: (() -> Void)? = nil) {
-        self.name = name
-        self.color = color
-        self.icon = icon
-        self.actionType = actionType
-        self.action = action
-    }
-
-    init(group: GroupUI,
-         actionType: ActionType = .none,
-         action: (() -> Void)? = nil) {
-        self.name = group.name
-        self.color = group.color
-        self.icon = group.icon
-        self.actionType = actionType
-        self.action = action
     }
 }
 

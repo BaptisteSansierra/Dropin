@@ -22,6 +22,7 @@ struct DropinApp: App {
     // MARK: - Body
     var body: some Scene {
         WindowGroup {
+            
             appContainer.createRootView()
                 .task {
                     appContainer.startLocationManager()
@@ -53,20 +54,20 @@ struct DropinApp: App {
             let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
-            /*
             // If empty database, populate with mock data
-            do {
-                let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
-                if places.count == 0 {
-                    print("Empty database, mock populating")
-                    try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
-                } else {
-                    print("\(places.count) places found in database, no mock populate needed")
+            if true {
+                do {
+                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
+                    if places.count == 0 {
+                        print("Empty database, mock populating")
+                        try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
+                    } else {
+                        print("\(places.count) places found in database, no mock populate needed")
+                    }
+                } catch {
+                    print("Couldn't populate database: \(error)")
                 }
-            } catch {
-                print("Couldn't populate database: \(error)")
             }
-            
             // Create data from cata OpenData
             if false {
                 Task {
@@ -79,7 +80,6 @@ struct DropinApp: App {
                     }
                 }
             }
-            */
             #endif
             
             // Create app container

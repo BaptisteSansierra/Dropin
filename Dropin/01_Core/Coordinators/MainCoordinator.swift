@@ -36,6 +36,12 @@ import CoreLocation
     }
     
     // MARK: navigation methods
+    
+    func pushPlaceEditView(placeId: String, mode: PlaceEditViewModel.Mode) {
+        push(NavigationItem.placeEditView(placeId: placeId, mode: mode))
+    }
+
+    // TODO: to be replaced
     func pushPlaceDetailsView(placeId: String, editMode: PlaceEditMode = .none) {
         push(NavigationItem.placeDetailsView(placeId: placeId, editMode: editMode))
     }
@@ -44,6 +50,7 @@ import CoreLocation
         push(NavigationItem.lookupPlacesView)
     }
     
+    // TODO: to be replaced
     func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
                                  address: String,
                                  name: String,
@@ -61,7 +68,7 @@ import CoreLocation
     func pushUndefinedDummyView() {
         push(NavigationItem.undefinedDummyView)
     }
-
+    
     private func push(_ item: NavigationItem) {
         path.append(item)
     }
@@ -98,6 +105,7 @@ import CoreLocation
 
 enum NavigationItem: Hashable {
     case placeDetailsView(placeId: String, editMode: PlaceEditMode)
+    case placeEditView(placeId: String, mode: PlaceEditViewModel.Mode)
     case lookupPlacesView
     case createPlaceFullView(coordinates: CLLocationCoordinate2D,
                              address: String,

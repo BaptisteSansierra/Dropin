@@ -73,8 +73,13 @@ import CoreLocation
         return appContainer.createPlacesListView(places: bindingPlaces)
     }
     
+    // TODO: to be replaced ?
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
+    }
+    
+    func createPlaceEditView(place: Binding<PlaceUI>, mode: PlaceEditViewModel.Mode) -> PlaceEditView {
+        return appContainer.createPlaceEditView(place: place, mode: mode)
     }
 
     func createLookupPlacesView() -> LookupPlacesView {

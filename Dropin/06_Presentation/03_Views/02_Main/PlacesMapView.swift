@@ -27,7 +27,8 @@ struct PlacesMapView: View {
     
     // MARK: - private var
     private let zoomMapDuration: TimeInterval = 10
-    private var createPlaceSheetDefaultDetent: CGFloat = 0.6
+    //private var createPlaceSheetDefaultDetent: CGFloat = 0.6
+    private var createPlaceSheetDefaultDetent: CGFloat = 400
 
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
@@ -116,7 +117,6 @@ struct PlacesMapView: View {
     }
 
     private func mapView(proxy: MapProxy) -> some View {
-        
         return Map(position: $viewModel.mapSettings.position) {
             mapContent
             UserAnnotation()
@@ -162,8 +162,8 @@ struct PlacesMapView: View {
             }
         }, content: {
             viewModel.createCreatePlacesView()
-            //.presentationDetents([.medium, .large])
-                .presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+                //.presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+                .presentationDetents([.height(createPlaceSheetDefaultDetent)])
                 .presentationBackground(.backgroundPrimary)
         })
         .onChange(of: viewModel.selectedPlaceId) {
@@ -171,7 +171,7 @@ struct PlacesMapView: View {
         }
         .sheet(item: $viewModel.selectedPlaceId) { placeId in
             createPlaceDetailsSheetView()
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
                 .presentationCornerRadius(20)
                 .presentationBackground(.backgroundPrimary)
         }
@@ -397,7 +397,9 @@ struct PlacesMapView: View {
     }
     
     private func zoomOnPlace(_ place: PlaceUI) {
-        let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegionSpan.latitudeDelta * (1 - createPlaceSheetDefaultDetent)
+        let fraction = createPlaceSheetDefaultDetent / UIScreen.main.bounds.size.height
+        //let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegionSpan.latitudeDelta * (1 - createPlaceSheetDefaultDetent)
+        let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegionSpan.latitudeDelta * (1 - fraction)
         let offset = viewModel.mapSettings.currentRegionSpan.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
         // Offset the new place coords so it's visible on the map despite the sheet appearing
         let coords = CLLocationCoordinate2D(latitude: place.coordinates.latitude - offset,
@@ -419,6 +421,18 @@ struct PlacesMapView: View {
         zoomOnPlace(place)
     }
 
+    private func createPlaceDetailsSheetView() -> PlaceSheetView {
+        guard let placeId = viewModel.selectedPlaceId else {
+            fatalError("selectedPlaceId undefined")
+        }
+        guard let index = places.firstIndex(where: { $0.id == placeId.id }) else {
+            fatalError("couldn't find place with id \(placeId)")
+        }
+        return viewModel.createPlaceSheetView(place: $places[index],
+                                              detend: $viewModel.detailSheetDetent)
+    }
+    
+/* Obsolete
     private func createPlaceDetailsSheetView() -> PlaceDetailsSheetView {
         guard let placeId = viewModel.selectedPlaceId else {
             fatalError("selectedPlaceId undefined")
@@ -428,6 +442,7 @@ struct PlacesMapView: View {
         }
         return viewModel.createPlaceDetailsSheetView(place: $places[index])
     }
+*/
 
     private func reloadPlaces() async {
         do {

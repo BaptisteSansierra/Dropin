@@ -42,4 +42,11 @@ final class MockTagRepository: TagRepository {
     func getAll() async throws -> [TagEntity] {
         return tags
     }
+    
+    func get(_ id: String) async throws -> TagEntity {
+        guard let g = tags.first(where: { $0.id == id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        return g
+    }
 }

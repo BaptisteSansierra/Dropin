@@ -29,6 +29,22 @@ struct DropinDomainTests {
         #expect( p2.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
         #expect( p3.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
     }
+    
+    @Test func testEntityLabeledValue() async throws {
+        // Test EntityLabeledValue encoding / decoding
+        let twl = EntityLabeledValue.TypeWithLabel.phone(.mobile)
+        let decodedTwl = try! JSONDecoder().decode(EntityLabeledValue.TypeWithLabel.self, from: twl.rawValue.data(using: .utf8)!)
+        #expect(decodedTwl == EntityLabeledValue.TypeWithLabel.phone(.mobile))
+
+        let twl2 = EntityLabeledValue.TypeWithLabel(rawValue: "{\"kind\":\"url\",\"label\":{\"other\":{}}}")
+        #expect(twl2 != nil)
+        #expect(twl2! == EntityLabeledValue.TypeWithLabel.url(.other))
+        
+        let elv = EntityLabeledValue(email: "pipo.popi@abc.com", label: .email)
+        let elvFromRaw = EntityLabeledValue(rawValue: elv.rawValue)
+        #expect(elvFromRaw != nil)
+        #expect(elvFromRaw! == elv)
+    }
 
     @MainActor
     @Test func createPlace() async throws {

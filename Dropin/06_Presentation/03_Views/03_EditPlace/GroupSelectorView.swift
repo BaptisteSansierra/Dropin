@@ -114,7 +114,7 @@ struct GroupSelectorView: View {
                 })
 
             } else {
-                Text("group_selector.none_selected")
+                Text("placeholder.no_group")
                     .textStyle(.placeholder)
                     .padding()
             }

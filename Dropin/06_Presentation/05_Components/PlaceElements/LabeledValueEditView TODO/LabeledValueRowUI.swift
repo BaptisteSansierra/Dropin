@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 10/2/26.
 //
 
+#if false
+
 import Foundation
    
 struct LabeledValueRowUI: Equatable {
@@ -52,3 +54,6 @@ struct LabeledValueRowUI: Equatable {
         self.deleteFrame = .zero
     }
 }
+
+#endif
+

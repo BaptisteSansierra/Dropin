@@ -23,6 +23,16 @@ struct IconView: View {
     }
     
     @ViewBuilder
+    func size(_ size: CGFloat) -> some View {
+        switch icon {
+            case .sf:
+                font(Font.system(size: size))
+            default:
+                frame(width: size, height: size)
+        }
+    }
+
+    @ViewBuilder
     func sizeLargeTitle() -> some View {
         switch icon {
             case .sf:
@@ -90,6 +100,12 @@ struct IconView: View {
     let ic3: Icon = .sf("birthday.cake")
 
     VStack {
+        IconView(icon: ic1)
+            .size(50)
+        IconView(icon: ic3)
+            .size(50)
+        Divider()
+        
         IconView(icon: ic1)
             .frame(width: 34, height: 34)
         IconView(icon: ic3)

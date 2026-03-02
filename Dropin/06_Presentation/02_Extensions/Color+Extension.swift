@@ -94,4 +94,14 @@ extension Color {
                      green: Double(resolved.green) * f,
                      blue: Double(resolved.blue) * f)
     }
+    
+    func isDark() -> Bool {
+        guard let uiColor = UIColor(self).cgColor.components else { return false }
+        let r = uiColor[0]
+        let g = uiColor[1]
+        let b = uiColor[2]
+        // luminance formula
+        let luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        return luminance < 0.5
+    }
 }

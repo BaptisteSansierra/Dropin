@@ -9,12 +9,12 @@ import SwiftUI
 
 extension ShapeStyle where Self == Color {
     
-//    static var dropinPrimary: Color { return Color(rgba: "#62899e") }
-//    static var dropinSecondary: Color { return Color(rgba: "#E1C16E") }
-
-//    static var dropinPrimary: Color { return Color(rgba: "#1E40AF") }
-//    static var dropinSecondary: Color { return Color(rgba: "#F97316") }
-//    static var dropinTertiary: Color { return Color(rgba: "#E5E7EB") }
+    //    static var dropinPrimary: Color { return Color(rgba: "#62899e") }
+    //    static var dropinSecondary: Color { return Color(rgba: "#E1C16E") }
+    
+    //    static var dropinPrimary: Color { return Color(rgba: "#1E40AF") }
+    //    static var dropinSecondary: Color { return Color(rgba: "#F97316") }
+    //    static var dropinTertiary: Color { return Color(rgba: "#E5E7EB") }
     
     // MARK: - App colors
     static var primaryLight: Color { return Color(rgba: "#588B8B") }
@@ -49,229 +49,274 @@ extension ShapeStyle where Self == Color {
         Color(light: infoLight, dark: infoDark)
     }
     
-//    static var textPrimaryLight: Color { return Color(rgba: "#000000") }
-//    static var textPrimaryDark: Color { return Color(rgba: "#FFFFFF") }
-//    static var textPrimary: Color { return Color(light: textPrimaryLight, dark: textPrimaryDark) }
-//
-//    static var textSecondaryLight: Color { return Color(rgba: "#000000") }
-//    static var textSecondaryDark: Color { return Color(rgba: "#FFFFFF") }
-//    static var textSecondary: Color { return Color(light: textSecondaryLight, dark: textSecondaryDark) }
-
+    //    static var textPrimaryLight: Color { return Color(rgba: "#000000") }
+    //    static var textPrimaryDark: Color { return Color(rgba: "#FFFFFF") }
+    //    static var textPrimary: Color { return Color(light: textPrimaryLight, dark: textPrimaryDark) }
+    //
+    //    static var textSecondaryLight: Color { return Color(rgba: "#000000") }
+    //    static var textSecondaryDark: Color { return Color(rgba: "#FFFFFF") }
+    //    static var textSecondary: Color { return Color(light: textSecondaryLight, dark: textSecondaryDark) }
+    
     // MARK: - Texts
-    static var textPrimaryLight: Color { Color(rgba: "#111111") }
-    static var textPrimaryDark: Color  { Color(rgba: "#F5F5F5") }
+    /*
+//    static var textPrimaryLight: Color { Color(rgba: "#111111") }
+//    static var textPrimaryDark: Color  { Color(rgba: "#F5F5F5") }
+    static var textPrimaryLight: Color { .dark1 }
+    static var textPrimaryDark: Color  { .light1 }
     static var textPrimary: Color {
         Color(light: textPrimaryLight, dark: textPrimaryDark)
     }
-
-    static var textSecondaryLight: Color { Color(rgba: "#444444") }
-    static var textSecondaryDark: Color  { Color(rgba: "#C7C7C7") }
+    
+//    static var textSecondaryLight: Color { Color(rgba: "#444444") }
+//    static var textSecondaryDark: Color  { Color(rgba: "#C7C7C7") }
+    static var textSecondaryLight: Color { .light5 }
+    static var textSecondaryDark: Color  { .dark4 }
     static var textSecondary: Color {
         Color(light: textSecondaryLight, dark: textSecondaryDark)
     }
-
-    static var textTertiaryLight: Color { Color(rgba: "#7A7A7A") }
-    static var textTertiaryDark: Color  { Color(rgba: "#8E8E8E") }
+    
+//    static var textTertiaryLight: Color { Color(rgba: "#7A7A7A") }
+//    static var textTertiaryDark: Color  { Color(rgba: "#8E8E8E") }
+    static var textTertiaryLight: Color { .light4 }
+    static var textTertiaryDark: Color  { .light5 }
     static var textTertiary: Color {
         Color(light: textTertiaryLight, dark: textTertiaryDark)
     }
+    */
     
-    static var disabledLight: Color { Color(rgba: "#BDBDBD") }
-    static var disabledDark: Color  { Color(rgba: "#5A5A5A") }
+    //static var disabledLight: Color { Color(rgba: "#BDBDBD") }
+    //static var disabledDark: Color  { Color(rgba: "#5A5A5A") }
     static var disabled: Color {
-        Color(light: disabledLight, dark: disabledDark)
+        Color(light: light4, dark: dark2)
     }
     
     static var overlayAlphaLayer: Color { textTertiary.opacity(0.25) }
-
+    
     
     /*
-    static var textPrimaryLight: Color { Color(rgba: "#0B1F1F") }      // near-black teal
-    static var textPrimaryDark: Color  { Color(rgba: "#E6F0F0") }      // near-white teal
-    static var textPrimary: Color {
-        Color(light: textPrimaryLight, dark: textPrimaryDark)
-    }
-
-    static var textSecondaryLight: Color { Color(rgba: "#3F5F5F") }    // muted
-    static var textSecondaryDark: Color  { Color(rgba: "#A9C6C6") }
-    static var textSecondary: Color {
-        Color(light: textSecondaryLight, dark: textSecondaryDark)
-    }
-
-    static var textTertiaryLight: Color { Color(rgba: "#7A9A9A") }     // hints / metadata
-    static var textTertiaryDark: Color  { Color(rgba: "#6F8F8F") }
-    static var textTertiary: Color {
-        Color(light: textTertiaryLight, dark: textTertiaryDark)
-    }
+     static var textPrimaryLight: Color { Color(rgba: "#0B1F1F") }      // near-black teal
+     static var textPrimaryDark: Color  { Color(rgba: "#E6F0F0") }      // near-white teal
+     static var textPrimary: Color {
+     Color(light: textPrimaryLight, dark: textPrimaryDark)
+     }
+     
+     static var textSecondaryLight: Color { Color(rgba: "#3F5F5F") }    // muted
+     static var textSecondaryDark: Color  { Color(rgba: "#A9C6C6") }
+     static var textSecondary: Color {
+     Color(light: textSecondaryLight, dark: textSecondaryDark)
+     }
+     
+     static var textTertiaryLight: Color { Color(rgba: "#7A9A9A") }     // hints / metadata
+     static var textTertiaryDark: Color  { Color(rgba: "#6F8F8F") }
+     static var textTertiary: Color {
+     Color(light: textTertiaryLight, dark: textTertiaryDark)
+     }
      */
     
     // MARK: - Background
-    static var backgroundPrimaryLight: Color { Color(rgba: "#FFFFFF") }
-    static var backgroundPrimaryDark: Color  { Color(rgba: "#000000") }
-    static var backgroundPrimary: Color {
-        Color(light: backgroundPrimaryLight, dark: backgroundPrimaryDark)
-    }
-
-    static var backgroundSecondaryLight: Color { Color(rgba: "#F2F2F2") }
-    static var backgroundSecondaryDark: Color  { Color(rgba: "#1C1C1E") }
-    static var backgroundSecondary: Color {
-        Color(light: backgroundSecondaryLight, dark: backgroundSecondaryDark)
-    }
-
-    static var backgroundTertiaryLight: Color { Color(rgba: "#E5E5E5") }
-    static var backgroundTertiaryDark: Color  { Color(rgba: "#2C2C2E") }
-    static var backgroundTertiary: Color {
-        Color(light: backgroundTertiaryLight, dark: backgroundTertiaryDark)
-    }
     /*
-    static var backgroundPrimaryLight: Color { Color(rgba: "#FFFFFF") }
-    static var backgroundPrimaryDark: Color  { Color(rgba: "#0F1C1C") }
+    static var backgroundPrimaryLight: Color { .light1 /*Color(rgba: "#F5F5F5")*/ }
+    static var backgroundPrimaryDark: Color  { .dark1 /*Color(rgba: "#000000")*/ }
     static var backgroundPrimary: Color {
         Color(light: backgroundPrimaryLight, dark: backgroundPrimaryDark)
     }
-
-    static var backgroundSecondaryLight: Color { Color(rgba: "#F3F7F7") } // cards / lists
-    static var backgroundSecondaryDark: Color  { Color(rgba: "#1E2F2F") }
+    
+    static var backgroundSecondaryLight: Color { .light2 /*Color(rgba: "#F2F2F2")*/ }
+    static var backgroundSecondaryDark: Color  { .dark2 /*Color(rgba: "#1C1C1E")*/ }
+    //static var backgroundSecondaryDark: Color  { Color(rgba: "#1C1C1E") }
     static var backgroundSecondary: Color {
         Color(light: backgroundSecondaryLight, dark: backgroundSecondaryDark)
     }
-
-    static var backgroundTertiaryLight: Color { Color(rgba: "#E4EEEE") }  // separators
-    static var backgroundTertiaryDark: Color  { Color(rgba: "#2A3F3F") }
+    
+//    static var backgroundTertiaryLight: Color { Color(rgba: "#E5E5E5") }
+//    static var backgroundTertiaryDark: Color  { Color(rgba: "#2C2C2E") }
+    static var backgroundTertiaryLight: Color { .light3 }
+    static var backgroundTertiaryDark: Color  { .dark3 }
     static var backgroundTertiary: Color {
         Color(light: backgroundTertiaryLight, dark: backgroundTertiaryDark)
-    }*/
+    }
+     */
+    
+    /*
+     static var backgroundPrimaryLight: Color { Color(rgba: "#FFFFFF") }
+     static var backgroundPrimaryDark: Color  { Color(rgba: "#0F1C1C") }
+     static var backgroundPrimary: Color {
+     Color(light: backgroundPrimaryLight, dark: backgroundPrimaryDark)
+     }
+     
+     static var backgroundSecondaryLight: Color { Color(rgba: "#F3F7F7") } // cards / lists
+     static var backgroundSecondaryDark: Color  { Color(rgba: "#1E2F2F") }
+     static var backgroundSecondary: Color {
+     Color(light: backgroundSecondaryLight, dark: backgroundSecondaryDark)
+     }
+     
+     static var backgroundTertiaryLight: Color { Color(rgba: "#E4EEEE") }  // separators
+     static var backgroundTertiaryDark: Color  { Color(rgba: "#2A3F3F") }
+     static var backgroundTertiary: Color {
+     Color(light: backgroundTertiaryLight, dark: backgroundTertiaryDark)
+     }*/
+    
+//    static var textPrimary: Color { shade1 }
+//    static var textSecondary: Color { shade3 }
+//    static var textTertiary: Color { shade4 }
+//    
+//    static var backgroundPrimary: Color { Color(light: dark1, dark: light1) }
+//    static var backgroundSecondary: Color { Color(light: dark2, dark: light2) }
+//    static var backgroundTertiary: Color { Color(light: dark3, dark: light3) }
+
+    #if true
+    static var backgroundPrimary: Color { shade1 }
+    static var backgroundSecondary: Color { shade3 }
+    static var backgroundTertiary: Color { shade4 }
+    
+    static var textPrimary: Color { Color(light: dark1, dark: light1) }
+    static var textSecondary: Color { Color(light: dark2, dark: light4) }
+    static var textTertiary: Color { Color(light: dark3, dark: light5) }
+    #else
+    static var backgroundPrimary: Color { Color(uiColor: UIColor.systemBackground) }
+    static var backgroundSecondary: Color { Color(uiColor: UIColor.secondarySystemBackground) }
+    static var backgroundTertiary: Color { Color(uiColor: UIColor.systemFill) }
+    
+    static var textPrimary: Color { Color(uiColor: UIColor.label) }
+    static var textSecondary: Color { Color(uiColor: UIColor.secondaryLabel) }
+    static var textTertiary: Color { Color(uiColor: UIColor.tertiaryLabel) }
+    #endif
+
+    // MARK: - Light shades
+    static var light1: Color { Color(rgba: "#FFFFFF") }
+    static var light2: Color { Color(rgba: "#F5F5F5") }
+    static var light3: Color { Color(rgba: "#E5E5E5") }
+    static var light4: Color { Color(rgba: "#C7C7C7") }
+    static var light5: Color { Color(rgba: "#7A7A7A") }
+    static var light6: Color { Color(rgba: "#444444") }
+
+    // MARK: - Dark shades
+    static var dark1: Color { Color(rgba: "#111111") }
+    static var dark2: Color { Color(rgba: "#444444") }
+    static var dark3: Color { Color(rgba: "#7A7A7A") }
+    static var dark4: Color { Color(rgba: "#C7C7C7") }
+    static var dark5: Color { Color(rgba: "#E5E5E5") }
+    static var dark6: Color { Color(rgba: "#FFFFFF") }
+
+    // MARK: - Shade accessor
+    static var shade1: Color { Color(light: light1, dark: dark1) }
+    static var shade2: Color { Color(light: light2, dark: dark2) }
+    static var shade3: Color { Color(light: light3, dark: dark3) }
+    static var shade4: Color { Color(light: light4, dark: dark4) }
+    static var shade5: Color { Color(light: light5, dark: dark5) }
+    static var shade6: Color { Color(light: light6, dark: dark6) }
 }
 
-#Preview {
-    HStack() {
+#if DEBUG
+
+struct ColorsPreview: View {
+
+    var body: some View {
+        HStack {
+            content
+                .environment(\.colorScheme, .light)
+            content
+                .environment(\.colorScheme, .dark)
+        }
+    }
+    
+    private var content: some View {
         ZStack {
-            Color(rgba: "FFFFFF").ignoresSafeArea()
+            Color.backgroundPrimary.ignoresSafeArea()
             VStack(spacing: 10) {
-                Text("dropinPrimary")
+                HStack {
+                    Rectangle()
+                        .foregroundStyle(.shade1)
+                        .border(.textPrimary)
+                        .frame(width: 20, height: 20)
+                    Rectangle()
+                        .foregroundStyle(.shade2)
+                        .border(.textPrimary)
+                        .frame(width: 20, height: 20)
+                    Rectangle()
+                        .foregroundStyle(.shade3)
+                        .border(.textPrimary)
+                        .frame(width: 20, height: 20)
+                    Rectangle()
+                        .foregroundStyle(.shade4)
+                        .border(.textPrimary)
+                        .frame(width: 20, height: 20)
+                    Rectangle()
+                        .foregroundStyle(.shade5)
+                        .border(.textPrimary)
+                        .frame(width: 20, height: 20)
+                    Rectangle()
+                        .foregroundStyle(.shade6)
+                        .border(.textPrimary)
+                        .frame(width: 20, height: 20)
+                }
+                Text(verbatim: "dropinPrimary")
                     .fontWeight(.bold)
                     .foregroundStyle(.primaryLight)
-                Text("dropinSecondary")
+                Text(verbatim: "dropinSecondary")
                     .fontWeight(.bold)
                     .foregroundStyle(.secondaryLight)
-                Text("textPrimary")
+                Text(verbatim: "textPrimary")
                     .fontWeight(.bold)
-                    .foregroundStyle(.textPrimaryLight)
-                Text("textSecondary")
+                    .foregroundStyle(.textPrimary)
+                Text(verbatim: "textSecondary")
                     .fontWeight(.bold)
-                    .foregroundStyle(.textSecondaryLight)
-                Text("textTertiary")
+                    .foregroundStyle(.textSecondary)
+                Text(verbatim: "textTertiary")
                     .fontWeight(.bold)
-                    .foregroundStyle(.textTertiaryLight)
+                    .foregroundStyle(.textTertiary)
                 
                 ZStack {
                     Rectangle()
                         .frame(width: 150, height: 45)
-                        .border(.backgroundPrimaryDark, width: 1)
-                        .foregroundStyle(.backgroundPrimaryLight)
-                    Text("BG primary")
+                        .border(.textPrimary, width: 1)
+                        .foregroundStyle(.backgroundPrimary)
+                    Text(verbatim: "BG primary")
                         .fontWeight(.bold)
-                        .foregroundStyle(.textPrimaryLight)
+                        .foregroundStyle(.textPrimary)
                 }
                 ZStack {
                     Rectangle()
                         .frame(width: 150, height: 45)
-                        .border(.backgroundPrimaryDark, width: 1)
-                        .foregroundStyle(.backgroundSecondaryLight)
-                    Text("BG secondary")
+                        .border(.textPrimary, width: 1)
+                        .foregroundStyle(.backgroundSecondary)
+                    Text(verbatim: "BG secondary")
                         .fontWeight(.bold)
-                        .foregroundStyle(.textPrimaryLight)
+                        .foregroundStyle(.textPrimary)
                 }
                 ZStack {
                     Rectangle()
                         .frame(width: 150, height: 45)
-                        .border(.backgroundPrimaryDark, width: 1)
-                        .foregroundStyle(.backgroundTertiaryLight)
-                    Text("BG tertiary")
+                        .border(.textPrimary, width: 1)
+                        .foregroundStyle(.backgroundTertiary)
+                    Text(verbatim: "BG tertiary")
                         .fontWeight(.bold)
-                        .foregroundStyle(.textPrimaryLight)
+                        .foregroundStyle(.textPrimary)
                 }
                 
-                Text("destructive")
+                Text(verbatim: "destructive")
                     .fontWeight(.bold)
-                    .foregroundStyle(.destructiveLight)
-                Text("warning")
+                    .foregroundStyle(.destructive)
+                Text(verbatim: "warning")
                     .fontWeight(.bold)
-                    .foregroundStyle(.warningLight)
-                Text("success")
+                    .foregroundStyle(.warning)
+                Text(verbatim: "success")
                     .fontWeight(.bold)
-                    .foregroundStyle(.successLight)
-                Text("disabled")
+                    .foregroundStyle(.success)
+                Text(verbatim: "disabled")
                     .fontWeight(.bold)
-                    .foregroundStyle(.disabledLight)
-                Text("info")
+                    .foregroundStyle(.disabled)
+                Text(verbatim: "info")
                     .fontWeight(.bold)
                     .foregroundStyle(.infoLight)
             }
-        }
-        ZStack {
-            Color(rgba: "0000").ignoresSafeArea()
-            VStack(spacing: 10) {
-                Text("dropinPrimary")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.primaryDark)
-                Text("dropinSecondary")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.secondaryDark)
-                Text("textPrimary")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.textPrimaryDark)
-                Text("textSecondary")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.textSecondaryDark)
-                Text("textTertiary")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.textTertiaryDark)
-                
-                ZStack {
-                    Rectangle()
-                        .frame(width: 150, height: 45)
-                        .border(.backgroundPrimaryLight, width: 1)
-                        .foregroundStyle(.backgroundPrimaryDark)
-                    Text("BG primary")
-                        .fontWeight(.bold)
-                        .foregroundStyle(.textPrimaryDark)
-                }
-                ZStack {
-                    Rectangle()
-                        .frame(width: 150, height: 45)
-                        .border(.backgroundPrimaryLight, width: 1)
-                        .foregroundStyle(.backgroundSecondaryDark)
-                    Text("BG secondary")
-                        .fontWeight(.bold)
-                        .foregroundStyle(.textPrimaryDark)
-                }
-                ZStack {
-                    Rectangle()
-                        .frame(width: 150, height: 45)
-                        .border(.backgroundPrimaryLight, width: 1)
-                        .foregroundStyle(.backgroundTertiaryDark)
-                    Text("BG tertiary")
-                        .fontWeight(.bold)
-                        .foregroundStyle(.textPrimaryDark)
-                }
 
-                Text("destructive")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.destructiveDark)
-                Text("warning")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.warningDark)
-                Text("success")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.successDark)
-                Text("disabled")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.disabledDark)
-                Text("info")
-                    .fontWeight(.bold)
-                    .foregroundStyle(.infoDark)
-            }
         }
     }
 }
+
+#Preview {
+    ColorsPreview()
+}
+
+#endif

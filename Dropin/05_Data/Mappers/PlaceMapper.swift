@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import ContactFieldKit
 
 public enum PlaceMapper {
     
@@ -23,6 +24,15 @@ public enum PlaceMapper {
                 group = GroupMapper.toDomain(sdGroup, skipRelationships: true)
             }
         }
+        let phones = sdPlace.phone
+            .filter { ContactItem(rawValue: $0) != nil }
+            .map { ContactItem(rawValue: $0)! }
+        let emails = sdPlace.email
+            .filter { ContactItem(rawValue: $0) != nil }
+            .map { ContactItem(rawValue: $0)! }
+        let urls = sdPlace.url
+            .filter { ContactItem(rawValue: $0) != nil }
+            .map { ContactItem(rawValue: $0)! }
         let place = PlaceEntity(id: sdPlace.identifier,
                                 name: sdPlace.name,
                                 coordinates: CLLocationCoordinate2D(latitude: sdPlace.latitude, longitude: sdPlace.longitude),
@@ -30,9 +40,12 @@ public enum PlaceMapper {
                                 tags: tags,
                                 group: group,
                                 icon: sdPlace.icon,
+                                rating: sdPlace.rating,
+                                phone: phones,
+                                email: emails,
+                                url: urls,
                                 notes: sdPlace.notes,
-                                phone: sdPlace.phone,
-                                url: sdPlace.url,
+                                images: sdPlace.images,
                                 creationDate: sdPlace.creationDate)
         //place.groupColor = sdPlace.group?.color
         // Relationships were created but not linked, do it manually
@@ -54,8 +67,12 @@ public enum PlaceMapper {
                        tags: [SDTag](),
                        group: nil,
                        icon: place.icon,
+                       rating: place.rating,
+                       phone: place.phone.map { $0.rawValue },
+                       email: place.email.map { $0.rawValue },
+                       url: place.url.map { $0.rawValue },
                        notes: place.notes,
-                       phone: place.phone,
-                       url: place.url)
+                       images: place.images)
+
     }
 }

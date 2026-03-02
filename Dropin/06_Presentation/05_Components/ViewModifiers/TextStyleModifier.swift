@@ -11,7 +11,9 @@ struct TextStyleModifier: ViewModifier {
     
     enum Style: String, CaseIterable {
         case title
+        case title2
         case body
+        case bodySemibold
         case bodyWarning
         case bodyError
         case caption
@@ -44,11 +46,13 @@ struct TextStyleModifier: ViewModifier {
         switch style {
             case .title:
                 .titleRegular
+            case .title2:
+                .title2Regular
             case .body:
                 .bodyRegular
-            case .bodyWarning:
-                .bodyBold
-            case .bodyError:
+            case .bodySemibold:
+                .bodySemibold
+            case .bodyWarning, .bodyError:
                 .bodyBold
             case .caption:
                 .captionRegular
@@ -85,9 +89,9 @@ struct TextStyleModifier: ViewModifier {
     
     private var color: Color {
         switch style {
-            case .title:
+            case .title, .title2:
                 .textPrimary
-            case .body:
+            case .body, .bodySemibold:
                 .textPrimary
             case .bodyWarning:
                 .warning

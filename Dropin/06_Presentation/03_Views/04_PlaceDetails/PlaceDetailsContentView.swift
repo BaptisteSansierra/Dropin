@@ -29,6 +29,7 @@ struct PlaceDetailsContentView: View {
     @State private var showUrlField: Bool
     @State private var showNotesField: Bool
     @State private var scrollPosition = ScrollPosition(edge: .top)
+    /*
     private var phone: Binding<String> {
         Binding<String>(
             get: {
@@ -45,6 +46,7 @@ struct PlaceDetailsContentView: View {
                 place.url = value
             })
     }
+     */
     private var notes: Binding<String> {
         Binding<String>(
             get: {
@@ -67,6 +69,7 @@ struct PlaceDetailsContentView: View {
                                   showingMarkerList: $showingMarkerList,
                                   editEnabled: editMode == .edit,
                                   isNameFocused: $isNameFocused)
+                /*
                 PlaceStringFieldView(field: phone,
                                      showField: $showPhoneField,
                                      name: "common.phone",
@@ -78,6 +81,7 @@ struct PlaceDetailsContentView: View {
                                      name: "common.url",
                                      keyboardType: .URL,
                                      editEnabled: editMode == .edit)
+                 */
                     .tag("url")
                 PlaceTagsView(place: $place,
                               showingTagsSelector: $showingTagsSelector,

@@ -12,7 +12,7 @@ import Foundation
 final class MockGroupRepository: GroupRepository {
     
     private var groups: [GroupEntity]
-
+    
     init(initialGroups: [GroupEntity] = []) {
         self.groups = initialGroups
     }
@@ -23,7 +23,7 @@ final class MockGroupRepository: GroupRepository {
         }
         return false
     }
-        
+    
     func create(_ group: GroupEntity) async throws {
         groups.append(group)
     }
@@ -41,5 +41,12 @@ final class MockGroupRepository: GroupRepository {
     
     func getAll() async throws -> [GroupEntity] {
         return groups
+    }
+    
+    func get(_ id: String) async throws -> GroupEntity {
+        guard let g = groups.first(where: { $0.id == id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        return g
     }
 }

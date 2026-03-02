@@ -151,6 +151,14 @@ struct MainView: View {
     }
      */
 
+    private func createPlaceEditView(_ placeId: String,
+                                     mode: PlaceEditViewModel.Mode) -> PlaceEditView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
+            fatalError("couldn't find any place '\(placeId)' in list")
+        }
+        return viewModel.createPlaceEditView(place: $viewModel.places[index], mode: mode)
+    }
+
     private func createPlaceDetailsView(_ placeId: String) -> PlaceDetailsView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
@@ -168,6 +176,8 @@ struct MainView: View {
     @ViewBuilder
     private func resolveDestination(navigationItem: NavigationItem) -> some View {
         switch navigationItem {
+            case .placeEditView(let placeID, let mode):
+                createPlaceEditView(placeID, mode: mode)
             case .placeDetailsView(let placeID, _):
                 createPlaceDetailsView(placeID)
             case .lookupPlacesView:

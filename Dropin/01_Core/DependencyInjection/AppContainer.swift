@@ -157,6 +157,23 @@ final class AppContainer {
                                      place: place)
     }
 
+    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+        let vm = PlaceSheetViewModel(self,
+                                     coordinator: mainCoordinator,
+                                     locationManager: locationManager)
+        return PlaceSheetView(viewModel: vm,
+                              place: place,
+                              detent: detent)
+    }
+
+    func createPlaceEditView(place: Binding<PlaceUI>, mode: PlaceEditViewModel.Mode) -> PlaceEditView {
+        let vm = PlaceEditViewModel(self,
+                                    coordinator: mainCoordinator,
+                                    mode: mode)
+        
+        return PlaceEditView(viewModel: vm, place: place)
+    }
+
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         let vm = PlaceDetailsViewModel(self,
                                        coordinator: mainCoordinator,
@@ -254,8 +271,10 @@ extension AppContainer {
             modelContext.insert(item)
         }
         
-        mockPlaces[0].group = mockGroups[0]
-        mockPlaces[0].tags = [mockTags[8], mockTags[10], mockTags[13]]
+        mockPlaces[0].group = nil // mockGroups[0]
+        mockPlaces[0].tags = [mockTags[1], mockTags[2], mockTags[3], mockTags[4],
+                              mockTags[5], mockTags[6], mockTags[7], mockTags[8],
+                              mockTags[10], mockTags[13], mockTags[12], mockTags[14], mockTags[15]]
 
         mockPlaces[1].group = mockGroups[0]
         mockPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]

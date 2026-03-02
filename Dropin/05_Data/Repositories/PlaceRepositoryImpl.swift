@@ -54,9 +54,11 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.longitude = place.coordinates.longitude
         sdPlace.address = place.address
         sdPlace.icon = place.icon
+        sdPlace.phone = place.phone.map { $0.rawValue }
+        sdPlace.email = place.email.map { $0.rawValue }
+        sdPlace.url = place.url.map { $0.rawValue }
         sdPlace.notes = place.notes
-        sdPlace.phone = place.phone
-        sdPlace.url = place.url
+        sdPlace.images = place.images
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
         try await linkGroup(sdPlace: sdPlace, domainPlace: place)
         try modelContext.save()

@@ -64,7 +64,7 @@ struct TagSelectorView: View {
     private var selectedView: some View {
         Group {
             let hasTags = viewModel.placeTags.count > 0
-            Text(hasTags ? "tag_selector.selected" : "tag_selector.empty")
+            Text(hasTags ? "tag_selector.selected" : "placeholder.no_tags")
                 .textStyle(.placeholder)
                 .padding()
           

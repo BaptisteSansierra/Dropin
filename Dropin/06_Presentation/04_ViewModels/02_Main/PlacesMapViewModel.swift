@@ -53,6 +53,8 @@ struct Bucket {
         }
     }
     
+    var detailSheetDetent: PresentationDetent = .medium
+
     var mapSettings: MapSettings
     
     // Clustering
@@ -267,8 +269,12 @@ struct Bucket {
 //        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
 //    }
 
-    func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
-        return appContainer.createPlaceDetailsSheetView(place: place)
+//    func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
+//        return appContainer.createPlaceDetailsSheetView(place: place)
+//    }
+
+    func createPlaceSheetView(place: Binding<PlaceUI>, detend: Binding<PresentationDetent>) -> PlaceSheetView {
+        return appContainer.createPlaceSheetView(place: place, detent: detend)
     }
 
 //    func createLookupPlacesView() -> LookupPlacesView {
