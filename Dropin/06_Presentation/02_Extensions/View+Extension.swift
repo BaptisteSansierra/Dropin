@@ -21,7 +21,17 @@ extension View {
         assertionFailure(message)
         return EmptyView()
     }
-    
+
+    func printInMapContentBuilder(_ message: String) -> EmptyMapContent {
+        print(message)
+        return EmptyMapContent()
+    }
+
+    func printInViewBuilder(_ message: String) -> EmptyView {
+        print(message)
+        return EmptyView()
+    }
+
     func commonErrorMessage(_ error: Error) -> String {
         switch error {
             case let urlError as URLError:

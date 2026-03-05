@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 14/10/25.
 //
 
+#if false
+
 import SwiftUI
 
 @MainActor
@@ -43,3 +45,6 @@ import SwiftUI
         return appContainer.createGroupSelectorView(place: place)
     }
 }
+
+#endif
+

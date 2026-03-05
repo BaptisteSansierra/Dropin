@@ -73,19 +73,36 @@ import CoreLocation
         return appContainer.createPlacesListView(places: bindingPlaces)
     }
     
+    /*
     // TODO: to be replaced ?
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
     }
+     */
     
-    func createPlaceEditView(place: Binding<PlaceUI>, mode: PlaceEditViewModel.Mode) -> PlaceEditView {
-        return appContainer.createPlaceEditView(place: place, mode: mode)
+    func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
+        return appContainer.createPlaceEditView(place: place)
     }
 
     func createLookupPlacesView() -> LookupPlacesView {
         return appContainer.createLookupPlacesView()
     }
     
+    func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
+                                     address: String,
+                                     name: String,
+                                     marker: String?,
+                                     tags: [String],
+                                     group: String?) -> PlaceCreateView {
+        return appContainer.createPlaceCreateView(coordinates: coordinates,
+                                                  address: address,
+                                                  name: name,
+                                                  marker: marker,
+                                                  tags: tags,
+                                                  group: group)
+    }
+
+    /*
     func createCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
                                    address: String,
                                    name: String,
@@ -99,6 +116,7 @@ import CoreLocation
                                                       tags: tags,
                                                       group: group)
     }
+     */
 
     // MARK: Use cases
     func loadPlaces() async throws {

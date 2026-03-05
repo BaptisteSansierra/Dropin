@@ -161,6 +161,7 @@ struct PlacesMapView: View {
                 await reloadPlaces()
             }
         }, content: {
+            // TODO: change method name
             viewModel.createCreatePlacesView()
                 //.presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
                 .presentationDetents([.height(createPlaceSheetDefaultDetent)])
@@ -169,7 +170,8 @@ struct PlacesMapView: View {
         .onChange(of: viewModel.selectedPlaceId) {
             zoomOnPin()
         }
-        .sheet(item: $viewModel.selectedPlaceId) { placeId in
+        .sheet(item: $viewModel.selectedPlaceId,
+               onDismiss: { viewModel.detailSheetDetent = .medium }) { placeId in
             createPlaceDetailsSheetView()
                 .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
                 .presentationCornerRadius(20)
@@ -259,7 +261,11 @@ struct PlacesMapView: View {
         }
     }
     
+    @MapContentBuilder
     private var visibleAnnotations: some MapContent {
+        // ICI
+        printInMapContentBuilder("--> Update visibleAnnotations")
+        
         ForEach(viewModel.visiblePlaces) { place in
             if viewModel.selectedPlaceId == nil ||
                viewModel.selectedPlaceId?.id != place.id {
@@ -464,12 +470,20 @@ struct PlacesMapView: View {
             print("Navigation history EMPTY")
             return
         }
+        print("MAP APPEARS")
         switch lastNavigationSource {
-            case .createPlaceFullView:
+            case .placeCreateView, .placeEditView:
                 Task {
+                    print("RELOAD PLACES")
                     await reloadPlaces()
+                    
+                    viewModel.visiblePlaces = viewModel.visiblePlaces
+                    for p in viewModel.visiblePlaces.indices {
+                        print("   \(p) place \(viewModel.visiblePlaces[p].name)")
+                    }
                 }
             default:
+                print("NOTHING TO DO")
                 ()
         }
 

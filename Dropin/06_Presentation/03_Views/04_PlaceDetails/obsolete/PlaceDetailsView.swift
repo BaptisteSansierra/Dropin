@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 7/8/25.
 //
 
+#if false
+
 import SwiftUI
 
 struct PlaceDetailsView: View {
@@ -162,5 +164,7 @@ struct MockPlaceDetailsView: View {
         MockPlaceDetailsView()
     }
 }
+
+#endif
 
 #endif

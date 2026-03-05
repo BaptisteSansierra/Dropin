@@ -110,6 +110,7 @@ final class AppContainer {
         return CreatePlaceQuickView(viewModel: vm, place: place)
     }
 
+/*
     func createCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
                                    address: String,
                                    name: String,
@@ -129,7 +130,8 @@ final class AppContainer {
                                    tags: tags,
                                    group: group)
     }
-
+*/
+    
     func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
                                       getTags: GetTags(repository: tagRepository),
@@ -144,6 +146,7 @@ final class AppContainer {
         return GroupSelectorView(viewModel: vm, place: place)
     }
     
+    /*
     func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
         let vm = PlaceDetailsSheetViewModel(self,
                                             coordinator: mainCoordinator,
@@ -156,6 +159,7 @@ final class AppContainer {
         return PlaceDetailsSheetView(viewModel: vm,
                                      place: place)
     }
+     */
 
     func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
         let vm = PlaceSheetViewModel(self,
@@ -166,14 +170,47 @@ final class AppContainer {
                               detent: detent)
     }
 
-    func createPlaceEditView(place: Binding<PlaceUI>, mode: PlaceEditViewModel.Mode) -> PlaceEditView {
+    func createPlaceEditContentView(place: Binding<PlaceUI>,
+                                    mode: PlaceEditContentViewModel.Mode,
+                                    showMissingName: Binding<Bool>) -> PlaceEditContentView {
+        let vm = PlaceEditContentViewModel(self,
+                                           coordinator: mainCoordinator,
+                                           updatePlace: UpdatePlace(repository: placeRepository),
+                                           deletePlace: DeletePlace(repository: placeRepository),
+                                           mode: mode)
+        return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
+    }
+
+    func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
         let vm = PlaceEditViewModel(self,
                                     coordinator: mainCoordinator,
-                                    mode: mode)
-        
+                                    updatePlace: UpdatePlace(repository: placeRepository))
         return PlaceEditView(viewModel: vm, place: place)
     }
 
+    func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
+                               address: String,
+                               name: String,
+                               marker: String?,
+                               tags: [String],
+                               group: String?) -> PlaceCreateView {
+        let vm = PlaceCreateViewModel(self,
+                                      coordinator: mainCoordinator,
+                                      createPlace: CreatePlace(repository: placeRepository),
+                                      getTag: GetTag(repository: tagRepository),
+                                      getGroup: GetGroup(repository: groupRepository))
+        return PlaceCreateView(viewModel: vm,
+                               coordinates: coordinates,
+                               address: address,
+                               name: name,
+                               marker: marker,
+                               tags: tags,
+                               group: group)
+    }
+    
+    
+
+    /*
     func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
         let vm = PlaceDetailsViewModel(self,
                                        coordinator: mainCoordinator,
@@ -199,6 +236,7 @@ final class AppContainer {
                                        place: place,
                                        editMode: editMode)
     }
+     */
     
     func createTagListView(showingSideMenu: Binding<Bool>) -> TagListView {
         let vm = TagListViewModel(self,

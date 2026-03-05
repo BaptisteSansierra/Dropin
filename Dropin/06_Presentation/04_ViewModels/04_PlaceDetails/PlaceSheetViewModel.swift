@@ -46,7 +46,7 @@ import CoreLocation
     
     // MARK: Navigation
     func pushPlaceEditView(placeId: String) {
-        coordinator.pushPlaceEditView(placeId: placeId, mode: .edit)
+        coordinator.pushPlaceEditView(placeId: placeId)
     }
     
     // MARK: - callbacks and co

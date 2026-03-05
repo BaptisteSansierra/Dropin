@@ -2,7 +2,7 @@
 //  PlaceEditViewModel.swift
 //  Dropin
 //
-//  Created by baptiste sansierra on 26/2/26.
+//  Created by baptiste sansierra on 2/3/26.
 //
 
 import SwiftUI
@@ -12,34 +12,33 @@ import CoreLocation
 @MainActor
 @Observable class PlaceEditViewModel {
     
-    enum Mode {
-        case edit
-        case creation
-    }
-    
-    var mode: Mode
-
     @ObservationIgnored private var coordinator: MainCoordinator
     @ObservationIgnored private var appContainer: AppContainer
-    //@ObservationIgnored private var locationManager: LocationManager
+    @ObservationIgnored private let updatePlace: UpdatePlace
 
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
-         mode: Mode) {
+         updatePlace: UpdatePlace) {
         self.appContainer = appContainer
         self.coordinator = coordinator
-        self.mode = mode
+        self.updatePlace = updatePlace
     }
     
     // MARK: Navigation
-    
-    // MARK: UI Childs
-    func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
-        return appContainer.createTagSelectorView(place: place)
+    func popView() {
+        coordinator.pop()
     }
-    
-    func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
-        return appContainer.createGroupSelectorView(place: place)
+
+    // MARK: UI Childs
+    func body(place: Binding<PlaceUI>, showMissingName: Binding<Bool>) -> some View {
+        return appContainer.createPlaceEditContentView(place: place,
+                                                       mode: .edit,
+                                                       showMissingName: showMissingName)
+    }
+
+    // MARK: Use cases
+    func updatePlace(_ place: PlaceUI) async throws {
+        try await updatePlace.execute(PlaceMapper.toDomain(place))
     }
 
     // MARK: - callbacks and co

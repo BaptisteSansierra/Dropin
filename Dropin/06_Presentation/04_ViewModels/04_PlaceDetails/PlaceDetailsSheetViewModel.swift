@@ -5,6 +5,7 @@
 //  Created by baptiste sansierra on 14/10/25.
 //
 
+#if false
 
 import SwiftUI
 
@@ -49,3 +50,6 @@ import SwiftUI
         return appContainer.createPlaceDetailsContentView(place: place, editMode: editMode)
     }
 }
+
+#endif
+

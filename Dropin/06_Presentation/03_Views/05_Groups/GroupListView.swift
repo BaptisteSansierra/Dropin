@@ -38,7 +38,7 @@ struct GroupListView: View {
                         }
                         .swipeActions {
                             Button() {
-                                deleteGroup(group)
+                                deleteGroupCallback(group)
                             } label: {
                                 Label("common.delete", systemImage: "trash")
                             }
@@ -72,14 +72,7 @@ struct GroupListView: View {
                 }
                 Button("common.delete", role: .destructive) {
                     Task {
-                        do {
-                            try await viewModel.deleteGroup(group)
-                            groupToRemove = nil
-                            groups = try await viewModel.loadGroups()
-                        } catch {
-                            // TODO: handle error
-                            assertionFailure("couldn't delete group")
-                        }
+                        await deleteGroup(group.id)
                     }
                 }
             } message: { group in
@@ -93,9 +86,23 @@ struct GroupListView: View {
     }
     
     // MARK: - Actions
-    private func deleteGroup(_ group: GroupUI) {
+    private func deleteGroupCallback(_ group: GroupUI) {
         groupToRemove = group
         showingRemoveAlert = true
+    }
+    
+    private func deleteGroup(_ groupId: String) async {
+        guard let index = groups.firstIndex(where: { $0.id == groupId }) else {
+            fatalError("couldn't find any group id '\(groupId)' in list")
+        }
+        do {
+            try await viewModel.deleteGroup(groups[index])
+            groupToRemove = nil
+            groups = try await viewModel.loadGroups()
+        } catch {
+            // TODO: handle error
+            assertionFailure("couldn't delete group")
+        }
     }
     
     private func createGroupDetailsView(_ groupId: String) -> GroupDetailsView {

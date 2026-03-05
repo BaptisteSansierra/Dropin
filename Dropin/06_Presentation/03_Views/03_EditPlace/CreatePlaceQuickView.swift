@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 26/1/26.
 //
 
+#if true
+
 import SwiftUI
 
 struct CreatePlaceQuickView: View {
@@ -69,7 +71,9 @@ struct CreatePlaceQuickView: View {
         // Fetch address from coords
         place.address = String(localized: "create_place.fetching")
         do {
-            self.place.address = try await viewModel.fetchAddress(coords: place.coordinates)
+            let address = try await viewModel.fetchAddress(coords: place.coordinates)
+            print("Address fetched : \(address)")
+            self.place.address = address
         } catch is CancellationError {
         } catch {
             self.place.address = String(localized: "common.na")
@@ -118,3 +122,6 @@ struct MockCreatePlaceQuickView: View {
 }
 
 #endif
+
+#endif
+

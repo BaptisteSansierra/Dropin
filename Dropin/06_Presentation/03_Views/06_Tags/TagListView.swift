@@ -38,7 +38,7 @@ struct TagListView: View {
                         }
                         .swipeActions {
                             Button() {
-                                deleteTag(tag)
+                                deleteTagCallback(tag)
                             } label: {
                                 Label("common.delete", systemImage: "trash")
                             }
@@ -72,14 +72,7 @@ struct TagListView: View {
                 }
                 Button("common.delete", role: .destructive) {
                     Task {
-                        do {
-                            try await viewModel.deleteTag(tag)
-                            tagToRemove = nil
-                            tags = try await viewModel.loadTags()
-                        } catch {
-                            // TODO: handle error
-                            assertionFailure("couldn't delete tag")
-                        }
+                        await deleteTag(tag.id)
                     }
                 }
             } message: { tag in
@@ -93,9 +86,23 @@ struct TagListView: View {
     }
     
     // MARK: - Actions
-    private func deleteTag(_ tag: TagUI) {
+    private func deleteTagCallback(_ tag: TagUI) {
         tagToRemove = tag
         showingRemoveAlert = true
+    }
+    
+    private func deleteTag(_ tagId: String) async {
+        guard let index = tags.firstIndex(where: { $0.id == tagId }) else {
+            fatalError("couldn't find any tag id '\(tagId)' in list")
+        }
+        do {
+            try await viewModel.deleteTag(tags[index])
+            tagToRemove = nil
+            tags = try await viewModel.loadTags()
+        } catch {
+            // TODO: handle error
+            assertionFailure("couldn't delete tag")
+        }
     }
     
     private func createTagDetailsView(_ tagId: String) -> TagDetailsView {

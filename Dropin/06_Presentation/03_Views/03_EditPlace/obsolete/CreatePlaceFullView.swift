@@ -5,6 +5,9 @@
 //  Created by baptiste sansierra on 26/1/26.
 //
 
+
+#if false
+
 import SwiftUI
 import CoreLocation
 
@@ -152,3 +155,6 @@ struct MockCreatePlaceFullView: View {
 }
 
 #endif
+
+#endif
+

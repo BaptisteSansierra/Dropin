@@ -14,7 +14,7 @@ struct PlaceAnnotation: MapContent {
     
     // MARK: - State & Bindables
     @Binding var selectedPlaceId: PlaceID?
-    
+
     // MARK: - private vars
     private var place: PlaceUI
     

@@ -11,6 +11,7 @@ import SwiftUI
 @Observable class GroupUI: Identifiable, @MainActor Equatable {
 //@MainActor
 //struct GroupUI: Identifiable, @MainActor Equatable {
+
     let id: String
     var name: String
     var icon: Icon

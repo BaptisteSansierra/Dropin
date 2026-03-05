@@ -23,20 +23,39 @@ struct MainView: View {
         self._showingSideMenu = showingSideMenu
     }
     
+    @State private var navBarHeight: CGFloat = 0
+    
     // MARK: - Body
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
-            ZStack {
-                viewModel.createPlacesMapView()
-                    .opacity(selectedTab == 0 ? 1 : 0)
-                
-                viewModel.createPlacesListView()
-                    .opacity(selectedTab == 1 ? 1 : 0)
-
-                customTabView
+            GeometryReader { proxy in
+                ZStack {
+                    
+                    viewModel.createPlacesMapView()
+                        .opacity(selectedTab == 0 ? 1 : 0)
+                    
+                    viewModel.createPlacesListView()
+                        .opacity(selectedTab == 1 ? 1 : 0)
+                    
+                    customTabView
+                    
+                    // Navigation bar background
+                    VStack {
+                        Color.backgroundPrimary
+                            .frame(height: navBarHeight)
+                            .onChange(of: proxy.frame(in: .global)) { oldValue, newValue in
+                                navBarHeight = proxy.safeAreaInsets.top
+                            }
+                            .onAppear {
+                                navBarHeight = proxy.safeAreaInsets.top
+                            }
+                        Spacer()
+                    }
+                    .ignoresSafeArea(edges: .top)
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.backgroundPrimary, for: .navigationBar)
+            //.toolbarBackground(.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
                 DropinToolbar.Logo()
@@ -151,14 +170,14 @@ struct MainView: View {
     }
      */
 
-    private func createPlaceEditView(_ placeId: String,
-                                     mode: PlaceEditViewModel.Mode) -> PlaceEditView {
+    private func createPlaceEditView(_ placeId: String) -> PlaceEditView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
         }
-        return viewModel.createPlaceEditView(place: $viewModel.places[index], mode: mode)
+        return viewModel.createPlaceEditView(place: $viewModel.places[index])
     }
 
+    /*
     private func createPlaceDetailsView(_ placeId: String) -> PlaceDetailsView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
@@ -172,23 +191,32 @@ struct MainView: View {
         }
         return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
     }
+     */
     
     @ViewBuilder
     private func resolveDestination(navigationItem: NavigationItem) -> some View {
         switch navigationItem {
-            case .placeEditView(let placeID, let mode):
-                createPlaceEditView(placeID, mode: mode)
-            case .placeDetailsView(let placeID, _):
-                createPlaceDetailsView(placeID)
+            case .placeEditView(let placeID):
+                createPlaceEditView(placeID)
+//            case .placeDetailsView(let placeID, _):
+//                createPlaceDetailsView(placeID)
             case .lookupPlacesView:
                 viewModel.createLookupPlacesView()
-            case .createPlaceFullView(let coordinates, let address, let name, let marker, let tags, let group):
-                viewModel.createCreatePlaceFullView(coordinates: coordinates,
-                                                    address: address,
-                                                    name: name,
-                                                    marker: marker,
-                                                    tags: tags,
-                                                    group: group)
+//            case .createPlaceFullView(let coordinates, let address, let name, let marker, let tags, let group):
+//                viewModel.createCreatePlaceFullView(coordinates: coordinates,
+//                                                    address: address,
+//                                                    name: name,
+//                                                    marker: marker,
+//                                                    tags: tags,
+//                                                    group: group)
+            case .placeCreateView(let coordinates, let address, let name, let marker, let tags, let group):
+                viewModel.createPlaceCreateView(coordinates: coordinates,
+                                                address: address,
+                                                name: name,
+                                                marker: marker,
+                                                tags: tags,
+                                                group: group)
+
             // development cases
             case .undefinedDummyView:
                 ZStack {

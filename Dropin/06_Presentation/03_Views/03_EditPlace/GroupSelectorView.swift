@@ -124,7 +124,9 @@ struct GroupSelectorView: View {
     
     private var createGroupView: some View {
         HStack(spacing: 0) {
-            @Bindable var place = place
+            
+            //@Bindable var place = place
+            
             // Color picker
             ZStack {
                 ColorPicker("", selection: $createdGroupColor, supportsOpacity: false)

@@ -257,7 +257,13 @@
         }
       }
     },
+    "Are you sure you want to cancel new place creation ?" : {
+
+    },
     "Are you sure you want to discard your changes ?" : {
+
+    },
+    "Cancel" : {
 
     },
     "category.accommodation" : {
@@ -1019,6 +1025,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report a problem"
+          }
+        }
+      }
+    },
+    "common.save" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         }
       }

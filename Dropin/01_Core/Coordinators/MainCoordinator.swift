@@ -37,20 +37,35 @@ import CoreLocation
     
     // MARK: navigation methods
     
-    func pushPlaceEditView(placeId: String, mode: PlaceEditViewModel.Mode) {
-        push(NavigationItem.placeEditView(placeId: placeId, mode: mode))
+    func pushPlaceEditView(placeId: String) {
+        push(NavigationItem.placeEditView(placeId: placeId))
     }
 
     // TODO: to be replaced
-    func pushPlaceDetailsView(placeId: String, editMode: PlaceEditMode = .none) {
-        push(NavigationItem.placeDetailsView(placeId: placeId, editMode: editMode))
-    }
+//    func pushPlaceDetailsView(placeId: String, editMode: PlaceEditMode = .none) {
+//        push(NavigationItem.placeDetailsView(placeId: placeId, editMode: editMode))
+//    }
     
     func pushLookupPlacesView() {
         push(NavigationItem.lookupPlacesView)
     }
     
-    // TODO: to be replaced
+    func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
+                                 address: String,
+                                 name: String,
+                                 marker: String?,
+                                 tags: [String],
+                                 group: String?) {
+        push(NavigationItem.placeCreateView(coordinates: coordinates,
+                                            address: address,
+                                            name: name,
+                                            marker: marker,
+                                            tags: tags,
+                                            group: group))
+    }
+
+    /*
+     // TODO: to be replaced
     func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
                                  address: String,
                                  name: String,
@@ -64,6 +79,7 @@ import CoreLocation
                                                 tags: tags,
                                                 group: group))
     }
+     */
 
     func pushUndefinedDummyView() {
         push(NavigationItem.undefinedDummyView)
@@ -104,15 +120,22 @@ import CoreLocation
 }
 
 enum NavigationItem: Hashable {
-    case placeDetailsView(placeId: String, editMode: PlaceEditMode)
-    case placeEditView(placeId: String, mode: PlaceEditViewModel.Mode)
+    //case placeDetailsView(placeId: String, editMode: PlaceEditMode)
+    case placeEditView(placeId: String)
     case lookupPlacesView
-    case createPlaceFullView(coordinates: CLLocationCoordinate2D,
-                             address: String,
-                             name: String,
-                             marker: String?,
-                             tags: [String],
-                             group: String?)
+    case placeCreateView(coordinates: CLLocationCoordinate2D,
+                         address: String,
+                         name: String,
+                         marker: String?,
+                         tags: [String],
+                         group: String?)
+
+//    case createPlaceFullView(coordinates: CLLocationCoordinate2D,
+//                             address: String,
+//                             name: String,
+//                             marker: String?,
+//                             tags: [String],
+//                             group: String?)
     // development
     case undefinedDummyView
 }
