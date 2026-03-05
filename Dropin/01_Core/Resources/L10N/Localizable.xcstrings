@@ -419,6 +419,18 @@
         }
       }
     },
+    "common.address2" : {
+      "comment" : "Complement d’adresse",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address line 2"
+          }
+        }
+      }
+    },
     "common.call" : {
       "localizations" : {
         "en" : {
@@ -1567,6 +1579,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appliquer les changements"
+          }
+        }
+      }
+    },
+    "placeholder.address2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apt, suite, unit, building, floor, etc."
           }
         }
       }

@@ -125,6 +125,7 @@ extension DropinApp {
         static let latitudeSpan: Double = 10
         static let longitudeSpan: Double = 5
     }
+    /*
     struct locations {
         static let london = CLLocationCoordinate2D(latitude: 51.5074, longitude: 0.1278)
         static let barcelona = CLLocationCoordinate2D(latitude: 41.390205, longitude: 2.154007)
@@ -143,6 +144,7 @@ extension DropinApp {
             static let long: Double = 2.349014
         } */
     }
+     */
     struct ui {
         struct button {
             static let height: Double = 40

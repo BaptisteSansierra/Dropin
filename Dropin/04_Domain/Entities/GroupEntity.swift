@@ -8,7 +8,7 @@
 import Foundation
 
 struct GroupEntity: Hashable {
-    let id: String
+    let id: UUID
     var name: String
     var icon: Icon
     var places: [PlaceEntity] = [PlaceEntity]()
@@ -18,7 +18,7 @@ struct GroupEntity: Hashable {
     /// When  databaseDeleted is true, domain objects should be ignored
     var databaseDeleted: Bool = false
     
-    init(id: String, name: String, color: String, icon: Icon, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
+    init(id: UUID, name: String, color: String, icon: Icon, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
         self.id = id
         self.name = name
         self.icon = icon
@@ -29,7 +29,7 @@ struct GroupEntity: Hashable {
     }
     
     init(name: String, color: String, icon: Icon) {
-        self.id = UUID().uuidString
+        self.id = UUID()
         self.name = name
         self.color = color
         self.icon = icon

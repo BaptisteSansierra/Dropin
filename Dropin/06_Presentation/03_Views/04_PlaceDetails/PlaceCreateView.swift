@@ -18,8 +18,8 @@ struct PlaceCreateView: View {
     // To be moved in VM
     @State private var confirmCancel: Bool = false
 
-    private var tagIds: [String]?
-    private var groupId: String?
+    private var tagIds: [UUID]?
+    private var groupId: UUID?
 
     // MARK: - Init
     init(viewModel: PlaceCreateViewModel,
@@ -27,9 +27,8 @@ struct PlaceCreateView: View {
          address: String,
          name: String,
          marker: String?,
-         tags: [String],
-         group: String?) {
-        print("PlaceCreateView (name:\(name))")
+         tags: [UUID],
+         group: UUID?) {
         self._viewModel = State(initialValue: viewModel)
         place = PlaceUI(coordinates: coordinates)
         place.address = address
@@ -66,7 +65,7 @@ struct PlaceCreateView: View {
                                     titleVisibility: .visible,
                                     actions: {
                     Button("Cancel", role: .destructive) {
-                        viewModel.popView()
+                        viewModel.pop()
                     }
                     Button("Keep Editing") {
                     }
@@ -93,7 +92,7 @@ struct PlaceCreateView: View {
             // Create new place
             do {
                 try await viewModel.save(place: place)
-                viewModel.popView()
+                viewModel.popToRoot()
 
             } catch {
                 // TODO: handle

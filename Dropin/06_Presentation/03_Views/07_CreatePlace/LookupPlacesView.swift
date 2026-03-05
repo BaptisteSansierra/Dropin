@@ -42,13 +42,6 @@ struct LookupPlacesView: View {
                                 placeholderView
                             }
                             if viewModel.resolving {
-//                                Color.overlayAlphaLayer
-//                                    .ignoresSafeArea()
-//                                RoundedRectangle(cornerSize: 8)
-//                                    .frame(width: 100, height: 100)
-//                                    .foregroundStyle(.backgroundPrimary)
-//                                    .shadow(radius: 5)
-//                                ProgressView()
                                 loadingView
                             }
                         }
@@ -78,13 +71,6 @@ struct LookupPlacesView: View {
             viewModel.query = "ddd"
             #endif
         }
-        
-//        .sheet(item: $viewModel.resolvedPlace,
-//               content: { item in
-//            viewModel.createLookupPlaceView(item)
-//                .presentationBackground(.ultraThinMaterial)
-//        })
-
         .onChange(of: resultStatus) { oldValue, newValue in
             switch newValue {
                 case .cancelled:
@@ -197,6 +183,7 @@ struct LookupPlacesView: View {
     // MARK: - private methods
     private func presentDetails(_ lookupResult: LookupResult) {
         Task {
+            
             await viewModel.resolvePlace(lookupResult)
         }
     }

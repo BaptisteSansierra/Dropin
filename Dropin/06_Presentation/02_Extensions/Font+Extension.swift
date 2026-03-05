@@ -17,6 +17,7 @@ extension Font {
     static let titleRegular = Font.system(size: 28, weight: .regular)
 
     // Title2
+    static let title2Bold = Font.system(size: 22, weight: .bold)
     static let title2Regular = Font.system(size: 22, weight: .regular)
 
     // Title3

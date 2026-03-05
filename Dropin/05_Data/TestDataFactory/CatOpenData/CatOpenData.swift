@@ -154,10 +154,11 @@ final class CatOpenData {
                 }
             }
             // Create place
-            let place = PlaceEntity(id: UUID().uuidString,
+            let place = PlaceEntity(id: UUID(),
                                     name: item.titol,
                                     coordinates: item.coords,
                                     address: item.address,
+                                    address2: "",
                                     tags: placeTags,
                                     group: group,
                                     creationDate: Date())

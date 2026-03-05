@@ -13,26 +13,26 @@ import CoreLocation
 struct ClusterAnnotation: MapContent {
     
     // MARK: - State & Bindables
-    @Binding var selectedCluster: MapDisplayClusterItem?
+    @Binding var selectedClusterId: UUID?
     
     // MARK: - private vars
-    private var cluster: MapDisplayClusterItem
+    private var cluster: ClusterAnnotationModel
 
     // MARK: - Body
     var body: some MapContent {
-        Annotation("", coordinate: cluster.center) {
-            
-            ClusterAnnotationView(count: cluster.points.count)
+        Annotation("", coordinate: cluster.coordinate) {
+            ClusterAnnotationView(count: cluster.count)
                 .onTapGesture {
-                    selectedCluster = cluster
+                    selectedClusterId = cluster.id
                 }
         }
     }
     
     // MARK: - init
-    init(clusterItem: MapDisplayClusterItem, selectedCluster: Binding<MapDisplayClusterItem?>) {
-        self.cluster = clusterItem
-        self._selectedCluster = selectedCluster
+    init(cluster: ClusterAnnotationModel,
+         selectedClusterId: Binding<UUID?>) {
+        self.cluster = cluster
+        self._selectedClusterId = selectedClusterId
     }
 }
 
@@ -67,19 +67,19 @@ struct ClusterAnnotationView: View {
 #if DEBUG
 struct MockClusterAnnotation: View {
     var mock: MockContainer
-    @State var cluster: MapDisplayClusterItem
-    @State var selectedCluster: MapDisplayClusterItem? = nil
+    @State var cluster: ClusterAnnotationModel
+    @State var selectedClusterId: UUID? = nil
 
     var body: some View {
-        Map {
-            ClusterAnnotation(clusterItem: cluster, selectedCluster: $selectedCluster)
+        Map(initialPosition: .region(.london)) {
+            ClusterAnnotation(cluster: cluster,
+                              selectedClusterId: $selectedClusterId)
         }
     }
     
     init() {
         self.mock = MockContainer()
-        let places = mock.getAllPlaceUI()
-        cluster = MapDisplayClusterItem(places: places)
+        cluster = ClusterAnnotationModel(coordinate: .london, count: 5, span: .zero)
     }
 }
 

@@ -14,5 +14,5 @@ protocol TagRepository {
     func delete(_ tag: TagEntity) async throws
     func update(_ tag: TagEntity) async throws
     func getAll() async throws -> [TagEntity]
-    func get(_ id: String) async throws -> TagEntity
+    func get(_ id: UUID) async throws -> TagEntity
 }

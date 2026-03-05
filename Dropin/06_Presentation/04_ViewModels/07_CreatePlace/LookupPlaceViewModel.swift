@@ -16,9 +16,6 @@ import MapKit
     // MARK: Properties
     private(set) var coordinator: MainCoordinator
     var lookupResolvedItem: LookupResolvedItem
-//    var resolvedResult: Result<LookupResolvedItem, Error>?
-//    var searching: Bool = false
-    //var showContent: Bool = false
     var cameraDistance: Double = 1000
     var camera: MapCameraPosition = .automatic
 

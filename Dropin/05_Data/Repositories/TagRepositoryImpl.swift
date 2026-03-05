@@ -55,7 +55,7 @@ public final class TagRepositoryImpl: TagRepository {
         return sdTags.map { TagMapper.toDomain($0) }
     }
     
-    func get(_ id: String) async throws -> TagEntity {
+    func get(_ id: UUID) async throws -> TagEntity {
         let sdTag = try await retrieveTag(tagId: id)
         return TagMapper.toDomain(sdTag)
     }
@@ -66,7 +66,7 @@ public final class TagRepositoryImpl: TagRepository {
         return try await retrieveTag(tagId: tagId)
     }
 
-    private func retrieveTag(tagId: String) async throws -> SDTag {
+    private func retrieveTag(tagId: UUID) async throws -> SDTag {
         let predicate = #Predicate<SDTag> { $0.identifier == tagId }
         let descriptor = FetchDescriptor<SDTag>(predicate: predicate)
         let sdTags = try modelContext.fetch(descriptor)

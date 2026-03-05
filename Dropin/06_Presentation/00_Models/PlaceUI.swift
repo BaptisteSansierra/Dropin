@@ -11,13 +11,12 @@ import ContactFieldKit
 
 @MainActor
 @Observable class PlaceUI: Identifiable, @MainActor Equatable {
-//@MainActor
-//struct PlaceUI: Identifiable, @MainActor Equatable {
 
-    let id: String
+    let id: UUID
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
     var address: String = ""
+    var address2: String = ""
     var icon: Icon? = nil
     var tags: [TagUI] = [TagUI]()
     var group: GroupUI? = nil
@@ -42,6 +41,7 @@ import ContactFieldKit
         hasher.combine(name)
         hasher.combine(coordinates)
         hasher.combine(address)
+        hasher.combine(address2)
         hasher.combine(icon?.rawValue)
         hasher.combine(tags.map(\.id))
         hasher.combine(group?.id)
@@ -57,10 +57,11 @@ import ContactFieldKit
         lhs.id == rhs.id
     }
     
-    init(id: String,
+    init(id: UUID,
          name: String,
          coordinates: CLLocationCoordinate2D,
          address: String,
+         address2: String,
          tags: [TagUI],
          group: GroupUI? = nil,
          icon: Icon? = nil,
@@ -76,6 +77,7 @@ import ContactFieldKit
         self.name = name
         self.coordinates = coordinates
         self.address = address
+        self.address2 = address2
         self.tags = tags
         self.group = group
         self.icon = icon
@@ -90,7 +92,7 @@ import ContactFieldKit
     }
 
     init(coordinates: CLLocationCoordinate2D) {
-        id = UUID().uuidString
+        id = UUID()
         self.coordinates = coordinates
         creationDate = Date()
     }
@@ -100,6 +102,7 @@ import ContactFieldKit
                        name: name,
                        coordinates: coordinates,
                        address: address,
+                       address2: address2,
                        tags: tags,
                        group: group,
                        icon: icon,
@@ -117,6 +120,8 @@ import ContactFieldKit
         guard id == other.id else { return false }
         guard name == other.name else { return false }
         guard coordinates == other.coordinates else { return false }
+        guard address == other.address else { return false }
+        guard address2 == other.address2 else { return false }
         guard tags == other.tags else { return false }
         guard group == other.group else { return false }
         guard icon == other.icon else { return false }

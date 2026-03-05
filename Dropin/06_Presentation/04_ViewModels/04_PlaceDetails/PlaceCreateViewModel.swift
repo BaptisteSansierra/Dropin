@@ -31,10 +31,14 @@ import CoreLocation
     }
     
     // MARK: Navigation
-    func popView() {
-        coordinator.pop()
+    func popToRoot() {
+        coordinator.popToRoot()
     }
     
+    func pop() {
+        coordinator.pop()
+    }
+
     // MARK: UI Childs
     func body(place: Binding<PlaceUI>, showMissingName: Binding<Bool>) -> some View {
         return appContainer.createPlaceEditContentView(place: place,
@@ -48,7 +52,7 @@ import CoreLocation
         try await createPlace.execute(placeEntity)
     }
     
-    func retrieveTags(tagIds: [String]) async -> [TagUI] {
+    func retrieveTags(tagIds: [UUID]) async -> [TagUI] {
         var tags = [TagUI]()
         for tagId in tagIds {
             do {
@@ -61,7 +65,7 @@ import CoreLocation
         return tags
     }
 
-    func retrieveGroup(groupId: String) async -> GroupUI? {
+    func retrieveGroup(groupId: UUID) async -> GroupUI? {
         do {
             let groupEntity = try await getGroup.execute(id: groupId)
             return GroupMapper.toUI(groupEntity)

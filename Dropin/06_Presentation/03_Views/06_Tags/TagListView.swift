@@ -91,7 +91,7 @@ struct TagListView: View {
         showingRemoveAlert = true
     }
     
-    private func deleteTag(_ tagId: String) async {
+    private func deleteTag(_ tagId: UUID) async {
         guard let index = tags.firstIndex(where: { $0.id == tagId }) else {
             fatalError("couldn't find any tag id '\(tagId)' in list")
         }
@@ -105,7 +105,7 @@ struct TagListView: View {
         }
     }
     
-    private func createTagDetailsView(_ tagId: String) -> TagDetailsView {
+    private func createTagDetailsView(_ tagId: UUID) -> TagDetailsView {
         guard let index = tags.firstIndex(where: { $0.id == tagId }) else {
             fatalError("couldn't find any tag id '\(tagId)' in list")
         }

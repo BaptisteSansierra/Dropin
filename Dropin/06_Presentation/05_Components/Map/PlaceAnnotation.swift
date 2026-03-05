@@ -8,15 +8,18 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import ClusterMap
+
 
 /// Draw a rounded bordered rectangle + SFSymbol as annotation
 struct PlaceAnnotation: MapContent {
     
     // MARK: - State & Bindables
-    @Binding var selectedPlaceId: PlaceID?
+    @Binding var selectedPlaceId: UUID?
+    @Binding var place: PlaceUI
 
     // MARK: - private vars
-    private var place: PlaceUI
+    //private var place: PlaceUI
     
     // MARK: - Body
     var body: some MapContent {
@@ -26,21 +29,27 @@ struct PlaceAnnotation: MapContent {
                                 icon: place.group?.icon,
                                 iconExtra: place.icon)
             .onTapGesture {
-                selectedPlaceId = PlaceID(id: place.id)
+                selectedPlaceId = place.id
             }
         }
     }
     
     // MARK: - init
+    /*
     init(item: MapDisplayPlaceItem, selectedPlaceId: Binding<PlaceID?>) {
         self.place = item.place
         self._selectedPlaceId = selectedPlaceId
     }
+     */
     
-    init(place: PlaceUI, selectedPlaceId: Binding<PlaceID?>) {
-        self.place = place
+    init(place: Binding<PlaceUI>, selectedPlaceId: Binding<UUID?>) {
+        self._place = place
         self._selectedPlaceId = selectedPlaceId
     }
+//    init(place: PlaceUI, selectedPlaceId: Binding<PlaceID?>) {
+//        self.place = place
+//        self._selectedPlaceId = selectedPlaceId
+//    }
 }
 
 struct PlaceAnnotationView: View {
@@ -114,26 +123,10 @@ struct PlaceAnnotationView: View {
                 }
                 .overlay(content: {
                     if let iconExtra = iconExtra {
-                        
-                        
                         VStack(spacing: 0) {
                             HStack(spacing: 0) {
                                 Spacer()
                                 PlaceIconView(icon: iconExtra, size: size * 20 / 36)
-
-//                                ZStack {
-//                                    Circle()
-//                                        .fill(.textPrimary)
-//                                        .frame(width: 20, height: 20)
-//                                        .shadow(color: .textPrimary.opacity(0.5),
-//                                                radius: 3,
-//                                                x: -2, y: 2)
-//                                    Circle()
-//                                        .fill(.backgroundPrimary)
-//                                        .frame(width: 19, height: 19)
-//                                    IconView(icon: iconExtra)
-//                                        .sizeCaption2()
-//                                }
                             }
                             Spacer()
                         }
@@ -152,15 +145,15 @@ struct MockPlaceAnnotation: View {
     @State var place3: PlaceUI
     @State var place4: PlaceUI
     @State var place5: PlaceUI
-    @State var selectedPlaceId: PlaceID? = nil
+    @State var selectedPlaceId: UUID? = nil
 
     var body: some View {
         Map {
-            PlaceAnnotation(place: place1, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: place2, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: place3, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: place4, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: place5, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place1, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place2, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place3, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place4, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place5, selectedPlaceId: $selectedPlaceId)
         }
     }
     

@@ -25,7 +25,7 @@ import CoreLocation
     }
     
     // MARK: Navigation
-    func popView() {
+    func pop() {
         coordinator.pop()
     }
 

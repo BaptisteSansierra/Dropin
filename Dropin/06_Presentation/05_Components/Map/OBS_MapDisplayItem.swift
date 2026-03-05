@@ -9,6 +9,7 @@ import Foundation
 import CoreLocation
 import MapKit
 
+#if false
 @MainActor
 class MapDisplayItem: Identifiable, Equatable {
     let id: String
@@ -68,3 +69,5 @@ class MapDisplayClusterItem: MapDisplayItem {
         super.init(id: identifier, center: center)
     }
 }
+
+#endif

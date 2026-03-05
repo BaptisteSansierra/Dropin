@@ -88,14 +88,14 @@ struct PlaceEditContentView: View {
                    onAllowed: noFlyZoneOnAllowed,
                    onBlocked: noFlyZoneOnBlocked,
                    coloredDebugOverlay: true)
-        .onChange(of: phones) { oldValue, newValue in
-            applyUpdate()
+        .onChange(of: phones) {
+            applyContactUpdate()
         }
-        .onChange(of: emails) { oldValue, newValue in
-            applyUpdate()
+        .onChange(of: emails) {
+            applyContactUpdate()
         }
-        .onChange(of: urls) { oldValue, newValue in
-            applyUpdate()
+        .onChange(of: urls) {
+            applyContactUpdate()
         }
         .alert("alert.missing_name.title", isPresented: $showMissingName) {
             Button("common.ok") {
@@ -105,43 +105,6 @@ struct PlaceEditContentView: View {
             Text("alert.missing_name.body")
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    // TODO: to be moved
-    func             applyUpdate() {
-        print("TODO")
-    }
-    private func noFlyZoneOnBlocked() {
-        noFlyZoneEnabled = false
-        noFlyZoneCompletionStatus = .blocked
-    }
-    private func noFlyZoneOnAllowed(tappedZones: [NoFlyZoneData]) {
-        noFlyZoneEnabled = false
-        noFlyZoneCompletionStatus = .allowed
-        
-        for z in tappedZones {
-            if z.viewId == 1 {
-                phones[z.itemId].toBeDeleted = true
-            }
-            else if z.viewId == 2 {
-                emails[z.itemId].toBeDeleted = true
-            }
-            else if z.viewId == 3 {
-                urls[z.itemId].toBeDeleted = true
-            }
-        }
-    }
-    
-    
-    
-    
-    
-    
     
     // MARK: - Subviews
     private var headerView: some View {
@@ -245,6 +208,7 @@ struct PlaceEditContentView: View {
         }
     }
     
+    @ViewBuilder
     private var addressView: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("common.address")
@@ -262,6 +226,34 @@ struct PlaceEditContentView: View {
         }
         .onTapGesture {
             print("Edit address")
+        }
+
+        VStack(alignment: .leading, spacing: 0) {
+            Text("common.address2")
+                .textStyle(.formSectionTitle2)
+                .padding(.leading)
+                .padding(.bottom, 10)
+            
+            ZStack {
+                Rectangle()
+                    .frame(height: 45)
+                    .foregroundStyle(.backgroundPrimary)
+                TextField("placeholder.address2", text: $place.address2)
+                    .textStyle(.body)
+                    .background(.clear)
+                    .padding(.vertical, 0)
+                    .padding(.horizontal)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+            }
+
+            
+//            TextField("placeholder.address2", text: $place.address2)
+//                .textStyle(.body)
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//                .padding(.vertical, 10)
+//                .padding(.horizontal)
+//                .background(.backgroundPrimary)
         }
     }
     
@@ -562,22 +554,37 @@ struct PlaceEditContentView: View {
         //        }
     }
     
-    /*
-    private func applyEdits() {
-        // Apply edits
-        srcPlace = editedPlace
-        editedPlace = srcPlace.copy()
+    func applyContactUpdate() {
+        let phoneItems: [ContactItem] = phones.map { $0.contactItem }
+        let emailItems: [ContactItem] = emails.map { $0.contactItem }
+        let urlItems: [ContactItem] = urls.map { $0.contactItem }
+
+        place.phone = phoneItems
+        place.email = emailItems
+        place.url = urlItems
+    }
+
+    private func noFlyZoneOnBlocked() {
+        noFlyZoneEnabled = false
+        noFlyZoneCompletionStatus = .blocked
     }
     
-    private func cancelEdits() {
-        guard edited else {
-            // TODO: dismiss or pop
-            return
+    private func noFlyZoneOnAllowed(tappedZones: [NoFlyZoneData]) {
+        noFlyZoneEnabled = false
+        noFlyZoneCompletionStatus = .allowed
+        
+        for z in tappedZones {
+            if z.viewId == 1 {
+                phones[z.itemId].toBeDeleted = true
+            }
+            else if z.viewId == 2 {
+                emails[z.itemId].toBeDeleted = true
+            }
+            else if z.viewId == 3 {
+                urls[z.itemId].toBeDeleted = true
+            }
         }
-        // Ask confirmation if there's some edits
-        confirmCancel = true
     }
-     */
     
     private func onPressDelete() {
         showDeleteWarning.toggle()

@@ -113,7 +113,7 @@ struct PlacesListView: View {
 
     private var groupedList: some View {
         Group {
-            let keys: [String] = Array(viewModel.groupedSortedPlaces.keys)
+            let keys: [UUID] = Array(viewModel.groupedSortedPlaces.keys)
             let sortedKeys = keys.sorted()
             ForEach(sortedKeys, id: \.self) { groupId in
                 if let groupPlaces = viewModel.groupedSortedPlaces[groupId],

@@ -192,8 +192,8 @@ final class AppContainer {
                                address: String,
                                name: String,
                                marker: String?,
-                               tags: [String],
-                               group: String?) -> PlaceCreateView {
+                               tags: [UUID],
+                               group: UUID?) -> PlaceCreateView {
         let vm = PlaceCreateViewModel(self,
                                       coordinator: mainCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),

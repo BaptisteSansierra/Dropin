@@ -33,15 +33,18 @@ struct GroupSelectorView: View {
     private var selectedGroupId: Binding<String> {
         Binding<String>(
             get: {
-                return place.group?.id ?? ""
+                return place.group?.id.uuidString ?? ""
             }, set: { value in
                 guard value.count > 0 else {
                     place.group = nil
                     return
                 }
+                let uuid = UUID(uuidString: value)
                 guard let selectedGroup = viewModel.groups.first(where: { group in
-                    group.id == value
-                }) else { return }
+                    group.id == uuid
+                }) else {
+                    return
+                }
                 place.group = selectedGroup
             })
     }
@@ -95,7 +98,7 @@ struct GroupSelectorView: View {
                     .textStyle(.body)
                 ForEach(viewModel.groups) { group in
                     Text(group.name)
-                        .tag(group.id)
+                        .tag(group.id.uuidString)
                         .textStyle(.body)
                 }
             }

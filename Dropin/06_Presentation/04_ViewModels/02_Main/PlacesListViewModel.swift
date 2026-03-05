@@ -20,7 +20,7 @@ import SwiftUI
     // MARK: Properties
     private(set) var coordinator: MainCoordinator
     var sortedPlaces: [PlaceUI] = []
-    var groupedSortedPlaces: [String: [PlaceUI]] = [:] // places grouped by group (key=group identifier)
+    var groupedSortedPlaces: [UUID: [PlaceUI]] = [:] // places grouped by group (key=group identifier)
     var ungroupedSortedPlaces: [PlaceUI] = []
     var searchText = ""
     var grouped = false
@@ -59,7 +59,7 @@ import SwiftUI
     }
 
     // MARK: Navigation
-    func pushPlaceDetailsView(placeId: String) {
+    func pushPlaceDetailsView(placeId: UUID) {
         // TODO
         //coordinator.pushPlaceDetailsView(placeId: placeId)
     }

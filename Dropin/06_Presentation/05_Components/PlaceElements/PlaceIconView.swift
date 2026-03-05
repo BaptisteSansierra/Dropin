@@ -33,7 +33,7 @@ struct PlaceIconView: View {
                 .fill(.backgroundPrimary)
                 .frame(width: size - 2, height: size - 2)
             IconView(icon: icon)
-                .size(size * 12 / 20)
+                .size(size * 10 / 20)
         }
     }
 }

@@ -16,7 +16,7 @@ import SwiftUI
         }
     }
     
-    func pushGroupDetailsView(groupId: String) {
+    func pushGroupDetailsView(groupId: UUID) {
         path.append(GroupNavigationItem.groupDetails(groupId: groupId))
     }
     
@@ -30,7 +30,7 @@ import SwiftUI
 }
 
 enum GroupNavigationItem: Hashable {
-    case groupDetails(groupId: String)
+    case groupDetails(groupId: UUID)
     // development
     case undefinedDummyView
 }

@@ -91,7 +91,7 @@ struct GroupListView: View {
         showingRemoveAlert = true
     }
     
-    private func deleteGroup(_ groupId: String) async {
+    private func deleteGroup(_ groupId: UUID) async {
         guard let index = groups.firstIndex(where: { $0.id == groupId }) else {
             fatalError("couldn't find any group id '\(groupId)' in list")
         }
@@ -105,7 +105,7 @@ struct GroupListView: View {
         }
     }
     
-    private func createGroupDetailsView(_ groupId: String) -> GroupDetailsView {
+    private func createGroupDetailsView(_ groupId: UUID) -> GroupDetailsView {
         guard let index = groups.firstIndex(where: { $0.id == groupId }) else {
             fatalError("couldn't find any group id '\(groupId)' in list")
         }

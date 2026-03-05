@@ -53,7 +53,7 @@ struct PlaceEditView: View {
                                     actions: {
                     Button("Discard Changes", role: .destructive) {
                         editedPlace = srcPlace.copy()
-                        viewModel.popView()
+                        viewModel.pop()
                     }
                     Button("Keep Editing") {
                     }
@@ -87,12 +87,12 @@ struct PlaceEditView: View {
             }
         }
         // Pop
-        viewModel.popView()
+        viewModel.pop()
     }
     
     private func cancelEdits() {
         guard edited else {
-            viewModel.popView()
+            viewModel.pop()
             return
         }
         // Ask confirmation if there's some edits

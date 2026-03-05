@@ -37,7 +37,7 @@ import CoreLocation
     
     // MARK: navigation methods
     
-    func pushPlaceEditView(placeId: String) {
+    func pushPlaceEditView(placeId: UUID) {
         push(NavigationItem.placeEditView(placeId: placeId))
     }
 
@@ -54,8 +54,8 @@ import CoreLocation
                                  address: String,
                                  name: String,
                                  marker: String?,
-                                 tags: [String],
-                                 group: String?) {
+                                 tags: [UUID],
+                                 group: UUID?) {
         push(NavigationItem.placeCreateView(coordinates: coordinates,
                                             address: address,
                                             name: name,
@@ -121,14 +121,14 @@ import CoreLocation
 
 enum NavigationItem: Hashable {
     //case placeDetailsView(placeId: String, editMode: PlaceEditMode)
-    case placeEditView(placeId: String)
+    case placeEditView(placeId: UUID)
     case lookupPlacesView
     case placeCreateView(coordinates: CLLocationCoordinate2D,
                          address: String,
                          name: String,
                          marker: String?,
-                         tags: [String],
-                         group: String?)
+                         tags: [UUID],
+                         group: UUID?)
 
 //    case createPlaceFullView(coordinates: CLLocationCoordinate2D,
 //                             address: String,

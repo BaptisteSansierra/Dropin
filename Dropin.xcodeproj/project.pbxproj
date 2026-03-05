@@ -10,6 +10,8 @@
 		4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90AA802F432643003614A2 /* NoFlyZone */; };
 		4D90AEBD2F4C8CFD003614A2 /* ContactFieldKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90AEBC2F4C8CFD003614A2 /* ContactFieldKit */; };
 		4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90A6152F374426003614A2 /* NoFlyZone */; };
+		4DBBECD52F59A280008413A2 /* ClusterMap in Frameworks */ = {isa = PBXBuildFile; productRef = 4DBBECD42F59A280008413A2 /* ClusterMap */; };
+		4DBBECD72F59A280008413A2 /* ClusterMapSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4DBBECD62F59A280008413A2 /* ClusterMapSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,7 +74,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */,
+				4DBBECD72F59A280008413A2 /* ClusterMapSwiftUI in Frameworks */,
 				4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */,
+				4DBBECD52F59A280008413A2 /* ClusterMap in Frameworks */,
 				4D90AEBD2F4C8CFD003614A2 /* ContactFieldKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,6 +149,8 @@
 				4D90A6152F374426003614A2 /* NoFlyZone */,
 				4D90AA802F432643003614A2 /* NoFlyZone */,
 				4D90AEBC2F4C8CFD003614A2 /* ContactFieldKit */,
+				4DBBECD42F59A280008413A2 /* ClusterMap */,
+				4DBBECD62F59A280008413A2 /* ClusterMapSwiftUI */,
 			);
 			productName = Dropin;
 			productReference = 4D42C73A2E2BFAFF00B50940 /* Dropin.app */;
@@ -232,6 +238,7 @@
 			packageReferences = (
 				4D90AA7F2F432643003614A2 /* XCRemoteSwiftPackageReference "NoFlyZone" */,
 				4D90AEBB2F4C8CFD003614A2 /* XCRemoteSwiftPackageReference "ContactFieldKit" */,
+				4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D42C73B2E2BFAFF00B50940 /* Products */;
@@ -663,6 +670,14 @@
 				minimumVersion = 1.0.2;
 			};
 		};
+		4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vospennikov/ClusterMap.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -679,6 +694,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4D90AEBB2F4C8CFD003614A2 /* XCRemoteSwiftPackageReference "ContactFieldKit" */;
 			productName = ContactFieldKit;
+		};
+		4DBBECD42F59A280008413A2 /* ClusterMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */;
+			productName = ClusterMap;
+		};
+		4DBBECD62F59A280008413A2 /* ClusterMapSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */;
+			productName = ClusterMapSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

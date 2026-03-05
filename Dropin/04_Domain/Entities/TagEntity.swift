@@ -8,7 +8,7 @@
 import Foundation
 
 struct TagEntity: Hashable {
-    let id: String
+    let id: UUID
     var name: String
     var color: String
     var places: [PlaceEntity] = [PlaceEntity]()
@@ -17,7 +17,7 @@ struct TagEntity: Hashable {
     /// When  databaseDeleted is true, domain objects should be ignored
     var databaseDeleted: Bool = false
     
-    init(id: String, name: String, color: String, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
+    init(id: UUID, name: String, color: String, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
         self.id = id
         self.name = name
         self.color = color
@@ -27,7 +27,7 @@ struct TagEntity: Hashable {
     }
     
     init(name: String, color: String) {
-        self.id = UUID().uuidString
+        self.id = UUID()
         self.name = name
         self.color = color
         creationDate = Date()

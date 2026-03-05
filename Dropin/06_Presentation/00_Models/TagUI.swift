@@ -12,7 +12,7 @@ import SwiftUI
 //@MainActor
 //struct TagUI: Identifiable, @MainActor Equatable {
 
-    let id: String
+    let id: UUID
     var name: String
     var color: Color
     var places: [PlaceUI] = [PlaceUI]()
@@ -25,7 +25,7 @@ import SwiftUI
         lhs.id == rhs.id
     }
 
-    init(id: String, name: String, color: String, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
+    init(id: UUID, name: String, color: String, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
         self.id = id
         self.name = name
         self.color = Color(rgba: color)

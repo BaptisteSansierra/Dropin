@@ -170,7 +170,7 @@ struct MainView: View {
     }
      */
 
-    private func createPlaceEditView(_ placeId: String) -> PlaceEditView {
+    private func createPlaceEditView(_ placeId: UUID) -> PlaceEditView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
         }

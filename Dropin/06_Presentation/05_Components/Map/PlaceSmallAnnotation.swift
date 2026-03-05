@@ -22,9 +22,11 @@ struct PlaceSmallAnnotation: MapContent {
     }
     
     // MARK: - init
+    /*
     init(item: MapDisplayPlaceItem) {
         self.place = item.place
     }
+     */
     
     init(place: PlaceUI) {
         self.place = place

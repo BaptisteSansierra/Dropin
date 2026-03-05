@@ -32,7 +32,7 @@ import SwiftUI
     }
 
     // MARK: Navigation
-    func pushTagDetailsView(tagId: String) {
+    func pushTagDetailsView(tagId: UUID) {
         coordinator.pushTagDetailsView(tagId: tagId)
     }
 

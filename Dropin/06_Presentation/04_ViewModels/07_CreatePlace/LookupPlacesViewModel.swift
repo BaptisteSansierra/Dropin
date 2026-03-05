@@ -33,13 +33,23 @@ struct LookupResolvedItem: Identifiable {
     init(mapItem: MKMapItem,
          address: String,
          coordinates: CLLocationCoordinate2D,
-         distance: String?) {
+         distance: String?,
+         name: String?) {
         self.type = .address
         self.mapItem = mapItem
         self.address = address
         self.coordinates = coordinates
         self.distance = distance
-        self.name = nil
+        if let name = name {
+            if self.address.contains(name) {
+                // name is the address, skip it
+                self.name = nil
+            } else {
+                self.name = name
+            }
+        } else {
+            self.name = nil
+        }
         self.pointOfInterestCategory = nil
         self.icon = nil
     }
@@ -138,23 +148,6 @@ struct LookupResolvedItem: Identifiable {
             resolvedPlaceComputed = true
             
             resolving = false
-            //showContent = true
-            
-            
-            //            print("FIRST LOC FOUND : ")
-            //            print("Name: \(response.mapItems.first!.name)")
-            //            if #available(iOS 26.0, *) {
-            //                print("Address: \(response.mapItems.first!.address)")
-            //            } else {
-            //                if let postalAddress = response.mapItems.first!.placemark.postalAddress {
-            //                    let formatter = CNPostalAddressFormatter()
-            //                    let addressString = formatter.string(from: postalAddress)
-            //                    print("Address Postal: \(addressString)")
-            //                }
-            //            }
-            //            print("Phone: \(response.mapItems.first!.phoneNumber)")
-            //            print("URL: \(response.mapItems.first!.url)")
-            
         } catch {
             resolveError = error
             resolving = false
@@ -196,12 +189,14 @@ struct LookupResolvedItem: Identifiable {
         // Get distance
         let coordinates = item.resolvedCoordinates()
         let distance = locationManager.distanceStringTo(coordinates)
+        
         // Return resolved item
         guard let poi = item.pointOfInterestCategory else {
             return LookupResolvedItem(mapItem: item,
                                       address: address,
                                       coordinates: coordinates,
-                                      distance: distance)
+                                      distance: distance,
+                                      name: item.name)
         }
         return LookupResolvedItem(mapItem: item,
                                   address: address,

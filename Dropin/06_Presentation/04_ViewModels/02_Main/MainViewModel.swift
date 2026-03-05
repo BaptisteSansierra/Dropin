@@ -89,11 +89,11 @@ import CoreLocation
     }
     
     func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
-                                     address: String,
-                                     name: String,
-                                     marker: String?,
-                                     tags: [String],
-                                     group: String?) -> PlaceCreateView {
+                               address: String,
+                               name: String,
+                               marker: String?,
+                               tags: [UUID],
+                               group: UUID?) -> PlaceCreateView {
         return appContainer.createPlaceCreateView(coordinates: coordinates,
                                                   address: address,
                                                   name: name,

@@ -55,6 +55,13 @@ struct PlaceSheetView: View {
         }) {
             Text(viewModel.openURLAlert?.body ?? "")
         }
+        .onChange(of: currentDetent) { oldValue, newValue in
+            // When sheet is manually moved to medium detent,
+            // go back to overview menu
+            if oldValue == .large && newValue == .medium {
+                viewModel.selectedMenu = .overview
+            }
+        }
     }
     
     // MARK: - Subviews
@@ -144,10 +151,13 @@ struct PlaceSheetView: View {
     
     @ViewBuilder
     private var subHeaderView: some View {
-        // Rating
+        // Rating + Distance
         HStack(alignment: .center, spacing: 0) {
-            // TODO: rating
-            StarRatingView(rating: 3.5)
+            if let rating = place.rating {
+                StarRatingView(rating: rating)
+            } else {
+                StarRatingView()
+            }
             if let dist = viewModel.distanceStringTo(place.coordinates) {
                 Text("·")
                     .padding(.horizontal, 5)
@@ -175,6 +185,16 @@ struct PlaceSheetView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        
+        // Address Line 2
+        if !place.address2.isEmpty {
+            Text(place.address2)
+                .foregroundStyle(.textTertiary)
+                .font(.footnoteRegular)
+                .padding(.horizontal)
+                .padding(.top, 5)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
     
     private var headerActionsView: some View {
@@ -219,10 +239,7 @@ struct PlaceSheetView: View {
                 squareButton(systemImage: "square.and.arrow.up",
                              label: "common.share",
                              width: btWidth,
-                             action: {
-                    viewModel.pushPlaceEditView(placeId: place.id)
-                    dismiss()
-                })
+                             action: share)
                 .padding(.leading, spacing)
             }
         }
@@ -269,15 +286,46 @@ struct PlaceSheetView: View {
         }
     }
     
+    @ViewBuilder
     private var overviewView: some View {
-        FlowLayout(alignment: .leading) {
-            let sortedTags = place.tags.sorted(by: { $0.name < $1.name && $0.creationDate < $1.creationDate })
-            ForEach(sortedTags) { tag in
-                TagView(name: tag.name, color: tag.color)
+        if place.tags.count > 0 {
+            FlowLayout(alignment: .leading) {
+                let sortedTags = place.tags.sorted(by: { $0.name < $1.name && $0.creationDate < $1.creationDate })
+                ForEach(sortedTags) { tag in
+                    TagView(name: tag.name, color: tag.color)
+                }
+            }
+            .padding(.horizontal, 15)
+            .padding(.bottom, 15)
+        } else {
+            ZStack {
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        Image(systemName: "tag")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.backgroundTertiary)
+                            .padding(.horizontal)
+                        Text("placeholder.no_tags")
+                            .font(.body)
+                            .foregroundStyle(.backgroundTertiary)
+                        Spacer()
+                        
+                        Button(action: edit) {
+                            ZStack {
+                                Circle()
+                                    .fill(.dropinPrimary)
+                                    .frame(width: 35, height: 35)
+                                Image(systemName: "pencil")
+                                    .font(.bodyRegular)
+                                    .foregroundStyle(.backgroundPrimary)
+                            }
+                            .padding(.trailing)
+                        }
+                    }
+                }
             }
         }
-        .padding(.horizontal, 15)
-        .padding(.bottom, 15)
     }
     
     private var contactPlaceholderView: some View {
@@ -286,9 +334,7 @@ struct PlaceSheetView: View {
                                    systemImage: "iphone.gen2.slash",
                                    description: Text("placeholder.no_contact.body"))
             
-            MainButton(text: "common.edit") {
-                // TODO
-            }
+            MainButton(text: "common.edit", action: edit)
         }
     }
     
@@ -388,6 +434,15 @@ struct PlaceSheetView: View {
         }
         viewModel.openWebLink(place: place)
     }
+    
+    private func edit() {
+        viewModel.pushPlaceEditView(placeId: place.id)
+        dismiss()
+    }
+
+    private func share() {
+        print("TO BE IMPLEMENTED")
+    }
 }
 
 #if DEBUG
@@ -434,7 +489,7 @@ struct MockPlaceDetailSheetView: View {
 }
 
 #Preview {
-    MockPlaceDetailSheetView(0)
+    MockPlaceDetailSheetView(1)
 }
 
 #endif

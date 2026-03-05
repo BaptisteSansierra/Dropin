@@ -9,10 +9,8 @@ import SwiftUI
 
 @MainActor
 @Observable class GroupUI: Identifiable, @MainActor Equatable {
-//@MainActor
-//struct GroupUI: Identifiable, @MainActor Equatable {
 
-    let id: String
+    let id: UUID
     var name: String
     var icon: Icon
     var color: Color
@@ -26,7 +24,7 @@ import SwiftUI
         lhs.id == rhs.id
     }
 
-    init(id: String, name: String, color: String, icon: Icon, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
+    init(id: UUID, name: String, color: String, icon: Icon, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
         self.id = id
         self.name = name
         self.icon = icon

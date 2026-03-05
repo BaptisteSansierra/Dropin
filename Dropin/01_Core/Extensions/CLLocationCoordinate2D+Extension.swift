@@ -26,6 +26,7 @@ extension CLLocationCoordinate2D {
     }
 }
 
+/*
 extension CLLocationCoordinate2D: @retroactive Equatable {
     static public func == (lhs: Self, rhs: Self) -> Bool {
         lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
@@ -38,3 +39,4 @@ extension CLLocationCoordinate2D: @retroactive Hashable {
         hasher.combine(longitude)
     }
 }
+*/

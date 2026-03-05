@@ -169,7 +169,11 @@ struct LookupPlaceView: View {
     private func textResolvingName(for item: LookupResolvedItem) -> Text {
         switch item.type {
             case .address:
-                return Text("common.new_place")
+                if let name = item.name {
+                    return Text(verbatim: name)
+                } else {
+                    return Text("common.new_place")
+                }
             case .poi:
                 if let name = item.name {
                     return Text(verbatim: name)
@@ -276,7 +280,8 @@ struct MockLookupPlaceView: View {
                         lookupResolvedItem = LookupResolvedItem(mapItem: item,
                                                                 address: item.resolvedAddress() ?? "N/A",
                                                                 coordinates: item.resolvedCoordinates(),
-                                                                distance: "N/A")
+                                                                distance: "N/A",
+                                                                name: item.name)
                     }
                 } catch {
                     lookupError = error

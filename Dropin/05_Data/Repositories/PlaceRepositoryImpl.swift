@@ -53,7 +53,9 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.latitude = place.coordinates.latitude
         sdPlace.longitude = place.coordinates.longitude
         sdPlace.address = place.address
+        sdPlace.address2 = place.address2
         sdPlace.icon = place.icon
+        sdPlace.rating = place.rating
         sdPlace.phone = place.phone.map { $0.rawValue }
         sdPlace.email = place.email.map { $0.rawValue }
         sdPlace.url = place.url.map { $0.rawValue }

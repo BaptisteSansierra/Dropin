@@ -10,23 +10,6 @@ import CoreLocation
 import SwiftUI
 import MapKit
 
-struct PlaceID: Identifiable, Equatable {
-    let id: String
-}
-
-struct Bucket {
-    let origin: CLLocationCoordinate2D
-    let span: MKCoordinateSpan
-    let id: String
-    init(region: MKCoordinateRegion) {
-        self.origin = CLLocationCoordinate2D(latitude: region.center.latitude - region.span.latitudeDelta * 0.5,
-                                             longitude: region.center.longitude -  region.span.longitudeDelta * 0.5)
-        self.span = region.span
-        self.id = UUID().uuidString
-    }
-}
-
-
 @MainActor
 @Observable class PlacesMapViewModel {
     
@@ -43,6 +26,9 @@ struct Bucket {
     //var places: [PlaceUI] = [PlaceUI]()
     var tmpPlace: PlaceUI? = nil   // Used for creating a new place
     /// `selectedPlaceId` is defined when a place annotation is selected on the map, toggle the corresponding sheet
+    var selectedPlaceId: UUID?
+    var selectedClusterId: UUID?
+/*
     var selectedPlaceId: PlaceID? {
         didSet {
 //            guard let selectedPlaceId = selectedPlaceId else { return }
@@ -52,20 +38,21 @@ struct Bucket {
 //            }
         }
     }
+ */
     
     var detailSheetDetent: PresentationDetent = .medium
 
     var mapSettings: MapSettings
     
     // Clustering
-    var selectedCluster: MapDisplayClusterItem?
-    
+    /*
     var mapItems: [MapDisplayItem] = [MapDisplayItem]()
     var visiblePlaces = [PlaceUI]()
     var clusteringEnabled = true
     
     var buckets = [Bucket]()
     var debugDisplayBuckets = false
+     */
     
     
 //    var mapPlaceItems: [MapDisplayPlaceItem] = [MapDisplayPlaceItem]()
@@ -77,6 +64,16 @@ struct Bucket {
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored private var creationMode: CreationMode = .undefined  // TODO: to be used ?
     //@ObservationIgnored private let deletePlace: DeletePlace
+
+    
+    
+    
+    //let clusterManager: ClusterManager<ExampleAnnotation>
+    //var mapSize: CGSize = .zero
+    var dataSource: MapDataSource
+    
+    
+    
     
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
@@ -89,6 +86,12 @@ struct Bucket {
         self.getPlaces = getPlaces
         self.createPlace = createPlace
         self.mapSettings = MapSettings()
+
+        dataSource = MapDataSource()
+    }
+    
+    func fillDataSource(places: [PlaceUI]) async {
+        await dataSource.loadPlaces(places)
     }
     
     func preparePlaceFromCoords(coords: CLLocationCoordinate2D) -> PlaceUI {
@@ -132,6 +135,8 @@ struct Bucket {
  
  
  */
+    
+    /*
     func gridBasedClustering(_ places: [PlaceUI],
                              center: CLLocationCoordinate2D,
                              span: MKCoordinateSpan) {
@@ -251,6 +256,7 @@ struct Bucket {
 //        print("----- ------- -----")
 //        print("Remaining places: \(remainingPlaces.count)")
     }
+     */
     
     // MARK: Navigation
     func pushLookupPlacesView() {
@@ -288,7 +294,7 @@ struct Bucket {
         let places = domainPlaces.map { PlaceMapper.toUI($0) }
         // check selectedPlaceId is nil or valid after loading places
         if let selectedPlaceId = selectedPlaceId {
-            if places.firstIndex(where: { $0.id == selectedPlaceId.id }) == nil {
+            if places.firstIndex(where: { $0.id == selectedPlaceId }) == nil {
                 self.selectedPlaceId = nil
             }
         }

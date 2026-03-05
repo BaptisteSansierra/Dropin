@@ -55,7 +55,7 @@ public final class GroupRepositoryImpl: GroupRepository {
         return sdGroups.map { GroupMapper.toDomain($0) }
     }
     
-    func get(_ id: String) async throws -> GroupEntity {
+    func get(_ id: UUID) async throws -> GroupEntity {
         let sdGroup = try await retrieveGroup(groupId: id)
         return GroupMapper.toDomain(sdGroup)
     }
@@ -66,7 +66,7 @@ public final class GroupRepositoryImpl: GroupRepository {
         return try await retrieveGroup(groupId: groupId)
     }
     
-    private func retrieveGroup(groupId: String) async throws -> SDGroup {
+    private func retrieveGroup(groupId: UUID) async throws -> SDGroup {
         let predicate = #Predicate<SDGroup> { $0.identifier == groupId }
         let descriptor = FetchDescriptor<SDGroup>(predicate: predicate)
         let sdGroups = try modelContext.fetch(descriptor)

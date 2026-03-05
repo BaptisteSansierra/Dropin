@@ -32,7 +32,7 @@ import SwiftUI
     }
 
     // MARK: Navigation
-    func pushGroupDetailsView(groupId: String) {
+    func pushGroupDetailsView(groupId: UUID) {
         coordinator.pushGroupDetailsView(groupId: groupId)
     }
 

@@ -16,7 +16,7 @@ import SwiftUI
         }
     }
     
-    func pushTagDetailsView(tagId: String) {
+    func pushTagDetailsView(tagId: UUID) {
         path.append(TagNavigationItem.tagDetails(tagId: tagId))
     }
     
@@ -30,7 +30,7 @@ import SwiftUI
 }
 
 enum TagNavigationItem: Hashable {
-    case tagDetails(tagId: String)
+    case tagDetails(tagId: UUID)
     // development
     case undefinedDummyView
 }
