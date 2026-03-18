@@ -260,10 +260,7 @@
     "Are you sure you want to cancel new place creation ?" : {
 
     },
-    "Are you sure you want to discard your changes ?" : {
-
-    },
-    "Cancel" : {
+    "BCN" : {
 
     },
     "category.accommodation" : {
@@ -387,6 +384,9 @@
         }
       }
     },
+    "Cell %lld" : {
+
+    },
     "common.about" : {
       "localizations" : {
         "en" : {
@@ -475,6 +475,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effacer la sélection"
+          }
+        }
+      }
+    },
+    "common.coordinates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coordinates"
           }
         }
       }
@@ -599,6 +610,39 @@
         }
       }
     },
+    "common.edit_address" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit address"
+          }
+        }
+      }
+    },
+    "common.edit_coordinates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit coordinates"
+          }
+        }
+      }
+    },
+    "common.edit_on_map" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit on map"
+          }
+        }
+      }
+    },
     "common.email" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -621,6 +665,7 @@
       }
     },
     "common.go" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -712,6 +757,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Groupes"
+          }
+        }
+      }
+    },
+    "common.keep_editing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep Editing"
           }
         }
       }
@@ -1242,6 +1298,31 @@
         }
       }
     },
+    "Create" : {
+
+    },
+    "create_place.create" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add place"
+          }
+        }
+      }
+    },
+    "create_place.fetch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetch address"
+          }
+        }
+      }
+    },
     "create_place.fetching" : {
       "localizations" : {
         "en" : {
@@ -1300,7 +1381,40 @@
         }
       }
     },
-    "Discard Changes" : {
+    "dialog.cancel_edits.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep editing"
+          }
+        }
+      }
+    },
+    "dialog.cancel_edits.discard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard Changes"
+          }
+        }
+      }
+    },
+    "dialog.cancel_edits.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to discard your changes ?"
+          }
+        }
+      }
+    },
+    "Drop a pin" : {
 
     },
     "Dropin" : {
@@ -1424,9 +1538,6 @@
         }
       }
     },
-    "Keep Editing" : {
-
-    },
     "markers.select" : {
       "localizations" : {
         "en" : {
@@ -1478,7 +1589,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "From current position (not implemented)"
+            "value" : "From current position"
           }
         }
       }
@@ -1503,7 +1614,11 @@
         }
       }
     },
+    "MyTitle" : {
+
+    },
     "navigate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1567,7 +1682,11 @@
         }
       }
     },
+    "pipo" : {
+
+    },
     "place_details.apply" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

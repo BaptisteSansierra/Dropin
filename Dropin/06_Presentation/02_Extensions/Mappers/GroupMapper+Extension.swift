@@ -21,7 +21,7 @@ extension GroupMapper {
                               icon: group.icon,
                               places: placesUI,
                               creationDate: group.creationDate,
-                              databaseDeleted: group.databaseDeleted)
+                              deletionDate: group.deletionDate)
         if !skipRelationships {
             for i in 0..<placesUI.count {
                 placesUI[i].group = groupUI
@@ -41,7 +41,7 @@ extension GroupMapper {
                                 icon: groupUI.icon,
                                 places: places,
                                 creationDate: groupUI.creationDate,
-                                databaseDeleted: groupUI.databaseDeleted)
+                                deletionDate: groupUI.deletionDate)
         if !skipRelationships {
             for i in 0..<places.count {
                 places[i].group = group

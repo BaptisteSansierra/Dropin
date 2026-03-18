@@ -10,19 +10,36 @@ import Contacts
 
 struct LookupPlaceView: View {
     
-    enum PresentationStatus {
+    enum PresentationStatus: Equatable {
+        static func == (lhs: PresentationStatus, rhs: PresentationStatus) -> Bool {
+            switch (lhs, rhs) {
+                case (.cancelled, .cancelled):
+                    return true
+                case (.validated, .validated):
+                    return true
+                case (.pending, .pending):
+                    return true
+                default:
+                    return false
+            }
+        }
+        
         case cancelled
-        case validated
+        case validated(item: LookupResolvedItem)
         case pending
     }
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlaceViewModel
     @Binding private var status: PresentationStatus
+    @Binding private var editedPlace: PlaceUI?
 
     // MARK: - init
-    init(viewModel: LookupPlaceViewModel, status: Binding<LookupPlaceView.PresentationStatus>) {
+    init(viewModel: LookupPlaceViewModel,
+         place: Binding<PlaceUI?>,
+         status: Binding<LookupPlaceView.PresentationStatus>) {
         self.viewModel = viewModel
+        self._editedPlace = place
         self._status = status
     }
     
@@ -70,7 +87,7 @@ struct LookupPlaceView: View {
                     .fill(.backgroundPrimary)
                     .stroke(.dropinPrimary, style: StrokeStyle(lineWidth: 2))
                     .frame(width: 60, height: 60)
-                Image(systemName: "plus")
+                Image(systemName: "checkmark") // "plus"
                     .font(.system(size: 30))
                     .foregroundStyle(.dropinPrimary)
                     .opacity(0.5)
@@ -93,7 +110,11 @@ struct LookupPlaceView: View {
         VStack {
             Map(position: $viewModel.camera,
                 interactionModes: []) {
-                markerResolvingName(for: item)
+                if let place = editedPlace, !place.name.isEmpty {
+                    PlaceAnnotation(place: Binding(get: { relocatedPlace(place, item) }, set: { _ in }))
+                } else {
+                    markerResolvingName(for: item)
+                }
                 UserAnnotation()
             }
             .overlay {
@@ -138,9 +159,15 @@ struct LookupPlaceView: View {
                 }
                 .padding(.leading)
                 VStack(alignment: .leading, spacing: 0) {
-                    textResolvingName(for: item)
-                        .textStyle(.cellTitle)
-                        .padding(.vertical, 5)
+                    if let place = editedPlace, !place.name.isEmpty {
+                        Text(place.name)
+                            .textStyle(.cellTitle)
+                            .padding(.vertical, 5)
+                    } else {
+                        textResolvingName(for: item)
+                            .textStyle(.cellTitle)
+                            .padding(.vertical, 5)
+                    }
                     Text(item.address)
                         .textStyle(.cellSubtitle)
                 }
@@ -166,6 +193,12 @@ struct LookupPlaceView: View {
     }
     
     // MARK: - private methods
+    private func relocatedPlace(_ place: PlaceUI, _ lookupResolvedItem: LookupResolvedItem) -> PlaceUI {
+        let relocated = place.copy()
+        relocated.coordinates = lookupResolvedItem.coordinates
+        return relocated
+    }
+    
     private func textResolvingName(for item: LookupResolvedItem) -> Text {
         switch item.type {
             case .address:
@@ -205,8 +238,7 @@ struct LookupPlaceView: View {
     }
     
     private func confirm() {
-        status = .validated
-        viewModel.pushCreatePlaceFullView()
+        status = .validated(item: viewModel.lookupResolvedItem)
     }
     
     private func cancel() {

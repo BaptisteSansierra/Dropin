@@ -13,17 +13,15 @@ struct TagEntity: Hashable {
     var color: String
     var places: [PlaceEntity] = [PlaceEntity]()
     var creationDate: Date
-    // following propertie are not part of the DB model
-    /// When  databaseDeleted is true, domain objects should be ignored
-    var databaseDeleted: Bool = false
-    
-    init(id: UUID, name: String, color: String, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
+    var deletionDate: Date? = nil
+
+    init(id: UUID, name: String, color: String, places: [PlaceEntity], creationDate: Date, deletionDate: Date? = nil) {
         self.id = id
         self.name = name
         self.color = color
         self.places = places
         self.creationDate = creationDate
-        self.databaseDeleted = databaseDeleted
+        self.deletionDate = deletionDate
     }
     
     init(name: String, color: String) {

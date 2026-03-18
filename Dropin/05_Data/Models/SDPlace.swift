@@ -27,7 +27,8 @@ final class SDPlace {
     var url: [String]
     var notes: String?
     @Attribute(.externalStorage) var images: [Data]
-    
+    var deletionDate: Date?
+
     init(identifier: UUID,
          name: String,
          latitude: Double,
@@ -59,6 +60,7 @@ final class SDPlace {
         self.url = url
         self.notes = notes
         self.images = images
+        self.deletionDate = nil
     }
 }
 

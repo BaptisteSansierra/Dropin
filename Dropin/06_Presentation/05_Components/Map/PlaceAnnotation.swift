@@ -17,10 +17,18 @@ struct PlaceAnnotation: MapContent {
     // MARK: - State & Bindables
     @Binding var selectedPlaceId: UUID?
     @Binding var place: PlaceUI
-
-    // MARK: - private vars
-    //private var place: PlaceUI
     
+    // MARK: - init
+    init(place: Binding<PlaceUI>) {
+        self._place = place
+        self._selectedPlaceId = .constant(nil)
+    }
+
+    init(place: Binding<PlaceUI>, selectedPlaceId: Binding<UUID?>) {
+        self._place = place
+        self._selectedPlaceId = selectedPlaceId
+    }
+
     // MARK: - Body
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
@@ -33,23 +41,6 @@ struct PlaceAnnotation: MapContent {
             }
         }
     }
-    
-    // MARK: - init
-    /*
-    init(item: MapDisplayPlaceItem, selectedPlaceId: Binding<PlaceID?>) {
-        self.place = item.place
-        self._selectedPlaceId = selectedPlaceId
-    }
-     */
-    
-    init(place: Binding<PlaceUI>, selectedPlaceId: Binding<UUID?>) {
-        self._place = place
-        self._selectedPlaceId = selectedPlaceId
-    }
-//    init(place: PlaceUI, selectedPlaceId: Binding<PlaceID?>) {
-//        self.place = place
-//        self._selectedPlaceId = selectedPlaceId
-//    }
 }
 
 struct PlaceAnnotationView: View {

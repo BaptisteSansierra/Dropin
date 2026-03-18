@@ -20,7 +20,7 @@ extension TagMapper {
                           color: tag.color,
                           places: places,
                           creationDate: tag.creationDate,
-                          databaseDeleted: tag.databaseDeleted)
+                          deletionDate: tag.deletionDate)
         if !skipRelationships {
             for i in 0..<places.count {
                 places[i].tags.append(tagUI)
@@ -39,7 +39,7 @@ extension TagMapper {
                             color: tagUI.color.hex,
                             places: places,
                             creationDate: tagUI.creationDate,
-                            databaseDeleted: tagUI.databaseDeleted)
+                            deletionDate: tagUI.deletionDate)
         if !skipRelationships {
             for i in 0..<places.count {
                 places[i].tags.append(tag)

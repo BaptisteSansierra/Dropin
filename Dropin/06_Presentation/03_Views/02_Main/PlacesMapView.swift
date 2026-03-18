@@ -9,6 +9,7 @@ import SwiftUI
 import CoreLocation
 import MapKit
 import ClusterMapSwiftUI
+import SheetOverlay
 
 struct PlacesMapView: View {
     
@@ -16,8 +17,9 @@ struct PlacesMapView: View {
     @State private var viewModel: PlacesMapViewModel
     @Binding private var places: [PlaceUI]
     @Binding private var showingCreatePlaceMenu: Bool
+    
     // TODO: move states to view model
-    @State private var showingLongPressCreateSheet = false
+    @State private var showingQuickCreateSheet = false
     @State private var showAuthLocAlert = false
     // Long press behaviour
     @State private var longPressGestureDateStart: Date?
@@ -30,6 +32,9 @@ struct PlacesMapView: View {
     //private var createPlaceSheetDefaultDetent: CGFloat = 0.6
     private var createPlaceSheetDefaultDetent: CGFloat = 400
 
+    private var addressSheetHeight: CGFloat = 350
+    private var coordinatesSheetHeight: CGFloat = 400
+
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
          places: Binding<[PlaceUI]>,
@@ -37,15 +42,15 @@ struct PlacesMapView: View {
         self.viewModel = viewModel
         self._places = places
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
-        
-        print("Init with \(places.count) places")
-        
-//        Task {
-//            await viewModel.fillDataSource(places: places.wrappedValue)
-//        }
     }
 
     // MARK: - Body
+    #if false
+    var body: some View {
+        PlacesMapViewRepresentable(viewModel: viewModel,
+                                   places: $places)
+    }
+    #else
     var body: some View {
         mapReaderView
             .onAppear {
@@ -55,6 +60,7 @@ struct PlacesMapView: View {
                 viewModel.dataSource.mapSize = newValue
             })
     }
+    #endif
 
     // MARK: - Subviews
     private var mapReaderView: some View {
@@ -72,6 +78,8 @@ struct PlacesMapView: View {
     }
     
     private var creationDialogPlaceholderView: some View {
+        // Create an hidden rectangle over the (+) nav bar button
+        // So the dialog can be anchored on it (FIXME: anchor on the right button)
         VStack {
             HStack {
                 Spacer()
@@ -82,7 +90,6 @@ struct PlacesMapView: View {
                                         isPresented: $showingCreatePlaceMenu,
                                         titleVisibility: .visible,
                                         actions: createNewPlaceActions)
-                //.presentationCompactAdaptation(.sheet)
             }
             .frame(height: 60)
             Spacer()
@@ -101,10 +108,17 @@ struct PlacesMapView: View {
         }
         // Create place from here now
         Button {
+            guard let _ = viewModel.locationManager.authorized else {
+                showAuthLocAlert.toggle()
+                return
+            }
+            guard let location = viewModel.locationManager.lastKnownLocation else { return }
+            prepareCreatePlaceFromCoords(location)
         } label: {
             Text("menu.new_place.current")
                 .textStyle(.body)
         }
+        
         // Create place from lat/long
         Button {
         } label: {
@@ -113,6 +127,9 @@ struct PlacesMapView: View {
         }
         // Create place from moving map under cursor
         Button {
+            viewModel.pickedAddress = nil
+            updateAddressPickerCoords()
+            viewModel.pickingAddress.toggle()
         } label: {
             Text("menu.new_place.drop_pin")
                 .textStyle(.body)
@@ -144,42 +161,52 @@ struct PlacesMapView: View {
     }
 
     private func mapView(proxy: MapProxy) -> some View {
-        ZStack {
+        ZStack(alignment: .center) {
             stateObservers
-            mapConfigModifiers
-            //mapConfigHandlerView
+
             Map(position: $viewModel.mapSettings.position) {
-                mapContent
+                
+                if !viewModel.pickingAddress && !viewModel.pickingCoordinates {
+                    mapContent
+                } else {
+                    Marker("BCN", coordinate: CLLocationCoordinate2D.barcelona)
+                }
                 UserAnnotation()
+                
+            }
+            if viewModel.pickingAddress || viewModel.pickingCoordinates {
+                pickingMarkerView
+                    .allowsHitTesting(false)
             }
         }
-        //.selectionDisabled(false)
+        .onFirstAppear(onFirstAppear)
         .mapControls {
             MapCompass()
         }
         .mapStyle(viewModel.mapSettings.selectedMapStyle)
-        .onMapCameraChange(frequency: .continuous) { _ in
+        .onMapCameraChange(frequency: .continuous) { ctx in
             // Cancel long press timer when moving map camera
             longPressTimer.upstream.connect().cancel()
-        }
-        .onMapCameraChange(frequency: .onEnd) { mapCameraUpdateContext in
-            
-            Task {
-                await viewModel.dataSource.reloadAnnotations(region: mapCameraUpdateContext.region)
+
+            // Reset picking address value
+            if viewModel.pickingAddress {
+                viewModel.pickedAddress = nil
+                updateAddressPickerCoords(camera: ctx.camera, span: ctx.region.span)
             }
-
-            updateCameraCache(mapCameraUpdateContext)
         }
-
-        
-        
+        .onMapCameraChange(frequency: .onEnd) { ctx in
+            Task {
+                await viewModel.dataSource.reloadAnnotations(region: ctx.region)
+            }
+            updateCameraCache(ctx)
+            if viewModel.pickingAddress {
+                updateAddressPickerCoords(camera: ctx.camera, span: ctx.region.span)
+            }
+        }
         .simultaneousGesture(longPressHackDragGesture)
         .onReceive(longPressTimer, perform: { time in
             onLongPressTimerFire(proxy: proxy)
         })
-
-        //.animation(.easeInOut(duration: zoomMapDuration), value: mapSettings.position)
-        .onFirstAppear(onFirstAppear)
         .overlay {
             MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown,
                                hidePointsOfInterest: $viewModel.mapSettings.hidePointsOfInterest,
@@ -188,16 +215,15 @@ struct PlacesMapView: View {
         .overlay {
             zoomOnUserOverlay
         }
-        .sheet(isPresented: $showingLongPressCreateSheet, onDismiss: {
+        // Sheets
+        .sheet(isPresented: $showingQuickCreateSheet, onDismiss: {
             viewModel.discardCreation()
             // Load the possible created place
             Task {
                 await reloadPlaces()
             }
         }, content: {
-            // TODO: change method name
-            viewModel.createCreatePlacesView()
-                //.presentationDetents([.fraction(createPlaceSheetDefaultDetent), .large])
+            viewModel.createPlaceCreateQuickView()
                 .presentationDetents([.height(createPlaceSheetDefaultDetent)])
                 .presentationBackground(.backgroundPrimary)
         })
@@ -208,16 +234,83 @@ struct PlacesMapView: View {
                 .presentationCornerRadius(20)
                 .presentationBackground(.backgroundPrimary)
         }
+       .sheetOverlay(isPresented: $viewModel.pickingAddress) {
+           AddressPickerView(coords: $viewModel.addressPickerCoords,
+                             address: $viewModel.pickedAddress,
+                             onFetchAddress: onAddressPickerFetchAddress,
+                             onComplete: onAddressPickerComplete)
+               .sheetOverlayDetents([.height(viewModel.pickingAddress ? addressSheetHeight : coordinatesSheetHeight)])
+               .sheetOverlayDragIndicator(.visible)
+       }
     }
 
-    private var mapConfigModifiers: some View {
-        EmptyView()
+
+    private func onAddressPickerFetchAddress() {
+        guard viewModel.pickedAddress == nil else {
+            // Already fetched for this position
+            return
+        }
+        Task {
+            do {
+                let address = try await viewModel.fetchAddress(coords: viewModel.addressPickerCoords)
+                viewModel.pickedAddress = address
+            } catch {
+                // TODO: handle error
+                return
+            }
+        }
     }
-    
+
+    private func onAddressPickerComplete() {
+        _ = viewModel.preparePlaceFromAddress(coords: viewModel.addressPickerCoords,
+                                              address: viewModel.pickedAddress)
+        // Reset picked address
+        viewModel.pickedAddress = nil
+        // Hide pickingAddress sheet
+        viewModel.pickingAddress.toggle()
+        Task {
+            try? await Task.sleep(for: .seconds(0.35))
+            // Show the creation sheet
+            showingQuickCreateSheet.toggle()
+        }
+    }
+
+    private func updateAddressPickerCoords() {
+        updateAddressPickerCoords(camera: viewModel.mapSettings.currentCamera,
+                                  span: viewModel.mapSettings.currentRegion.span)
+    }
+
+    private func updateAddressPickerCoords(camera: MapCamera, span: MKCoordinateSpan) {
+        let spanLat = span.latitudeDelta
+        let lat = camera.centerCoordinate.latitude
+        let lon = camera.centerCoordinate.longitude
+        
+        let sheetHeight = viewModel.pickingAddress ? addressSheetHeight : coordinatesSheetHeight
+        let offset: CGFloat = (sheetHeight - DropinApp.ui.mainTabBarHeight) * -0.5
+        let latOffset = spanLat * offset / viewModel.dataSource.mapSize.height
+        
+        // ICI TODO: use map conversion
+        
+        let targetLat = lat - latOffset + 0.000010
+        
+        let frmt = CLLocationCoordinate2D(latitude: targetLat,
+                                          longitude: lon).formatted()
+        //print("LatLon: \(frmt)")
+        viewModel.addressPickerCoords = CLLocationCoordinate2D(latitude: targetLat,
+                                                               longitude: lon)
+    }
+
     private var stateObservers: some View {
         EmptyView()
             .onChange(of: places, { _, newValue in
                 Task {
+                    guard viewModel.dataSource.isEmpty() else {
+//                        print("UPDATE DATA SOURCE")
+//                        await viewModel.updateDataSource(places: newValue)
+//                        await viewModel.dataSource.reloadAnnotations()
+                        return
+                    }
+                    // Only fill data source the first time
                     await viewModel.fillDataSource(places: newValue)
                 }
             })
@@ -266,6 +359,37 @@ struct PlacesMapView: View {
             }
         }
     }
+    
+    @ViewBuilder
+    private var pickingMarkerView: some View {
+        // Marker is already centered on map, add an offset to get it centered
+        // on remaining visible map after presenting sheetOverlay
+        let sheetHeight = viewModel.pickingAddress ? addressSheetHeight : coordinatesSheetHeight
+        let offset: CGFloat = (sheetHeight - DropinApp.ui.mainTabBarHeight) * -0.5
+        let markerSize: CGFloat = 43
+        //let gradientColors: [Color] = [.dropinPrimary.opacity(0.45), .dropinPrimary]
+        let gradientColors: [Color] = [.init(rgba: "fd6da5"), .init(rgba: "d91235")]
+        MapMarkerShape()
+            .fill(.white)
+            .frame(width: markerSize, height: markerSize)
+            .offset(y: offset - markerSize * 0.5)
+            .shadow(radius: 5, y: 3)
+            .overlay(alignment: .center) {
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(colors: gradientColors,
+                                             startPoint: .top,
+                                             endPoint: .bottom))
+
+                        .frame(width: markerSize * 3 / 5,
+                               height: markerSize * 3 / 5)
+                    Image(systemName: "pin")
+                        .font(.footnote)
+                        .foregroundStyle(.white)
+                }
+                .offset(y: offset - markerSize * 0.5)
+            }
+    }
 
     // MARK: map contents
     @MapContentBuilder
@@ -299,7 +423,7 @@ struct PlacesMapView: View {
         placeAnnotations
         
         // Add a marker at current new temporary place
-        if let tmpPlace = viewModel.tmpPlace, !tmpPlace.databaseDeleted {
+        if let tmpPlace = viewModel.tmpPlace, tmpPlace.isActive {
             Marker(tmpPlace.name,
                    monogram: Text("common.new".uppercased()),
                    coordinate: tmpPlace.coordinates)
@@ -339,7 +463,10 @@ struct PlacesMapView: View {
         // Do not show clusters when displaying small annotations
         // TODO: loop on viewModel.dataSource.annotations + viewModel.dataSource.clusters anyway, so we do not create out pf screen stuf
         ForEach(places.indices, id: \.self) { placeIdx in
-            PlaceSmallAnnotation(place: places[placeIdx])
+            if places[placeIdx].id != viewModel.selectedPlaceId &&
+               places[placeIdx].isActive {
+                PlaceSmallAnnotation(place: places[placeIdx])
+            }
         }
 
         /*
@@ -412,30 +539,28 @@ struct PlacesMapView: View {
             fatalError("Long press location undefined")
         }
         let coordinates = proxy.convert(longPressLocation, from: .local)!
-        let createdPlace = viewModel.preparePlaceFromCoords(coords: coordinates)
-        // Show the creation sheet
-        showingLongPressCreateSheet.toggle()
-        // Center map on new place
-        zoomOnPlace(createdPlace)
+        prepareCreatePlaceFromCoords(coordinates)
         // Cancel long press timer
         longPressTimer.upstream.connect().cancel()
     }
     
+    private func prepareCreatePlaceFromCoords(_ coordinates: CLLocationCoordinate2D) {
+        let createdPlace = viewModel.preparePlaceFromCoords(coords: coordinates)
+        // Show the creation sheet
+        showingQuickCreateSheet.toggle()
+        // Center map on new place
+        zoomOnPlace(createdPlace)
+    }
+    
     private func updateCameraCache(_ context : MapCameraUpdateContext) {
+        /*
         viewModel.mapSettings.currentCameraCenter = context.camera.centerCoordinate
         viewModel.mapSettings.currentCameraDistance = context.camera.distance
         viewModel.mapSettings.currentRegionSpan = context.region.span
-        
-        
-        /*
-        // Enable clustering if camera is far enough
-        viewModel.clusteringEnabled = viewModel.mapSettings.currentCameraDistance > 1000
-        
-        //print("Current zoom = \(mapSettings.currentCameraDistance)")
-        
-        // Compute places under camera
-        updateClustering()
          */
+        viewModel.mapSettings.currentCamera = context.camera
+        viewModel.mapSettings.currentRegion = context.region
+        viewModel.mapSettings.currentRect = context.rect
     }
     
     private func zoomOnCluster(_ clusterId: UUID) {
@@ -452,14 +577,14 @@ struct PlacesMapView: View {
     private func zoomOnPlace(_ place: PlaceUI) {
         let fraction = createPlaceSheetDefaultDetent / UIScreen.main.bounds.size.height
         //let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegionSpan.latitudeDelta * (1 - createPlaceSheetDefaultDetent)
-        let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegionSpan.latitudeDelta * (1 - fraction)
-        let offset = viewModel.mapSettings.currentRegionSpan.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
+        let latitudeDeltaOverSheet = viewModel.mapSettings.currentRegion.span.latitudeDelta * (1 - fraction)
+        let offset = viewModel.mapSettings.currentRegion.span.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
         // Offset the new place coords so it's visible on the map despite the sheet appearing
         let coords = CLLocationCoordinate2D(latitude: place.coordinates.latitude - offset,
                                             longitude: place.coordinates.longitude)
         withAnimation(.easeInOut(duration: zoomMapDuration)) {
             viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: coords,
-                                                               distance: viewModel.mapSettings.currentCameraDistance))
+                                                               distance: viewModel.mapSettings.currentCamera.distance))
         }
     }
     
@@ -500,6 +625,8 @@ struct PlacesMapView: View {
     private func reloadPlaces() async {
         do {
             places = try await viewModel.loadPlaces()
+            await viewModel.updateDataSource(places: places)
+            await viewModel.dataSource.reloadAnnotations()
         } catch {
             assertionFailure("couldn't reload places")
         }
@@ -518,9 +645,7 @@ struct PlacesMapView: View {
             default:
                 ()
         }
-
     }
-    
 }
 
 #if DEBUG

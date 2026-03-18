@@ -24,6 +24,16 @@ extension CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude + x,
                                       longitude: longitude + y)
     }
+    
+    func formatted() -> String {
+        let latStr = latitude.formatted(.number
+                                            .precision(.fractionLength(0...6))
+                                            .locale(Locale(identifier: "en_US_POSIX")))
+        let lonStr = longitude.formatted(.number
+                                             .precision(.fractionLength(0...6))
+                                             .locale(Locale(identifier: "en_US_POSIX")))
+        return "\(latStr),\(lonStr)"
+    }
 }
 
 /*

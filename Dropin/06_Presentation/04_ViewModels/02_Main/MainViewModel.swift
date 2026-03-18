@@ -17,7 +17,7 @@ import CoreLocation
     
     /// show/hide the 'create new place' menu
     var showingCreatePlaceMenu: Bool = false
-
+    
     // /////////////////////
     // Moved from PlacesListViewModel in order to define ToolBar in MainView
     // currently duplicated, should be solved somehow
@@ -29,7 +29,6 @@ import CoreLocation
     }
     var sortMode: SortMode = .distance
     // /////////////////////
-
     
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var getPlaces: GetPlaces
@@ -72,14 +71,7 @@ import CoreLocation
             })
         return appContainer.createPlacesListView(places: bindingPlaces)
     }
-    
-    /*
-    // TODO: to be replaced ?
-    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
-        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
-    }
-     */
-    
+
     func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
         return appContainer.createPlaceEditView(place: place)
     }
@@ -87,7 +79,15 @@ import CoreLocation
     func createLookupPlacesView() -> LookupPlacesView {
         return appContainer.createLookupPlacesView()
     }
-    
+
+    func createLookupPlacesView(placeId: UUID) -> LookupPlacesView {
+        return appContainer.createLookupPlacesView()
+    }
+
+    func createLookupPlacesView(place: Binding<PlaceUI>) -> LookupPlacesView {
+        return appContainer.createLookupPlacesView(place: place)
+    }
+
     func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
                                address: String,
                                name: String,
@@ -101,22 +101,10 @@ import CoreLocation
                                                   tags: tags,
                                                   group: group)
     }
-
-    /*
-    func createCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
-                                   address: String,
-                                   name: String,
-                                   marker: String?,
-                                   tags: [String],
-                                   group: String?) -> CreatePlaceFullView {
-        return appContainer.createCreatePlaceFullView(coordinates: coordinates,
-                                                      address: address,
-                                                      name: name,
-                                                      marker: marker,
-                                                      tags: tags,
-                                                      group: group)
+    
+    func createDropAPinView() -> DropAPinView {
+        return appContainer.createDropAPinView()
     }
-     */
 
     // MARK: Use cases
     func loadPlaces() async throws {

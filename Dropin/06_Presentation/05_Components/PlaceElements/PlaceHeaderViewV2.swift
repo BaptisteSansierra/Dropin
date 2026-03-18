@@ -56,6 +56,9 @@ struct PlaceHeaderViewV2: View {
                         .focused(isNameFocused)
                     Text(place.address.isEmpty ? "" : place.address)
                         .textStyle(.placeholder)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .onLongPressGesture {
                             copyAddressToClipboard()
                         }
@@ -84,7 +87,6 @@ struct PlaceHeaderViewV2: View {
     // MARK: private methods
     private func copyAddressToClipboard() {
         showingAddressToClipboard.toggle()
-        print("COPY TO CLIPBOARD: \(place.address)")
         UIPasteboard.general.string = place.address
     }
 }

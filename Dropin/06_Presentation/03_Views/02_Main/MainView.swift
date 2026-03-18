@@ -16,7 +16,7 @@ struct MainView: View {
     @State private var tabViewOpacity: CGFloat = 1
     
     @Binding private var showingSideMenu: Bool
-        
+    
     // MARK: - Init
     init(viewModel: MainViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
@@ -109,7 +109,7 @@ struct MainView: View {
             Divider()
             ZStack {
                 Rectangle()
-                    .frame(height: 80)
+                    .frame(height: DropinApp.ui.mainTabBarHeight)
                     .foregroundStyle(.regularMaterial)
                 VStack {
                     HStack(alignment: .top) {
@@ -170,11 +170,18 @@ struct MainView: View {
     }
      */
 
-    private func createPlaceEditView(_ placeId: UUID) -> PlaceEditView {
+    private func createPlaceEditView(placeId: UUID) -> PlaceEditView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
         }
         return viewModel.createPlaceEditView(place: $viewModel.places[index])
+    }
+
+    private func createLookupPlacesView(placeId: UUID) -> LookupPlacesView {
+        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
+            fatalError("couldn't find any place '\(placeId)' in list")
+        }
+        return viewModel.createLookupPlacesView(place: $viewModel.places[index])
     }
 
     /*
@@ -196,19 +203,12 @@ struct MainView: View {
     @ViewBuilder
     private func resolveDestination(navigationItem: NavigationItem) -> some View {
         switch navigationItem {
-            case .placeEditView(let placeID):
-                createPlaceEditView(placeID)
-//            case .placeDetailsView(let placeID, _):
-//                createPlaceDetailsView(placeID)
+            case .placeEditView(let placeId):
+                createPlaceEditView(placeId: placeId)
             case .lookupPlacesView:
                 viewModel.createLookupPlacesView()
-//            case .createPlaceFullView(let coordinates, let address, let name, let marker, let tags, let group):
-//                viewModel.createCreatePlaceFullView(coordinates: coordinates,
-//                                                    address: address,
-//                                                    name: name,
-//                                                    marker: marker,
-//                                                    tags: tags,
-//                                                    group: group)
+            case .lookupPlacesEditView(let placeId):
+                createLookupPlacesView(placeId: placeId)
             case .placeCreateView(let coordinates, let address, let name, let marker, let tags, let group):
                 viewModel.createPlaceCreateView(coordinates: coordinates,
                                                 address: address,
@@ -216,7 +216,8 @@ struct MainView: View {
                                                 marker: marker,
                                                 tags: tags,
                                                 group: group)
-
+            case .dropAPin:
+                viewModel.createDropAPinView()
             // development cases
             case .undefinedDummyView:
                 ZStack {

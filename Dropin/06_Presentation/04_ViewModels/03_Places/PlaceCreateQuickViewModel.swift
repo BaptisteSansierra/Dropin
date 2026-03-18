@@ -1,5 +1,5 @@
 //
-//  CreatePlaceQuickViewModel.swift
+//  PlaceCreateQuickViewModel.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 26/1/26.
@@ -9,10 +9,9 @@ import SwiftUI
 import CoreLocation
 
 @MainActor
-@Observable class CreatePlaceQuickViewModel {
+@Observable class PlaceCreateQuickViewModel {
     
     // MARK: Properties
-    private(set) var coordinator: MainCoordinator
     var showingMarkerList = false
     var showingTagsSelector = false
     var showingGroupSelector = false
@@ -22,7 +21,8 @@ import CoreLocation
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let createPlace: CreatePlace
-    
+    @ObservationIgnored private var coordinator: MainCoordinator
+
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          createPlace: CreatePlace) {

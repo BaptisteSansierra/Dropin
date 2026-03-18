@@ -12,14 +12,28 @@ struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
-    @State private var resultOffset: CGFloat
-    @State private var resultStatus: LookupPlaceView.PresentationStatus = .pending
-    @State private var resultBgOpacity: CGFloat = 0
+    @Binding private var editedPlace: PlaceUI?
+    
+    private var initialAddress = ""
 
     // MARK: - init
     init(viewModel: LookupPlacesViewModel) {
+        viewModel.resultOffset = UIScreen.main.bounds.height
         self.viewModel = viewModel
-        self.resultOffset = UIScreen.main.bounds.height
+        self._editedPlace = .constant(nil)
+    }
+
+    init(viewModel: LookupPlacesViewModel, place: Binding<PlaceUI>) {
+        viewModel.resultOffset = UIScreen.main.bounds.height
+        self.viewModel = viewModel
+        self._editedPlace = Binding<PlaceUI?>(get: {
+            place.wrappedValue
+        }, set: { value in
+            guard value != nil else { return }
+            place.wrappedValue = value!
+        })
+        print("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address)'")
+        self.initialAddress = place.wrappedValue.address
     }
 
     // MARK: - Body
@@ -53,56 +67,36 @@ struct LookupPlacesView: View {
             }
             if let resolvedPlace = $viewModel.resolvedPlace.wrappedValue {
                 Color.overlayAlphaLayer
-                    .opacity(resultBgOpacity)
+                    .opacity(viewModel.resultBgOpacity)
                     .ignoresSafeArea()
                 viewModel.createLookupPlaceView(resolvedPlace,
-                                                status: $resultStatus)
-                    .offset(x: 0, y: resultOffset)
+                                                place: $editedPlace,
+                                                status: $viewModel.resultStatus)
+                    .offset(x: 0, y: viewModel.resultOffset)
             }
         }
-        .navigationTitle("common.save_new_place")
+        .navigationTitle(viewModel.isEditMode() ? "common.edit_address" : "common.save_new_place")
         .navigationBarTitleDisplayMode(.inline)
 // Use Apple default ?
 //        .searchable(text: $searchText,
 //                    placement: .navigationBarDrawer,
 //                    prompt: "Do your math")
         .task {
-            #if DEBUG
-            viewModel.query = "ddd"
-            #endif
+            print("  ==> IN TASK : initialAddress = \(initialAddress)")
+            viewModel.query = initialAddress
+//            #if DEBUG
+//            viewModel.query = "ddd"
+//            #endif
         }
-        .onChange(of: resultStatus) { oldValue, newValue in
-            switch newValue {
-                case .cancelled:
-                    withAnimation {
-                        resultOffset = UIScreen.main.bounds.height
-                        resultBgOpacity = 0
-                    } completion: {
-                        viewModel.resolvedPlaceComputed = false
-                        viewModel.resolvedPlace = nil
-                        resultStatus = .pending
-                    }
-                case .validated:
-                    Task {
-                        try await Task.sleep(for: .seconds(0.5))
-                        resultOffset = UIScreen.main.bounds.height
-                        resultBgOpacity = 0
-                        viewModel.resolvedPlaceComputed = false
-                        viewModel.resolvedPlace = nil
-                        resultStatus = .pending
-                    }
-                default:
-                    ()
-            }
+        .onChange(of: viewModel.resultStatus) { _, newValue in
+            completeLookup(newValue)
         }
         .onChange(of: viewModel.resolvedPlaceComputed) { oldValue, newValue in
-            if !oldValue && newValue {
-                resultStatus = .pending
-                withAnimation {
-                    resultOffset = 0
-                    resultBgOpacity = 1
-
-                }
+            guard !oldValue && newValue else { return }
+            viewModel.resultStatus = .pending
+            withAnimation {
+                viewModel.resultOffset = 0
+                viewModel.resultBgOpacity = 1
             }
         }
         .onChange(of: viewModel.reachabilityService.isConnected) { oldValue, newValue in
@@ -113,7 +107,7 @@ struct LookupPlacesView: View {
             }
         }
     }
-        
+    
     // MARK: - Subviews
     private var errorView: some View {
         ContentUnavailableView {
@@ -183,10 +177,58 @@ struct LookupPlacesView: View {
     // MARK: - private methods
     private func presentDetails(_ lookupResult: LookupResult) {
         Task {
-            
             await viewModel.resolvePlace(lookupResult)
         }
     }
+    
+    private func completeLookup(_ status: LookupPlaceView.PresentationStatus) {
+        switch status {
+            case .cancelled:
+                hideDetailView()
+            case .validated(let item):
+                hideDetailView()
+                if viewModel.isEditMode() {
+                    // Apply change and pop
+                    guard let editedPlace = editedPlace else { return }
+                    editedPlace.address = item.address
+                    editedPlace.coordinates = item.coordinates
+                    Task {
+                        do {
+                            try await viewModel.updatePlace(editedPlace)
+                        } catch {
+                            assertionFailure("Couldn't update place \(editedPlace.name)")
+                        }
+                    }
+                    viewModel.popToRoot()
+                } else {
+                    viewModel.pushCreatePlaceFullView(lookupResolvedItem: item)
+                }
+                /*
+                 Task {
+                 try await Task.sleep(for: .seconds(0.5))
+                 resultOffset = UIScreen.main.bounds.height
+                 resultBgOpacity = 0
+                 viewModel.resolvedPlaceComputed = false
+                 viewModel.resolvedPlace = nil
+                 resultStatus = .pending
+                 }
+                 */
+            default:
+                ()
+        }
+    }
+    
+    private func hideDetailView() {
+        withAnimation {
+            viewModel.resultOffset = UIScreen.main.bounds.height
+            viewModel.resultBgOpacity = 0
+        } completion: {
+            viewModel.resolvedPlaceComputed = false
+            viewModel.resolvedPlace = nil
+            viewModel.resultStatus = .pending
+        }
+    }
+
 }
 
 #if DEBUG

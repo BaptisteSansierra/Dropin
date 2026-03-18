@@ -16,6 +16,7 @@ final class SDGroup {
     var icon: Icon
     var places: [SDPlace]
     var creationDate: Date
+    var deletionDate: Date?
 
     init(identifier: UUID, name: String, color: String, icon: Icon, places: [SDPlace] = [SDPlace]()) {
         self.identifier = identifier
@@ -24,6 +25,7 @@ final class SDGroup {
         self.icon = icon
         self.color = color
         self.creationDate = Date()
+        self.deletionDate = nil
     }
 }
 

@@ -10,10 +10,8 @@ import SwiftUI
 struct MarkerListView: View {
     
     // MARK: - State & Bindings
-    @State private var position = ScrollPosition(edge: .bottom)
-    @State private var confirmed = false
+    @State private var viewModel: MarkerListViewModel
     @Binding private var selected: Icon?
-    @State private var nullable: Bool
 
     // MARK: - Dependencies
     @Environment(\.dismiss) var dismiss
@@ -24,7 +22,7 @@ struct MarkerListView: View {
     // MARK: - Init
     init(selected: Binding<Icon?>) {
         self._selected = selected
-        self.nullable = true
+        self.viewModel = MarkerListViewModel(nullable: true)
     }
     
     init(selected: Binding<Icon>) {
@@ -33,7 +31,7 @@ struct MarkerListView: View {
         }, set: { value in
             selected.wrappedValue = value ?? selected.wrappedValue
         })
-        self.nullable = false
+        self.viewModel = MarkerListViewModel(nullable: false)
     }
 
     // MARK: - Body
@@ -44,10 +42,10 @@ struct MarkerListView: View {
                 scrollView
                     .safeAreaInset(edge: .bottom) {
                         Color.clear
-                            .frame(height: nullable ? 60 : 0)
+                            .frame(height: viewModel.nullable ? 60 : 0)
                     }
             }
-            if nullable && selected != nil {
+            if viewModel.nullable && selected != nil {
                 footerView
             }
         }

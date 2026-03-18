@@ -32,6 +32,9 @@ import SwiftUI
     
     func deleteGroup(_ group: GroupUI) async throws {
         try await deleteGroup.execute(GroupMapper.toDomain(group))
-        group.databaseDeleted = true
+        if group.deletionDate == nil {
+            assertionFailure("Model should have been marked deleted already for SwiftUI safety")
+            group.deletionDate = Date()
+        }
     }
 }

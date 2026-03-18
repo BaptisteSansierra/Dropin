@@ -40,6 +40,10 @@ import CoreLocation
     func popView() {
         coordinator.pop()
     }
+    
+    func pushLookupPlacesView(placeId: UUID) {
+        coordinator.pushLookupPlacesEditView(placeId: placeId)
+    }
 
     // MARK: UI Childs
     func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
@@ -52,13 +56,15 @@ import CoreLocation
 
     // MARK: Use cases
     func updatePlace(_ place: PlaceUI) async throws {
-        try await updatePlace.execute(PlaceMapper.toDomain(place))
+        let placeEntity = PlaceMapper.toDomain(place)
+        try await updatePlace.execute(placeEntity)
     }
 
     func deletePlace(_ place: PlaceUI) async throws {
         try await deletePlace.execute(PlaceMapper.toDomain(place))
-        place.databaseDeleted = true
+        if place.deletionDate == nil {
+            assertionFailure("Model should have been marked deleted already for SwiftUI safety")
+            place.deletionDate = Date()
+        }
     }
-
-    // MARK: - callbacks and co
 }

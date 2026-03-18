@@ -45,6 +45,9 @@ import SwiftUI
     
     func deleteTag(_ tag: TagUI) async throws {
         try await deleteTag.execute(TagMapper.toDomain(tag))
-        tag.databaseDeleted = true
+        if tag.deletionDate == nil {
+            assertionFailure("Model should have been marked deleted already for SwiftUI safety")
+            tag.deletionDate = Date()
+        }
     }
 }

@@ -17,6 +17,21 @@ import MapKit
         case coords
         case undefined
     }
+    
+    #if false
+    enum MapAction: Equatable {
+        case centerOnUser
+//        case zoomIn
+//        case zoomOut
+//        case fitAllPlaces
+    }
+    var currentAction: MapAction?
+    
+    func performAction(_ action: MapAction) {
+        currentAction = action
+        // Reset after execution (handled in updateUIView)
+    }
+    #endif
 
     // MARK: Properties
     private(set) var coordinator: MainCoordinator
@@ -25,9 +40,17 @@ import MapKit
 
     //var places: [PlaceUI] = [PlaceUI]()
     var tmpPlace: PlaceUI? = nil   // Used for creating a new place
+
+    var pickingAddress: Bool = false
+    var pickingCoordinates: Bool = false
+    var pickedAddress: String? = nil   // Used for creating a new place by address picking
+    var addressPickerCoords: CLLocationCoordinate2D = .zero
+    
     /// `selectedPlaceId` is defined when a place annotation is selected on the map, toggle the corresponding sheet
     var selectedPlaceId: UUID?
     var selectedClusterId: UUID?
+    
+    
 /*
     var selectedPlaceId: PlaceID? {
         didSet {
@@ -90,21 +113,8 @@ import MapKit
         dataSource = MapDataSource()
     }
     
-    func fillDataSource(places: [PlaceUI]) async {
-        await dataSource.loadPlaces(places)
-    }
     
-    func preparePlaceFromCoords(coords: CLLocationCoordinate2D) -> PlaceUI {
-        creationMode = .coords
-        let createdPlace = PlaceUI(coordinates: coords)
-        tmpPlace = createdPlace
-        return createdPlace
-    }
     
-    func discardCreation() {
-        reset()
-    }
-
 
 /*
 
@@ -262,13 +272,17 @@ import MapKit
     func pushLookupPlacesView() {
         coordinator.pushLookupPlacesView()
     }
+
+    func pushDropAPinView() {
+        coordinator.pushDropAPinView()
+    }
     
     // MARK: - UI child
-    func createCreatePlacesView() -> CreatePlaceQuickView {
+    func createPlaceCreateQuickView() -> PlaceCreateQuickView {
         guard let tmpPlace = tmpPlace else {
             fatalError("temporary place undefined")
         }
-        return appContainer.createCreatePlaceQuickView(place: tmpPlace)
+        return appContainer.createPlaceCreateQuickView(place: tmpPlace)
     }
         
 //    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
@@ -289,8 +303,8 @@ import MapKit
 
     // MARK: - Use cases
     func loadPlaces() async throws -> [PlaceUI] {
-        var domainPlaces = try await getPlaces.execute()
-        domainPlaces = domainPlaces.filter { !$0.databaseDeleted }
+        let domainPlaces = try await getPlaces.execute()
+        //domainPlaces = domainPlaces.filter { !$0.databaseDeleted }
         let places = domainPlaces.map { PlaceMapper.toUI($0) }
         // check selectedPlaceId is nil or valid after loading places
         if let selectedPlaceId = selectedPlaceId {
@@ -301,6 +315,41 @@ import MapKit
         return places
     }
 
+    // MARK: - Actions
+    func fillDataSource(places: [PlaceUI]) async {
+        await dataSource.loadPlaces(places)
+    }
+
+    func updateDataSource(places: [PlaceUI]) async {
+        await dataSource.updatePlaces(places)
+    }
+
+    func preparePlaceFromCoords(coords: CLLocationCoordinate2D) -> PlaceUI {
+        creationMode = .coords
+        let createdPlace = PlaceUI(coordinates: coords)
+        tmpPlace = createdPlace
+        return createdPlace
+    }
+
+    func preparePlaceFromAddress(coords: CLLocationCoordinate2D,
+                                 address: String?) -> PlaceUI {
+        creationMode = .coords
+        let createdPlace = PlaceUI(coordinates: coords)
+        if let address = address {
+            createdPlace.address = address
+        }
+        tmpPlace = createdPlace
+        return createdPlace
+    }
+
+    func discardCreation() {
+        reset()
+    }
+
+    func fetchAddress(coords: CLLocationCoordinate2D) async throws -> String {
+        return try await LocationManager.lookUpAddress(coords: coords)
+    }
+
     // MARK: - private
     private func reset() {
         tmpPlace = nil
@@ -308,6 +357,9 @@ import MapKit
         creationMode = .undefined
     }
 }
+
+
+
 
 // TODO: move this
 
@@ -330,12 +382,27 @@ import MapKit
     // MARK: - Published properties
     /// `position` can be used to set the main map camera position
     var position: MapCameraPosition = .automatic
+
+
+    
+    /// The current map camera.
+    public var currentMKCamera: MKMapCamera = .init()
+    public var currentCamera: MapCamera = .init(centerCoordinate: .zero, distance: 0) // to be removed
+    /// A map region approximating the view of the map's camera.
+    public var currentRegion: MKCoordinateRegion = .zero
+    /// A map rect approximating the view of the map's camera.
+    public var currentRect: MKMapRect = .null
+
+    /*
     /// `currentCameraCenter` can be used to get the main map current camera center
     var currentCameraCenter = CLLocationCoordinate2D()
     /// `currentCameraDistance` can be used to get the main map current camera distance
     var currentCameraDistance: Double = 0
     /// `currentRegionSpan` can be used to get the main map current region span distance
     var currentRegionSpan = MKCoordinateSpan()
+    */
+    
+    
     /// `hidePointsOfInterest` show/hide the POI in the main map
     var hidePointsOfInterest: Bool = true
     /// `satellite` enable/disable the satellite view in the main map

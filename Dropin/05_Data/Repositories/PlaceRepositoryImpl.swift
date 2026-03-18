@@ -63,6 +63,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.images = place.images
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
         try await linkGroup(sdPlace: sdPlace, domainPlace: place)
+        sdPlace.deletionDate = place.deletionDate
         try modelContext.save()
     }
 

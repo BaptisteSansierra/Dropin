@@ -1,5 +1,5 @@
 //
-//  CreatePlaceQuickView.swift
+//  PlaceCreateQuickView.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 26/1/26.
@@ -9,10 +9,10 @@
 
 import SwiftUI
 
-struct CreatePlaceQuickView: View {
+struct PlaceCreateQuickView: View {
     
     // MARK: - State & Bindings
-    @State private var viewModel: CreatePlaceQuickViewModel
+    @State private var viewModel: PlaceCreateQuickViewModel
     @State private var place: PlaceUI
     @FocusState private var isNameFocused
 
@@ -20,7 +20,7 @@ struct CreatePlaceQuickView: View {
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Init
-    init(viewModel: CreatePlaceQuickViewModel, place: PlaceUI) {
+    init(viewModel: PlaceCreateQuickViewModel, place: PlaceUI) {
         self._viewModel = State(initialValue: viewModel)
         self._place = State(initialValue: place)
     }
@@ -28,19 +28,30 @@ struct CreatePlaceQuickView: View {
     // MARK: - Body
     var body: some View {
         // Content
-        VStack {
-            CreatePlaceBasicsView(place: $place,
-                                  showingMarkerList: $viewModel.showingMarkerList,
-                                  showingTagsSelector: $viewModel.showingTagsSelector,
-                                  showingGroupSelector: $viewModel.showingGroupSelector,
-                                  isNameFocused: $isNameFocused)
+        VStack(spacing: 0) {
+            PlaceHeaderViewV2(place: $place,
+                              showingMarkerList: $viewModel.showingMarkerList,
+                              editEnabled: true,
+                              isNameFocused: $isNameFocused)
+                .padding(.bottom)
+            PlaceTagsView(place: $place,
+                          showingTagsSelector: $viewModel.showingTagsSelector,
+                          editEnabled: true)
+                .padding(.bottom)
+            PlaceGroupView(place: $place,
+                           showingGroupSelector: $viewModel.showingGroupSelector,
+                           editEnabled: true)
+                .padding(.bottom)
+
             Spacer()
             SecondaryButton(text: "create_place.moreOptions", action: moreOptions)
                 .padding(.bottom, 15)
             MainButton(text: "create_place.save", action: createPlace)
         }
         .task {
-            await fetchAddress()
+            if place.address.isEmpty {
+                await fetchAddress()
+            }
         }
         .sheet(isPresented: $viewModel.showingTagsSelector) {
             viewModel.createTagSelectorView(place: $place)
@@ -102,12 +113,12 @@ struct CreatePlaceQuickView: View {
 
 
 #if DEBUG
-struct MockCreatePlaceQuickView: View {
+struct MockPlaceCreateQuickView: View {
     var mock: MockContainer
     @State var place: PlaceUI
 
     var body: some View {
-        mock.appContainer.createCreatePlaceQuickView(place: place)
+        mock.appContainer.createPlaceCreateQuickView(place: place)
     }
     
     init() {
@@ -118,7 +129,7 @@ struct MockCreatePlaceQuickView: View {
 }
 
 #Preview {
-    MockCreatePlaceQuickView()
+    MockPlaceCreateQuickView()
 }
 
 #endif

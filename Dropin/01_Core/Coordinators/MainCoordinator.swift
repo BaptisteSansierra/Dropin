@@ -26,7 +26,7 @@ import CoreLocation
     // MARK: properties
     var path: [NavigationItem] = [] {
         didSet {
-            print("COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
+            //print("COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
             trackNavigation(oldPath: oldValue, newPath: path)
         }
     }
@@ -49,7 +49,15 @@ import CoreLocation
     func pushLookupPlacesView() {
         push(NavigationItem.lookupPlacesView)
     }
-    
+
+    func pushDropAPinView() {
+        push(NavigationItem.dropAPin)
+    }
+
+    func pushLookupPlacesEditView(placeId: UUID) {
+        push(NavigationItem.lookupPlacesEditView(placeId: placeId))
+    }
+
     func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
                                  address: String,
                                  name: String,
@@ -63,23 +71,6 @@ import CoreLocation
                                             tags: tags,
                                             group: group))
     }
-
-    /*
-     // TODO: to be replaced
-    func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
-                                 address: String,
-                                 name: String,
-                                 marker: String?,
-                                 tags: [String],
-                                 group: String?) {
-        push(NavigationItem.createPlaceFullView(coordinates: coordinates,
-                                                address: address,
-                                                name: name,
-                                                marker: marker,
-                                                tags: tags,
-                                                group: group))
-    }
-     */
 
     func pushUndefinedDummyView() {
         push(NavigationItem.undefinedDummyView)
@@ -120,22 +111,44 @@ import CoreLocation
 }
 
 enum NavigationItem: Hashable {
-    //case placeDetailsView(placeId: String, editMode: PlaceEditMode)
     case placeEditView(placeId: UUID)
     case lookupPlacesView
+    case lookupPlacesEditView(placeId: UUID)
     case placeCreateView(coordinates: CLLocationCoordinate2D,
                          address: String,
                          name: String,
                          marker: String?,
                          tags: [UUID],
                          group: UUID?)
-
-//    case createPlaceFullView(coordinates: CLLocationCoordinate2D,
-//                             address: String,
-//                             name: String,
-//                             marker: String?,
-//                             tags: [String],
-//                             group: String?)
+    case dropAPin
     // development
     case undefinedDummyView
+}
+
+extension NavigationItem {
+    enum Kind {
+        case placeEditView
+        case lookupPlacesView
+        case lookupPlacesEditView
+        case placeCreateView
+        case dropAPin
+        case undefinedDummyView
+    }
+
+    var kind: Kind {
+        switch self {
+            case .placeEditView:
+                return .placeEditView
+            case .lookupPlacesView:
+                return .lookupPlacesView
+            case .lookupPlacesEditView:
+                return .lookupPlacesEditView
+            case .placeCreateView:
+                return .placeCreateView
+            case .dropAPin:
+                return .dropAPin
+            case .undefinedDummyView:
+                return .undefinedDummyView
+        }
+    }
 }

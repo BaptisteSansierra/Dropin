@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import SwiftUI
 import MapKit
 
@@ -14,7 +13,6 @@ import MapKit
 @Observable class LookupPlaceViewModel {
         
     // MARK: Properties
-    private(set) var coordinator: MainCoordinator
     var lookupResolvedItem: LookupResolvedItem
     var cameraDistance: Double = 1000
     var camera: MapCameraPosition = .automatic
@@ -22,6 +20,7 @@ import MapKit
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var createPlace: CreatePlace
+    @ObservationIgnored private var coordinator: MainCoordinator
 
     // MARK: - init
     init(_ appContainer: AppContainer,
@@ -35,7 +34,8 @@ import MapKit
     }
 
     // MARK: - Navigation
-    func pushCreatePlaceFullView() {
+    /*
+    func pushCreatePlaceFullView(lookupResolvedItem: LookupResolvedItem) {
         coordinator.pushCreatePlaceFullView(coordinates: lookupResolvedItem.coordinates,
                                             address: lookupResolvedItem.address,
                                             name: lookupResolvedItem.name ?? "",
@@ -43,7 +43,8 @@ import MapKit
                                             tags: [],
                                             group: nil)
     }
-
+*/
+    
     // MARK: - Actions
     func zoomIn() {
         guard cameraDistance >= 125 else { return }

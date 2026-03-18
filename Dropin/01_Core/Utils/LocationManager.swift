@@ -123,10 +123,10 @@ extension LocationManager {
         }
     }
 
-    // TODO: make it private after replaced
     static private func lookUpAddressWithCompletion(coords: CLLocationCoordinate2D, completion: @Sendable @escaping (String?)->() ) {
         let location = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
         let geocoder = CLGeocoder()
+        geocoder.cancelGeocode() // Cancel pending requests
         geocoder.reverseGeocodeLocation(location, completionHandler: { placemarks, error in
             if let error = error {
                 print("couldn't get address from coords \(coords): \(error.localizedDescription)")

@@ -19,17 +19,34 @@ extension View {
         modifier(TextStyleModifier(style: style))
     }
     
-//    func `if`<Content: View>(_ condition: Bool, action: @escaping (Self)->Content ) -> some View {
-//        modifier(IfModifier(condition: condition, action: action))
-//    }
+    //    func `if`<Content: View>(_ condition: Bool, action: @escaping (Self)->Content ) -> some View {
+    //        modifier(IfModifier(condition: condition, action: action))
+    //    }
     
     
     @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool, action: (Self) -> Content) -> some View {
+    func `if`<Content: View>(_ condition: Bool, action: (Self) -> Content, elseAction: ((Self) -> Content)? = nil) -> some View {
         if condition {
             action(self)
         } else {
-            self
+            if let elseAction {
+                elseAction(self)
+            } else {
+                self
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func ifShape<Content: Shape>(_ condition: Bool, action: (Self) -> Content, elseAction: ((Self) -> Content)? = nil) -> some View {
+        if condition {
+            action(self)
+        } else {
+            if let elseAction {
+                elseAction(self)
+            } else {
+                self
+            }
         }
     }
 }

@@ -20,7 +20,8 @@ public enum TagMapper {
                             name: sdTag.name,
                             color: sdTag.color,
                             places: places,
-                            creationDate: sdTag.creationDate)
+                            creationDate: sdTag.creationDate,
+                            deletionDate: sdTag.deletionDate)
         if !skipRelationships {
             for i in 0..<places.count {
                 places[i].tags.append(tag)
@@ -33,7 +34,6 @@ public enum TagMapper {
         return SDTag(identifier: tag.id,
                      name: tag.name,
                      color: tag.color,
-                     places: [],  // places are attached later in repository to avoid Mapping recursion 
-                     creationDate: tag.creationDate)
+                     places: [])  // places are attached later in repository to avoid Mapping recursion 
     }
 }

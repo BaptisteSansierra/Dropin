@@ -22,7 +22,6 @@ struct DropinApp: App {
     // MARK: - Body
     var body: some Scene {
         WindowGroup {
-            
             appContainer.createRootView()
                 .task {
                     appContainer.startLocationManager()
@@ -146,6 +145,7 @@ extension DropinApp {
     }
      */
     struct ui {
+        static let mainTabBarHeight: CGFloat = 80
         struct button {
             static let height: Double = 40
             static let width: Double = 200

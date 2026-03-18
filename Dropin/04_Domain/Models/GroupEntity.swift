@@ -14,18 +14,16 @@ struct GroupEntity: Hashable {
     var places: [PlaceEntity] = [PlaceEntity]()
     var color: String
     var creationDate: Date
-    // following propertie are not part of the DB model
-    /// When  databaseDeleted is true, domain objects should be ignored
-    var databaseDeleted: Bool = false
+    var deletionDate: Date? = nil
     
-    init(id: UUID, name: String, color: String, icon: Icon, places: [PlaceEntity], creationDate: Date, databaseDeleted: Bool = false) {
+    init(id: UUID, name: String, color: String, icon: Icon, places: [PlaceEntity], creationDate: Date, deletionDate: Date? = nil) {
         self.id = id
         self.name = name
         self.icon = icon
         self.color = color
         self.places = places
         self.creationDate = creationDate
-        self.databaseDeleted = databaseDeleted
+        self.deletionDate = deletionDate
     }
     
     init(name: String, color: String, icon: Icon) {

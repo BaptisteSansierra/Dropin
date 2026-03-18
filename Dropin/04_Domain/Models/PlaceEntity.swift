@@ -19,16 +19,13 @@ struct PlaceEntity: Hashable {
     var group: GroupEntity?
     var icon: Icon?
     var creationDate: Date
-    // Metadata
     var rating: Float?
     var phone: [ContactItem]
     var email: [ContactItem]
     var url: [ContactItem]
     var notes: String?
     var images: [Data]
-    // following propertie are not part of the DB model
-    /// When  databaseDeleted is true, domain objects should be ignored
-    var databaseDeleted: Bool
+    var deletionDate: Date? = nil
 
     init(id: UUID,
          name: String,
@@ -45,7 +42,7 @@ struct PlaceEntity: Hashable {
          notes: String? = nil,
          images: [Data] = [],
          creationDate: Date,
-         databaseDeleted: Bool = false) {
+         deletionDate: Date? = nil) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -62,7 +59,7 @@ struct PlaceEntity: Hashable {
         self.notes = notes
         self.images = images
         self.creationDate = creationDate
-        self.databaseDeleted = databaseDeleted
+        self.deletionDate = deletionDate
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {

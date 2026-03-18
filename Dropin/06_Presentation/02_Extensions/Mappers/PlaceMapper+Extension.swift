@@ -34,7 +34,7 @@ extension PlaceMapper {
                               notes: place.notes,
                               images: place.images,
                               creationDate: place.creationDate,
-                              databaseDeleted: place.databaseDeleted)
+                              deletionDate: place.deletionDate)
         if !skipRelationships {
             groupUI?.places.append(placeUI)
             for i in 0..<tagsUI.count {
@@ -68,7 +68,7 @@ extension PlaceMapper {
                                 notes: placeUI.notes,
                                 images: placeUI.images,
                                 creationDate: placeUI.creationDate,
-                                databaseDeleted: placeUI.databaseDeleted)
+                                deletionDate: placeUI.deletionDate)
         if !skipRelationships {
             group?.places.append(place)
             for i in 0..<tags.count {

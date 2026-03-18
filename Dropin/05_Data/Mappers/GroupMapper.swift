@@ -19,7 +19,8 @@ public enum GroupMapper {
                                 color: sdGroup.color,
                                 icon: sdGroup.icon,
                                 places: places,
-                                creationDate: sdGroup.creationDate)
+                                creationDate: sdGroup.creationDate,
+                                deletionDate: sdGroup.deletionDate)
         if !skipRelationships {
             for i in 0..<places.count {
                 places[i].group = group

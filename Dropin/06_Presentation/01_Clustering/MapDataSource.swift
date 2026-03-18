@@ -14,6 +14,8 @@ import ClusterMap
 
     var mapSize: CGSize = .zero
 
+    private var allAnnotations: [PlaceAnnotationModel] = []
+
     private(set) var annotations: [PlaceAnnotationModel] = []
     private(set) var clusters: [ClusterAnnotationModel] = []
 
@@ -31,14 +33,47 @@ import ClusterMap
         clusterManager = ClusterManager<PlaceAnnotationModel>(configuration: config)
     }
 
+    func isEmpty() -> Bool {
+        annotations.count == 0 && clusters.count == 0
+    }
+
     func loadPlaces(_ places: [PlaceUI]) async {
-        var annotations: [PlaceAnnotationModel] = []
-        for place in places {
-            annotations.append(PlaceAnnotationModel(coordinates: place.coordinates,
-                                                    placeId: place.id))
+        guard annotations.count == 0, clusters.count == 0 else {
+            // Ensure it's called only once
+            fatalError("Cannot double load places")
         }
-        await clusterManager.add(annotations)
+        allAnnotations = places
+            .filter({ $0.isActive })
+            .map({ PlaceAnnotationModel(coordinates: $0.coordinates,
+                                        placeId: $0.id) })
+        await clusterManager.add(allAnnotations)
         await reloadAnnotations()
+    }
+    
+    func updatePlaces(_ places: [PlaceUI]) async {
+        // Remove places
+        // Get all annotations not in places or with 'databaseDeleted' true
+        let toBeRemoved = allAnnotations.filter { item in
+            if let place = places.first(where: { $0.id == item.placeId }) {
+                return !place.isActive
+            }
+            return true
+        }
+        allAnnotations.removeAll(where: { toBeRemoved.contains($0) })
+        await clusterManager.remove(toBeRemoved)
+        
+        // Add places
+        // Get all places not in annotations and not deleted
+        let placesToBeAdded = places.filter { place in
+            if let _ = allAnnotations.first(where: { $0.placeId == place.id }) {
+                return false
+            }
+            return place.isActive
+        }
+        let toBeAdded = placesToBeAdded.map({ PlaceAnnotationModel(coordinates: $0.coordinates,
+                                                               placeId: $0.id)})
+        allAnnotations.append(contentsOf: toBeAdded)
+        await clusterManager.add(toBeAdded)
     }
 
     func reloadAnnotations(region: MKCoordinateRegion) async {

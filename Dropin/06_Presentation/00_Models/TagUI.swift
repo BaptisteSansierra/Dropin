@@ -17,21 +17,23 @@ import SwiftUI
     var color: Color
     var places: [PlaceUI] = [PlaceUI]()
     var creationDate: Date
-    // following propertie are not part of the DB model
-    /// When  databaseDeleted is true, UI objects should be ignored
-    var databaseDeleted: Bool = false
+    var deletionDate: Date? = nil
 
+    var isActive: Bool {
+        deletionDate == nil
+    }
+    
     static func == (lhs: TagUI, rhs: TagUI) -> Bool {
         lhs.id == rhs.id
     }
 
-    init(id: UUID, name: String, color: String, places: [PlaceUI], creationDate: Date, databaseDeleted: Bool) {
+    init(id: UUID, name: String, color: String, places: [PlaceUI], creationDate: Date, deletionDate: Date? = nil) {
         self.id = id
         self.name = name
         self.color = Color(rgba: color)
         self.places = places
         self.creationDate = creationDate
-        self.databaseDeleted = databaseDeleted
+        self.deletionDate = deletionDate
     }
     
 //    init(name: String, color: String) {

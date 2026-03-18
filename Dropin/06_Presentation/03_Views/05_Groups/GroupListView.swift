@@ -28,7 +28,7 @@ struct GroupListView: View {
         NavigationStack(path: $viewModel.coordinator.path) {
             List {
                 ForEach(groups) { group in
-                    if !group.databaseDeleted {
+                    if group.isActive {
                         HStack {
                             GroupView(group: group)
                             Spacer()

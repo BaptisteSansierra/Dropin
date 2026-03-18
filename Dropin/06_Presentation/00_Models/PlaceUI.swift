@@ -27,13 +27,15 @@ import ContactFieldKit
     var notes: String? = nil
     var images: [Data] = []
     var creationDate: Date
-    // following propertie are not part of the DB model
-    /// When  databaseDeleted is true, UI objects should be ignored
-    var databaseDeleted: Bool = false
+    var deletionDate: Date? = nil
 
     var groupColor: Color {
         guard let group = self.group else { return .dropinPrimary }
         return group.color
+    }
+    
+    var isActive: Bool {
+        deletionDate == nil
     }
 
     var changeToken: Int {
@@ -72,7 +74,7 @@ import ContactFieldKit
          notes: String? = nil,
          images: [Data] = [],
          creationDate: Date,
-         databaseDeleted: Bool) {
+         deletionDate: Date? = nil) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -88,7 +90,7 @@ import ContactFieldKit
         self.notes = notes
         self.images = images
         self.creationDate = creationDate
-        self.databaseDeleted = databaseDeleted
+        self.deletionDate = deletionDate
     }
 
     init(coordinates: CLLocationCoordinate2D) {
@@ -113,7 +115,7 @@ import ContactFieldKit
                        notes: notes,
                        images: images,
                        creationDate: creationDate,
-                       databaseDeleted: databaseDeleted)
+                       deletionDate: deletionDate)
     }
     
     func isContentEqual(_ other: PlaceUI) -> Bool {

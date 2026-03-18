@@ -81,6 +81,10 @@ struct LookupResolvedItem: Identifiable {
     }
     
     // MARK: Properties
+    var resultOffset: CGFloat = 0
+    var resultStatus: LookupPlaceView.PresentationStatus = .pending
+    var resultBgOpacity: CGFloat = 0
+
     var query: String = "" {
         didSet {
             guard query != oldValue else { return }
@@ -101,21 +105,59 @@ struct LookupResolvedItem: Identifiable {
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
+    @ObservationIgnored private var coordinator: MainCoordinator
     @ObservationIgnored private var addressLookupService: AddressLookupService
     @ObservationIgnored private var locationManager: LocationManager
+    @ObservationIgnored private var updatePlace: UpdatePlace
 
     // MARK: - init
     init(_ appContainer: AppContainer,
+         coordinator: MainCoordinator,
          addressLookupService: AddressLookupService,
          locationManager: LocationManager,
-         reachabilityService: ReachabilityService) {
+         reachabilityService: ReachabilityService,
+         updatePlace: UpdatePlace) {
         self.appContainer = appContainer
+        self.coordinator = coordinator
         self.addressLookupService = addressLookupService
         self.locationManager = locationManager
         self.reachabilityService = reachabilityService
+        self.updatePlace = updatePlace
     }
     
-    // MARK: -
+    // MARK: - Navigation
+    func popToRoot() {
+        coordinator.popToRoot()
+    }
+
+    func pushCreatePlaceFullView(lookupResolvedItem: LookupResolvedItem) {
+        coordinator.pushCreatePlaceFullView(coordinates: lookupResolvedItem.coordinates,
+                                            address: lookupResolvedItem.address,
+                                            name: lookupResolvedItem.name ?? "",
+                                            marker: nil,
+                                            tags: [],
+                                            group: nil)
+    }
+    
+    func isEditMode() -> Bool {
+        coordinator.path.contains(.placeEditView)
+    }
+
+    // MARK: - UI child
+    func createLookupPlaceView(_ lookupResolvedItem: LookupResolvedItem,
+                               place: Binding<PlaceUI?>,
+                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
+        return appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem,
+                                                  place: place,
+                                                  status: status)
+    }
+    
+    // MARK: Use cases
+    func updatePlace(_ place: PlaceUI) async throws {
+        try await updatePlace.execute(PlaceMapper.toDomain(place))
+    }
+
+    // MARK: - public methods
     func updateQuery() {
         handleQueryChanges()
     }
@@ -125,15 +167,7 @@ struct LookupResolvedItem: Identifiable {
         lookupError = nil
         searching = false
     }
-    
-    // MARK: - UI child
-    func createLookupPlaceView(_ lookupResolvedItem: LookupResolvedItem,
-                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
-        return appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem,
-                                                  status: status)
-    }
-    
-    // MARK: - public methods
+
     func resolvePlace(_ lookupResult: LookupResult) async {
         resolving = true
         let request = MKLocalSearch.Request(completion: lookupResult.localSearchCompletion)
@@ -153,7 +187,7 @@ struct LookupResolvedItem: Identifiable {
             resolving = false
         }
     }
-    
+        
     // MARK: - private methods
     private func handleQueryChanges() {
         searchTask?.cancel()

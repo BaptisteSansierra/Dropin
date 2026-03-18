@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import ClusterMap
 
-struct PlaceAnnotationModel: Identifiable, CoordinateIdentifiable, Hashable {
+struct PlaceAnnotationModel: Identifiable, Equatable, CoordinateIdentifiable, Hashable {
     var id = UUID()
     var coordinate: CLLocationCoordinate2D
     var placeId: UUID

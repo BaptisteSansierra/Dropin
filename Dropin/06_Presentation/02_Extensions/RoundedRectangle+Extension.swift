@@ -9,6 +9,8 @@ import SwiftUI
 
 extension RoundedRectangle {
     
+    // TODO: check 
+    
     init(cornerSize: CGFloat) {
         self.init(cornerSize: CGSize(width: cornerSize, height: cornerSize))
     }

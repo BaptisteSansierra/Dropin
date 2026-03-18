@@ -28,7 +28,7 @@ struct TagListView: View {
         NavigationStack(path: $viewModel.coordinator.path) {
             List {
                 ForEach(tags) { tag in
-                    if !tag.databaseDeleted {
+                    if tag.isActive {
                         HStack {
                             TagView(name: tag.name, color: tag.color)
                             Spacer()

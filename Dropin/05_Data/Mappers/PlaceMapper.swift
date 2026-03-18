@@ -47,7 +47,8 @@ public enum PlaceMapper {
                                 url: urls,
                                 notes: sdPlace.notes,
                                 images: sdPlace.images,
-                                creationDate: sdPlace.creationDate)
+                                creationDate: sdPlace.creationDate,
+                                deletionDate: sdPlace.deletionDate)
         //place.groupColor = sdPlace.group?.color
         // Relationships were created but not linked, do it manually
         if !skipRelationships {
@@ -75,6 +76,5 @@ public enum PlaceMapper {
                        url: place.url.map { $0.rawValue },
                        notes: place.notes,
                        images: place.images)
-
     }
 }
