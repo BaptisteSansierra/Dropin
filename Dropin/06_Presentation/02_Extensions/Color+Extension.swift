@@ -19,7 +19,7 @@ extension Color {
             }
         })
     }
-    
+
     init(rgba: String) {
         var red: CGFloat = 0.0
         var green: CGFloat = 0.0
@@ -83,25 +83,30 @@ extension Color {
         let blueLightRange = Double(1 - resolved.blue)
         return Color(red: Double(resolved.red) + f * redLightRange,
                      green: Double(resolved.green) + f * greenLightRange,
-                     blue: Double(resolved.blue) + f * blueLightRange)
+                     blue: Double(resolved.blue) + f * blueLightRange,
+                     opacity: Double(resolved.opacity))
     }
 
     func darken(factor: Double) -> Color {
         //@Environment(\.self) var env
         let resolved = self.resolve(in: EnvironmentValues())
         let f = factor < 0 ? 0 : (factor > 1 ? 1 : factor)
-        return Color(red: Double(resolved.red) * f,
-                     green: Double(resolved.green) * f,
-                     blue: Double(resolved.blue) * f)
+        return Color(red: Double(resolved.red) * (1 - f),
+                     green: Double(resolved.green) * (1 - f),
+                     blue: Double(resolved.blue) * (1 - f),
+                     opacity: Double(resolved.opacity))
     }
-    
-    func isDark() -> Bool {
-        guard let uiColor = UIColor(self).cgColor.components else { return false }
+
+    func luminance() -> CGFloat {
+        guard let uiColor = UIColor(self).cgColor.components else { return 0 }
         let r = uiColor[0]
         let g = uiColor[1]
         let b = uiColor[2]
-        // luminance formula
         let luminance = 0.299 * r + 0.587 * g + 0.114 * b
-        return luminance < 0.5
+        return luminance
+    }
+
+    func isDark() -> Bool {
+        return luminance() < 0.5
     }
 }

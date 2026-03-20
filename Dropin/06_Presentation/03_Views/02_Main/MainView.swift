@@ -33,6 +33,9 @@ struct MainView: View {
                     
                     viewModel.createPlacesMapView()
                         .opacity(selectedTab == 0 ? 1 : 0)
+                        .padding(.top, navBarHeight)
+                        .padding(.bottom, DropinApp.ui.mainTabBarHeight)
+                        .ignoresSafeArea()
                     
                     viewModel.createPlacesListView()
                         .opacity(selectedTab == 1 ? 1 : 0)
@@ -110,7 +113,8 @@ struct MainView: View {
             ZStack {
                 Rectangle()
                     .frame(height: DropinApp.ui.mainTabBarHeight)
-                    .foregroundStyle(.regularMaterial)
+                    //.foregroundStyle(.regularMaterial)
+                    .foregroundStyle(.white.opacity(0.35))
                 VStack {
                     HStack(alignment: .top) {
                         Button {

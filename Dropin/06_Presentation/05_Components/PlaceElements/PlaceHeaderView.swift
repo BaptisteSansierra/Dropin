@@ -46,7 +46,7 @@ struct PlaceHeaderView: View {
                 
                 ZStack(alignment: .topLeading) {
                     let color = place.groupColor
-                    PlaceAnnotationView(color: color,
+                    PlaceRectAnnotationView(color: color,
                                         icon: place.group?.icon,
                                         iconExtra: place.icon)
                     .padding()

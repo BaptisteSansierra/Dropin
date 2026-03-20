@@ -30,11 +30,19 @@ struct PlaceEditView: View {
     var body: some View {
         viewModel.body(place: $editedPlace, showMissingName: $showMissingName)
             .navigationBarBackButtonHidden(true)
-            .toolbar { toolbar }
-//            .onChange(of: editedPlace) { oldValue, newValue in
-//                print("Place edited !! isEqual to source = \(editedPlace.isContentEqual(srcPlace))")
-//                edited = !editedPlace.isContentEqual(srcPlace)
-//            }
+            // Issue: iOS<26 NavigationBar bg is transparent but become visible when view is scrolled
+            // Fix: if iOS<26 : hide nav bar, add overlay buttons
+            .hideNavigationBarBelowIOS26()
+            .overlay(content: {
+                if #unavailable(iOS 26) {
+                    toolbarView
+                }
+            })
+            .toolbar {
+                if #available(iOS 26, *) {
+                    toolbar
+                }
+            }
             .onChange(of: editedPlace.changeToken) { oldValue, newValue in
                 print("Place edited !! isEqual to source = \(editedPlace.isContentEqual(srcPlace))")
                 edited = !editedPlace.isContentEqual(srcPlace)
@@ -42,27 +50,48 @@ struct PlaceEditView: View {
     }
     
     // MARK: - Subviews
+    private var cancelButtonView: some View {
+        Button("common.cancel", action: cancelEdits)
+            .tint(.blue)
+            .confirmationDialog("dialog.cancel_edits.title",
+                                isPresented: $confirmCancel,
+                                titleVisibility: .visible,
+                                actions: {
+                Button("dialog.cancel_edits.discard", role: .destructive) {
+                    editedPlace = srcPlace.copy()
+                    viewModel.pop()
+                }
+                Button("dialog.cancel_edits.cancel") {
+                }
+            })
+    }
+    
+    private var applyButtonView: some View {
+        Button("common.done", action: applyEdits)
+            .disabled(!edited)
+            .tint(.blue)
+    }
+    
+    private var toolbarView: some View {
+        VStack {
+            HStack {
+                cancelButtonView
+                    .padding()
+                Spacer()
+                applyButtonView
+                    .padding()
+            }
+            Spacer()
+        }
+    }
+    
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button("common.cancel", action: cancelEdits)
-                .tint(.blue)
-                .confirmationDialog("dialog.cancel_edits.title",
-                                    isPresented: $confirmCancel,
-                                    titleVisibility: .visible,
-                                    actions: {
-                    Button("dialog.cancel_edits.discard", role: .destructive) {
-                        editedPlace = srcPlace.copy()
-                        viewModel.pop()
-                    }
-                    Button("dialog.cancel_edits.cancel") {
-                    }
-                })
+            cancelButtonView
         }
         ToolbarItem(placement: .topBarTrailing) {
-            Button("common.done", action: applyEdits)
-                .disabled(!edited)
-                .tint(.blue)
+            applyButtonView
         }
     }
     

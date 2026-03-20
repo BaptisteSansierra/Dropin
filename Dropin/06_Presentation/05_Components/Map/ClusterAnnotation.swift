@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 5/8/25.
 //
 
+#if false
+
 import SwiftUI
 import MapKit
 import CoreLocation
@@ -88,5 +90,7 @@ struct MockClusterAnnotation: View {
         MockClusterAnnotation()
     }
 }
+
+#endif
 
 #endif

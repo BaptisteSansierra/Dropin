@@ -4,68 +4,34 @@
 //
 //  Created by baptiste sansierra on 18/3/26.
 //
-#if false
 
 import SwiftUI
 import MapKit
 
 @MainActor
-class MKPlaceAnnotation: NSObject, MKAnnotation {
-    let id: UUID
-    let coordinate: CLLocationCoordinate2D
-    let title: String?
-    let subtitle: String?
-    let color: UIColor
-    let icon: UIImage?
-    let place: PlaceUI  // Backreference
-    
-    init(place: PlaceUI) {
-        self.id = place.id
-        self.coordinate = place.coordinates
-        self.title = place.name
-        self.subtitle = place.address
-        
-        // Convert SwiftUI Color → UIColor
-        self.color = UIColor(place.group?.color ?? .gray)
-        
-        // Convert Icon → UIImage
-        if let iconSource = place.icon {
-            self.icon = iconSource.uiImage  // You need this conversion
-        } else {
-            self.icon = nil
-        }
-        
-        self.place = place
-        super.init()
-    }
-    
-    override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? PlaceAnnotation else { return false }
-        return id == other.id
-    }
-    
-    override var hash: Int {
-        id.hashValue
-    }
-}
-
-
 struct PlacesMapViewRepresentable: UIViewRepresentable {
 
-    //@Binding var viewModel: PlacesMapViewModel
-    @Bindable var viewModel: PlacesMapViewModel
+    // MARK: States & Bindings
+    @Bindable private var viewModel: PlacesMapViewModel
     @Binding private var places: [PlaceUI]
-
+    @State private var tmpPlaceAnnotation: MKTempPlaceAnnotation?
+    
+    // MARK: Init
     init(viewModel: PlacesMapViewModel, places: Binding<[PlaceUI]>) {
         self.viewModel = viewModel
         self._places = places
     }
-    
+
+    // MARK: UIViewRepresentable
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = true
+        mapView.userTrackingMode = .follow // Track user location at launch
+        mapView.mapType = .standard
         
+        AnnotationViewFactory.registerViews(for: mapView)
+                
         // Gestures
         let longPress = UILongPressGestureRecognizer(
             target: context.coordinator,
@@ -78,18 +44,17 @@ struct PlacesMapViewRepresentable: UIViewRepresentable {
     
     func updateUIView(_ mapView: MKMapView, context: Context) {
         
-        // Execute action if changed
-        if let action = viewModel.currentAction,
-           action != context.coordinator.lastAction {
-            
-            context.coordinator.lastAction = action
-            executeAction(action, on: mapView)
-            
-            // Reset action after execution
-            DispatchQueue.main.async {
-                viewModel.currentAction = nil
-            }
+        // 0. Map style
+        applyMapStyle(to: mapView,
+                      satellite: viewModel.mapSettings.satellite,
+                      hidePointsOfInterest: viewModel.mapSettings.hidePointsOfInterest)
+        
+        // 1. Update region (only if changed)
+        if !mapView.region.isApproximatelyEqual(to: viewModel.mapSettings.currentRegion) {
+            mapView.setRegion(viewModel.mapSettings.currentRegion, animated: true)
         }
+        
+        // 2. Update annotations
         
         // Update region (only if changed to avoid loops)
         if !mapView.region.isApproximatelyEqual(to: viewModel.mapSettings.currentRegion) {
@@ -99,33 +64,70 @@ struct PlacesMapViewRepresentable: UIViewRepresentable {
         // Update annotations
         updateAnnotations(mapView)
         
-        // Update selection
-        /*
-        if let selected = viewModel.selectedPlace {
-            let annotation = mapView.annotations.first {
-                ($0 as? PlaceAnnotation)?.id == selected.id
-            }
-            mapView.selectAnnotation(annotation, animated: true)
+        // 3. Handle actions
+        if let action = viewModel.currentAction {
+            // Reset action once it's catched
+            viewModel.currentAction = nil
+            executeAction(action, on: mapView, context: context)
         }
-         */
-    }
-    
-    private func executeAction(_ action: PlacesMapViewModel.MapAction, on mapView: MKMapView) {
     }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(viewModel: viewModel)
     }
     
-    private func updateAnnotations(_ mapView: MKMapView) {
+    // MARK: private methods
+    private func applyMapStyle(to mapView: MKMapView, satellite: Bool, hidePointsOfInterest: Bool) {
+        // Map type
+        mapView.mapType = satellite ? .hybrid : .standard
         
-        /*
-        let newAnnotations = places.map { <#PlaceUI#> in
-            <#code#>
+        // Points of interest filter
+        if hidePointsOfInterest {
+            mapView.pointOfInterestFilter = MKPointOfInterestFilter(including: [.publicTransport])
+        } else {
+            mapView.pointOfInterestFilter = .includingAll
         }
-         */
         
-        let current = mapView.annotations.compactMap { $0 as? PlaceAnnotation }
+        // Traffic
+        mapView.showsTraffic = false
+    }
+    
+    private func executeAction(_ action: PlacesMapViewModel.MapAction, on mapView: MKMapView, context: Context) {
+        switch action {
+            case .clearSelection:
+                for annotation in mapView.selectedAnnotations {
+                    mapView.deselectAnnotation(annotation, animated: true)
+                }
+            case .centerOnCoords(let coords, let animated, let sheetHeight):
+                context.coordinator.centerOn(mapView, coords: coords, animated: animated, sheetHeight: sheetHeight)
+            case .reloadData:
+                reloadAnnotations(mapView)
+            case .updateData:
+                updateAnnotations(mapView)
+            case .updateAddressPickerPositions:
+                context.coordinator.updateAddressPickerPositions(mapView)
+        }
+    }
+    
+    private func reloadAnnotations(_ mapView: MKMapView) {
+        let newAnnotations = places
+            .filter { $0.isActive }
+            .map { MKPlaceAnnotation(place: $0) }
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.addAnnotations(newAnnotations)
+
+        // Add temporary place
+        if let tmpPlace = viewModel.tmpPlace {
+            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
+        }
+    }
+    
+    private func updateAnnotations(_ mapView: MKMapView) {
+        let newAnnotations = places
+            .filter { $0.isActive }
+            .map { MKPlaceAnnotation(place: $0) }
+
+        let current = mapView.annotations.compactMap { $0 as? MKPlaceAnnotation }
         
         // Remove deleted annotations
         let toRemove = current.filter { currentAnnotation in
@@ -138,75 +140,149 @@ struct PlacesMapViewRepresentable: UIViewRepresentable {
             !current.contains { $0.id == newAnnotation.id }
         }
         mapView.addAnnotations(toAdd)
+
+        // Add / remove temporary place
+        let tmps = mapView.annotations.compactMap { $0 as? MKTempPlaceAnnotation }
+        mapView.removeAnnotations(tmps)
+        if let tmpPlace = viewModel.tmpPlace {
+            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
+        }
     }
 }
 
+// MARK: Coordinator
 extension PlacesMapViewRepresentable {
 
     @MainActor
     class Coordinator: NSObject, MKMapViewDelegate {
-
-        let viewModel: PlacesMapViewModel
-        var lastAction: PlacesMapViewModel.MapAction?
-
+        
+        private let viewModel: PlacesMapViewModel
+        
+        // MARK: init
         init(viewModel: PlacesMapViewModel) {
             self.viewModel = viewModel
         }
         
-        // MARK: - Gestures
+        // MARK: - gestures
         @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+            guard !viewModel.pickingAddress else { return }
+            guard !viewModel.pickingCoordinates else { return }
             guard gesture.state == .began else { return }
             
             let mapView = gesture.view as! MKMapView
             let point = gesture.location(in: mapView)
-            let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
+            let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
             
-            // viewModel.addPlace(at: coordinate)
+            _ = viewModel.preparePlaceFromCoords(coords: coordinates)
+            viewModel.performAction(.updateData)
+            
+            // Show the creation sheet
+            viewModel.showQuickCreateSheet.toggle()
+            // Center map on new place
+            centerOn(mapView, coords: coordinates, animated: true, sheetHeight: 400)
         }
         
         // MARK: - MKMapViewDelegate
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-                        
-            
-            /*
-            guard let placeAnnotation = annotation as? PlaceAnnotation else {
-                return nil
-            }
-            
-            let identifier = "PlacePin"
-            let view = mapView.dequeueReusableAnnotationView(
-                withIdentifier: identifier
-            ) as? MKMarkerAnnotationView ?? MKMarkerAnnotationView(
-                annotation: annotation,
-                reuseIdentifier: identifier
-            )
-            
-            view.annotation = placeAnnotation
-            view.markerTintColor = placeAnnotation.color
-            view.glyphImage = placeAnnotation.icon
-            view.canShowCallout = true
-            
-            return view
-             */
-            
-            return nil
+            AnnotationViewFactory.view(for: annotation, in: mapView)
+        }
+        
+        func mapView(_ mapView: MKMapView, shouldSelect view: MKAnnotationView) -> Bool {
+            guard !viewModel.pickingAddress else { return false }
+            guard !viewModel.pickingCoordinates else { return false }
+            return true
         }
         
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-//            guard let annotation = view.annotation as? PlaceAnnotation else { return }
-//            viewModel.selectPlace(annotation)
+            if let cluster = view.annotation as? MKClusterAnnotation {
+                // Zoom into cluster
+                mapView.showAnnotations(cluster.memberAnnotations, animated: true)
+            } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
+                
+                view.isSelected = true
+                
+                let defaultSheetDetent: CGFloat = 400 // FIXME: this value should be provided somehow
+                centerOn(mapView,
+                         coords: placeAnnotation.coordinate,
+                         animated: true,
+                         sheetHeight: defaultSheetDetent)
+                viewModel.selectPlace(placeAnnotation.id)
+            }
         }
         
-//        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-//            <#code#>
-//        }
+        func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+            guard let _ = view.annotation as? MKPlaceAnnotation else { return }
+            view.isSelected = false
+        }
         
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
             // Update ViewModel when user pans/zooms
             viewModel.mapSettings.currentMKCamera = mapView.camera
             viewModel.mapSettings.currentRegion = mapView.region
             viewModel.mapSettings.currentRect = mapView.visibleMapRect
+            
+            if viewModel.pickingAddress || viewModel.pickingCoordinates {
+                updateAddressPickerPositions(mapView)
+            }
+        }
+        
+        // MARK: - private methods
+        fileprivate func updateAddressPickerPositions(_ mapView: MKMapView) {
+            // Compute pickers coordinates
+            let sheetHeight = viewModel.pickingAddress ? viewModel.addressSheetHeight : viewModel.coordinatesSheetHeight
+            let offset: CGFloat = (sheetHeight - DropinApp.ui.mainTabBarHeight) * -0.5
+
+            let centerPoint = mapView.convert(mapView.camera.centerCoordinate, toPointTo: mapView)
+            let offsetPoint = CGPoint(x: centerPoint.x, y: centerPoint.y + offset)
+            let offsetCoords = mapView.convert(offsetPoint, toCoordinateFrom: mapView)
+            
+            viewModel.addressPickerCoords = offsetCoords
+            viewModel.addressPickerViewCoords = offsetPoint
+            viewModel.pickedAddress = nil
+            
+            fetchAddress()
+        }
+        
+        
+        private var addressPickingTask: Task<Void, Never>? = nil
+        
+        private func fetchAddress() {
+            guard viewModel.pickedAddress == nil else {
+                // Already fetched for this position
+                return
+            }
+            addressPickingTask?.cancel()
+            addressPickingTask = Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                guard !Task.isCancelled else {
+                    return
+                }
+                do {
+                    let address = try await viewModel.fetchAddress(coords: viewModel.addressPickerCoords)
+                    viewModel.pickedAddress = address
+                } catch {
+                    // TODO: handle error
+                    return
+                }
+            }
+        }
+
+        fileprivate func centerOn(_ mapView: MKMapView,
+                                  coords: CLLocationCoordinate2D,
+                                  animated: Bool = true,
+                                  sheetHeight: CGFloat? = nil) {
+            guard let sheetHeight = sheetHeight else {
+                // Simple center
+                mapView.setCenter(coords, animated: animated)
+                return
+            }
+            let fraction = sheetHeight / UIScreen.main.bounds.size.height
+            let latitudeDeltaOverSheet = mapView.region.span.latitudeDelta * (1 - fraction)
+            let offset = mapView.region.span.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
+            // Offset the coords so location is visible on the map despite the sheet appearing
+            let coords = CLLocationCoordinate2D(latitude: coords.latitude - offset,
+                                                longitude: coords.longitude)
+            mapView.setCenter(coords, animated: animated)
         }
     }
 }
-#endif

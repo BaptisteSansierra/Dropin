@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "\n\n" : {
+
+    },
     "_NOTTR_Dr" : {
       "localizations" : {
         "en" : {
@@ -1559,7 +1562,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "From a name or an address"
+            "value" : "Search by address or name"
           }
         }
       }
@@ -1579,7 +1582,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "From coordinates (not implemented)"
+            "value" : "Enter coordinates"
           }
         }
       }
@@ -1589,7 +1592,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "From current position"
+            "value" : "Use current location"
           }
         }
       }
@@ -1599,7 +1602,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drop a pin (not implemented)"
+            "value" : "Drop pin on map"
           }
         }
       }

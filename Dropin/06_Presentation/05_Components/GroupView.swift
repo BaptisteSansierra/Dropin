@@ -134,6 +134,6 @@ struct GroupView: View {
                   actionType: .edit,
                   action: { print("Eat a carrot") })
 
-        PlaceAnnotationView(color: .brown, icon: .sf("tag"))
+        PlaceRectAnnotationView(color: .brown, icon: .sf("tag"))
     }
 }

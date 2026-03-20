@@ -5,6 +5,9 @@
 //  Created by baptiste sansierra on 16/3/26.
 //
 
+
+
+#if false
 import SwiftUI
 
 struct MapMarkerShape: Shape {
@@ -93,3 +96,4 @@ struct MapMarkerShape: Shape {
             }
     }
 }
+#endif

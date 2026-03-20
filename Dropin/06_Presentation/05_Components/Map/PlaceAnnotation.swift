@@ -5,14 +5,14 @@
 //  Created by baptiste sansierra on 5/8/25.
 //
 
+
 import SwiftUI
 import MapKit
 import CoreLocation
 import ClusterMap
 
-
 /// Draw a rounded bordered rectangle + SFSymbol as annotation
-struct PlaceAnnotation: MapContent {
+struct PlaceRectAnnotation: MapContent {
     
     // MARK: - State & Bindables
     @Binding var selectedPlaceId: UUID?
@@ -33,7 +33,7 @@ struct PlaceAnnotation: MapContent {
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             
-            PlaceAnnotationView(color: place.groupColor,
+            PlaceRectAnnotationView(color: place.groupColor,
                                 icon: place.group?.icon,
                                 iconExtra: place.icon)
             .onTapGesture {
@@ -43,93 +43,8 @@ struct PlaceAnnotation: MapContent {
     }
 }
 
-struct PlaceAnnotationView: View {
-
-    private enum Style {
-        case borderedRect
-        case plainCircle // LEGACY
-    }
-    
-    // MARK: - private vars
-    private var style: Style = .borderedRect
-    private var color: Color
-    private var icon: Icon?
-    private var iconExtra: Icon?
-    private var size: CGFloat
-
-    // MARK: - init
-    init(color: Color = .dropinPrimary,
-         icon: Icon? = nil,
-         iconExtra: Icon? = nil,
-         size: CGFloat = 36) {
-        self.color = color
-        self.icon = icon
-        self.iconExtra = iconExtra
-        self.size = size
-    }
-
-    // MARK: - Body
-    var body: some View {
-
-        switch style {
-            case .plainCircle:
-                // LEGACY
-                ZStack {
-                    Circle()
-                        .fill(.backgroundPrimary)
-                        .frame(width: size, height: size)
-                    Circle()
-                        .fill(color)
-                        .frame(width: size * 30 / 36, height: size * 30 / 36)
-                    if let icon = icon {
-                        IconView(icon: icon)
-                            .sizeXS()
-                            .foregroundStyle(.backgroundPrimary)
-                    }
-                }
-            case .borderedRect:
-                ZStack {
-                    RoundedRectangle(cornerSize: 5)
-                        .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.backgroundPrimary)
-                        .frame(width: size, height: size * 30 / 36)
-                    RoundedRectangle(cornerSize: 5)
-                        .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.backgroundPrimary)
-                        .frame(width: size * 34 / 36, height: size * 28 / 36)
-                    RoundedRectangle(cornerSize: 5)
-                        .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.backgroundPrimary)
-                        .frame(width: size * 32 / 36, height: size * 26 / 36)
-                    if let icon = icon {
-                        IconView(icon: icon)
-                            .size(size * 18 / 36)
-                    } else {
-                        Image("empty")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(.textPrimary.opacity(0.3))
-                            .frame(width: size * 17 / 36, height: size * 17 / 36)
-                    }
-                }
-                .overlay(content: {
-                    if let iconExtra = iconExtra {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 0) {
-                                Spacer()
-                                PlaceIconView(icon: iconExtra, size: size * 20 / 36)
-                            }
-                            Spacer()
-                        }
-                        .offset(x: size * 12 / 36, y: size * -12 / 36)
-                    }
-                })
-        }
-    }
-}
-
 #if DEBUG
-struct MockPlaceAnnotation: View {
+struct MockPlaceRectAnnotation: View {
     var mock: MockContainer
     @State var place1: PlaceUI
     @State var place2: PlaceUI
@@ -140,11 +55,11 @@ struct MockPlaceAnnotation: View {
 
     var body: some View {
         Map {
-            PlaceAnnotation(place: $place1, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: $place2, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: $place3, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: $place4, selectedPlaceId: $selectedPlaceId)
-            PlaceAnnotation(place: $place5, selectedPlaceId: $selectedPlaceId)
+            PlaceRectAnnotation(place: $place1, selectedPlaceId: $selectedPlaceId)
+            PlaceRectAnnotation(place: $place2, selectedPlaceId: $selectedPlaceId)
+            PlaceRectAnnotation(place: $place3, selectedPlaceId: $selectedPlaceId)
+            PlaceRectAnnotation(place: $place4, selectedPlaceId: $selectedPlaceId)
+            PlaceRectAnnotation(place: $place5, selectedPlaceId: $selectedPlaceId)
         }
     }
     
@@ -180,6 +95,7 @@ struct MockPlaceAnnotation: View {
 }
 
 #Preview {
-    MockPlaceAnnotation()
+    MockPlaceRectAnnotation()
 }
 #endif
+

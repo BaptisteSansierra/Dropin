@@ -12,17 +12,18 @@ struct AddressPickerView: View {
         
     @Binding private var coords: CLLocationCoordinate2D
     @Binding private var address: String?
-    
-    let onFetchAddress: () -> Void
+    @State private var loading: Bool = false
+
+    //let onFetchAddress: () -> Void
     let onComplete: () -> Void
 
     init(coords: Binding<CLLocationCoordinate2D>,
          address: Binding<String?>,
-         onFetchAddress: @escaping () -> Void,
+         //onFetchAddress: @escaping () -> Void,
          onComplete: @escaping () -> Void) {
         self._coords = coords
         self._address = address
-        self.onFetchAddress = onFetchAddress
+        //self.onFetchAddress = onFetchAddress
         self.onComplete = onComplete
     }
     
@@ -62,6 +63,7 @@ struct AddressPickerView: View {
                     }
                     .padding(.horizontal)
                 
+                /*
                 Text(verbatim: CLLocationCoordinate2D.barcelona.formatted())
                     .textStyle(.formSectionTitle2)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -74,7 +76,7 @@ struct AddressPickerView: View {
                         //.shadow(radius: 5)
                     }
                     .padding(.horizontal)
-
+                 */
                 
                 VStack(spacing: 0) {
                     Text("common.address")
@@ -82,27 +84,41 @@ struct AddressPickerView: View {
                         .padding(.horizontal)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 5)
-                    //let address = viewModel.pickedAddress == nil ? String(localized: "common.na") : viewModel.pickedAddress!
-                    let address = self.address == nil ? String(localized: "common.na") : self.address!
-                    Text(address)
-                        .textStyle(.formSectionTitle2)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
-                    //.padding(.top, 5)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-                        .background {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(.white)
-                                .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
-                            //.shadow(radius: 5)
+                    if let address = self.address {
+                        Text(address)
+                            .textStyle(.formSectionTitle2)
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .padding(.vertical, 10)
+                            .background {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(.white)
+                                    .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
+                                //.shadow(radius: 5)
+                            }
+                            .padding(.horizontal)
+                    } else {
+                        ZStack {
+                            Text("\n\n")
+                                .textStyle(.formSectionTitle2)
+                                .lineLimit(nil)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
+                                .padding(.vertical, 10)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.white)
+                                        .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
+                                }
+                                .padding(.horizontal)
+                            ProgressView()
                         }
-                        .padding(.horizontal)
+                    }
                 }
-                .padding(.top, 20)
-                //                   .padding(.horizontal)
-                
+                .padding(.top, 20)                
                 
                 
                 /*
@@ -124,9 +140,11 @@ struct AddressPickerView: View {
                 
                 
                 Spacer()
+                /*
                 SecondaryButton(text: "create_place.fetch") {
                     onFetchAddress()
                 }
+                 */
                 .padding(.bottom)
                 MainButton(text: "create_place.create") {
                     onComplete()
@@ -140,12 +158,18 @@ struct AddressPickerView: View {
 #Preview {
     
     @Previewable @State var coords = CLLocationCoordinate2D.barcelona
-    @Previewable @State var address: String? = "..."
+    @Previewable @State var address: String? = nil
 
     AddressPickerView(coords: $coords,
-                      address: $address) {
-        print("fetch")
-    } onComplete: {
+                      address: $address,
+                      onComplete: {
         print("complete")
-    }
+    })
+
+//    AddressPickerView(coords: $coords,
+//                      address: $address) {
+//        print("fetch")
+//    } onComplete: {
+//        print("complete")
+//    }
 }

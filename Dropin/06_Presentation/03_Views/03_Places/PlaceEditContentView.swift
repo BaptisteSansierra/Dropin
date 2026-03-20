@@ -8,6 +8,7 @@
 import SwiftUI
 import ContactFieldKit
 import NoFlyZone
+import UIKit
 
 struct PlaceEditContentView: View {
     
@@ -120,10 +121,18 @@ struct PlaceEditContentView: View {
             
             VStack {
                 Spacer()
-                PlaceAnnotationView(color: place.groupColor,
-                                    icon: place.group?.icon,
-                                    iconExtra: place.icon,
-                                    size: annotationSize)
+                switch AnnotationViewFactory.pinMode {
+                    case .rect:
+                        PlaceRectAnnotationView(color: place.groupColor,
+                                                icon: place.group?.icon,
+                                                iconExtra: place.icon,
+                                                size: annotationSize)
+                    case .pin:
+                        PlacePinAnnotationView(color: place.groupColor,
+                                               icon: place.group?.icon,
+                                               iconExtra: place.icon,
+                                               size: annotationSize)
+                }
             }
             .padding(.bottom, annotationBottomPading)
             

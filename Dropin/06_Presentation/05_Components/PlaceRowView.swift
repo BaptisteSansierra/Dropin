@@ -26,7 +26,7 @@ struct PlaceRowView: View {
     // MARK: - Body
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            PlaceAnnotationView(color: place.groupColor,
+            PlaceRectAnnotationView(color: place.groupColor,
                                 icon: place.group?.icon,
                                 iconExtra: place.icon)
                 .padding(.trailing)

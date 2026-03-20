@@ -18,7 +18,15 @@ extension View {
     func textStyle(_ style: TextStyleModifier.Style) -> some View {
         modifier(TextStyleModifier(style: style))
     }
+
+    func outline(color: Color = .white, width: CGFloat = 0.5) -> some View {
+        modifier(OutlineModifier(color: color, width: width))
+    }
     
+    func hideNavigationBarBelowIOS26() -> some View {
+        modifier(HideNavigationBarBelowIOS26Modifier())
+    }
+
     //    func `if`<Content: View>(_ condition: Bool, action: @escaping (Self)->Content ) -> some View {
     //        modifier(IfModifier(condition: condition, action: action))
     //    }

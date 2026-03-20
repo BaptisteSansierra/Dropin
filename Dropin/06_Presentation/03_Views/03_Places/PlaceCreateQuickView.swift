@@ -5,8 +5,6 @@
 //  Created by baptiste sansierra on 26/1/26.
 //
 
-#if true
-
 import SwiftUI
 
 struct PlaceCreateQuickView: View {
@@ -28,25 +26,27 @@ struct PlaceCreateQuickView: View {
     // MARK: - Body
     var body: some View {
         // Content
-        VStack(spacing: 0) {
-            PlaceHeaderViewV2(place: $place,
-                              showingMarkerList: $viewModel.showingMarkerList,
-                              editEnabled: true,
-                              isNameFocused: $isNameFocused)
-                .padding(.bottom)
-            PlaceTagsView(place: $place,
-                          showingTagsSelector: $viewModel.showingTagsSelector,
-                          editEnabled: true)
-                .padding(.bottom)
-            PlaceGroupView(place: $place,
-                           showingGroupSelector: $viewModel.showingGroupSelector,
-                           editEnabled: true)
-                .padding(.bottom)
+        ScrollView {
+            VStack(spacing: 0) {
+                PlaceHeaderViewV2(place: $place,
+                                  showingMarkerList: $viewModel.showingMarkerList,
+                                  editEnabled: true,
+                                  isNameFocused: $isNameFocused)
+                    .padding(.bottom)
+                PlaceTagsView(place: $place,
+                              showingTagsSelector: $viewModel.showingTagsSelector,
+                              editEnabled: true)
+                    .padding(.bottom)
+                PlaceGroupView(place: $place,
+                               showingGroupSelector: $viewModel.showingGroupSelector,
+                               editEnabled: true)
+                    .padding(.bottom)
 
-            Spacer()
-            SecondaryButton(text: "create_place.moreOptions", action: moreOptions)
-                .padding(.bottom, 15)
-            MainButton(text: "create_place.save", action: createPlace)
+                Spacer()
+                SecondaryButton(text: "create_place.moreOptions", action: moreOptions)
+                    .padding(.bottom, 15)
+                MainButton(text: "create_place.save", action: createPlace)
+            }
         }
         .task {
             if place.address.isEmpty {
@@ -133,6 +133,3 @@ struct MockPlaceCreateQuickView: View {
 }
 
 #endif
-
-#endif
-

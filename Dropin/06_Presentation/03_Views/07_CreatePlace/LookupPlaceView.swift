@@ -111,7 +111,9 @@ struct LookupPlaceView: View {
             Map(position: $viewModel.camera,
                 interactionModes: []) {
                 if let place = editedPlace, !place.name.isEmpty {
-                    PlaceAnnotation(place: Binding(get: { relocatedPlace(place, item) }, set: { _ in }))
+                    // TODO: replace this ? or offset ??
+                    
+                    PlaceRectAnnotation(place: Binding(get: { relocatedPlace(place, item) }, set: { _ in }))
                 } else {
                     markerResolvingName(for: item)
                 }
