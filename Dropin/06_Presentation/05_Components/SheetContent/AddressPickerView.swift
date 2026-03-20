@@ -62,7 +62,12 @@ struct AddressPickerView: View {
                         //.shadow(radius: 5)
                     }
                     .padding(.horizontal)
-                
+                    .contextMenu {
+                        Button(action: { copyCoordinatesToClipboard() } ){
+                            Text("common.copy_coordinates")
+                        }
+                    }
+
                 /*
                 Text(verbatim: CLLocationCoordinate2D.barcelona.formatted())
                     .textStyle(.formSectionTitle2)
@@ -99,6 +104,12 @@ struct AddressPickerView: View {
                                 //.shadow(radius: 5)
                             }
                             .padding(.horizontal)
+                            .contextMenu {
+                                Button(action: { copyAddressToClipboard() } ){
+                                    Text("common.copy_address")
+                                }
+                            }
+
                     } else {
                         ZStack {
                             Text("\n\n")
@@ -152,6 +163,15 @@ struct AddressPickerView: View {
                 .padding(.bottom, 40)
             }
         //}
+    }
+    
+    private func copyCoordinatesToClipboard() {
+        UIPasteboard.general.string = coords.formatted()
+    }
+
+    private func copyAddressToClipboard() {
+        guard let address = address else { return }
+        UIPasteboard.general.string = address
     }
 }
 

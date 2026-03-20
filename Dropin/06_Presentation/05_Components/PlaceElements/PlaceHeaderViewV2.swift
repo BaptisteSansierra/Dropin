@@ -37,16 +37,30 @@ struct PlaceHeaderViewV2: View {
             HStack(alignment: .center) {
                 
                 ZStack(alignment: .topLeading) {
-                    let color = place.groupColor
-                    PlaceRectAnnotationView(color: color,
-                                        icon: place.group?.icon,
-                                        iconExtra: place.icon)
-                    .padding()
-                    IcoButton(systemImage: "ellipsis",
-                              icoSize: 14,
-                              action: { showingMarkerList.toggle() })
-                        .padding(0)
-                        .opacity(editEnabled ? 1 : 0)
+                    switch AnnotationViewFactory.pinMode {
+                        case .rect:
+                            PlaceRectAnnotationView(color: place.groupColor,
+                                                icon: place.group?.icon,
+                                                iconExtra: place.icon)
+                            .padding()
+                            IcoButton(systemImage: "ellipsis",
+                                      icoSize: 14,
+                                      action: { showingMarkerList.toggle() })
+                                .padding(0)
+                                .opacity(editEnabled ? 1 : 0)
+                        case .pin:
+                            PlacePinAnnotationView(color: place.groupColor,
+                                                   icon: place.group?.icon,
+                                                   iconExtra: place.icon,
+                                                   size: 40)
+                            .padding()
+                            IcoButton(systemImage: "ellipsis",
+                                      icoSize: 14,
+                                      action: { showingMarkerList.toggle() })
+                                .padding(0)
+                                .opacity(editEnabled ? 1 : 0)
+                                .offset(x: 3, y: 3)
+                    }
                 }
                 VStack(alignment: .leading) {
                     TextField(editEnabled ? "placeholder.place_name" : "common.na", text: $place.name)
