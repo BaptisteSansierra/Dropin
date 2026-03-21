@@ -26,6 +26,7 @@ struct AnnotationViewFactory {
         static let cluster = "ClusterPin"
     }
 
+//  TODO: MOVE THIS ELSEWHERE AND PERSIST IT !!!
     static var mapPinMode: MapPinMode = .custom
     static var pinMode: PinMode = .pin
 
