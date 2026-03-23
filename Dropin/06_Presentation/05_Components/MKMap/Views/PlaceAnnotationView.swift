@@ -41,25 +41,32 @@ struct PlaceAnnotationView: View {
                         case .rect:
                             PlaceRectAnnotationView(color: place.groupColor,
                                                     icon: place.group?.icon,
-                                                    iconExtra: place.icon)
+                                                    iconExtra: place.icon,
+                                                    size: DropinApp.ui.pinHeight)
+                            let rectHeight = PlaceRectAnnotationView.heightFor(size: DropinApp.ui.pinHeight)
+                            let arrrowHeight = DropinApp.ui.pinHeight - rectHeight
                             BellCurveShape()
                                 .fill(place.groupColor)
-                                .frame(width: 20, height: 6)
+                                .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
                         case .pin:
                             MapPinView(color: place.groupColor,
                                        icon: place.group?.icon)
-                                .frame(width: 36, height: 36)
+                            .frame(width: DropinApp.ui.pinHeight,
+                                   height: DropinApp.ui.pinHeight)
                     }
                 } else {
                     switch AnnotationViewFactory.pinMode {
                         case .rect:
-                            PlaceRectAnnotationView()
+                            PlaceRectAnnotationView(size: DropinApp.ui.pinHeight)
+                            let rectHeight = PlaceRectAnnotationView.heightFor(size: DropinApp.ui.pinHeight)
+                            let arrrowHeight = DropinApp.ui.pinHeight - rectHeight
                             BellCurveShape()
                                 .fill(.gray)
-                                .frame(width: 20, height: 6)
+                                .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
                         case .pin:
                             MapPinView()
-                                .frame(width: 36, height: 36)
+                                .frame(width: DropinApp.ui.pinHeight,
+                                       height: DropinApp.ui.pinHeight)
                     }
                 }
             }
@@ -85,11 +92,13 @@ struct PlaceAnnotationView: View {
                 Text(place.name)
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.white)
-                    .outline(color: .init(rgba: "FFFFFF"), width: 0.5)
+                    .outline(color: Color(light: .white, dark: .black.opacity(0.5)),
+                             width: 0.5)
                     .overlay {
                         Text(place.name)
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(Color(rgba: "222222"))
+                            .foregroundStyle(Color(light: Color(rgba: "#222222"),
+                                                   dark: Color(rgba: "#DDDDDD")))
                     }
                     .lineLimit(1)
                     .fixedSize()

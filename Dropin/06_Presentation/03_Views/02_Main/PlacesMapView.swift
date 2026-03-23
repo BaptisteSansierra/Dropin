@@ -15,6 +15,8 @@ struct PlacesMapView: View {
     // MARK: - State & Bindings
     @State private var viewModel: PlacesMapViewModel
     @Binding private var places: [PlaceUI]
+    /// True if parent is presenting something over the view (sidebar / menu / ...) => should hide sheetOverlays
+    @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
     
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
@@ -22,9 +24,11 @@ struct PlacesMapView: View {
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
          places: Binding<[PlaceUI]>,
+         isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>) {
         self.viewModel = viewModel
         self._places = places
+        self._isParentPresenting = isParentPresenting
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
     }
 
@@ -44,6 +48,12 @@ struct PlacesMapView: View {
         .onAppear {
             onAppearCallback()
         }
+        .onChange(of: isParentPresenting, { oldValue, newValue in
+            guard isParentPresenting else { return }
+            isParentPresenting.toggle()
+            viewModel.pickingAddress = false
+            viewModel.pickingCoordinates = false
+        })
         // Overlays
         .overlay {
             MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown,
@@ -77,9 +87,20 @@ struct PlacesMapView: View {
         .sheetOverlay(isPresented: $viewModel.pickingAddress) {
             AddressPickerView(coords: $viewModel.addressPickerCoords,
                               address: $viewModel.pickedAddress,
-                              //onFetchAddress: onAddressPickerFetchAddress,
                               onComplete: onAddressPickerComplete)
-            .sheetOverlayDetents([.height(viewModel.pickingAddress ? viewModel.addressSheetHeight : viewModel.coordinatesSheetHeight)])
+            .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
+            .sheetOverlayDragIndicator(.visible)
+        }
+        .sheetOverlay(isPresented: $viewModel.pickingCoordinates) {
+            CoordinatesPickerView(coords: Binding<CLLocationCoordinate2D>(get: {
+                viewModel.coordinatesPickerCoords
+            }, set: { edited in
+                print("SET COORDS : \(edited)")
+                viewModel.coordinatesPickerUpdate(edited)
+            }),
+                                  address: $viewModel.pickedAddress,
+                                  onComplete: onCoordinatesPickerComplete)
+            .sheetOverlayDetents([.height(DropinApp.ui.coordinatesPickerSheetHeight)])
             .sheetOverlayDragIndicator(.visible)
         }
     }
@@ -136,6 +157,8 @@ struct PlacesMapView: View {
         }
         // Create place from lat/long
         Button {
+            viewModel.pickedAddress = nil
+            viewModel.pickingCoordinates.toggle()
         } label: {
             Text("menu.new_place.coords")
                 .textStyle(.body)
@@ -195,11 +218,14 @@ struct PlacesMapView: View {
     
     @ViewBuilder
     private var pickingMarkerView: some View {
-        let markerSize: CGFloat = 36
+        let markerSize: CGFloat = DropinApp.ui.pinHeight
+        let offsetY: CGFloat = viewModel.pickingAddress ?
+                                viewModel.addressPickerViewCoords.y :
+                                viewModel.coordinatesPickerViewCoords.y
         MapPinView(icon: Icon(rawValue: "sf:pin"))
             .frame(width: markerSize, height: markerSize)
             .offset(x: 0,
-                    y: viewModel.addressPickerViewCoords.y - markerSize * 0.5)
+                    y: offsetY - markerSize * 0.5)
     }
 
     // MARK: private methods
@@ -228,7 +254,7 @@ struct PlacesMapView: View {
     }
 
     private func prepareCreatePlaceFromCoords(_ coordinates: CLLocationCoordinate2D) {
-        let createdPlace = viewModel.preparePlaceFromCoords(coords: coordinates)
+        let _ = viewModel.preparePlaceFromCoords(coords: coordinates)
         // Show the creation sheet
         viewModel.showQuickCreateSheet.toggle()
         // Center map on new place
@@ -236,19 +262,27 @@ struct PlacesMapView: View {
     }
     
     private func onAddressPickerComplete() {
-        _ = viewModel.preparePlaceFromAddress(coords: viewModel.addressPickerCoords,
+        onPlacePickerComplete(viewModel.addressPickerCoords)
+    }
+
+    private func onCoordinatesPickerComplete() {
+        onPlacePickerComplete(viewModel.addressPickerCoords)
+    }
+
+    private func onPlacePickerComplete(_ coordinates: CLLocationCoordinate2D) {
+        _ = viewModel.preparePlaceFromAddress(coords: coordinates,
                                               address: viewModel.pickedAddress)
         // Reset picked address
         viewModel.pickedAddress = nil
-        // Hide pickingAddress sheet
-        viewModel.pickingAddress.toggle()
+        // Hide sheet
+        viewModel.pickingAddress = false
+        viewModel.pickingCoordinates = false
         Task {
             try? await Task.sleep(for: .seconds(0.35))
             // Show the creation sheet
             viewModel.showQuickCreateSheet.toggle()
         }
     }
-
 }
 
 // Create Views
@@ -273,10 +307,12 @@ extension PlacesMapView {
 struct MockPlacesMapView: View {
     var mock: MockContainer
     @State var places: [PlaceUI]
+    @State var isParentPresenting: Bool = false
     @State var showingCreatePlaceMenu: Bool = false
 
     var body: some View {
         mock.appContainer.createPlacesMapView(places: $places,
+                                              isParentPresenting: $isParentPresenting,
                                               showingCreatePlaceMenu: $showingCreatePlaceMenu)
     }
     

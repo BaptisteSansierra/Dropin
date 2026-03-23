@@ -104,8 +104,8 @@ struct PlacesMapViewRepresentable: UIViewRepresentable {
                 reloadAnnotations(mapView)
             case .updateData:
                 updateAnnotations(mapView)
-            case .updateAddressPickerPositions:
-                context.coordinator.updateAddressPickerPositions(mapView)
+            case .updatePlacePickerPositions:
+                context.coordinator.updatePlacePickerPositions(mapView)
         }
     }
     
@@ -157,7 +157,8 @@ extension PlacesMapViewRepresentable {
     class Coordinator: NSObject, MKMapViewDelegate {
         
         private let viewModel: PlacesMapViewModel
-        
+        private var addressPickingTask: Task<Void, Never>? = nil
+
         // MARK: init
         init(viewModel: PlacesMapViewModel) {
             self.viewModel = viewModel
@@ -198,7 +199,9 @@ extension PlacesMapViewRepresentable {
                 // Zoom into cluster
                 mapView.showAnnotations(cluster.memberAnnotations, animated: true)
             } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
-                
+                guard !viewModel.pickingAddress else { return }
+                guard !viewModel.pickingCoordinates else { return }
+
                 view.isSelected = true
                 
                 let defaultSheetDetent: CGFloat = 400 // FIXME: this value should be provided somehow
@@ -222,35 +225,46 @@ extension PlacesMapViewRepresentable {
             viewModel.mapSettings.currentRect = mapView.visibleMapRect
             
             if viewModel.pickingAddress || viewModel.pickingCoordinates {
-                updateAddressPickerPositions(mapView)
+                updatePlacePickerPositions(mapView)
             }
         }
         
         // MARK: - private methods
-        fileprivate func updateAddressPickerPositions(_ mapView: MKMapView) {
+        fileprivate func updatePlacePickerPositions(_ mapView: MKMapView) {
+            guard viewModel.pickingAddress || viewModel.pickingCoordinates else {
+                assertionFailure()
+                return
+            }
             // Compute pickers coordinates
-            let sheetHeight = viewModel.pickingAddress ? viewModel.addressSheetHeight : viewModel.coordinatesSheetHeight
+            let sheetHeight = viewModel.pickingAddress ? DropinApp.ui.addressPickerSheetHeight : DropinApp.ui.coordinatesPickerSheetHeight
             let offset: CGFloat = (sheetHeight - DropinApp.ui.mainTabBarHeight) * -0.5
 
             let centerPoint = mapView.convert(mapView.camera.centerCoordinate, toPointTo: mapView)
             let offsetPoint = CGPoint(x: centerPoint.x, y: centerPoint.y + offset)
             let offsetCoords = mapView.convert(offsetPoint, toCoordinateFrom: mapView)
             
-            viewModel.addressPickerCoords = offsetCoords
-            viewModel.addressPickerViewCoords = offsetPoint
-            viewModel.pickedAddress = nil
+            if viewModel.pickingAddress {
+                viewModel.addressPickerCoords = offsetCoords
+                viewModel.addressPickerViewCoords = offsetPoint
+            } else {
+                viewModel.coordinatesPickerCoords = offsetCoords
+                viewModel.coordinatesPickerViewCoords = offsetPoint
+            }
             
+            viewModel.pickedAddress = nil
             fetchAddress()
         }
-        
-        
-        private var addressPickingTask: Task<Void, Never>? = nil
-        
+                
         private func fetchAddress() {
+            guard viewModel.pickingAddress || viewModel.pickingCoordinates else {
+                assertionFailure()
+                return
+            }
             guard viewModel.pickedAddress == nil else {
                 // Already fetched for this position
                 return
             }
+            let coords = viewModel.pickingAddress ? viewModel.addressPickerCoords : viewModel.coordinatesPickerCoords
             addressPickingTask?.cancel()
             addressPickingTask = Task {
                 try? await Task.sleep(for: .seconds(1.5))
@@ -258,7 +272,7 @@ extension PlacesMapViewRepresentable {
                     return
                 }
                 do {
-                    let address = try await viewModel.fetchAddress(coords: viewModel.addressPickerCoords)
+                    let address = try await viewModel.fetchAddress(coords: coords)
                     viewModel.pickedAddress = address
                 } catch {
                     // TODO: handle error

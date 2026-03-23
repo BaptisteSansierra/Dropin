@@ -73,6 +73,16 @@ struct MainView: View {
             .navigationDestination(for: NavigationItem.self) { navigationItem in
                 resolveDestination(navigationItem: navigationItem)
             }
+            .onChange(of: showingSideMenu) { _, newValue in
+                guard newValue else { return }
+                // Hide sheet overlays if any
+                viewModel.isPresenting = true
+            }
+            .onChange(of: viewModel.showingCreatePlaceMenu) { _, newValue in
+                guard newValue else { return }
+                // Hide sheet overlays if any
+                viewModel.isPresenting = true
+            }
         }
         .task {
             Task {
@@ -123,10 +133,14 @@ struct MainView: View {
                             Spacer()
                             Label {
                                 Text("common.map")
-                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary : Color(rgba: "666666"))
+                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary :
+                                                        Color(light: Color(rgba: "666666"),
+                                                              dark: Color(rgba: "AAAAAA")) )
                             } icon: {
                                 Image(systemName: "map")
-                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary : Color(rgba: "666666"))
+                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary :
+                                                        Color(light: Color(rgba: "666666"),
+                                                              dark: Color(rgba: "AAAAAA")) )
                             }
                             .labelStyle(CenteredLabelStyle())
                             Spacer()
@@ -137,10 +151,14 @@ struct MainView: View {
                             Spacer()
                             Label {
                                 Text("common.list")
-                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary : Color(rgba: "666666"))
+                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary :
+                                                        Color(light: Color(rgba: "666666"),
+                                                              dark: Color(rgba: "AAAAAA")) )
                             } icon: {
                                 Image(systemName: "list.bullet")
-                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary : Color(rgba: "666666"))
+                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary :
+                                                        Color(light: Color(rgba: "666666"),
+                                                              dark: Color(rgba: "AAAAAA")) )
                             }
                             .labelStyle(CenteredLabelStyle())
                             Spacer()

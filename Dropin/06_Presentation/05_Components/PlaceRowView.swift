@@ -26,11 +26,27 @@ struct PlaceRowView: View {
     // MARK: - Body
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            PlaceRectAnnotationView(color: place.groupColor,
-                                icon: place.group?.icon,
-                                iconExtra: place.icon)
-                .padding(.trailing)
-                .offset(x: 0, y: 5)
+            switch AnnotationViewFactory.pinMode {
+                case .rect:
+                    PlaceRectAnnotationView(color: place.groupColor,
+                                            icon: place.group?.icon,
+                                            iconExtra: place.icon)
+                    .padding(.trailing)
+                    .ifBelowIOS26(action: { view in
+                        view
+                            .padding(.top, 13)
+                    })
+                case .pin:
+                    PlacePinAnnotationView(color: place.groupColor,
+                                           icon: place.group?.icon,
+                                           iconExtra: place.icon,
+                                           shadow: false)
+                    .padding(.trailing)
+                    .ifBelowIOS26(action: { view in
+                        view
+                            .padding(.top, 13)
+                    })
+            }
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(place.name)
@@ -40,6 +56,10 @@ struct PlaceRowView: View {
                     Text(locationManager.distanceStringTo(place.coordinates) ?? "")
                         .textStyle(.cellDetail)
                 }
+                .ifBelowIOS26(action: { view in
+                    view
+                        .padding(.top, 5)
+                })
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .foregroundStyle(.clear)
@@ -70,12 +90,25 @@ struct MockPlaceRowView: View {
 
     var body: some View {
         List {
-            PlaceRowView(place: place1, locationManager: mock.locationManager)
+            PlaceRowView(place: place1,
+                         locationManager: mock.locationManager)
                 .listRowSeparator(.hidden)
-            PlaceRowView(place: place2, locationManager: mock.locationManager)
+            PlaceRowView(place: place2,
+                         locationManager: mock.locationManager)
                 .listRowSeparator(.hidden)
         }
         .listStyle(.grouped)
+
+        VStack(spacing: 0) {
+            PlaceRowView(place: place1,
+                         locationManager: mock.locationManager)
+                .listRowSeparator(.hidden)
+            Divider()
+            PlaceRowView(place: place2,
+                         locationManager: mock.locationManager)
+                .listRowSeparator(.hidden)
+        }
+
     }
     
     init() {

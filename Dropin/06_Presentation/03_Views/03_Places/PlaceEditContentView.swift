@@ -131,7 +131,8 @@ struct PlaceEditContentView: View {
                         PlacePinAnnotationView(color: place.groupColor,
                                                icon: place.group?.icon,
                                                iconExtra: place.icon,
-                                               size: annotationSize)
+                                               size: annotationSize,
+                                               shadow: false)
                 }
             }
             .padding(.bottom, annotationBottomPading)
@@ -140,7 +141,7 @@ struct PlaceEditContentView: View {
                 Spacer()
                 Text(place.name)
                     .font(.captionMedium)
-                    .foregroundStyle(.textSecondary)
+                    .foregroundStyle(Color(light: .textSecondary, dark: .textPrimary))
                     .opacity(headerNameOpacity)
                     .padding(.bottom, 10)
             }

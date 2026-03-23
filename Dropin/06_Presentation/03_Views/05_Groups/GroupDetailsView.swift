@@ -200,6 +200,7 @@ struct GroupDetailsView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
             } else {
                 Text("common.no_related_places")
                     .textStyle(.formSectionTitle2)
@@ -243,7 +244,7 @@ struct MockGroupDetailsView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.group = mock.getGroupUI(0)
+        self.group = mock.getGroupUI(2)
     }
 }
 

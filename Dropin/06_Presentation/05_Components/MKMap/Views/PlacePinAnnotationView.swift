@@ -14,23 +14,26 @@ struct PlacePinAnnotationView: View {
     private var icon: Icon?
     private var iconExtra: Icon?
     private var size: CGFloat
+    private var shadow: Bool
 
     // MARK: - init
     init(color: Color = .dropinPrimary,
          icon: Icon? = nil,
          iconExtra: Icon? = nil,
-         size: CGFloat = 36) {
+         size: CGFloat = 36,
+         shadow: Bool = true) {
         self.color = color
         self.icon = icon
         self.iconExtra = iconExtra
         self.size = size
+        self.shadow = shadow
     }
 
     // MARK: - Body
     var body: some View {
-        
         MapPinView(color: color,
-                   icon: icon)
+                   icon: icon,
+                   shadow: shadow)
             .frame(width: size, height: size)
             .overlay(content: {
                 if let iconExtra = iconExtra {
@@ -59,42 +62,52 @@ struct MockPlacePinAnnotationView: View {
     @State var place5: PlaceUI
 
     var body: some View {
+        VStack {
+            HStack(spacing: 50) {
+                contentView.environment(\.colorScheme, .light)
+                contentView.environment(\.colorScheme, .dark)
+            }
+            .padding(.bottom, 50)
+            Divider()
+                .padding(.bottom, 50)
+            HStack {
+                PlacePinAnnotationView(color: place5.groupColor,
+                                       icon: place5.group?.icon,
+                                       iconExtra: place5.icon,
+                                       size: size)
+            }
+            .frame(height: 200)
+            
+            Slider(value: $size, in: 10...200)
+                .padding(.horizontal, 30)
+            
+            Divider()
+        }
+    }
+    
+    var contentView: some View {
         VStack(spacing: 30) {
-            HStack(spacing: 40) {
+            HStack(spacing: 10) {
                 PlacePinAnnotationView(color: place1.groupColor,
                                        icon: place1.group?.icon,
                                        iconExtra: place1.icon,
-                                       size: 100)
+                                       size: 50)
                 PlacePinAnnotationView(color: place2.groupColor,
                                        icon: place2.group?.icon,
                                        iconExtra: place2.icon,
-                                       size: 100)
+                                       size: 50)
             }
 
-            HStack(spacing: 40) {
+            HStack(spacing: 10) {
                 PlacePinAnnotationView(color: place3.groupColor,
                                        icon: place3.group?.icon,
                                        iconExtra: place3.icon,
-                                       size: 100)
+                                       size: 50)
                 PlacePinAnnotationView(color: place4.groupColor,
                                        icon: place4.group?.icon,
                                        iconExtra: place4.icon,
-                                       size: 100)
+                                       size: 50)
             }
-
-            Divider()
-            HStack {
-                PlacePinAnnotationView(color: place5.groupColor,
-                                        icon: place5.group?.icon,
-                                        iconExtra: place5.icon,
-                                        size: size)
-            }
-            .frame(height: 200)
-
-            Slider(value: $size, in: 10...200)
-                .padding(.horizontal, 30)
-
-            Divider()
         }
     }
     

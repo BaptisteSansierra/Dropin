@@ -78,6 +78,7 @@ final class AppContainer {
     }
 
     func createPlacesMapView(places: Binding<[PlaceUI]>,
+                             isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
@@ -86,6 +87,7 @@ final class AppContainer {
                                     createPlace: CreatePlace(repository: placeRepository))
         return PlacesMapView(viewModel: vm,
                              places: places,
+                             isParentPresenting: isParentPresenting,
                              showingCreatePlaceMenu: showingCreatePlaceMenu)
     }
     

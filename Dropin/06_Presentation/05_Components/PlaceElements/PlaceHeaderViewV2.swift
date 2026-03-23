@@ -52,7 +52,8 @@ struct PlaceHeaderViewV2: View {
                             PlacePinAnnotationView(color: place.groupColor,
                                                    icon: place.group?.icon,
                                                    iconExtra: place.icon,
-                                                   size: 40)
+                                                   size: 40,
+                                                   shadow: false)
                             .padding()
                             IcoButton(systemImage: "ellipsis",
                                       icoSize: 14,

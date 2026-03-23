@@ -24,29 +24,4 @@ extension CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude + x,
                                       longitude: longitude + y)
     }
-    
-    func formatted() -> String {
-        let latStr = latitude.formatted(.number
-                                            .precision(.fractionLength(0...6))
-                                            .locale(Locale(identifier: "en_US_POSIX")))
-        let lonStr = longitude.formatted(.number
-                                             .precision(.fractionLength(0...6))
-                                             .locale(Locale(identifier: "en_US_POSIX")))
-        return "\(latStr),\(lonStr)"
-    }
 }
-
-/*
-extension CLLocationCoordinate2D: @retroactive Equatable {
-    static public func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
-    }
-}
-
-extension CLLocationCoordinate2D: @retroactive Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(latitude)
-        hasher.combine(longitude)
-    }
-}
-*/

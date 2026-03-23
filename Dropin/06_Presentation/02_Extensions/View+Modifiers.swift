@@ -57,4 +57,17 @@ extension View {
             }
         }
     }
+    
+    @ViewBuilder
+    func ifBelowIOS26<Content: View>(action: (Self) -> Content, elseAction: ((Self) -> Content)? = nil) -> some View {
+        if #available(iOS 26, *) {
+            if let elseAction {
+                elseAction(self)
+            } else {
+                self
+            }
+        } else {
+            action(self)
+        }
+    }
 }

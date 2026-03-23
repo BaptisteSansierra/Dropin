@@ -7,6 +7,8 @@
 
 import SwiftUI
 import CoreLocation
+import MapKit
+import SheetOverlay
 
 struct AddressPickerView: View {
         
@@ -14,83 +16,73 @@ struct AddressPickerView: View {
     @Binding private var address: String?
     @State private var loading: Bool = false
 
-    //let onFetchAddress: () -> Void
     let onComplete: () -> Void
 
     init(coords: Binding<CLLocationCoordinate2D>,
          address: Binding<String?>,
-         //onFetchAddress: @escaping () -> Void,
          onComplete: @escaping () -> Void) {
         self._coords = coords
         self._address = address
-        //self.onFetchAddress = onFetchAddress
         self.onComplete = onComplete
     }
     
     var body: some View {
-        //VStack {
+        VStack(spacing: 0) {
+            /*
+            Text("common.coordinates")
+                .textStyle(.formSectionTitle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.top, 20)
+                .padding(.bottom, 5)
+            
+            Text(verbatim: coords.formatted())
+                .textStyle(.formSectionTitle2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.white)
+                        .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
+                }
+                .padding(.horizontal)
+                .contextMenu {
+                    Button(action: { copyCoordinatesToClipboard() } ){
+                        Text("common.copy_coordinates")
+                    }
+                }
+            */
+            
             VStack(spacing: 0) {
-                
-                /*
-                 HStack(alignment: .center) {
-                 Text("common.coordinates")
-                 .textStyle(.formSectionTitle)
-                 Text(verbatim: coords.formatted())
-                 .textStyle(.formSectionTitle2)
-                 .padding(.leading, 20)
-                 Spacer()
-                 }
-                 .padding(.leading)
-                 .padding(.top, 20)
-                 */
-                Text("common.coordinates")
+                Text("common.address")
                     .textStyle(.formSectionTitle)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
-                    .padding(.top, 20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 5)
-                
-                Text(verbatim: coords.formatted())
-                    .textStyle(.formSectionTitle2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.white)
-                            .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
-                        //.shadow(radius: 5)
-                    }
-                    .padding(.horizontal)
-                    .contextMenu {
-                        Button(action: { copyCoordinatesToClipboard() } ){
-                            Text("common.copy_coordinates")
-                        }
-                    }
-
-                /*
-                Text(verbatim: CLLocationCoordinate2D.barcelona.formatted())
-                    .textStyle(.formSectionTitle2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.red)
-                            .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
-                        //.shadow(radius: 5)
-                    }
-                    .padding(.horizontal)
-                 */
-                
-                VStack(spacing: 0) {
-                    Text("common.address")
-                        .textStyle(.formSectionTitle)
-                        .padding(.horizontal)
+                if let address = self.address {
+                    Text(address)
+                        .textStyle(.formSectionTitle2)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 5)
-                    if let address = self.address {
-                        Text(address)
+                        .padding(.horizontal)
+                        .padding(.vertical, 10)
+                        .background {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.white)
+                                .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
+                        }
+                        .padding(.horizontal)
+                        .contextMenu {
+                            Button(action: { copyAddressToClipboard() } ){
+                                Text("common.copy_address")
+                            }
+                        }
+
+                } else {
+                    ZStack {
+                        Text("\n\n")
                             .textStyle(.formSectionTitle2)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
@@ -101,68 +93,20 @@ struct AddressPickerView: View {
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(.white)
                                     .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
-                                //.shadow(radius: 5)
                             }
                             .padding(.horizontal)
-                            .contextMenu {
-                                Button(action: { copyAddressToClipboard() } ){
-                                    Text("common.copy_address")
-                                }
-                            }
-
-                    } else {
-                        ZStack {
-                            Text("\n\n")
-                                .textStyle(.formSectionTitle2)
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal)
-                                .padding(.vertical, 10)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(.white)
-                                        .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
-                                }
-                                .padding(.horizontal)
-                            ProgressView()
-                        }
+                        ProgressView()
                     }
                 }
-                .padding(.top, 20)                
-                
-                
-                /*
-                 VStack(spacing: 0) {
-                 Text("common.address")
-                 .textStyle(.formSectionTitle)
-                 .frame(maxWidth: .infinity, alignment: .leading)
-                 let address = viewModel.pickedAddress == nil ? "common.na" : viewModel.pickedAddress!
-                 Text(address)
-                 .textStyle(.formSectionTitle2)
-                 .lineLimit(nil)
-                 .fixedSize(horizontal: false, vertical: true)
-                 .padding(.top, 5)
-                 .frame(maxWidth: .infinity, alignment: .leading)
-                 }
-                 .padding(.top, 20)
-                 .padding(.leading)
-                 */
-                
-                
-                Spacer()
-                /*
-                SecondaryButton(text: "create_place.fetch") {
-                    onFetchAddress()
-                }
-                 */
-                .padding(.bottom)
-                MainButton(text: "create_place.create") {
-                    onComplete()
-                }
-                .padding(.bottom, 40)
             }
-        //}
+            .padding(.top, 20)
+
+            Spacer()
+            MainButton(text: "create_place.create") {
+                onComplete()
+            }
+            .padding(.bottom, 40)
+        }
     }
     
     private func copyCoordinatesToClipboard() {
@@ -176,20 +120,20 @@ struct AddressPickerView: View {
 }
 
 #Preview {
-    
+    @Previewable @State var presented: Bool = false
     @Previewable @State var coords = CLLocationCoordinate2D.barcelona
     @Previewable @State var address: String? = nil
 
-    AddressPickerView(coords: $coords,
-                      address: $address,
-                      onComplete: {
-        print("complete")
-    })
-
-//    AddressPickerView(coords: $coords,
-//                      address: $address) {
-//        print("fetch")
-//    } onComplete: {
-//        print("complete")
-//    }
+    Map(initialPosition: .camera(.init(centerCoordinate: .barcelona, distance: 1000))) { }
+    .onAppear {
+        presented = true
+    }
+    .sheetOverlay(isPresented: $presented) {
+        AddressPickerView(coords: $coords,
+                          address: $address,
+                          onComplete: {
+            print("complete")
+        })
+        .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
+    }
 }

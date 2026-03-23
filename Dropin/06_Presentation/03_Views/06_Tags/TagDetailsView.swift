@@ -152,6 +152,7 @@ struct TagDetailsView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
             } else {
                 Text("common.no_related_places")
                     .textStyle(.formSectionTitle2)

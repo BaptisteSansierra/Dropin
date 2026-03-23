@@ -21,8 +21,8 @@ struct PlaceholderPinShape: Shape {
         var path = Path()
 
         let fullRadius = PlaceholderPinShape.fullRadius(in: rect)
-        let radius = fullRadius * 0.3
-        let coverage = (fullRadius * 2) * 0.9
+        let radius = fullRadius * 0.35
+        let coverage = (fullRadius * 2) * 0.8
         let topY = (fullRadius * 2 - coverage) * 0.5
         let bottomY = topY + coverage
         

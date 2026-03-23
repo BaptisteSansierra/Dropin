@@ -8,14 +8,12 @@
 import SwiftUI
 
 struct PlaceRectAnnotationView: View {
-
-    private enum Style {
-        case borderedRect
-        case plainCircle // LEGACY
+    
+    static func heightFor(size: CGFloat) -> CGFloat {
+        return size * 30 / 36
     }
     
     // MARK: - private vars
-    private var style: Style = .borderedRect
     private var color: Color
     private var icon: Icon?
     private var iconExtra: Icon?
@@ -34,69 +32,51 @@ struct PlaceRectAnnotationView: View {
 
     // MARK: - Body
     var body: some View {
+        ZStack {
+            RoundedRectangle(cornerSize: 5)
+                .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                .fill(.backgroundPrimary)
+                .frame(width: size,
+                       height: PlaceRectAnnotationView.heightFor(size: size))
+            RoundedRectangle(cornerSize: 5)
+                .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                .fill(.backgroundPrimary)
+                .frame(width: size * 34 / 36, height: size * 28 / 36)
+            RoundedRectangle(cornerSize: 5)
+                .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                .fill(.backgroundPrimary)
+                .frame(width: size * 32 / 36, height: size * 26 / 36)
+            if let icon = icon {
+                IconView(icon: icon)
+                    .size(size * 18 / 36)
+            } else {
+                PlaceholderPinShape()
+                    .frame(width: size * 18 / 36,
+                           height: size * 18 / 36)
+                    .foregroundStyle(.textPrimary)
+                    //.offset(y: contentOffsetY)
 
-        switch style {
-            case .plainCircle:
-                // LEGACY
-                ZStack {
-                    Circle()
-                        .fill(.backgroundPrimary)
-                        .frame(width: size, height: size)
-                    Circle()
-                        .fill(color)
-                        .frame(width: size * 30 / 36, height: size * 30 / 36)
-                    if let icon = icon {
-                        IconView(icon: icon)
-                            .sizeXS()
-                            .foregroundStyle(.backgroundPrimary)
-                    }
-                }
-            case .borderedRect:
-                ZStack {
-                    RoundedRectangle(cornerSize: 5)
-                        .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.backgroundPrimary)
-                        .frame(width: size, height: size * 30 / 36)
-                    RoundedRectangle(cornerSize: 5)
-                        .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.backgroundPrimary)
-                        .frame(width: size * 34 / 36, height: size * 28 / 36)
-                    RoundedRectangle(cornerSize: 5)
-                        .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                        .fill(.backgroundPrimary)
-                        .frame(width: size * 32 / 36, height: size * 26 / 36)
-                    if let icon = icon {
-                        IconView(icon: icon)
-                            .size(size * 18 / 36)
-                    } else {
-                        PlaceholderPinShape()
-                            .frame(width: size * 18 / 36,
-                                   height: size * 18 / 36)
-                            .foregroundStyle(.black)
-                            //.offset(y: contentOffsetY)
-
-                        /*
-                        Image("empty")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(.textPrimary.opacity(0.3))
-                            .frame(width: size * 17 / 36, height: size * 17 / 36)
-                         */
-                    }
-                }
-                .overlay(content: {
-                    if let iconExtra = iconExtra {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 0) {
-                                Spacer()
-                                PlaceIconView(icon: iconExtra, size: size * 20 / 36)
-                            }
-                            Spacer()
-                        }
-                        .offset(x: size * 12 / 36, y: size * -12 / 36)
-                    }
-                })
+                /*
+                Image("empty")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(.textPrimary.opacity(0.3))
+                    .frame(width: size * 17 / 36, height: size * 17 / 36)
+                 */
+            }
         }
+        .overlay(content: {
+            if let iconExtra = iconExtra {
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        Spacer()
+                        PlaceIconView(icon: iconExtra, size: size * 20 / 36)
+                    }
+                    Spacer()
+                }
+                .offset(x: size * 12 / 36, y: size * -12 / 36)
+            }
+        })
     }
 }
 
@@ -110,6 +90,13 @@ struct MockPlaceRectAnnotationView: View {
     @State var place5: PlaceUI
 
     var body: some View {
+        HStack(spacing: 50) {
+            contentView.environment(\.colorScheme, .light)
+            contentView.environment(\.colorScheme, .dark)
+        }
+    }
+    
+    var contentView: some View {
         VStack(spacing: 30) {
             PlaceRectAnnotationView(color: place1.groupColor,
                                     icon: place1.group?.icon,

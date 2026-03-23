@@ -14,14 +14,18 @@ struct MapPinView: View {
     @State private var fontSize: CGFloat = .zero
     @State private var iconColor: Color = .white
 
-    private let shapeColor: Color = .white
+    private let shapeColor: Color = Color(light: .white,
+                                          dark: Color(rgba: "#222222"))
     private var color: Color
     private var icon: Icon?
+    private var shadow: Bool
 
     init(color: Color = .gray,
-         icon: Icon? = nil) {
+         icon: Icon? = nil,
+         shadow: Bool = true) {
         self.color = color
         self.icon = icon
+        self.shadow = shadow
     }
     
     var body: some View {
@@ -29,7 +33,7 @@ struct MapPinView: View {
             ZStack {
                 MapPinShape()
                     .fill(shapeColor)
-                    .shadow(radius: 5)
+                    .shadow(radius: shadow ? 5 : 1)
                 Circle()
                     .fill(gradient())
                     .frame(width: contentRadius * 2, height: contentRadius * 2)
@@ -82,19 +86,23 @@ struct MapPinView: View {
     VStack {
         HStack {
             MapPinView(color: .red,
-                       icon: Icon(rawValue: "sf:mappin"))
+                       icon: Icon(rawValue: "sf:mappin"),
+                       shadow: true)
                 .frame(width: 200, height: 200)
 
-            MapPinView(color: .blue)
+            MapPinView(color: .blue,
+                       shadow: false)
             .frame(width: 200, height: 200)
         }
 
         HStack {
-            MapPinView(color: .red)
+            MapPinView(color: .red, shadow: false)
                 .frame(width: 200, height: 200)
 
             MapPinView(color: .blue,
-                    icon: Icon(rawValue: "sf:mappin"))
+                    icon: Icon(rawValue: "sf:mappin"),
+                    shadow: true)
+
             .frame(width: 200, height: 200)
         }
         

@@ -17,7 +17,10 @@ import CoreLocation
     
     /// show/hide the 'create new place' menu
     var showingCreatePlaceMenu: Bool = false
-    
+
+    /// Should be set to true when showing sidebar / presenting add place menu / ...
+    var isPresenting: Bool = false
+
     // /////////////////////
     // Moved from PlacesListViewModel in order to define ToolBar in MainView
     // currently duplicated, should be solved somehow
@@ -58,7 +61,14 @@ import CoreLocation
             }, set: { value in
                 self.showingCreatePlaceMenu = value
             })
+        let bindingIsPresenting = Binding<Bool>(
+            get: {
+                return self.isPresenting
+            }, set: { value in
+                self.isPresenting = value
+            })
         return appContainer.createPlacesMapView(places: bindingPlaces,
+                                                isParentPresenting: bindingIsPresenting,
                                                 showingCreatePlaceMenu: bindingShowingCreatePlaceMenu)
     }
     

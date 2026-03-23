@@ -28,28 +28,10 @@ class HostingAnnotationView: MKAnnotationView {
 
     // MARK: private properties
     private var hostingController: UIHostingController<PlaceAnnotationView>?
-    private var pinSize: CGSize {
-        switch AnnotationViewFactory.pinMode {
-            case .rect:
-                return CGSize(width: 36, height: 52)
-            case .pin:
-                return CGSize(width: 36, height: 52)
-        }
-    }
     
     // MARK: inits
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        
-        bounds = CGRect(origin: .zero, size: pinSize)
-        
-        // Set offset once (bottom-center on coordinate)
-        switch AnnotationViewFactory.pinMode {
-            case .rect:
-                centerOffset = CGPoint(x: 0, y: -10)
-            case .pin:
-                centerOffset = CGPoint(x: 0, y: -10)
-        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -63,21 +45,7 @@ class HostingAnnotationView: MKAnnotationView {
         hostingController = nil
     }
     
-    // MARK: private methods
-    /*
-    private func getHostingController() -> UIHostingController<PlaceAnnotationView> {
-        guard let hostingController = hostingController else {
-            let hostingController = UIHostingController(rootView: swiftUIView)
-            hostingController.view.backgroundColor = .clear
-            self.hostingController = hostingController
-            
-            addSubview(hostingController.view)
-            hostingController.view.frame = CGRect(origin: .zero, size: pinSize)
-        }
-        return hostingController.rootView = swiftUIView
-    }
-     */
-
+    // MARK: private methods    
     private func configure(view: PlaceAnnotationView) {
         if let hostingController = hostingController {
             hostingController.rootView = view
@@ -87,7 +55,23 @@ class HostingAnnotationView: MKAnnotationView {
             self.hostingController = hostingController
             
             addSubview(hostingController.view)
-            hostingController.view.frame = CGRect(origin: .zero, size: pinSize)
+        }
+        guard let hostingController = hostingController else { return }
+        
+        // Set the size
+        let size = hostingController.sizeThatFits(in: UIView.layoutFittingCompressedSize)
+        hostingController.view.frame = CGRect(origin: .zero, size: size)
+        bounds = CGRect(origin: .zero, size: size)
+        
+        // Set the offset (pin bottom should be centered on coordinate)
+        if let _ = annotation as? MKTempPlaceAnnotation {
+            // No text below pin
+            centerOffset = CGPoint(x: 0, y: -(size.height / 2))
+        } else {
+            let pinHeight: CGFloat = DropinApp.ui.pinHeight
+            let bottomHeight = size.height - pinHeight // text + spacing
+            let offset: CGFloat = -size.height * 0.5 + bottomHeight
+            centerOffset = CGPoint(x: 0, y: offset)
         }
     }
     

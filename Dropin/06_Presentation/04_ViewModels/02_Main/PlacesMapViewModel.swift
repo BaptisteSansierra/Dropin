@@ -25,7 +25,7 @@ import MapKit
         case centerOnCoords(coords: CLLocationCoordinate2D, animated: Bool = true, sheetHeight: CGFloat? = nil)
         case reloadData
         case updateData
-        case updateAddressPickerPositions
+        case updatePlacePickerPositions
 //        case zoomOut
 //        case fitAllPlaces
     }
@@ -56,8 +56,8 @@ import MapKit
     
     
     // UI constants
-    var addressSheetHeight: CGFloat = 350
-    var coordinatesSheetHeight: CGFloat = 400
+    //var addressSheetHeight: CGFloat = 350
+    //var coordinatesSheetHeight: CGFloat = 400
 
     // Alerts toggles
     var showAuthLocAlert = false
@@ -75,18 +75,34 @@ import MapKit
 
     var pickingAddress: Bool = false {
         didSet {
-            performAction(.updateAddressPickerPositions)
+            guard pickingAddress else { return }
+            performAction(.updatePlacePickerPositions)
         }
     }
     var pickingCoordinates: Bool = false {
         didSet {
-            performAction(.updateAddressPickerPositions)
+            guard pickingCoordinates else { return }
+            performAction(.updatePlacePickerPositions)
         }
     }
     var pickedAddress: String? = nil   // Used for creating a new place by address picking
     var addressPickerCoords: CLLocationCoordinate2D = .zero
     var addressPickerViewCoords: CGPoint = .zero
+    var coordinatesPickerCoords: CLLocationCoordinate2D = .zero
+    var coordinatesPickerViewCoords: CGPoint = .zero
     
+    func coordinatesPickerUpdate(_ newCoords: CLLocationCoordinate2D) {
+        performAction(.centerOnCoords(coords: newCoords,
+                                      animated: false,
+                                      sheetHeight: DropinApp.ui.coordinatesPickerSheetHeight))
+        Task {
+            try? await Task.sleep(for: .seconds(0.1))
+            performAction(.updatePlacePickerPositions)
+        }
+    }
+    
+    
+
     /// `selectedPlaceId` is defined when a place annotation is selected on the map, toggle the corresponding sheet
     var selectedPlaceId: UUID?
     var selectedClusterId: UUID?
