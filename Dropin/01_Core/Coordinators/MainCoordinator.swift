@@ -40,19 +40,14 @@ import CoreLocation
     func pushPlaceEditView(placeId: UUID) {
         push(NavigationItem.placeEditView(placeId: placeId))
     }
-
-    // TODO: to be replaced
-//    func pushPlaceDetailsView(placeId: String, editMode: PlaceEditMode = .none) {
-//        push(NavigationItem.placeDetailsView(placeId: placeId, editMode: editMode))
-//    }
     
     func pushLookupPlacesView() {
         push(NavigationItem.lookupPlacesView)
     }
 
-    func pushDropAPinView() {
-        push(NavigationItem.dropAPin)
-    }
+//    func pushDropAPinView() {
+//        push(NavigationItem.dropAPin)
+//    }
 
     func pushLookupPlacesEditView(placeId: UUID) {
         push(NavigationItem.lookupPlacesEditView(placeId: placeId))

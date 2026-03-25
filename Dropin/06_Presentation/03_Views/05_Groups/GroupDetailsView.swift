@@ -129,7 +129,7 @@ struct GroupDetailsView: View {
                         .padding(.leading, 40)
                         //.padding(.trailing, 40)
                     Spacer()
-                    ColorPicker("", selection: $groupColor, supportsOpacity: false)
+                    ColorPicker(String(""), selection: $groupColor, supportsOpacity: false)
                         .labelsHidden()
                         .padding(.leading, 40)
                         .padding(.trailing, 40)

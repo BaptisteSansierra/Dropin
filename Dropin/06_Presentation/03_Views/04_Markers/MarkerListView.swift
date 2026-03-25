@@ -59,7 +59,7 @@ struct MarkerListView: View {
                 .padding()
             HStack {
                 Spacer()
-                Button("", systemImage: "xmark.circle") {
+                Button(String(""), systemImage: "xmark.circle") {
                     dismiss()
                 }
                 .padding()

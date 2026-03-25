@@ -30,11 +30,8 @@ struct MainView: View {
         NavigationStack(path: $viewModel.coordinator.path) {
             GeometryReader { proxy in
                 ZStack {
-                    
-                    viewModel.createPlacesMapView()
+                    viewModel.createPlacesMapView(navBarHeight: navBarHeight)
                         .opacity(selectedTab == 0 ? 1 : 0)
-                        .padding(.top, navBarHeight)
-                        .padding(.bottom, DropinApp.ui.mainTabBarHeight)
                         .ignoresSafeArea()
                     
                     viewModel.createPlacesListView()
@@ -44,7 +41,8 @@ struct MainView: View {
                     
                     // Navigation bar background
                     VStack {
-                        Color.backgroundPrimary
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
                             .frame(height: navBarHeight)
                             .onChange(of: proxy.frame(in: .global)) { oldValue, newValue in
                                 navBarHeight = proxy.safeAreaInsets.top
@@ -52,6 +50,7 @@ struct MainView: View {
                             .onAppear {
                                 navBarHeight = proxy.safeAreaInsets.top
                             }
+                            .background(.thinMaterial)
                         Spacer()
                     }
                     .ignoresSafeArea(edges: .top)
@@ -123,8 +122,8 @@ struct MainView: View {
             ZStack {
                 Rectangle()
                     .frame(height: DropinApp.ui.mainTabBarHeight)
-                    //.foregroundStyle(.regularMaterial)
-                    .foregroundStyle(.white.opacity(0.35))
+                    .foregroundStyle(.ultraThinMaterial)
+                    //.foregroundStyle(.white.opacity(0.35))
                 VStack {
                     HStack(alignment: .top) {
                         Button {
@@ -238,8 +237,8 @@ struct MainView: View {
                                                 marker: marker,
                                                 tags: tags,
                                                 group: group)
-            case .dropAPin:
-                viewModel.createDropAPinView()
+//            case .dropAPin:
+//                viewModel.createDropAPinView()
             // development cases
             case .undefinedDummyView:
                 ZStack {

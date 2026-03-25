@@ -145,12 +145,12 @@ struct SideMenuView: View {
                 .foregroundStyle(.dropinPrimary)
                 .frame(height: 0.5)
             
-            Text("developed_by")
+            Text("developed_by \(DropinApp.strings.developer)")
                 .font(.captionRegular)
                 .padding(.top, 20)
                 .padding(.bottom, 10)
 
-            Text("_NOTTR_v\(appVersion)(\(appBuild))")
+            Text(verbatim: "v\(appVersion)(\(appBuild))")
                 .font(.caption2Light)
                 .padding(.bottom, 20)
         }
@@ -176,7 +176,7 @@ struct SideMenuView: View {
                     .padding(.leading, 25)
                     .padding(.trailing, 25)
 
-                    Text("Dropin")
+                    Text(verbatim: DropinApp.strings.app)
                         .foregroundStyle(.backgroundPrimary)
                         .font(.largeTitleSemibold)
 

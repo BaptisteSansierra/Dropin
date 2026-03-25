@@ -22,19 +22,21 @@ struct TagView: View {
 
     // MARK: - Body
     var body: some View {
-        Text(name)
-            .foregroundStyle(textColor)
-            .textStyle(.tagSticker)
-            .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .background(color)
-//            .background(LinearGradient(colors: [gColor1, gColor2],
-//                                       startPoint: .topLeading,
-//                                       endPoint: .bottomTrailing))
-            .cornerRadius(cornerRadius)
-            .background {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(textColor, style: .init(lineWidth: 1))
-            }
+        ZStack {
+            Text(name)
+                .foregroundStyle(textColor)
+                .textStyle(.tagSticker)
+                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .background(color)
+            //            .background(LinearGradient(colors: [gColor1, gColor2],
+            //                                       startPoint: .topLeading,
+            //                                       endPoint: .bottomTrailing))
+                .cornerRadius(cornerRadius)
+                .background {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .stroke(textColor, style: .init(lineWidth: 1))
+                }
+        }
     }
 
     // MARK: - init

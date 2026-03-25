@@ -20,29 +20,38 @@ struct PlacesMapView: View {
     @Binding private var showingCreatePlaceMenu: Bool
     
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
+    private var navBarHeight: CGFloat
 
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
          places: Binding<[PlaceUI]>,
          isParentPresenting: Binding<Bool>,
-         showingCreatePlaceMenu: Binding<Bool>) {
+         showingCreatePlaceMenu: Binding<Bool>,
+         navBarHeight: CGFloat) {
         self.viewModel = viewModel
         self._places = places
         self._isParentPresenting = isParentPresenting
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
+        self.navBarHeight = navBarHeight
     }
 
     // MARK: - Body
     var body: some View {
-        ZStack(alignment: .top) {
-            creationDialogPlaceholderView
+        GeometryReader { proxy in
             
-            PlacesMapViewRepresentable(viewModel: viewModel,
-                                       places: $places)
-
-            if viewModel.pickingAddress || viewModel.pickingCoordinates {
-                pickingMarkerView
-                    .allowsHitTesting(false)
+            ZStack(alignment: .top) {
+                creationDialogPlaceholderView
+                
+                // Map with bottom inset for card
+                PlacesMapViewVCRepresentable(viewModel: viewModel,
+                                             places: $places,
+                                             //topInset: 0,
+                                             bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
+                
+                if viewModel.pickingAddress || viewModel.pickingCoordinates {
+                    pickingMarkerView
+                        .allowsHitTesting(false)
+                }
             }
         }
         .onAppear {
@@ -59,6 +68,7 @@ struct PlacesMapView: View {
             MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown,
                                hidePointsOfInterest: $viewModel.mapSettings.hidePointsOfInterest,
                                satellite: $viewModel.mapSettings.satellite)
+            .padding(.top, navBarHeight)
         }
         .overlay {
             zoomOnUserOverlay
@@ -87,6 +97,7 @@ struct PlacesMapView: View {
         .sheetOverlay(isPresented: $viewModel.pickingAddress) {
             AddressPickerView(coords: $viewModel.addressPickerCoords,
                               address: $viewModel.pickedAddress,
+                              //onFetch: { },
                               onComplete: onAddressPickerComplete)
             .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
             .sheetOverlayDragIndicator(.visible)
@@ -102,6 +113,7 @@ struct PlacesMapView: View {
                                   onComplete: onCoordinatesPickerComplete)
             .sheetOverlayDetents([.height(DropinApp.ui.coordinatesPickerSheetHeight)])
             .sheetOverlayDragIndicator(.visible)
+            .sheetOverlayKeyboardPolicy(.maxOffset(100))
         }
     }
     
@@ -192,7 +204,10 @@ struct PlacesMapView: View {
                             viewModel.centerOnUser()
                             //viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
                         }
-                        .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
+                        .padding(EdgeInsets(top: 15,
+                                            leading: 10,
+                                            bottom: 15 + DropinApp.ui.mainTabBarHeight,
+                                            trailing: 10))
                     }
                 } else {
                     MapIcoButton(systemImage: "exclamationmark.triangle",
@@ -201,7 +216,10 @@ struct PlacesMapView: View {
                                  color: .warning) {
                         viewModel.showAuthLocAlert.toggle()
                     }
-                    .padding(EdgeInsets(top: 15, leading: 10, bottom: 15, trailing: 10))
+                    .padding(EdgeInsets(top: 15,
+                                        leading: 10,
+                                        bottom: 15 + DropinApp.ui.mainTabBarHeight,
+                                        trailing: 10))
                     .alert("common.loc_auth_missing", isPresented: $viewModel.showAuthLocAlert) {
                         Button("common.open_settings") {
                             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
@@ -225,7 +243,7 @@ struct PlacesMapView: View {
         MapPinView(icon: Icon(rawValue: "sf:pin"))
             .frame(width: markerSize, height: markerSize)
             .offset(x: 0,
-                    y: offsetY - markerSize * 0.5)
+                    y: offsetY - markerSize)
     }
 
     // MARK: private methods
@@ -243,7 +261,7 @@ struct PlacesMapView: View {
                 ()
         }
     }
-    
+
     private func reloadPlaces() async {
         do {
             places = try await viewModel.loadPlaces()
@@ -266,7 +284,7 @@ struct PlacesMapView: View {
     }
 
     private func onCoordinatesPickerComplete() {
-        onPlacePickerComplete(viewModel.addressPickerCoords)
+        onPlacePickerComplete(viewModel.coordinatesPickerCoords)
     }
 
     private func onPlacePickerComplete(_ coordinates: CLLocationCoordinate2D) {
@@ -313,7 +331,8 @@ struct MockPlacesMapView: View {
     var body: some View {
         mock.appContainer.createPlacesMapView(places: $places,
                                               isParentPresenting: $isParentPresenting,
-                                              showingCreatePlaceMenu: $showingCreatePlaceMenu)
+                                              showingCreatePlaceMenu: $showingCreatePlaceMenu,
+                                              navBarHeight: 100)
     }
     
     init() {

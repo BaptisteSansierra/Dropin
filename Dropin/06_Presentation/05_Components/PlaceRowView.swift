@@ -32,20 +32,14 @@ struct PlaceRowView: View {
                                             icon: place.group?.icon,
                                             iconExtra: place.icon)
                     .padding(.trailing)
-                    .ifBelowIOS26(action: { view in
-                        view
-                            .padding(.top, 13)
-                    })
+                    .padding(.top, place.icon == nil ? 0 : 10)
                 case .pin:
                     PlacePinAnnotationView(color: place.groupColor,
                                            icon: place.group?.icon,
                                            iconExtra: place.icon,
                                            shadow: false)
                     .padding(.trailing)
-                    .ifBelowIOS26(action: { view in
-                        view
-                            .padding(.top, 13)
-                    })
+                    .padding(.top, place.icon == nil ? 0 : 10)
             }
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -53,21 +47,17 @@ struct PlaceRowView: View {
                         .textStyle(.cellTitle)
                         .allowsHitTesting(true)
                     Spacer()
-                    Text(locationManager.distanceStringTo(place.coordinates) ?? "")
+                    Text(locationManager.distanceStringTo(place.coordinates) ?? "5.5km")
                         .textStyle(.cellDetail)
+                        .padding(.trailing)
                 }
-                .ifBelowIOS26(action: { view in
-                    view
-                        .padding(.top, 5)
-                })
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .foregroundStyle(.clear)
-                        .frame(height: 40)
-                    Text(place.address.isEmpty ? "" : place.address)
-                        .textStyle(.cellSubtitle)
-                        .multilineTextAlignment(.leading)
-                }
+                Text(place.address.isEmpty ? "" : place.address)
+                    .textStyle(.cellSubtitle)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 5)
+                    .padding(.bottom, 10)
                 ScrollView(.horizontal) {
                     LazyHStack {
                         let tags = place.tags.defaultSorted()
@@ -75,7 +65,9 @@ struct PlaceRowView: View {
                             TagView(name: tag.name, color: tag.color)
                         }
                     }
+                    .padding(.vertical, 2) // add space for borders
                 }
+                .scrollIndicators(.hidden)
             }
         }
     }
@@ -87,27 +79,34 @@ struct MockPlaceRowView: View {
     var mock: MockContainer
     @State var place1: PlaceUI
     @State var place2: PlaceUI
+    @State var place3: PlaceUI
+    @State var place4: PlaceUI
 
     var body: some View {
         List {
             PlaceRowView(place: place1,
                          locationManager: mock.locationManager)
-                .listRowSeparator(.hidden)
             PlaceRowView(place: place2,
                          locationManager: mock.locationManager)
-                .listRowSeparator(.hidden)
+            PlaceRowView(place: place3,
+                         locationManager: mock.locationManager)
+            PlaceRowView(place: place4,
+                         locationManager: mock.locationManager)
         }
         .listStyle(.grouped)
 
-        VStack(spacing: 0) {
-            PlaceRowView(place: place1,
-                         locationManager: mock.locationManager)
-                .listRowSeparator(.hidden)
-            Divider()
-            PlaceRowView(place: place2,
-                         locationManager: mock.locationManager)
-                .listRowSeparator(.hidden)
-        }
+        
+//        VStack(spacing: 0) {
+//            PlaceRowView(place: place3,
+//                         locationManager: mock.locationManager)
+//                .border(.blue)
+//                .listRowSeparator(.hidden)
+//            PlaceRowView(place: place4,
+//                         locationManager: mock.locationManager)
+//                .border(.brown)
+//                .listRowSeparator(.hidden)
+//            Spacer()
+//        }
 
     }
     
@@ -116,6 +115,8 @@ struct MockPlaceRowView: View {
         self.mock = mock
         self.place1 = mock.getPlaceUI(0)
         self.place2 = mock.getPlaceUI(1)
+        self.place3 = mock.getPlaceUI(4)
+        self.place4 = mock.getPlaceUI(5)
     }
 }
 

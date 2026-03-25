@@ -60,7 +60,7 @@ struct PlaceCreateView: View {
         ToolbarItem(placement: .topBarLeading) {
             Button("common.cancel", action: cancelEdits)
                 .tint(.blue)
-                .confirmationDialog("Are you sure you want to cancel new place creation ?",
+                .confirmationDialog("dialog.cancel_creation.title",
                                     isPresented: $confirmCancel,
                                     titleVisibility: .visible,
                                     actions: {

@@ -60,8 +60,7 @@ import SwiftUI
 
     // MARK: Navigation
     func pushPlaceDetailsView(placeId: UUID) {
-        // TODO
-        //coordinator.pushPlaceDetailsView(placeId: placeId)
+        coordinator.pushPlaceEditView(placeId: placeId)
     }
 
     // MARK: - Use cases

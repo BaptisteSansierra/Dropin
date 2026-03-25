@@ -1,97 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
-    "\n\n" : {
-
-    },
-    "_NOTTR_Dr" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dr"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dr"
-          }
-        }
-      }
-    },
-    "_NOTTR_num %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "num %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "num %lld"
-          }
-        }
-      }
-    },
-    "_NOTTR_pin" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "pin"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "pin"
-          }
-        }
-      }
-    },
-    "_NOTTR_v%@(%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "v%1$@(%2$@)"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "v%1$@(%2$@)"
-          }
-        }
-      }
-    },
-    "·" : {
-
-    },
-    "%@" : {
-
-    },
-    "%lld" : {
-
-    },
     "alert.address_copied_body" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Address was copied to clipboard"
+            "value" : "Address copied to clipboard"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adresse copiée dans le presse papier"
+            "value" : "Adresse copiée dans le presse-papiers"
           }
         }
       }
@@ -101,13 +22,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copied !"
+            "value" : "Copied!"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copiée !"
+            "value" : "Copié !"
           }
         }
       }
@@ -117,13 +38,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This action cannot be undone!\nConfirm place deletion ?"
+            "value" : "This action cannot be undone!\nDelete this place?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette action est irréversible !\nConfirmer la suppression de ce lieu ?"
+            "value" : "Cette action est irréversible !\nConfirmer la suppression du lieu ?"
           }
         }
       }
@@ -133,13 +54,47 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete place ‘%@’ ?"
+            "value" : "Delete “%@”?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer le lieu ‘%@’ ?"
+            "value" : "Supprimer le lieu “%@” ?"
+          }
+        }
+      }
+    },
+    "alert.invalid_coords.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter coordinates in the format: 48.864716, 2.349014"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrez les coordonnées suivant le format: 48.864716, 2.349014"
+          }
+        }
+      }
+    },
+    "alert.invalid_coords.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid coordinates"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coordonnées non valides"
           }
         }
       }
@@ -151,6 +106,12 @@
             "state" : "translated",
             "value" : "Please provide a name for this new place"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donnez un nom à ce lieu"
+          }
         }
       }
     },
@@ -159,7 +120,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Give place a name"
+            "value" : "Name this place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom du lieu"
           }
         }
       }
@@ -169,13 +136,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warning: Group ‘%1$@’ is used by %2$lld places!\nThis action cannot be undone.\nConfirm group deletion ?"
+            "value" : "Warning: Group “%1$@” is used by %2$lld places!\nThis action cannot be undone.\nConfirm group deletion ?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attention: Le groupe ‘%1$@’ est associé à %2$lld places!\nCette action est irréversible.\nConfirmer la suppression de ce groupe ?"
+            "value" : "Attention: Le groupe “%1$@” est associé à %2$lld lieux!\nCette action est irréversible.\nConfirmer la suppression du groupe ?"
           }
         }
       }
@@ -191,7 +158,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette action est irréversible.\nConfirmer la suppression de ce groupe ?"
+            "value" : "Cette action est irréversible.\nConfirmer la suppression du groupe ?"
           }
         }
       }
@@ -201,7 +168,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete group ?"
+            "value" : "Delete group?"
           }
         },
         "fr" : {
@@ -217,13 +184,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warning: Tag ‘%1$@’ is used by %2$lld places!\nThis action cannot be undone.\nConfirm tag deletion ?"
+            "value" : "Warning: Tag “%1$@” is used by %2$lld places!\nThis action cannot be undone.\nConfirm tag deletion ?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attention: Le tag ‘%1$@’ est associé à %2$lld places!\nCette action est irréversible.\nConfirmer la suppression de ce tag ?"
+            "value" : "Attention: Le tag “%1$@” est associé à %2$lld lieux!\nCette action est irréversible.\nConfirmer la suppression du tag ?"
           }
         }
       }
@@ -239,7 +206,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette action est irréversible.\nConfirmer la suppression de ce tag ?"
+            "value" : "Cette action est irréversible.\nConfirmer la suppression du tag ?"
           }
         }
       }
@@ -249,7 +216,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete tag ?"
+            "value" : "Delete tag?"
           }
         },
         "fr" : {
@@ -260,13 +227,8 @@
         }
       }
     },
-    "Are you sure you want to cancel new place creation ?" : {
-
-    },
-    "BCN" : {
-
-    },
     "category.accommodation" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -274,10 +236,17 @@
             "state" : "translated",
             "value" : "Accommodation"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hébergement"
+          }
         }
       }
     },
     "category.education" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -285,10 +254,17 @@
             "state" : "translated",
             "value" : "Culture & Education"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Culture & Éducation"
+          }
         }
       }
     },
     "category.entertainment" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -296,10 +272,17 @@
             "state" : "translated",
             "value" : "Entertainment"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divertissement"
+          }
         }
       }
     },
     "category.food_drinks" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -307,10 +290,17 @@
             "state" : "translated",
             "value" : "Food & Drinks"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restauration"
+          }
         }
       }
     },
     "category.nature" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -318,24 +308,44 @@
             "state" : "translated",
             "value" : "Nature & Outdoors"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nature et plein air"
+          }
         }
       }
     },
     "category.people" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "People"
+            "value" : "Community"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Communauté"
           }
         }
       }
     },
     "category.services" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Services"
@@ -344,9 +354,16 @@
       }
     },
     "category.shopping" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shopping"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shopping"
@@ -355,20 +372,34 @@
       }
     },
     "category.special" : {
+      "comment" : "Icon category name (aka Miscellaneous)",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Special"
+            "value" : "Other"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divers"
           }
         }
       }
     },
     "category.sports" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sports & Fitness"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sports & Fitness"
@@ -377,6 +408,7 @@
       }
     },
     "category.transport" : {
+      "comment" : "Icon category name",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -384,29 +416,46 @@
             "state" : "translated",
             "value" : "Transport"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport"
+          }
         }
       }
     },
-    "Cell %lld" : {
-
-    },
     "common.about" : {
+      "comment" : "Sidebar ",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "About"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos"
+          }
         }
       }
     },
     "common.additional_icon" : {
+      "comment" : "Place specific icon",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Additional icon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icône supplémentaire"
           }
         }
       }
@@ -419,6 +468,12 @@
             "state" : "translated",
             "value" : "Address"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse"
+          }
         }
       }
     },
@@ -430,6 +485,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Address line 2"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complément d’adresse"
           }
         }
       }
@@ -483,12 +544,19 @@
       }
     },
     "common.coordinates" : {
+      "comment" : "GPS coordinates",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coordinates"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coordonnées"
           }
         }
       }
@@ -500,6 +568,12 @@
             "state" : "translated",
             "value" : "Copy address"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier l’adresse"
+          }
         }
       }
     },
@@ -509,6 +583,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copy coordinates"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier les coordonnées"
           }
         }
       }
@@ -578,21 +658,35 @@
       }
     },
     "common.directions" : {
+      "comment" : "Aka go to this place",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Directions"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire"
+          }
         }
       }
     },
     "common.done" : {
+      "comment" : "Confirm edits",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Done"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valider"
           }
         }
       }
@@ -621,6 +715,12 @@
             "state" : "translated",
             "value" : "Edit address"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éditer l’adresse"
+          }
         }
       }
     },
@@ -632,16 +732,29 @@
             "state" : "translated",
             "value" : "Edit coordinates"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éditer les coordonnées"
+          }
         }
       }
     },
     "common.edit_on_map" : {
+      "comment" : "Modify place coordinates on a map",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Edit on map"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier sur la carte"
           }
         }
       }
@@ -650,6 +763,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Email"
@@ -664,22 +783,11 @@
             "state" : "translated",
             "value" : "Favorites"
           }
-        }
-      }
-    },
-    "common.go" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Go"
-          }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Y aller"
+            "value" : "Favoris"
           }
         }
       }
@@ -772,6 +880,12 @@
             "state" : "translated",
             "value" : "Keep Editing"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer l’édition"
+          }
         }
       }
     },
@@ -797,6 +911,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement…"
           }
         }
       }
@@ -873,6 +993,12 @@
             "state" : "translated",
             "value" : "Name"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom"
+          }
         }
       }
     },
@@ -882,6 +1008,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Navigate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrer la navigation"
           }
         }
       }
@@ -911,6 +1043,12 @@
             "state" : "translated",
             "value" : "New place"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau lieu"
+          }
         }
       }
     },
@@ -926,17 +1064,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun lieu apparenté"
-          }
-        }
-      }
-    },
-    "common.none" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
           }
         }
       }
@@ -958,6 +1085,7 @@
       }
     },
     "common.notes" : {
+      "comment" : "Note field (aka short message)",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1031,7 +1159,7 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Téléphone"
           }
         }
@@ -1061,6 +1189,12 @@
             "state" : "translated",
             "value" : "Rating"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
         }
       }
     },
@@ -1070,6 +1204,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recents"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récents"
           }
         }
       }
@@ -1097,16 +1237,29 @@
             "state" : "translated",
             "value" : "Report a problem"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaler un problème"
+          }
         }
       }
     },
     "common.save" : {
+      "comment" : "Save a new place",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer"
           }
         }
       }
@@ -1118,6 +1271,12 @@
             "state" : "translated",
             "value" : "Save a new place"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer un nouveau lieu"
+          }
         }
       }
     },
@@ -1128,6 +1287,12 @@
             "state" : "translated",
             "value" : "Settings"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglages"
+          }
         }
       }
     },
@@ -1137,6 +1302,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager"
+          }
+        }
+      }
+    },
+    "common.show_on_map" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show on map"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualiser sur la carte"
           }
         }
       }
@@ -1254,6 +1442,7 @@
       }
     },
     "common.unlink" : {
+      "comment" : "Unlink place from tag/group",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1301,9 +1490,6 @@
         }
       }
     },
-    "Create" : {
-
-    },
     "create_place.create" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1312,10 +1498,17 @@
             "state" : "translated",
             "value" : "Add place"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un lieu"
+          }
         }
       }
     },
     "create_place.fetch" : {
+      "comment" : "Fetch address from coordinates",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1323,10 +1516,17 @@
             "state" : "translated",
             "value" : "Fetch address"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenir l’adresse"
+          }
         }
       }
     },
     "create_place.fetching" : {
+      "comment" : "Fetching address from coordinates",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1349,6 +1549,12 @@
             "state" : "translated",
             "value" : "More options"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus d’options"
+          }
         }
       }
     },
@@ -1368,18 +1574,34 @@
         }
       }
     },
-    "developed_by" : {
+    "developed_by %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Developed by Baptiste Sansierra"
+            "value" : "Developed by %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Développé par Baptiste Sansierra"
+            "value" : "Développé par %@"
+          }
+        }
+      }
+    },
+    "dialog.cancel_creation.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to cancel new place creation ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler la création de ce lieu ?"
           }
         }
       }
@@ -1392,6 +1614,12 @@
             "state" : "translated",
             "value" : "Keep editing"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer l’édition"
+          }
         }
       }
     },
@@ -1402,6 +1630,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Discard Changes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler les modifications"
           }
         }
       }
@@ -1414,14 +1648,14 @@
             "state" : "translated",
             "value" : "Are you sure you want to discard your changes ?"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Êtes-vous sûr de vouloir annuler les modifications ?"
+          }
         }
       }
-    },
-    "Drop a pin" : {
-
-    },
-    "Dropin" : {
-      "shouldTranslate" : false
     },
     "error.fetching" : {
       "localizations" : {
@@ -1429,6 +1663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error while fetching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’obtenir l’adresse"
           }
         }
       }
@@ -1440,6 +1680,12 @@
             "state" : "translated",
             "value" : "No internet connection"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de connexion internet"
+          }
         }
       }
     },
@@ -1449,6 +1695,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No result matching"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun résultat"
           }
         }
       }
@@ -1564,6 +1816,12 @@
             "state" : "translated",
             "value" : "Search by address or name"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher par adresse ou par nom"
+          }
         }
       }
     },
@@ -1573,6 +1831,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "From contact (not implemented)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depuis un contact (not implemented)"
           }
         }
       }
@@ -1584,6 +1848,12 @@
             "state" : "translated",
             "value" : "Enter coordinates"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrer les coordonnées"
+          }
         }
       }
     },
@@ -1593,6 +1863,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Use current location"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser la position actuelle"
           }
         }
       }
@@ -1604,6 +1880,12 @@
             "state" : "translated",
             "value" : "Drop pin on map"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Placer un repère sur la carte"
+          }
         }
       }
     },
@@ -1614,25 +1896,11 @@
             "state" : "translated",
             "value" : "From image library (not implemented)"
           }
-        }
-      }
-    },
-    "MyTitle" : {
-
-    },
-    "navigate" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navigate"
-          }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Itinéraire"
+            "state" : "translated",
+            "value" : "Depuis la photothèque (not implemented)"
           }
         }
       }
@@ -1685,33 +1953,20 @@
         }
       }
     },
-    "pipo" : {
-
-    },
-    "place_details.apply" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apply changes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appliquer les changements"
-          }
-        }
-      }
-    },
     "placeholder.address2" : {
+      "comment" : "Field : Address line 2",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apt, suite, unit, building, floor, etc."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appartement, suite, unité, bâtiment, étage, etc."
           }
         }
       }
@@ -1739,20 +1994,34 @@
             "state" : "translated",
             "value" : "No contact data available, edit the place to add some phone numbers, emails or urls"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune information de contact disponible. Modifiez le lieu pour ajouter un numéro de téléphone, une adresse e-mail ou une URL."
+          }
         }
       }
     },
     "placeholder.no_contact.title" : {
+      "comment" : "No contact data associated to place",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No contact"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune donnée de contact "
+          }
         }
       }
     },
     "placeholder.no_group" : {
+      "comment" : "No group associated to place",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1760,10 +2029,17 @@
             "state" : "translated",
             "value" : "No group"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun groupe"
+          }
         }
       }
     },
     "placeholder.no_icon" : {
+      "comment" : "No icon associated to place",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1771,10 +2047,17 @@
             "state" : "translated",
             "value" : "No icon"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune icône"
+          }
         }
       }
     },
     "placeholder.no_rating" : {
+      "comment" : "No rating associated to place",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1782,16 +2065,29 @@
             "state" : "translated",
             "value" : "No rating"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune note"
+          }
         }
       }
     },
     "placeholder.no_tags" : {
+      "comment" : "No tags associated to place",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No tag selected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun tag sélectionné"
           }
         }
       }

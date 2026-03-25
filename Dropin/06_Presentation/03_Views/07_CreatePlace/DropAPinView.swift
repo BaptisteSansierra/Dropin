@@ -5,6 +5,7 @@
 //  Created by baptiste sansierra on 6/3/26.
 //
 
+#if false
 import SwiftUI
 import MapKit
 //import Combine
@@ -31,7 +32,7 @@ struct DropAPinView: View {
                 navigationBarView(proxy: proxy)
             }
         }
-        .navigationTitle("Drop a pin")
+        .navigationTitle(String("Drop a pin"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -44,7 +45,7 @@ struct DropAPinView: View {
 
                 ZStack(alignment: .center) {
                     Map(position: $viewModel.camera) {
-                        Marker("pipo", coordinate: viewModel.centerPosition)
+                        Marker(String("pipo"), coordinate: viewModel.centerPosition)
                     }
                     .onMapCameraChange(frequency: .continuous) { ctx in
                         viewModel.didUpdateCamera(ctx)
@@ -118,7 +119,7 @@ struct DropAPinView: View {
 
                 Spacer()
                 
-                MainButton(text: "Create") {
+                MainButton(text: String("Create")) {
                 }
                 .padding(.bottom)
 
@@ -208,3 +209,5 @@ actor RateLimiter {
         timestamps.append(Date())
     }
 }
+
+#endif

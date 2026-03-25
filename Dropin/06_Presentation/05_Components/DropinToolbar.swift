@@ -13,7 +13,7 @@ struct LogoToolbarView: View {
     
     var body: some View {
         HStack {
-            Text("_NOTTR_Dr")
+            Text(verbatim: "Dr")
                 .font(.titleBold)
                 .foregroundStyle(.textPrimary)
                 .padding(0)
@@ -22,7 +22,7 @@ struct LogoToolbarView: View {
                        lineWidthMuliplier: 2,
                        pinSizeMuliplier: 1.5)
                 .frame(width: 25, height: 25)
-            Text("_NOTTR_pin")
+            Text(verbatim: "pin")
                 .font(.titleBold)
                 .foregroundStyle(.textPrimary)
                 .padding(0)
@@ -39,7 +39,7 @@ struct BurgerToolbarView: View {
     @Binding private var showingSideMenu: Bool
 
     var body: some View {
-        Button("", systemImage: "line.3.horizontal") {
+        Button(String(""), systemImage: "line.3.horizontal") {
             showingSideMenu.toggle()
         }
         .tint(.dropinPrimary)
@@ -55,7 +55,7 @@ struct AddPlaceToolbarView: View {
     
     var body: some View {
         HStack {
-            Button("", systemImage: "plus") {
+            Button(String(""), systemImage: "plus") {
                 showingCreatePlaceMenu.toggle()
             }
             .tint(.dropinPrimary)

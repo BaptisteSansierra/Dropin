@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 5/3/26.
 //
 
+#if false
+
 import Foundation
 import CoreLocation
 import ClusterMap
@@ -19,3 +21,6 @@ struct PlaceAnnotationModel: Identifiable, Equatable, CoordinateIdentifiable, Ha
         self.placeId = placeId
     }
 }
+
+#endif
+

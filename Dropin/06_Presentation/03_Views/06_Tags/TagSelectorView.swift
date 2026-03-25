@@ -108,7 +108,7 @@ struct TagSelectorView: View {
         HStack() {
             // Color picker
             ZStack {
-                ColorPicker("", selection: $createdTagColor, supportsOpacity: false)
+                ColorPicker(String(""), selection: $createdTagColor, supportsOpacity: false)
                     .labelsHidden()
                     .padding()
                 Circle()

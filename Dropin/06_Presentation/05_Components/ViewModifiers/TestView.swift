@@ -27,7 +27,7 @@ struct TestView: View {
                                 Rectangle()
                                     .fill(.red.opacity(0.3))
                                     .frame(height: 50)
-                                Text("Cell \(idx)")
+                                Text(verbatim: "Cell \(idx)")
                             }
                         }
                     }
@@ -41,7 +41,7 @@ struct TestView: View {
                     .opacity(0.25)
                 
             }
-            .navigationTitle("MyTitle")
+            .navigationTitle(String("MyTitle"))
         }
     }
 }

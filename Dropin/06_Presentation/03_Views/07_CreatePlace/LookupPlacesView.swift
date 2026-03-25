@@ -176,6 +176,7 @@ struct LookupPlacesView: View {
     
     // MARK: - private methods
     private func presentDetails(_ lookupResult: LookupResult) {
+        UIApplication.dismissKeyboard()
         Task {
             await viewModel.resolvePlace(lookupResult)
         }

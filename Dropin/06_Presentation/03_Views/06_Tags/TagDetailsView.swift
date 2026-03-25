@@ -115,7 +115,7 @@ struct TagDetailsView: View {
                         .padding(.leading, 40)
                         //.padding(.trailing, 40)
                     Spacer()
-                    ColorPicker("", selection: $tagColor, supportsOpacity: false)
+                    ColorPicker(String(""), selection: $tagColor, supportsOpacity: false)
                         .labelsHidden()
                         .padding(.leading, 40)
                         .padding(.trailing, 40)

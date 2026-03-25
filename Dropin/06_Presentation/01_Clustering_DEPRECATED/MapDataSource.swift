@@ -4,7 +4,7 @@
 //
 //  Created by baptiste sansierra on 5/3/26.
 //
-
+#if false
 import SwiftUI
 import MapKit
 import ClusterMap
@@ -121,3 +121,4 @@ import ClusterMap
     }
 }
 
+#endif

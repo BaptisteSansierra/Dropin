@@ -1,5 +1,5 @@
 //
-//  CLLocationCoordinate2D+Extension.swift
+//  CLLocationCoordinate2D+Utils.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 12/8/25.

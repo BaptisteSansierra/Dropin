@@ -159,7 +159,7 @@ struct PlaceSheetView: View {
                 StarRatingView()
             }
             if let dist = viewModel.distanceStringTo(place.coordinates) {
-                Text("·")
+                Text(verbatim: "·")
                     .padding(.horizontal, 5)
                     .font(.caption2)
                 Text(dist)

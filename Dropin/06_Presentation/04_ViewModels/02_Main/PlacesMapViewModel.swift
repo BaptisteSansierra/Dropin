@@ -151,7 +151,7 @@ import MapKit
     
     //let clusterManager: ClusterManager<ExampleAnnotation>
     //var mapSize: CGSize = .zero
-    var dataSource: MapDataSource
+//    var dataSource: MapDataSource
     
     
     
@@ -168,7 +168,7 @@ import MapKit
         self.createPlace = createPlace
         self.mapSettings = MapSettings()
 
-        dataSource = MapDataSource()
+        //dataSource = MapDataSource()
     }
     
     // MARK: Navigation
@@ -176,9 +176,11 @@ import MapKit
         coordinator.pushLookupPlacesView()
     }
 
+    #if false
     func pushDropAPinView() {
         coordinator.pushDropAPinView()
     }
+    #endif
     
     // MARK: - UI child
     func createPlaceCreateQuickView() -> PlaceCreateQuickView {
@@ -211,6 +213,7 @@ import MapKit
         selectedPlaceId = id
     }
     
+    /*
     func fillDataSource(places: [PlaceUI]) async {
         await dataSource.loadPlaces(places)
     }
@@ -218,6 +221,7 @@ import MapKit
     func updateDataSource(places: [PlaceUI]) async {
         await dataSource.updatePlaces(places)
     }
+     */
 
     func preparePlaceFromCoords(coords: CLLocationCoordinate2D) -> PlaceUI {
         creationMode = .coords

@@ -132,7 +132,7 @@ struct GroupSelectorView: View {
             
             // Color picker
             ZStack {
-                ColorPicker("", selection: $createdGroupColor, supportsOpacity: false)
+                ColorPicker(String(""), selection: $createdGroupColor, supportsOpacity: false)
                     .labelsHidden()
                     .padding()
                 Circle()

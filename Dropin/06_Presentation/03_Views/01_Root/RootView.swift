@@ -51,7 +51,7 @@ struct RootView: View {
             case .toBeImplemnented:
                 NavigationStack {
                     Text(verbatim: "Unavailable")
-                    ContentUnavailableView("",
+                    ContentUnavailableView(String(""),
                                            systemImage: "wrench.and.screwdriver")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {

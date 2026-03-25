@@ -1,0 +1,22 @@
+
+---- BUGFIX
+
+* create a place by input coords : if user loc is being updated by system, cannot tip values
+  Detect if update comes from manual drag and only update coords fields in this case
+                                        
+                                        
+---- IMPROVMENTS
+
+* Center on user : should not only center but also zoom
+
+* Create Settings
+   => shared with environment
+   => persist via UserDefaults
+   => should contain:
+     - MapSettings
+     - AnnotationViewFactory pin configuration
+     - Clustering option ? (cluster size/sensitivity ?)
+     -
+
+
+

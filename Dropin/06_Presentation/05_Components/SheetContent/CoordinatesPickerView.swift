@@ -17,6 +17,8 @@ struct CoordinatesPickerView: View {
     @State private var loading: Bool = false
     @State private var tfCoords: String
     @State private var showInvalidAlert: Bool = false
+    @State private var fetching: Bool = false
+    @State private var addressViewOpacity: CGFloat = 0
 
     // MARK: - private properties
     private let onComplete: () -> Void
@@ -35,16 +37,48 @@ struct CoordinatesPickerView: View {
     var body: some View {
         VStack(spacing: 0) {
             inputView
-            addressView
+            Spacer()
+            ZStack {
+                addressView
+                    .opacity(addressViewOpacity)
+                    .padding(.bottom, 10)
+
+                SecondaryButton(text: "create_place.fetch", systemImage: "text.magnifyingglass") {
+                    fetching = true
+                }
+                .opacity(fetching ? 0 : 1)
+                .animation(.easeInOut, value: fetching)
+            }
             Spacer()
             MainButton(text: "create_place.create") {
                 onComplete()
             }
             .padding(.bottom, 40)
         }
+        .onChange(of: fetching) { oldValue, newValue in
+            guard oldValue != newValue else { return }
+            withAnimation {
+                addressViewOpacity = newValue ? 1 : 0
+            }
+        }
+        .onChange(of: address) { _, newValue in
+            guard let _ = newValue else {
+                addressViewOpacity = 0
+                fetching = false
+                return
+            }
+        }
         .onChange(of: coords) { _, newValue in
             tfCoords = coords.formatted()
         }
+        .alert("alert.invalid_coords.title",
+               isPresented: $showInvalidAlert,
+               actions: {
+            Button("common.ok", role: .cancel) { }
+        },
+               message: {
+            Text("alert.invalid_coords.body")
+        })
     }
 
     // MARK: - subviews
@@ -59,6 +93,9 @@ struct CoordinatesPickerView: View {
         
         TextField("common.coordinates", text: $tfCoords)
             .textStyle(.formSectionTitle2)
+            .keyboardType(.numbersAndPunctuation)
+            .autocorrectionDisabled()
+            .submitLabel(.done)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .padding(.vertical, 10)
@@ -102,7 +139,7 @@ struct CoordinatesPickerView: View {
 
             } else {
                 ZStack {
-                    Text("\n\n")
+                    Text(verbatim: "\n\n")
                         .textStyle(.formSectionTitle2)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
@@ -119,7 +156,6 @@ struct CoordinatesPickerView: View {
                 }
             }
         }
-        .padding(.top, 20)
     }
 
     // MARK: - private methods
@@ -127,7 +163,6 @@ struct CoordinatesPickerView: View {
         guard let tmpCoords = CLLocationCoordinate2D(string: tfCoords) else {
             showInvalidAlert = true
             tfCoords = coords.formatted()
-            TODO
             return
         }
         coords = tmpCoords
@@ -154,5 +189,6 @@ struct CoordinatesPickerView: View {
                               onComplete: {
             print("complete")
         })
+        .sheetOverlayDetents([.height(DropinApp.ui.coordinatesPickerSheetHeight)])
     }
 }

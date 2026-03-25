@@ -118,6 +118,10 @@ extension UIApplication {
 
 // MARK: - app constants
 extension DropinApp {
+    struct strings {
+        static let app = "Dropin"
+        static let developer = "Baptiste Sansierra"
+    }
     struct defaults {
         static let latitude: Double = 46.232193
         static let longitude: Double = 2.209667
@@ -130,8 +134,8 @@ extension DropinApp {
             static let height: Double = 40
             static let width: Double = 200
         }
-        static let addressPickerSheetHeight: CGFloat = 250
-        static let coordinatesPickerSheetHeight: CGFloat = 400
+        static let addressPickerSheetHeight: CGFloat = 225
+        static let coordinatesPickerSheetHeight: CGFloat = 300
         static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
     }
     struct userDefaultsKeys {

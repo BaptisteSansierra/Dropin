@@ -6,14 +6,108 @@
 //
 
 import SwiftUI
-import SwiftData
+
+#if true
+
+struct PlacesListView: View {
+    // MARK: - State & Bindings
+    @State private var viewModel: PlacesListViewModel
+    @Binding private var places: [PlaceUI]
+    
+    // MARK: - Init
+    init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
+        self.viewModel = viewModel
+        self._places = places
+    }
+    
+    // MARK: - Body
+    var body: some View {
+        ZStack {
+            contentView
+            if viewModel.loading {
+                ProgressView()
+                    .progressViewStyle(.circular)
+            }
+        }
+        .onAppear(perform: onAppearCallback)
+        .task {
+            try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
+            Task {
+                viewModel.updateSorting(places)
+            }
+        }
+    }
+    
+    // MARK: - Subviews
+    private var contentView: some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(viewModel.sortedPlaces) { place in
+                    placeRowView(place)
+                }
+            }
+        }
+        .id(viewModel.sortedPlaces.map(\.changeToken))
+        .background(.backgroundSecondary)
+        .safeAreaPadding(.bottom, DropinApp.ui.mainTabBarHeight)
+        .ignoresSafeArea(edges: .bottom)
+    }
+    
+    private func placeRowView(_ place: PlaceUI) -> some View {
+        PlaceRowView(place: place, locationManager: viewModel.locationManager)
+            .padding(EdgeInsets(top: 20,
+                                leading: 10,
+                                bottom: 20,
+                                trailing: 0))
+            .contextMenu {
+                Button(action: { showOnMap(place.id) }) {
+                    Text("common.show_on_map")
+                }
+            }
+            .background(.backgroundPrimary)
+            .padding(.bottom, 20)
+            .onTapGesture {
+                viewModel.pushPlaceDetailsView(placeId: place.id)
+            }
+    }
+    
+    // MARK: private methods
+    private func onAppearCallback() {
+        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
+            return
+        }
+        switch lastNavigationSource {
+            case .placeCreateView, .placeEditView:
+                Task {
+                    await reloadPlaces()
+                }
+            default:
+                ()
+        }
+    }
+    
+    private func reloadPlaces() async {
+        do {
+            places = try await viewModel.loadPlaces()
+            viewModel.updateSorting(places)
+        } catch {
+            assertionFailure("couldn't reload places")
+        }
+    }
+
+    private func showOnMap(_ placeId: UUID) {
+        print("Go \(placeId)")
+    }
+}
+
+#else
 
 struct PlacesListView: View {
         
     // MARK: - State & Bindings
     @State private var viewModel: PlacesListViewModel
     @Binding private var places: [PlaceUI]
-    @State private var renderList = false
+    @State private var readyToDisplay = false
 
     // MARK: - Init
     init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
@@ -24,7 +118,7 @@ struct PlacesListView: View {
     // MARK: - Body
     var body: some View {
         Group {
-            if viewModel.loading || !renderList {
+            if viewModel.loading || !readyToDisplay {
                 ProgressView()
                     .progressViewStyle(.circular)
             } else {
@@ -52,7 +146,7 @@ struct PlacesListView: View {
         }
         .task {
             try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
-            renderList = true
+            readyToDisplay = true
             Task {
                 viewModel.updateSorting(places)
             }
@@ -153,7 +247,7 @@ struct PlacesListView: View {
 //        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
 //    }
 }
-
+#endif
 
 #if DEBUG
 struct MockPlacesListView: View {

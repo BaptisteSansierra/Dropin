@@ -59,7 +59,7 @@ struct SearchTextFieldView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color(uiColor: .secondaryLabel))
                     .opacity(isTextEmpty ? 1 : 0)
-                TextField("", text: $text)
+                TextField(String(""), text: $text)
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .focused($textFocused)

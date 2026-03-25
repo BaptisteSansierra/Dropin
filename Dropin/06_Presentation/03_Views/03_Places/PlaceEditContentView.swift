@@ -234,7 +234,7 @@ struct PlaceEditContentView: View {
                 .padding(.vertical, 10)
                 .padding(.horizontal)
                 .background(.backgroundPrimary)
-                .confirmationDialog("",
+                .confirmationDialog(String(""),
                                     isPresented: $showEditAddressMenu,
                                     actions: editAddressActionsView)
         }
@@ -276,10 +276,13 @@ struct PlaceEditContentView: View {
         Button("common.edit_address") {
             viewModel.pushLookupPlacesView(placeId: place.id)
         }
+        // TODO: DRO-19 Edit place: edit address options
         Button("common.edit_coordinates") {
         }
+        .disabled(true)
         Button("common.edit_on_map") {
         }
+        .disabled(true)
     }
     
     private var groupView: some View {

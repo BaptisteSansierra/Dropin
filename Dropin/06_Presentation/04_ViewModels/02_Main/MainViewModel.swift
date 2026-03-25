@@ -48,7 +48,7 @@ import CoreLocation
 //    }
 
     // MARK: UI Child
-    func createPlacesMapView() -> PlacesMapView {
+    func createPlacesMapView(navBarHeight: CGFloat) -> PlacesMapView {
         let bindingPlaces = Binding<[PlaceUI]>(
             get: {
                 return self.places
@@ -69,7 +69,8 @@ import CoreLocation
             })
         return appContainer.createPlacesMapView(places: bindingPlaces,
                                                 isParentPresenting: bindingIsPresenting,
-                                                showingCreatePlaceMenu: bindingShowingCreatePlaceMenu)
+                                                showingCreatePlaceMenu: bindingShowingCreatePlaceMenu,
+                                                navBarHeight: navBarHeight)
     }
     
     func createPlacesListView() -> PlacesListView {
@@ -111,10 +112,12 @@ import CoreLocation
                                                   tags: tags,
                                                   group: group)
     }
-    
+
+    #if false
     func createDropAPinView() -> DropAPinView {
         return appContainer.createDropAPinView()
     }
+    #endif
 
     // MARK: Use cases
     func loadPlaces() async throws {

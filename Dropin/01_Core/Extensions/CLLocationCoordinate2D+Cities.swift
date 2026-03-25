@@ -8,6 +8,7 @@
 import CoreLocation
 
 extension CLLocationCoordinate2D {
+
     static var london: CLLocationCoordinate2D {
         .init(latitude: 51.509865, longitude: -0.118092)
     }

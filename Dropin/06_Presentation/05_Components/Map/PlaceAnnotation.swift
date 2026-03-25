@@ -5,14 +5,11 @@
 //  Created by baptiste sansierra on 5/8/25.
 //
 
-
 import SwiftUI
 import MapKit
 import CoreLocation
-import ClusterMap
 
-/// Draw a rounded bordered rectangle + SFSymbol as annotation
-struct PlaceRectAnnotation: MapContent {
+struct PlaceAnnotation: MapContent {
     
     // MARK: - State & Bindables
     @Binding var selectedPlaceId: UUID?
@@ -32,10 +29,24 @@ struct PlaceRectAnnotation: MapContent {
     // MARK: - Body
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
-            
-            PlaceRectAnnotationView(color: place.groupColor,
-                                icon: place.group?.icon,
-                                iconExtra: place.icon)
+            VStack(spacing: 0) {
+                switch AnnotationViewFactory.pinMode {
+                    case .rect:
+                        PlaceRectAnnotationView(color: place.groupColor,
+                                                icon: place.group?.icon,
+                                                iconExtra: place.icon)
+                        let rectHeight = PlaceRectAnnotationView.heightFor(size: DropinApp.ui.pinHeight)
+                        let arrrowHeight = DropinApp.ui.pinHeight - rectHeight
+                        BellCurveShape()
+                            .fill(place.groupColor)
+                            .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
+                    case .pin:
+                        PlacePinAnnotationView(color: place.groupColor,
+                                               icon: place.group?.icon,
+                                               iconExtra: place.icon)
+                }
+            }
+            .offset(y: -DropinApp.ui.pinHeight * 0.5)
             .onTapGesture {
                 selectedPlaceId = place.id
             }
@@ -44,7 +55,7 @@ struct PlaceRectAnnotation: MapContent {
 }
 
 #if DEBUG
-struct MockPlaceRectAnnotation: View {
+struct MockPlaceAnnotation: View {
     var mock: MockContainer
     @State var place1: PlaceUI
     @State var place2: PlaceUI
@@ -55,11 +66,11 @@ struct MockPlaceRectAnnotation: View {
 
     var body: some View {
         Map {
-            PlaceRectAnnotation(place: $place1, selectedPlaceId: $selectedPlaceId)
-            PlaceRectAnnotation(place: $place2, selectedPlaceId: $selectedPlaceId)
-            PlaceRectAnnotation(place: $place3, selectedPlaceId: $selectedPlaceId)
-            PlaceRectAnnotation(place: $place4, selectedPlaceId: $selectedPlaceId)
-            PlaceRectAnnotation(place: $place5, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place1, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place2, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place3, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place4, selectedPlaceId: $selectedPlaceId)
+            PlaceAnnotation(place: $place5, selectedPlaceId: $selectedPlaceId)
         }
     }
     
@@ -95,7 +106,6 @@ struct MockPlaceRectAnnotation: View {
 }
 
 #Preview {
-    MockPlaceRectAnnotation()
+    MockPlaceAnnotation()
 }
 #endif
-

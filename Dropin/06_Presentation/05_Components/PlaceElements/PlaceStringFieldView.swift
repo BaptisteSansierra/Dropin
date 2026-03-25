@@ -25,7 +25,7 @@ struct PlaceStringFieldView: View {
                 Text(name)
                     .textStyle(.stringFieldTitle)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
-                TextField("", text: $field)
+                TextField(String(""), text: $field)
                     .textStyle(.stringFieldContent)
                     .autocorrectionDisabled()
                     .autocapitalization(.none)

@@ -79,7 +79,8 @@ final class AppContainer {
 
     func createPlacesMapView(places: Binding<[PlaceUI]>,
                              isParentPresenting: Binding<Bool>,
-                             showingCreatePlaceMenu: Binding<Bool>) -> PlacesMapView {
+                             showingCreatePlaceMenu: Binding<Bool>,
+                             navBarHeight: CGFloat) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
                                     locationManager: locationManager,
@@ -88,7 +89,8 @@ final class AppContainer {
         return PlacesMapView(viewModel: vm,
                              places: places,
                              isParentPresenting: isParentPresenting,
-                             showingCreatePlaceMenu: showingCreatePlaceMenu)
+                             showingCreatePlaceMenu: showingCreatePlaceMenu,
+                             navBarHeight: navBarHeight)
     }
     
     func createPlacesListView(places: Binding<[PlaceUI]>) -> PlacesListView {
@@ -230,6 +232,7 @@ final class AppContainer {
         return LookupPlaceView(viewModel: vm, place: place, status: status)
     }
 
+    #if false
     func createDropAPinView() -> DropAPinView {
         let vm = DropAPinViewModel(self,
                                    coordinator: mainCoordinator,
@@ -237,6 +240,7 @@ final class AppContainer {
                                    createPlace: CreatePlace(repository: placeRepository))
         return DropAPinView(viewModel: vm)
     }
+    #endif
 }
 
 #if DEBUG

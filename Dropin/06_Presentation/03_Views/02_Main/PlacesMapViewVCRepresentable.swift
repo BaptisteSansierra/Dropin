@@ -1,54 +1,66 @@
 //
-//  PlacesMapViewRepresentable.swift
+//  PlacesMapViewVCRepresentable.swift
 //  Dropin
 //
-//  Created by baptiste sansierra on 18/3/26.
+//  Created by baptiste sansierra on 25/3/26.
 //
 
 import SwiftUI
+import UIKit
 import MapKit
 
 @MainActor
-struct PlacesMapViewRepresentable: UIViewRepresentable {
-
+struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
+    
     // MARK: States & Bindings
     @Bindable private var viewModel: PlacesMapViewModel
     @Binding private var places: [PlaceUI]
     @State private var tmpPlaceAnnotation: MKTempPlaceAnnotation?
     
+    //var topInset: CGFloat = 0
+    var bottomInset: CGFloat = 0
+
     // MARK: Init
-    init(viewModel: PlacesMapViewModel, places: Binding<[PlaceUI]>) {
+    init(viewModel: PlacesMapViewModel,
+         places: Binding<[PlaceUI]>,
+         //topInset: CGFloat,
+         bottomInset: CGFloat) {
         self.viewModel = viewModel
         self._places = places
+        self.bottomInset = bottomInset
+        //self.topInset = topInset
     }
-
-    // MARK: UIViewRepresentable
-    func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView()
-        mapView.delegate = context.coordinator
-        mapView.showsUserLocation = true
-        mapView.userTrackingMode = .follow // Track user location at launch
-        mapView.mapType = .standard
+    
+    func makeUIViewController(context: Context) -> PlacesMapViewController {
+        let viewController = PlacesMapViewController()
+        viewController.coordinator = context.coordinator
+        context.coordinator.mapView = viewController.mapView
         
-        AnnotationViewFactory.registerViews(for: mapView)
-                
         // Gestures
         let longPress = UILongPressGestureRecognizer(
             target: context.coordinator,
             action: #selector(Coordinator.handleLongPress(_:))
         )
-        mapView.addGestureRecognizer(longPress)
-        
-        return mapView
+        context.coordinator.mapView!.addGestureRecognizer(longPress)
+
+        return viewController
     }
     
-    func updateUIView(_ mapView: MKMapView, context: Context) {
+    func updateUIViewController(_ viewController: PlacesMapViewController, context: Context) {
+        guard let mapView = context.coordinator.mapView else { assertionFailure(); return }
+        // Set additional safe area insets
+        viewController.additionalSafeAreaInsets = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: bottomInset,
+            right: 0
+        )
         
         // 0. Map style
         applyMapStyle(to: mapView,
                       satellite: viewModel.mapSettings.satellite,
                       hidePointsOfInterest: viewModel.mapSettings.hidePointsOfInterest)
-        
+
         // 1. Update region (only if changed)
         if !mapView.region.isApproximatelyEqual(to: viewModel.mapSettings.currentRegion) {
             mapView.setRegion(viewModel.mapSettings.currentRegion, animated: true)
@@ -148,16 +160,33 @@ struct PlacesMapViewRepresentable: UIViewRepresentable {
             mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
         }
     }
+
+    
+    /*
+    @MainActor
+    class Coordinator: NSObject, MKMapViewDelegate {
+        let viewModel: PlacesMapViewModel
+        weak var mapView: MKMapView?
+        var lastCenterTrigger = 0
+        
+        init(viewModel: PlacesMapViewModel) {
+            self.viewModel = viewModel
+        }
+        
+        // ... delegate methods
+    }
+     */
 }
 
 // MARK: Coordinator
-extension PlacesMapViewRepresentable {
+extension PlacesMapViewVCRepresentable {
 
     @MainActor
     class Coordinator: NSObject, MKMapViewDelegate {
         
         private let viewModel: PlacesMapViewModel
         private var addressPickingTask: Task<Void, Never>? = nil
+        weak var mapView: MKMapView?
 
         // MARK: init
         init(viewModel: PlacesMapViewModel) {
@@ -254,6 +283,28 @@ extension PlacesMapViewRepresentable {
             viewModel.pickedAddress = nil
             fetchAddress()
         }
+        
+        fileprivate func centerOn(_ mapView: MKMapView,
+                                  coords: CLLocationCoordinate2D,
+                                  animated: Bool = true,
+                                  sheetHeight: CGFloat? = nil) {
+            guard let sheetHeight = sheetHeight else {
+                // Simple center
+                mapView.setCenter(coords, animated: animated)
+                return
+            }
+            // First move on the target latitude so we're getting correct screen/map delta correlation
+            mapView.setCenter(coords, animated: animated)
+            // Get the screen point for the map center point
+            let centerPoint = mapView.convert(mapView.camera.centerCoordinate, toPointTo: mapView)
+            // Offset the point considering sheet height + tabBar height
+            // FIXME: can we improve by using map size (+ insets) ?
+            let offset: CGFloat = (sheetHeight - DropinApp.ui.mainTabBarHeight) * -0.5
+            let offsetPoint = CGPoint(x: centerPoint.x, y: centerPoint.y - offset)
+            // Get the offset map point
+            let offsetCoords = mapView.convert(offsetPoint, toCoordinateFrom: mapView)
+            mapView.setCenter(offsetCoords, animated: animated)
+        }
                 
         private func fetchAddress() {
             guard viewModel.pickingAddress || viewModel.pickingCoordinates else {
@@ -280,23 +331,48 @@ extension PlacesMapViewRepresentable {
                 }
             }
         }
+    }
+}
 
-        fileprivate func centerOn(_ mapView: MKMapView,
-                                  coords: CLLocationCoordinate2D,
-                                  animated: Bool = true,
-                                  sheetHeight: CGFloat? = nil) {
-            guard let sheetHeight = sheetHeight else {
-                // Simple center
-                mapView.setCenter(coords, animated: animated)
-                return
-            }
-            let fraction = sheetHeight / UIScreen.main.bounds.size.height
-            let latitudeDeltaOverSheet = mapView.region.span.latitudeDelta * (1 - fraction)
-            let offset = mapView.region.span.latitudeDelta * 0.5 - latitudeDeltaOverSheet * 0.5
-            // Offset the coords so location is visible on the map despite the sheet appearing
-            let coords = CLLocationCoordinate2D(latitude: coords.latitude - offset,
-                                                longitude: coords.longitude)
-            mapView.setCenter(coords, animated: animated)
-        }
+// MARK: - MapViewController
+class PlacesMapViewController: UIViewController {
+
+    var mapView: MKMapView
+    weak var coordinator: PlacesMapViewVCRepresentable.Coordinator?
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.mapView = MKMapView()
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+
+    convenience init(coordinator: PlacesMapViewVCRepresentable.Coordinator? = nil) {
+        self.init(nibName: nil, bundle: nil)
+        self.coordinator = coordinator
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        guard let coordinator = coordinator else { fatalError("undefined coordinator") }
+        
+        mapView.delegate = coordinator
+        mapView.showsUserLocation = true
+        mapView.userTrackingMode = .follow // Track user location at launch
+        mapView.mapType = .standard
+        
+        AnnotationViewFactory.registerViews(for: mapView)
+
+        view.addSubview(mapView)
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            mapView.topAnchor.constraint(equalTo: view.topAnchor),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 }

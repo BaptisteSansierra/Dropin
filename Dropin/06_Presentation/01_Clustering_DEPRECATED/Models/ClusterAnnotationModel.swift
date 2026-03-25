@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 5/3/26.
 //
 
+#if false
+
 import Foundation
 import CoreLocation
 import MapKit
@@ -15,3 +17,5 @@ struct ClusterAnnotationModel: Identifiable {
     var count: Int
     var span: MKCoordinateSpan
 }
+
+#endif

@@ -10,8 +10,6 @@
 		4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90AA802F432643003614A2 /* NoFlyZone */; };
 		4D90AEBD2F4C8CFD003614A2 /* ContactFieldKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90AEBC2F4C8CFD003614A2 /* ContactFieldKit */; };
 		4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90A6152F374426003614A2 /* NoFlyZone */; };
-		4DBBECD52F59A280008413A2 /* ClusterMap in Frameworks */ = {isa = PBXBuildFile; productRef = 4DBBECD42F59A280008413A2 /* ClusterMap */; };
-		4DBBECD72F59A280008413A2 /* ClusterMapSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4DBBECD62F59A280008413A2 /* ClusterMapSwiftUI */; };
 		4DC9DFF72F640DC500C1C60A /* SheetOverlay in Frameworks */ = {isa = PBXBuildFile; productRef = 4DC9DFF62F640DC500C1C60A /* SheetOverlay */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4D2AC4992F73F7FA00AD2298 /* QUICK_TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = QUICK_TODO.txt; sourceTree = "<group>"; };
 		4D42C73A2E2BFAFF00B50940 /* Dropin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dropin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D42C74A2E2BFB0100B50940 /* DropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D42C7542E2BFB0100B50940 /* DropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,9 +75,7 @@
 			files = (
 				4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */,
 				4DC9DFF72F640DC500C1C60A /* SheetOverlay in Frameworks */,
-				4DBBECD72F59A280008413A2 /* ClusterMapSwiftUI in Frameworks */,
 				4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */,
-				4DBBECD52F59A280008413A2 /* ClusterMap in Frameworks */,
 				4D90AEBD2F4C8CFD003614A2 /* ContactFieldKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +100,7 @@
 		4D42C7312E2BFAFF00B50940 = {
 			isa = PBXGroup;
 			children = (
+				4D2AC4992F73F7FA00AD2298 /* QUICK_TODO.txt */,
 				4D42C73C2E2BFAFF00B50940 /* Dropin */,
 				4D42C74D2E2BFB0100B50940 /* DropinTests */,
 				4D42C7572E2BFB0100B50940 /* DropinUITests */,
@@ -151,8 +149,6 @@
 				4D90A6152F374426003614A2 /* NoFlyZone */,
 				4D90AA802F432643003614A2 /* NoFlyZone */,
 				4D90AEBC2F4C8CFD003614A2 /* ContactFieldKit */,
-				4DBBECD42F59A280008413A2 /* ClusterMap */,
-				4DBBECD62F59A280008413A2 /* ClusterMapSwiftUI */,
 				4DC9DFF62F640DC500C1C60A /* SheetOverlay */,
 			);
 			productName = Dropin;
@@ -241,7 +237,6 @@
 			packageReferences = (
 				4D90AA7F2F432643003614A2 /* XCRemoteSwiftPackageReference "NoFlyZone" */,
 				4D90AEBB2F4C8CFD003614A2 /* XCRemoteSwiftPackageReference "ContactFieldKit" */,
-				4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */,
 				4DC9DFF52F640DC500C1C60A /* XCRemoteSwiftPackageReference "SheetOverlay" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -671,15 +666,7 @@
 			repositoryURL = "https://github.com/BaptisteSansierra/ContactFieldKit";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.2;
-			};
-		};
-		4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/vospennikov/ClusterMap.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.1;
+				minimumVersion = 1.0.3;
 			};
 		};
 		4DC9DFF52F640DC500C1C60A /* XCRemoteSwiftPackageReference "SheetOverlay" */ = {
@@ -687,7 +674,7 @@
 			repositoryURL = "https://github.com/BaptisteSansierra/SheetOverlay";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -706,16 +693,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4D90AEBB2F4C8CFD003614A2 /* XCRemoteSwiftPackageReference "ContactFieldKit" */;
 			productName = ContactFieldKit;
-		};
-		4DBBECD42F59A280008413A2 /* ClusterMap */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */;
-			productName = ClusterMap;
-		};
-		4DBBECD62F59A280008413A2 /* ClusterMapSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4DBBECD32F59A27F008413A2 /* XCRemoteSwiftPackageReference "ClusterMap" */;
-			productName = ClusterMapSwiftUI;
 		};
 		4DC9DFF62F640DC500C1C60A /* SheetOverlay */ = {
 			isa = XCSwiftPackageProductDependency;

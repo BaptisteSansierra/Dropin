@@ -111,9 +111,11 @@ struct LookupPlaceView: View {
             Map(position: $viewModel.camera,
                 interactionModes: []) {
                 if let place = editedPlace, !place.name.isEmpty {
-                    // TODO: replace this ? or offset ??
-                    
-                    PlaceRectAnnotation(place: Binding(get: { relocatedPlace(place, item) }, set: { _ in }))
+                    // Show custom marker when editing an existing place
+                    PlaceAnnotation(place: Binding(
+                        get: { relocatedPlace(place, item) },
+                        set: { _ in })
+                    )
                 } else {
                     markerResolvingName(for: item)
                 }
@@ -290,8 +292,8 @@ struct MockLookupPlaceView: View {
     
     private func load() async {
         do {
-            //self.results = try await mock.addressLookupService.search(query: "la chitarra")
-            self.results = try await mock.addressLookupService.search(query: "5 rue chevalet")
+            self.results = try await mock.addressLookupService.search(query: "la chitarra")
+            //self.results = try await mock.addressLookupService.search(query: "5 rue chevalet")
             if let first = results.first {
                 let request = MKLocalSearch.Request(completion: first.localSearchCompletion)
                 let search = MKLocalSearch(request: request)
