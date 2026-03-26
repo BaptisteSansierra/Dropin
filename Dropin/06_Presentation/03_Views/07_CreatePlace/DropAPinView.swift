@@ -200,7 +200,7 @@ actor RateLimiter {
             if let earliest = timestamps.first {
                 let delay = window - now.timeIntervalSince(earliest)
                 if delay > 0 {
-                    print("Sleep for \(delay)")
+                    Log.debug("Sleep for \(delay)")
                     try? await Task.sleep(for: .seconds(delay))
                 }
             }

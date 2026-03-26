@@ -33,14 +33,6 @@ import SwiftUI
         remainingTags.sort(by: { $0.name < $1.name && $0.creationDate < $1.creationDate })
     }
     
-    func printContent() {
-        print("\n----------CONTENT: ----------")
-        print(Unmanaged.passUnretained(self).toOpaque())
-        print("FULL TAGS : \(tags.map { $0.name })")
-        print("PLAC TAGS : \(placeTags.map { $0.name })")
-        print("REMA TAGS : \(remainingTags.map { $0.name })")
-    }
-
     // MARK: Uses cases
     func createTag(name: String, color: String) async throws -> TagUI {
         let domainTag = TagEntity(name: name, color: color)

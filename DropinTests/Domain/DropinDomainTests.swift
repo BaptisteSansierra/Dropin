@@ -30,31 +30,16 @@ struct DropinDomainTests {
         #expect( p3.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
     }
     
-    @Test func testEntityLabeledValue() async throws {
-        // Test EntityLabeledValue encoding / decoding
-        let twl = EntityLabeledValue.TypeWithLabel.phone(.mobile)
-        let decodedTwl = try! JSONDecoder().decode(EntityLabeledValue.TypeWithLabel.self, from: twl.rawValue.data(using: .utf8)!)
-        #expect(decodedTwl == EntityLabeledValue.TypeWithLabel.phone(.mobile))
-
-        let twl2 = EntityLabeledValue.TypeWithLabel(rawValue: "{\"kind\":\"url\",\"label\":{\"other\":{}}}")
-        #expect(twl2 != nil)
-        #expect(twl2! == EntityLabeledValue.TypeWithLabel.url(.other))
-        
-        let elv = EntityLabeledValue(email: "pipo.popi@abc.com", label: .email)
-        let elvFromRaw = EntityLabeledValue(rawValue: elv.rawValue)
-        #expect(elvFromRaw != nil)
-        #expect(elvFromRaw! == elv)
-    }
-
     @MainActor
     @Test func createPlace() async throws {
         let placeRepo = MockPlaceRepository()
         let createPlaceUC = CreatePlace(repository: placeRepo)
 
-        let place = PlaceEntity(id: UUID().uuidString,
+        let place = PlaceEntity(id: UUID(),
                                 name: "London",
-                                coordinates: DropinApp.locations.london,
+                                coordinates: .london,
                                 address: "",
+                                address2: "",
                                 tags: [],
                                 icon: .sf("tag"),
                                 creationDate: Date())
@@ -71,10 +56,11 @@ struct DropinDomainTests {
         })
         
         // Check empty names are not accepted
-        let placeWithEmptyName = PlaceEntity(id: UUID().uuidString,
+        let placeWithEmptyName = PlaceEntity(id: UUID(),
                                              name: "",
                                              coordinates: CLLocationCoordinate2D.zero,
                                              address: "",
+                                             address2: "",
                                              tags: [],
                                              icon: .sf("tag"),
                                              creationDate: Date())
@@ -90,10 +76,11 @@ struct DropinDomainTests {
         let createPlaceUC = CreatePlace(repository: placeRepo)
         let deletePlaceUC = DeletePlace(repository: placeRepo)
 
-        let place = PlaceEntity(id: UUID().uuidString,
+        let place = PlaceEntity(id: UUID(),
                                 name: "London",
-                                coordinates: DropinApp.locations.london,
+                                coordinates: .london,
                                 address: "",
+                                address2: "",
                                 tags: [],
                                 icon: .sf("tag"),
                                 creationDate: Date())

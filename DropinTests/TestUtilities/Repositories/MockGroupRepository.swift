@@ -32,7 +32,7 @@ final class MockGroupRepository: GroupRepository {
         guard let index = groups.firstIndex(where: { $0.id == group.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
         }
-        print("Remove group at index \(index)")
+        Log.info("Remove group at index \(index)")
         groups.remove(at: index)
     }
     
@@ -43,7 +43,7 @@ final class MockGroupRepository: GroupRepository {
         return groups
     }
     
-    func get(_ id: String) async throws -> GroupEntity {
+    func get(_ id: UUID) async throws -> GroupEntity {
         guard let g = groups.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")
         }

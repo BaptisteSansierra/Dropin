@@ -12,7 +12,7 @@ import SwiftUI
     
     var path: [GroupNavigationItem] = [] {
         didSet {
-            print("GROUP COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
+            Log.info("GROUP COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
         }
     }
     

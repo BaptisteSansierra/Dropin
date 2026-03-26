@@ -187,7 +187,7 @@ struct CoordinatesPickerView: View {
         CoordinatesPickerView(coords: $coords,
                               address: $address,
                               onComplete: {
-            print("complete")
+            Log.debug("complete")
         })
         .sheetOverlayDetents([.height(DropinApp.ui.coordinatesPickerSheetHeight)])
     }

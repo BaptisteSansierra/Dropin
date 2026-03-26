@@ -32,7 +32,7 @@ extension Color {
         let scanner = Scanner(string: hex)
         var hexValue: Int64 = 0
         guard scanner.scanHexInt64(&hexValue) else {
-            print("Scan RGB hexa error, accepted formats are '#xxxxxx' or 'xxxxxx'")
+            Log.error("Scan RGB hexa error, accepted formats are '#xxxxxx' or 'xxxxxx'")
             self.init(red: red, green: green, blue: blue, opacity: 1)
             return
         }
@@ -47,7 +47,7 @@ extension Color {
             blue = CGFloat(hexValue & 0x0000FF) / 255.0
             self.init(red: red, green: green, blue: blue, opacity: 1)
         } else {
-            print("Invalid RGB string, accepted formats are '#xxxxxx' or 'xxxxxx'", terminator: "")
+            Log.error("Invalid RGB string, accepted formats are '#xxxxxx' or 'xxxxxx'")
             self.init(red: red, green: green, blue: blue, opacity: 1)
         }
     }

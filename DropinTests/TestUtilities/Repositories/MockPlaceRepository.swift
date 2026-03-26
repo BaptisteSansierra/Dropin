@@ -36,7 +36,7 @@ final class MockPlaceRepository: PlaceRepository {
         guard let index = places.firstIndex(where: { $0.id == place.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
         }
-        print("Remove place at index \(index)")
+        Log.info("Remove place at index \(index)")
         places.remove(at: index)
         //places.removeAll { $0.id == place.id }
     }

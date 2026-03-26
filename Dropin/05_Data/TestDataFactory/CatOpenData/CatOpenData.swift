@@ -38,7 +38,7 @@ final class CatOpenData {
     }
     
     private func fetchData() async throws {
-        print("Fetch Cat OpenData")
+        Log.debug("Fetch Cat OpenData")
         Task.detached(priority: .background) {
             let (data, response) = try await URLSession.shared.data(from: self.url)
             guard let response = response as? HTTPURLResponse,
@@ -59,19 +59,19 @@ final class CatOpenData {
 //                        print("   \(coords.first!) - \(coords.last!)")
 //                    }
                     
-                    print("\(items.count) Cat OpenData items fetched")
+                    Log.debug("\(items.count) Cat OpenData items fetched")
 
                     Task {
                         do {
                             try await self.convertToDropinData()
                         } catch {
-                            print("Zut zut zut \(error)")
+                            Log.error("Zut zut zut \(error)")
                         }
                     }
 
                 }
             } catch {
-                print("Decoding error: \(error)")
+                Log.error("Decoding error: \(error)")
             }
         }
     }
@@ -84,16 +84,16 @@ final class CatOpenData {
                 guard let response = output.response as? HTTPURLResponse,
                       response.statusCode >= 200 && response.statusCode <= 300 else {
                     
-                    print("ERROR: \(output.response)")
+                    Log.error("ERROR: \(output.response)")
                     
                     throw URLError(.badServerResponse)
                 }
                 
-                print("decoding str debug")
+                Log.debug("decoding str debug")
                 
                 let str = String(data: output.data, encoding: .utf8)
                 
-                print("READ: \(str!)")
+                Log.debug("READ: \(str!)")
                 
                 return output.data
             }
@@ -113,12 +113,12 @@ final class CatOpenData {
     }
     
     private func convertToDropinData() async throws {
-        print("Convert data to dropin...")
+        Log.debug("Convert data to dropin...")
         var tags = [TagEntity]()
         var groups = [GroupEntity]()
         var places = [PlaceEntity]()
         for item in items {
-            print("   process item : \(item.titol)")
+            Log.debug("   process item : \(item.titol)")
 
             // Create group
             var group: GroupEntity? = nil
@@ -175,16 +175,16 @@ final class CatOpenData {
             for place in places {
                 try await placeRepository.create(place)
             }
-            print("\(groups.count) Groups created")
-            print("\(tags.count) Tags created")
-            print("\(places.count) Places created")
+            Log.debug("\(groups.count) Groups created")
+            Log.debug("\(tags.count) Tags created")
+            Log.debug("\(places.count) Places created")
             
             
             
             let backPlaces = try await placeRepository.getAll()
-            print("Places from database = \(backPlaces.count)")
+            Log.debug("Places from database = \(backPlaces.count)")
         } catch {
-            print("Couldn't populate database: \(error)")
+            Log.error("Couldn't populate database: \(error)")
         }
     }
 }

@@ -32,7 +32,7 @@ struct LookupPlacesView: View {
             guard value != nil else { return }
             place.wrappedValue = value!
         })
-        print("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address)'")
+        Log.debug("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address)'")
         self.initialAddress = place.wrappedValue.address
     }
 
@@ -82,11 +82,7 @@ struct LookupPlacesView: View {
 //                    placement: .navigationBarDrawer,
 //                    prompt: "Do your math")
         .task {
-            print("  ==> IN TASK : initialAddress = \(initialAddress)")
             viewModel.query = initialAddress
-//            #if DEBUG
-//            viewModel.query = "ddd"
-//            #endif
         }
         .onChange(of: viewModel.resultStatus) { _, newValue in
             completeLookup(newValue)

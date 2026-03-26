@@ -73,7 +73,7 @@ extension LocationManager: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        print("error getting location: \(error.localizedDescription)")
+        Log.error("error getting location: \(error.localizedDescription)")
     }
 }
 
@@ -129,12 +129,12 @@ extension LocationManager {
         geocoder.cancelGeocode() // Cancel pending requests
         geocoder.reverseGeocodeLocation(location, completionHandler: { placemarks, error in
             if let error = error {
-                print("couldn't get address from coords \(coords): \(error.localizedDescription)")
+                Log.error("couldn't get address from coords \(coords): \(error.localizedDescription)")
                 completion(nil)
                 return
             }
             guard let placemark = placemarks?[0] else {
-                print("no address found from coords \(coords)")
+                Log.error("no address found from coords \(coords)")
                 completion(nil)
                 return
             }

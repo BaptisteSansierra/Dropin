@@ -44,7 +44,7 @@ struct PlaceEditView: View {
                 }
             }
             .onChange(of: editedPlace.changeToken) { oldValue, newValue in
-                print("Place edited !! isEqual to source = \(editedPlace.isContentEqual(srcPlace))")
+                Log.debug("Place edited !! isEqual to source = \(editedPlace.isContentEqual(srcPlace))")
                 edited = !editedPlace.isContentEqual(srcPlace)
             }
     }
@@ -147,7 +147,7 @@ struct MockPlaceEditView: View {
         self.mock = mock
         self.place = mock.getPlaceUI(index)
         
-        print("PLACE \(place.name) has GROUP \(place.group?.name)")
+        Log.debug("PLACE \(place.name) has GROUP \(place.group?.name)")
         
         //self.place = mock.getPlaceUI(1) // No group
     }

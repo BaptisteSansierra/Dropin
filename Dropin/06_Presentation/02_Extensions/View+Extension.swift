@@ -23,12 +23,12 @@ extension View {
     }
 
     func printInMapContentBuilder(_ message: String) -> EmptyMapContent {
-        print(message)
+        Log.info(message)
         return EmptyMapContent()
     }
 
     func printInViewBuilder(_ message: String) -> EmptyView {
-        print(message)
+        Log.info(message)
         return EmptyView()
     }
 

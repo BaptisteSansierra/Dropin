@@ -51,7 +51,7 @@ struct FlowLayout: Layout {
                     let rowWidth = row.contentWidth(proposal, spacing: spacingH)
                     xPos = bounds.midX - rowWidth * 0.5
                 default:
-                    print("alignment type \(alignment) not handled in FlowLayout, use leading")
+                    Log.warning("alignment type \(alignment) not handled in FlowLayout, use leading")
                     xPos = bounds.minX
             }
             for view in row {

@@ -58,20 +58,20 @@ struct DropinApp: App {
                 do {
                     let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
                     if places.count == 0 {
-                        print("Empty database, mock populating")
+                        Log.info("Empty database, mock populating")
                         try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
                     } else {
-                        print("\(places.count) places found in database, no mock populate needed")
+                        Log.info("\(places.count) places found in database, no mock populate needed")
                     }
                 } catch {
-                    print("Couldn't populate database: \(error)")
+                    Log.error("Couldn't populate database: \(error)")
                 }
             }
             // Create data from cata OpenData
             if false {
                 Task {
                     do {
-                        print("Load Cat open data")
+                        Log.info("Load Cat open data")
                         let catOpenData = try CatOpenData(modelContext: modelContainer.mainContext)
                         try await catOpenData.load()
                     } catch {

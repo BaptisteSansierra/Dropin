@@ -26,7 +26,6 @@ import CoreLocation
     // MARK: properties
     var path: [NavigationItem] = [] {
         didSet {
-            //print("COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
             trackNavigation(oldPath: oldValue, newPath: path)
         }
     }

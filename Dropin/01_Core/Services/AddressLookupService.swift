@@ -65,10 +65,10 @@ final class AddressLookupService: NSObject {
         //        p.pointOfInterestCategory
         //
         for r in results {
-            print("R: \(r.title)")
-            print("   \(r.subtitle)")
-            print("   \(r.description)")
-            print("---------")
+            Log.debug("R: \(r.title)")
+            Log.debug("   \(r.subtitle)")
+            Log.debug("   \(r.description)")
+            Log.debug("---------")
         }
     }
     

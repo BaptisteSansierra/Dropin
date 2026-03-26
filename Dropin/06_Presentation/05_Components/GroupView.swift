@@ -204,13 +204,13 @@ struct MockGroupView: View {
                       color: .brown,
                       icon: nil,
                       actionType: .remove,
-                      action: { print("Do the work") })
+                      action: { Log.info("Do the work") })
 
             GroupView(name: "Mark",
                       color: .brown,
                       icon: .sf("carrot"),
                       actionType: .edit,
-                      action: { print("Eat a carrot") })
+                      action: { Log.info("Eat a carrot") })
 
             PlaceRectAnnotationView(color: .brown, icon: .sf("tag"))
         }

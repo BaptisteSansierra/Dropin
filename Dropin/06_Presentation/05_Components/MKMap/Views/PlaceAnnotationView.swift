@@ -126,7 +126,7 @@ struct PlaceAnnotationView: View {
                         Spacer()
                     }
                     .onAppear {
-                        print("PIN HEIGHT: \(proxy.size.height)")
+                        Log.debug("PIN HEIGHT: \(proxy.size.height)")
                     }
                 }
                 VStack {

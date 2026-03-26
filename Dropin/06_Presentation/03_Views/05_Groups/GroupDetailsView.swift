@@ -65,7 +65,7 @@ struct GroupDetailsView: View {
                         try await viewModel.deleteGroup(group)
                         dismiss()
                     } catch {
-                        print("Could not delete group \(group.name): \(error)")
+                        Log.error("Could not delete group \(group.name): \(error)")
                     }
                 }
             }

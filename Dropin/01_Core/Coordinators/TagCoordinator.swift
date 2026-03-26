@@ -12,7 +12,7 @@ import SwiftUI
     
     var path: [TagNavigationItem] = [] {
         didSet {
-            print("TAG COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
+            Log.info("TAG COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
         }
     }
     

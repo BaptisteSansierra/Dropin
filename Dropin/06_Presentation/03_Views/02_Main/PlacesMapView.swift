@@ -108,7 +108,7 @@ struct PlacesMapView: View {
             CoordinatesPickerView(coords: Binding<CLLocationCoordinate2D>(get: {
                 viewModel.coordinatesPickerCoords
             }, set: { edited in
-                print("SET COORDS : \(edited)")
+                Log.debug("SET COORDS : \(edited)")
                 viewModel.coordinatesPickerUpdate(edited)
             }),
                                   address: $viewModel.pickedAddress,
@@ -260,7 +260,6 @@ struct PlacesMapView: View {
 
     private func onAppearCallback() {
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
-            print("Navigation history EMPTY")
             return
         }
         switch lastNavigationSource {

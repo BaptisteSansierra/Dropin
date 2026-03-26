@@ -72,10 +72,10 @@ struct MapIcoButton: View {
 #Preview {
     VStack {
         MapIcoButton(systemImage: "gear", imageFrame: CGSize(width: 15, height: 15)) {
-            print("gear")
+            Log.debug("gear")
         }
         MapIcoButton(systemImage: "mappin", imageFrame: CGSize(width: 15, height: 15), rightCaption: "caption") {
-            print("mappin")
+            Log.debug("mappin")
         }
     }
     .background(.brown)

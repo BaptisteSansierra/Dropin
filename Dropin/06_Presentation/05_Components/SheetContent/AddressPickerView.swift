@@ -181,7 +181,7 @@ struct AddressPickerView: View {
     .sheetOverlay(isPresented: $presented) {
         AddressPickerView(coords: $coords,
                           address: $address) {
-            print("complete")
+            Log.debug("complete")
         }
         .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
     }

@@ -78,12 +78,12 @@ struct PlaceCreateQuickView: View {
 
     // MARK: - Actions
     private func fetchAddress() async {
-        print("Fetch address from coords : \(place.coordinates)")
+        Log.debug("Fetch address from coords : \(place.coordinates)")
         // Fetch address from coords
         place.address = String(localized: "create_place.fetching")
         do {
             let address = try await viewModel.fetchAddress(coords: place.coordinates)
-            print("Address fetched : \(address)")
+            Log.debug("Address fetched : \(address)")
             self.place.address = address
         } catch is CancellationError {
         } catch {

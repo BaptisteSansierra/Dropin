@@ -32,7 +32,7 @@ final class MockTagRepository: TagRepository {
         guard let index = tags.firstIndex(where: { $0.id == tag.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
         }
-        print("Remove tag at index \(index)")
+        Log.info("Remove tag at index \(index)")
         tags.remove(at: index)
     }
     
@@ -43,7 +43,7 @@ final class MockTagRepository: TagRepository {
         return tags
     }
     
-    func get(_ id: String) async throws -> TagEntity {
+    func get(_ id: UUID) async throws -> TagEntity {
         guard let g = tags.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")
         }

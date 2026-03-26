@@ -546,11 +546,9 @@ struct PlaceEditContentView: View {
     // MARK: - Private methods
     private func didUpdateScroll(_ proxy: GeometryProxy) {
         scrollY = proxy.frame(in: .named(scrollCoordinateSpace)).minY
-        //print("Offset = \(scrollY)")
         // Update header offset
         let headerOffsetLimit: CGFloat = 70
         headerBackgroundOffsetY = min(max(scrollY, -headerOffsetLimit), 0)
-        //print("headerBackgroundOffsetY = \(headerBackgroundOffsetY)")
         // Update annotation size
         let annotationBottomPadingMin: CGFloat = 30
         let annotationBottomPadingMax: CGFloat = 40
@@ -570,16 +568,6 @@ struct PlaceEditContentView: View {
             annotationBottomPading = lerp * annotationBottomPadingMax + (1 - lerp) * annotationBottomPadingMin
             headerNameOpacity = 0
         }
-        // Update minimized header visibility
-        //        let step1: CGFloat = -125
-        //        let step2: CGFloat = -140
-        //        if scrollY < step2 {
-        //            headerOpacity = 1
-        //        } else if scrollY > step1 {
-        //            headerOpacity = 0
-        //        } else {
-        //            headerOpacity = abs(scrollY - step1) / abs(step1 - step2)
-        //        }
     }
     
     func applyContactUpdate() {
@@ -659,7 +647,7 @@ struct MockPlaceEditContentView: View {
         self.mock = mock
         self.place = mock.getPlaceUI(index)
         
-        print("PLACE \(place.name) has GROUP \(place.group?.name)")
+        Log.debug("PLACE \(place.name) has GROUP \(place.group?.name)")
         
         //self.place = mock.getPlaceUI(1) // No group
     }

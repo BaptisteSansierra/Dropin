@@ -133,7 +133,6 @@ struct PlaceHeaderView: View {
     // MARK: private methods
     private func copyAddressToClipboard() {
         showingAddressToClipboard.toggle()
-        print("COPY TO CLIPBOARD: \(place.address)")
         UIPasteboard.general.string = place.address
     }
 }

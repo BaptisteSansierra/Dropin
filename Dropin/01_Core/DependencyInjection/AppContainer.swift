@@ -252,15 +252,12 @@ extension AppContainer {
         let mockTags = SDTag.mockTags()
         let mockPlaces = SDPlace.mockPlaces()
         for item in mockGroups {
-            //print(" GROUP -> \(item.name)")
             modelContext.insert(item)
         }
         for item in mockTags {
-            //print(" TAG -> \(item.name)")
             modelContext.insert(item)
         }
         for item in mockPlaces {
-            //print(" PLACE -> \(item.name)")
             modelContext.insert(item)
         }
         

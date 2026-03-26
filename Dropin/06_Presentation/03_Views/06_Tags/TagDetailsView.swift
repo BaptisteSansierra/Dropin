@@ -62,7 +62,7 @@ struct TagDetailsView: View {
                         try await viewModel.deleteTag(tag)
                         dismiss()
                     } catch {
-                        print("Could not delete tag \(tag.name): \(error)")
+                        Log.error("Could not delete tag \(tag.name): \(error)")
                     }
                 }
             }

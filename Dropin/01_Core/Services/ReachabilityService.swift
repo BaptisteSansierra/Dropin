@@ -17,33 +17,23 @@ import SwiftUI
     @ObservationIgnored private let queue = DispatchQueue(label: "ReachabilityMonitor")
 
     init() {
-        if verbose {
-            print("🔵 ReachabilityService init")
-        }
+        Log.debug("🔵 ReachabilityService init", condition: verbose)
 
         monitor.pathUpdateHandler = { [weak self] path in
-            if let self = self, self.verbose {
-                print("🟢 Path update received on thread: \(Thread.current)")
-                print("   Status: \(path.status)")
-                print("   Available interfaces: \(path.availableInterfaces)")
-                print("   Uses interface type - cellular: \(path.usesInterfaceType(.cellular))")
-                print("   Uses interface type - wifi: \(path.usesInterfaceType(.wifi))")
-            }
+            Log.debug("🟢 Path update received on thread: \(Thread.current)", condition: self?.verbose ?? false)
+            Log.debug("   Status: \(path.status)", condition: self?.verbose ?? false)
+            Log.debug("   Available interfaces: \(path.availableInterfaces)", condition: self?.verbose ?? false)
+            Log.debug("   Uses interface type - cellular: \(path.usesInterfaceType(.cellular))", condition: self?.verbose ?? false)
+            Log.debug("   Uses interface type - wifi: \(path.usesInterfaceType(.wifi))", condition: self?.verbose ?? false)
 
             //Task { @MainActor in
             DispatchQueue.main.async { [weak self] in
-                if let self = self, self.verbose {
-                    print("🟡 Updating on main thread")
-                }
+                Log.debug("🟡 Updating on main thread", condition: self?.verbose ?? false)
                 self?.isConnected = path.status == .satisfied
-                if let self = self, self.verbose {
-                    print("🟣 Updated isConnected to: \(self.isConnected)")
-                }
+                Log.debug("🟣 Updated isConnected to: \(self?.isConnected ?? false)", condition: self?.verbose ?? false)
             }
         }
-        if verbose {
-            print("🔵 Starting monitor")
-        }
+        Log.debug("🔵 Starting monitor", condition: verbose)
         monitor.start(queue: queue)
         
         // Also get initial state

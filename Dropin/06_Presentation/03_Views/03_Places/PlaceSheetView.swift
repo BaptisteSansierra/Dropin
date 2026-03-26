@@ -441,7 +441,7 @@ struct PlaceSheetView: View {
     }
 
     private func share() {
-        print("TO BE IMPLEMENTED")
+        Log.warning("TO BE IMPLEMENTED")
     }
 }
 
@@ -477,7 +477,7 @@ struct MockPlaceDetailSheetView: View {
         self.mock = mock
         self.place = mock.getPlaceUI(index)
         
-        print("PLACE \(place.name) has GROUP \(place.group?.name)")
+        Log.debug("PLACE \(place.name) has GROUP \(place.group?.name)")
         
         //self.place = mock.getPlaceUI(1) // No group
     }
