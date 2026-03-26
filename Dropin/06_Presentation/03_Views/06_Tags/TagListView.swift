@@ -29,24 +29,7 @@ struct TagListView: View {
             List {
                 ForEach(tags) { tag in
                     if tag.isActive {
-                        HStack {
-                            TagView(name: tag.name, color: tag.color)
-                            Spacer()
-                            let nPlaces = tag.places.count
-                            Text("tag_list_view.num_places_\(nPlaces)")
-                                .textStyle(.placeholder)
-                        }
-                        .swipeActions {
-                            Button() {
-                                deleteTagCallback(tag)
-                            } label: {
-                                Label("common.delete", systemImage: "trash")
-                            }
-                            .tint(.destructive)
-                        }
-                        .onTapGesture {
-                            viewModel.pushTagDetailsView(tagId: tag.id)
-                        }
+                        tagRow(tag)
                     }
                 }
             }
@@ -82,6 +65,28 @@ struct TagListView: View {
                     Text("alert.remove_tag_empty_body_\(tag.name)")
                 }
             }
+        }
+    }
+    
+    private func tagRow(_ tag: TagUI) -> some View {
+        HStack {
+            TagView(name: tag.name, color: tag.color)
+            Spacer()
+            let nPlaces = tag.places.count
+            Text("tag_list_view.num_places_\(nPlaces)")
+                .textStyle(.placeholder)
+        }
+        .contentShape(Rectangle())
+        .swipeActions {
+            Button() {
+                deleteTagCallback(tag)
+            } label: {
+                Label("common.delete", systemImage: "trash")
+            }
+            .tint(.destructive)
+        }
+        .onTapGesture {
+            viewModel.pushTagDetailsView(tagId: tag.id)
         }
     }
     

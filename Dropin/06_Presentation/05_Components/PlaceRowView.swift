@@ -57,17 +57,19 @@ struct PlaceRowView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 5)
-                    .padding(.bottom, 10)
-                ScrollView(.horizontal) {
-                    LazyHStack {
-                        let tags = place.tags.defaultSorted()
-                        ForEach(tags) { tag in
-                            TagView(name: tag.name, color: tag.color)
+                if place.tags.count > 0 {
+                    ScrollView(.horizontal) {
+                        LazyHStack {
+                            let tags = place.tags.defaultSorted()
+                            ForEach(tags) { tag in
+                                TagView(name: tag.name, color: tag.color)
+                            }
                         }
+                        .padding(.vertical, 2) // add space for borders
                     }
-                    .padding(.vertical, 2) // add space for borders
+                    .scrollIndicators(.hidden)
+                    .padding(.top, 10)
                 }
-                .scrollIndicators(.hidden)
             }
         }
     }

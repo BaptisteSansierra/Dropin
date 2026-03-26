@@ -8,22 +8,23 @@
 import SwiftUI
 
 struct MainView: View {
-    
+        
     // MARK: - States & Bindings
     @State private var viewModel: MainViewModel
     @State private var selectedTab: Int = 0
     @State private var tabViewOffsetY: CGFloat = 0
     @State private var tabViewOpacity: CGFloat = 1
-    
+    @Environment(RootView.ActionBus.self) private var actionBus
+
     @Binding private var showingSideMenu: Bool
-    
+
+    @State private var navBarHeight: CGFloat = 0
+
     // MARK: - Init
     init(viewModel: MainViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
         self._showingSideMenu = showingSideMenu
     }
-    
-    @State private var navBarHeight: CGFloat = 0
     
     // MARK: - Body
     var body: some View {
@@ -83,6 +84,7 @@ struct MainView: View {
                 viewModel.isPresenting = true
             }
         }
+        .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .task {
             Task {
                 try await viewModel.loadPlaces()
@@ -255,6 +257,16 @@ struct MainView: View {
                 }
         }
     }
+    
+    // MARK: private methods
+    private func handleAction(_ action: RootView.ActionBus.Action) {
+        switch action {
+            case .showOnMap:
+                selectedTab = 0
+            default:
+                ()
+        }
+    }
 }
 
 private struct CenteredLabelStyle: LabelStyle {
@@ -290,3 +302,4 @@ struct MockMainView: View {
 }
 
 #endif
+

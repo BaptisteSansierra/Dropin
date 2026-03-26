@@ -17,6 +17,10 @@ struct TagDetailsView: View {
 
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
+    
+    var blurEffectHeight: CGFloat {
+        DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
+    }
 
     // MARK: - Init
     init(viewModel: TagDetailsViewModel, tag: Binding<TagUI>) {
@@ -27,25 +31,27 @@ struct TagDetailsView: View {
 
     // MARK: - Body
     var body: some View {
-        VStack(alignment: .center) {
-            HStack {
-                Spacer()
-                TagView(name: tag.name, color: tag.color)
+        ZStack {
+            VStack(alignment: .center) {
+                HStack {
+                    Spacer()
+                    TagView(name: tag.name, color: tag.color)
+                    Spacer()
+                }
+                .padding(.top, 15)
+                .padding(.bottom, 20)
+                
+                nameView
+                
+                colorView
+                
+                placesView
+                
                 Spacer()
             }
-            .padding(.top, 15)
-            .padding(.bottom, 20)
-
-            nameView
-
-            colorView
-            
-            placesView
-
-            Spacer()
-            
             deleteButton
         }
+        .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .alert("alert.remove_tag_title",
                isPresented: $showingRemoveAlert) {
@@ -130,7 +136,6 @@ struct TagDetailsView: View {
 
     private var placesView: some View {
         VStack(alignment: .leading) {
-            
             if tag.places.count > 0 {
                 Text("common.related_places")
                     .textStyle(.formSectionTitle2)
@@ -153,6 +158,10 @@ struct TagDetailsView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear
+                        .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
+                }
             } else {
                 Text("common.no_related_places")
                     .textStyle(.formSectionTitle2)
@@ -163,10 +172,29 @@ struct TagDetailsView: View {
     }
     
     private var deleteButton: some View {
-        DestructiveButton(text: "common.delete_tag") {
-            showingRemoveAlert = true
+        
+        VStack(alignment: .center) {
+            Spacer()
+            ZStack(alignment: .bottom) {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .mask(LinearGradient(colors: [.clear, // top → no blur visible
+                                                  .black.opacity(0.7),
+                                                  .black.opacity(0.9),
+                                                  .black,
+                                                  .black,
+                                                  .black,
+                                                  .black], // bottom → full blur visible
+                                         startPoint: .top,
+                                         endPoint: .bottom))
+                    .frame(height: blurEffectHeight)
+
+                DestructiveButton(text: "common.delete_tag") {
+                    showingRemoveAlert = true
+                }
+                .padding(.bottom, UIApplication.rootBottomSafeArea())
+            }
         }
-        .padding(.bottom, 15)
     }
     
     // MARK: private methods

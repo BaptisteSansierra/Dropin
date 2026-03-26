@@ -6,11 +6,31 @@
 //
 
 import SwiftUI
+import Combine
 
 struct RootView: View {
+    
+    /// Handle app shared action
+    /// exemple: "Show on map" tapped on a place under "Group detail" view
+    ///                  Should trigger actions :
+    ///                     1 - Side menu back to main
+    ///                     2 - Main view select map tab
+    ///                     3 - Map zoom on place
+    @Observable final class ActionBus {
+        enum Action {
+            case showOnMap(placeId: UUID)
+        }
+        
+        let actionPublisher = PassthroughSubject<Action, Never>()
+        
+        func send(_ action: Action) {
+            actionPublisher.send(action)
+        }
+    }
 
     // MARK: - State & Bindings
     @State private var viewModel: RootViewModel
+    @State private var actionBus: ActionBus
     @State private var contentFrameW: CGFloat = .infinity
     @State private var contentFrameH: CGFloat = .infinity
     @State private var contentCornerR: CGFloat = 0
@@ -21,6 +41,7 @@ struct RootView: View {
     // MARK: - init
     init(viewModel: RootViewModel) {
         self.viewModel = viewModel
+        self.actionBus = ActionBus()
     }
     
     // MARK: - body
@@ -37,6 +58,7 @@ struct RootView: View {
                 viewModel.switchAppIcon()
             }
         }
+        .environment(actionBus)
     }
 
     @ViewBuilder

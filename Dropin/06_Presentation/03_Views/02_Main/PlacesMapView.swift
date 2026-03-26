@@ -18,6 +18,7 @@ struct PlacesMapView: View {
     /// True if parent is presenting something over the view (sidebar / menu / ...) => should hide sheetOverlays
     @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
+    @Environment(RootView.ActionBus.self) private var actionBus
     
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
     private var navBarHeight: CGFloat
@@ -54,6 +55,7 @@ struct PlacesMapView: View {
                 }
             }
         }
+        .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .onAppear {
             onAppearCallback()
         }
@@ -247,6 +249,15 @@ struct PlacesMapView: View {
     }
 
     // MARK: private methods
+    private func handleAction(_ action: RootView.ActionBus.Action) {
+        switch action {
+            case .showOnMap(let placeId):
+                viewModel.manualSelectPlace(placeId)
+            default:
+                ()
+        }
+    }
+
     private func onAppearCallback() {
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
             print("Navigation history EMPTY")

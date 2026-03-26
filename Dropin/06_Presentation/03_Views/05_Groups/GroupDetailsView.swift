@@ -19,6 +19,10 @@ struct GroupDetailsView: View {
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
 
+    var blurEffectHeight: CGFloat {
+        DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
+    }
+
     // MARK: - Init
     init(viewModel: GroupDetailsViewModel, group: Binding<GroupUI>) {
         self.viewModel = viewModel
@@ -28,27 +32,29 @@ struct GroupDetailsView: View {
 
     // MARK: - Body
     var body: some View {
-        VStack(alignment: .center) {
-            HStack {
-                Spacer()
-                GroupView(group: group)
+        ZStack {
+            VStack(alignment: .center) {
+                HStack {
+                    Spacer()
+                    GroupView(group: group)
+                    Spacer()
+                }
+                .padding(.top, 15)
+                .padding(.bottom, 20)
+                
+                nameView
+                
+                colorView
+                
+                iconView
+                
+                placesView
+                
                 Spacer()
             }
-            .padding(.top, 15)
-            .padding(.bottom, 20)
-
-            nameView
-
-            colorView
-            
-            iconView
-            
-            placesView
-
-            Spacer()
-            
             deleteButton
         }
+        .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .alert("alert.remove_group_title",
                isPresented: $showingRemoveAlert) {
@@ -201,6 +207,10 @@ struct GroupDetailsView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear
+                        .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
+                }
             } else {
                 Text("common.no_related_places")
                     .textStyle(.formSectionTitle2)
@@ -211,10 +221,28 @@ struct GroupDetailsView: View {
     }
     
     private var deleteButton: some View {
-        DestructiveButton(text: "common.delete_group") {
-            showingRemoveAlert = true
+        VStack(alignment: .center) {
+            Spacer()
+            ZStack(alignment: .bottom) {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .mask(LinearGradient(colors: [.clear, // top → no blur visible
+                                                  .black.opacity(0.7),
+                                                  .black.opacity(0.9),
+                                                  .black,
+                                                  .black,
+                                                  .black,
+                                                  .black], // bottom → full blur visible
+                                         startPoint: .top,
+                                         endPoint: .bottom))
+                    .frame(height: blurEffectHeight)
+
+                DestructiveButton(text: "common.delete_group") {
+                    showingRemoveAlert = true
+                }
+                .padding(.bottom, UIApplication.rootBottomSafeArea())
+            }
         }
-        .padding(.bottom, 15)
     }
 
     // MARK: private methods

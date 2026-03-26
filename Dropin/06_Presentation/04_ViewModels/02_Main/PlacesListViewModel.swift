@@ -26,6 +26,8 @@ import SwiftUI
     var grouped = false
     var sortMode: SortMode = .distance
     var loading: Bool = true
+    var selectedPlaceId: UUID?
+    var detailSheetDetent: PresentationDetent = .medium
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
@@ -128,9 +130,7 @@ import SwiftUI
     }
 
     // MARK: - UI child
-//    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
-//        return appContainer.createPlaceDetailsView(place: place, editMode: editMode)
-//    }
-
-
+    func createPlaceSheetView(place: Binding<PlaceUI>, detend: Binding<PresentationDetent>) -> PlaceSheetView {
+        return appContainer.createPlaceSheetView(place: place, detent: detend)
+    }
 }

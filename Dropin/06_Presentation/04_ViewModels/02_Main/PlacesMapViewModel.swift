@@ -26,14 +26,13 @@ import MapKit
         case reloadData
         case updateData
         case updatePlacePickerPositions
-//        case zoomOut
+        case selectPlace(id: UUID)
 //        case fitAllPlaces
     }
     var currentAction: MapAction?
     
     func performAction(_ action: MapAction) {
         currentAction = action
-        // Reset after execution (handled in updateUIView)
     }
     #endif
     
@@ -51,7 +50,10 @@ import MapKit
     func reloadMapData() {
         performAction(.reloadData)
     }
-    
+    func manualSelectPlace(_ id: UUID) {
+        performAction(.selectPlace(id: id))
+    }
+
 
     
     
@@ -212,7 +214,7 @@ import MapKit
     func selectPlace(_ id: UUID) {
         selectedPlaceId = id
     }
-    
+
     /*
     func fillDataSource(places: [PlaceUI]) async {
         await dataSource.loadPlaces(places)

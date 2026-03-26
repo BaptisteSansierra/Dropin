@@ -56,6 +56,7 @@ struct SideMenuItemView: View {
                     Spacer()
                 }
             }
+            .contentShape(Rectangle())
             .onTapGesture {
                 currentSideMenuContext = context
                 showingSideMenu = false

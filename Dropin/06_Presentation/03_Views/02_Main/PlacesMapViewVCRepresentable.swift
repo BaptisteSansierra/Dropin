@@ -118,6 +118,13 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
                 updateAnnotations(mapView)
             case .updatePlacePickerPositions:
                 context.coordinator.updatePlacePickerPositions(mapView)
+            case .selectPlace(let placeId):
+                guard let ann = mapView.annotations
+                    .compactMap({ $0 as? MKPlaceAnnotation })
+                    .first(where: { $0.place.id == placeId }) else {
+                    return
+                }
+                mapView.selectAnnotation(ann, animated: true)
         }
     }
     
@@ -160,22 +167,6 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
             mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
         }
     }
-
-    
-    /*
-    @MainActor
-    class Coordinator: NSObject, MKMapViewDelegate {
-        let viewModel: PlacesMapViewModel
-        weak var mapView: MKMapView?
-        var lastCenterTrigger = 0
-        
-        init(viewModel: PlacesMapViewModel) {
-            self.viewModel = viewModel
-        }
-        
-        // ... delegate methods
-    }
-     */
 }
 
 // MARK: Coordinator
@@ -228,9 +219,18 @@ extension PlacesMapViewVCRepresentable {
                 // Zoom into cluster
                 mapView.showAnnotations(cluster.memberAnnotations, animated: true)
             } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
+                
+                Log.debug("didSelect a place")
+                Log.info("didSelect a place")
+                Log.warning("didSelect a place")
+                Log.error("didSelect a place")
+                Log.fatal("didSelect a place")
+
                 guard !viewModel.pickingAddress else { return }
                 guard !viewModel.pickingCoordinates else { return }
 
+                
+                
                 view.isSelected = true
                 
                 let defaultSheetDetent: CGFloat = 400 // FIXME: this value should be provided somehow

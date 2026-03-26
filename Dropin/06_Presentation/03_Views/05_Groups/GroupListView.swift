@@ -29,24 +29,7 @@ struct GroupListView: View {
             List {
                 ForEach(groups) { group in
                     if group.isActive {
-                        HStack {
-                            GroupView(group: group)
-                            Spacer()
-                            let nPlaces = group.places.count
-                            Text("group_list_view.num_places_\(nPlaces)")
-                                .textStyle(.placeholder)
-                        }
-                        .swipeActions {
-                            Button() {
-                                deleteGroupCallback(group)
-                            } label: {
-                                Label("common.delete", systemImage: "trash")
-                            }
-                            .tint(.destructive)
-                        }
-                        .onTapGesture {
-                            viewModel.pushGroupDetailsView(groupId: group.id)
-                        }
+                        groupRow(group)
                     }
                 }
             }
@@ -82,6 +65,28 @@ struct GroupListView: View {
                     Text("alert.remove_group_empty_body_\(group.name)")
                 }
             }
+        }
+    }
+    
+    private func groupRow(_ group: GroupUI) -> some View {
+        HStack {
+            GroupView(group: group)
+            Spacer()
+            let nPlaces = group.places.count
+            Text("group_list_view.num_places_\(nPlaces)")
+                .textStyle(.placeholder)
+        }
+        .contentShape(Rectangle())
+        .swipeActions {
+            Button() {
+                deleteGroupCallback(group)
+            } label: {
+                Label("common.delete", systemImage: "trash")
+            }
+            .tint(.destructive)
+        }
+        .onTapGesture {
+            viewModel.pushGroupDetailsView(groupId: group.id)
         }
     }
     

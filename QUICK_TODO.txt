@@ -7,6 +7,17 @@
                                         
 ---- IMPROVMENTS
 
+* Make a Rectangle() with a blurry background
+                                        
+* Place details sheet: Add buttons
+    - Edit
+    - Email
+    - Map (show on map only visible from LIST)
+
+* Allow tap on group / tag to see details ?
+                                        
+* Center on a place manually : should not only center but also zoom
+
 * Center on user : should not only center but also zoom
 
 * Create Settings

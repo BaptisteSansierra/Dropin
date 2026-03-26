@@ -10,10 +10,13 @@ import SwiftUI
 #if true
 
 struct PlacesListView: View {
+    
     // MARK: - State & Bindings
     @State private var viewModel: PlacesListViewModel
     @Binding private var places: [PlaceUI]
-    
+    @Environment(RootView.ActionBus.self) private var actionBus
+    @State private var scrollPosition: ScrollPosition = .init()
+
     // MARK: - Init
     init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
         self.viewModel = viewModel
@@ -36,6 +39,15 @@ struct PlacesListView: View {
                 viewModel.updateSorting(places)
             }
         }
+        .sheet(item: $viewModel.selectedPlaceId,
+               onDismiss: {
+            viewModel.detailSheetDetent = .medium
+        }) { placeId in
+            createPlaceDetailsSheetView()
+                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
+                .presentationCornerRadius(20)
+                .presentationBackground(.backgroundPrimary)
+        }
     }
     
     // MARK: - Subviews
@@ -47,30 +59,40 @@ struct PlacesListView: View {
                 }
             }
         }
-        .id(viewModel.sortedPlaces.map(\.changeToken))
+        .scrollPosition($scrollPosition)
         .background(.backgroundSecondary)
         .safeAreaPadding(.bottom, DropinApp.ui.mainTabBarHeight)
         .ignoresSafeArea(edges: .bottom)
     }
     
     private func placeRowView(_ place: PlaceUI) -> some View {
-        PlaceRowView(place: place, locationManager: viewModel.locationManager)
-            .padding(EdgeInsets(top: 20,
-                                leading: 10,
-                                bottom: 20,
-                                trailing: 0))
-            .contextMenu {
-                Button(action: { showOnMap(place.id) }) {
+        placeRowContentView(place)
+            .contextMenu(menuItems: {
+                Button(action: {showOnMap(place.id)}) {
                     Text("common.show_on_map")
                 }
-            }
+            }, preview: {
+                placeRowContentView(place)
+                    .frame(width: UIScreen.main.bounds.width)
+            })
             .background(.backgroundPrimary)
             .padding(.bottom, 20)
+            .id(place.changeToken)  // Force the update after edit
             .onTapGesture {
-                viewModel.pushPlaceDetailsView(placeId: place.id)
+                viewModel.selectedPlaceId = place.id
+                //viewModel.pushPlaceDetailsView(placeId: place.id)
             }
     }
     
+    private func placeRowContentView(_ place: PlaceUI) -> some View {
+        PlaceRowView(place: place, locationManager: viewModel.locationManager)
+            .padding(EdgeInsets(top: 15,
+                                leading: 10,
+                                bottom: 15,
+                                trailing: 0))
+            .contentShape(Rectangle()) // seems to fix the contextMenu not appearing on last item
+    }
+        
     // MARK: private methods
     private func onAppearCallback() {
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
@@ -96,9 +118,26 @@ struct PlacesListView: View {
     }
 
     private func showOnMap(_ placeId: UUID) {
-        print("Go \(placeId)")
+        actionBus.send(.showOnMap(placeId: placeId))
     }
 }
+
+// Create Views
+extension PlacesListView {
+    
+    private func createPlaceDetailsSheetView() -> PlaceSheetView {
+        guard let selectedPlaceId = viewModel.selectedPlaceId else {
+            fatalError("selectedPlaceId undefined")
+        }
+        guard let index = places.firstIndex(where: { $0.id == selectedPlaceId }) else {
+            fatalError("couldn't find place with id \(selectedPlaceId)")
+        }
+        return viewModel.createPlaceSheetView(place: $places[index],
+                                              detend: $viewModel.detailSheetDetent)
+    }
+}
+
+
 
 #else
 
