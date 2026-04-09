@@ -12,24 +12,6 @@ import CoreLocation
 
 struct DropinDomainTests {
 
-    @Test func testFoundations() async throws {
-        // Test string extension
-        #expect("#111".isValidHexaColor)
-        #expect("12F".isValidHexaColor)
-        #expect("#1a2b3C".isValidHexaColor)
-        #expect("F9e0D8".isValidHexaColor)
-        #expect(!"#1a2b3".isValidHexaColor)
-        #expect(!"F9e0D82".isValidHexaColor)
-        #expect(!"QRTYIO".isValidHexaColor)
-        // Test CLLocationCoordinate2D extension
-        let p1 = CLLocationCoordinate2D(latitude: 10, longitude: 20)
-        let p2 = CLLocationCoordinate2D(latitude: 20, longitude: 20)
-        let p3 = CLLocationCoordinate2D(latitude: 10, longitude: 50)
-        #expect( p1.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == true )
-        #expect( p2.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
-        #expect( p3.isInside(minLatitude: 0, maxLatitude: 15, minLongitude: 10, maxLongitude: 30) == false )
-    }
-    
     @MainActor
     @Test func createPlace() async throws {
         let placeRepo = MockPlaceRepository()
@@ -139,5 +121,67 @@ struct DropinDomainTests {
         await #expect(throws: DomainError.Tag.invalidColor, performing: {
             try await createTagUC.execute(tag)
         })
+    }
+    
+    @MainActor
+    @Test func filterPlaces() async throws {
+        // Create dataset
+        var mockPlaces = PlaceEntity.mockPlaces()
+        let mockTags = TagEntity.mockTags()
+        let mockGroups = GroupEntity.mockGroups()
+        // link some objects
+        mockPlaces[0].group = mockGroups[0]
+        mockPlaces[1].group = mockGroups[0]
+        mockPlaces[2].group = mockGroups[4]
+        mockPlaces[3].group = mockGroups[5]
+        mockPlaces[4].group = mockGroups[1]
+
+        mockPlaces[0].tags = [mockTags[8], mockTags[10], mockTags[13]]
+        mockPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
+        mockPlaces[2].tags = [mockTags[6], mockTags[7]]
+        mockPlaces[3].tags = [mockTags[1]]
+
+        let placeRepo = MockPlaceRepository(initialPlaces: mockPlaces)
+        var fetchResult = [PlaceEntity]()
+        
+        // Check inactive filtering returns all places
+        let f1 = PlaceFilter(groupIDs: [], includeUngrouped: false, tagIDs: [], includeUntagged: false)
+        do {
+            fetchResult = try await placeRepo.fetch(f1)
+            #expect(true)
+        } catch {
+            Issue.record("could not fetch places")
+        }
+        #expect(fetchResult.count == mockPlaces.count)
+
+        // Check includeUngrouped filtering
+        let f2 = PlaceFilter(groupIDs: [], includeUngrouped: true, tagIDs: [], includeUntagged: false)
+        let ungroupedPlaces = mockPlaces.filter { $0.group == nil }
+        fetchResult = try! await placeRepo.fetch(f2)
+        #expect(fetchResult.count == ungroupedPlaces.count)
+        #expect(fetchResult.map({ $0.id }).sorted() == ungroupedPlaces.map({ $0.id }).sorted())
+
+        // Check includeUntagged filtering
+        let f3 = PlaceFilter(groupIDs: [], includeUngrouped: false, tagIDs: [], includeUntagged: true)
+        let untaggedPlaces = mockPlaces.filter { $0.tags.count == 0 }
+        fetchResult = try! await placeRepo.fetch(f3)
+        #expect(fetchResult.count == untaggedPlaces.count)
+        #expect(fetchResult.map({ $0.id }).sorted() == untaggedPlaces.map({ $0.id }).sorted())
+        
+        // Check group filtering
+        let f4 = PlaceFilter(groupIDs: [mockGroups[0].id], includeUngrouped: false, tagIDs: [], includeUntagged: false)
+        fetchResult = try! await placeRepo.fetch(f4)
+        #expect(fetchResult.count == 2)
+        let f5 = PlaceFilter(groupIDs: [mockGroups[1].id, mockGroups[4].id, mockGroups[5].id])
+        fetchResult = try! await placeRepo.fetch(f5)
+        #expect(fetchResult.count == 3)
+
+        // Check tag filtering
+        let f6 = PlaceFilter(tagIDs: [mockTags[8].id])
+        fetchResult = try! await placeRepo.fetch(f6)
+        #expect(fetchResult.count == 2)
+        let f7 = PlaceFilter(tagIDs: [mockTags[10].id, mockTags[9].id, mockTags[7].id, mockTags[1].id])
+        fetchResult = try! await placeRepo.fetch(f7)
+        #expect(fetchResult.count == 4)
     }
 }

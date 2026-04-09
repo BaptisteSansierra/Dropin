@@ -15,7 +15,7 @@ struct GetPlaces: Sendable {
         self.repository = repository
     }
     
-    func execute() async throws -> [PlaceEntity] {
-        return try await repository.getAll()
+    func execute(_ filter: PlaceFilter? = nil) async throws -> [PlaceEntity] {
+        return try await repository.fetch(filter)
     }
 }

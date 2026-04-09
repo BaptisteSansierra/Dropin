@@ -80,6 +80,7 @@ struct PlaceCreateView: View {
     // MARK: - private methods
     private func save() {
         Task {
+            // Ensure a name is given
             let name = place.name.trimmingCharacters(in: [" "])
             guard !name.isEmpty else {
                 showMissingName = true
@@ -89,6 +90,10 @@ struct PlaceCreateView: View {
                 assertionFailure("Place \(name) has an empty address")
                 return
             }
+            // Remove empty contact fields
+            place.phone.removeEmptyFields()
+            place.email.removeEmptyFields()
+            place.url.removeEmptyFields()
             // Create new place
             do {
                 try await viewModel.save(place: place)

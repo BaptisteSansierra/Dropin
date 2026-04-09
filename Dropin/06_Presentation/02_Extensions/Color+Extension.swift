@@ -37,8 +37,8 @@ extension Color {
             return
         }
         if hex.count == 3 {
-            red = CGFloat((hexValue & 0xF00) >> 16) * 17 / 255.0
-            green = CGFloat((hexValue & 0x0F0) >> 8) * 17 / 255.0
+            red = CGFloat((hexValue & 0xF00) >> 8) * 17 / 255.0
+            green = CGFloat((hexValue & 0x0F0) >> 4) * 17 / 255.0
             blue = CGFloat(hexValue & 0x00F) * 17 / 255.0
             self.init(red: red, green: green, blue: blue, opacity: 1)
         } else if hex.count == 6 {

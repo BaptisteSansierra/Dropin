@@ -14,6 +14,7 @@ struct PlaceEditContentView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: PlaceEditContentViewModel
+    @State private var keyboardObserver = KeyboardObserver()
     @Binding private var place: PlaceUI
     @Binding private var showMissingName: Bool
     @FocusState private var isNameFocused
@@ -46,7 +47,11 @@ struct PlaceEditContentView: View {
     private let scrollCoordinateSpace = "scroll"
     private let topLayerHeight: CGFloat = 200
     private let nameFieldKey = "nameField"
-    
+
+    private let phoneFieldId = 1
+    private let emailFieldId = 2
+    private let urlFieldId = 3
+
     // MARK: - Init
     init(viewModel: PlaceEditContentViewModel,
          place: Binding<PlaceUI>,
@@ -189,6 +194,10 @@ struct PlaceEditContentView: View {
                 }
             }
             .padding(.bottom, 50)
+        }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear
+                .frame(height: keyboardObserver.height)
         }
         .coordinateSpace(name: scrollCoordinateSpace)
         .ignoresSafeArea()
@@ -448,7 +457,7 @@ struct PlaceEditContentView: View {
                 .padding(.leading)
                 .padding(.bottom, 10)
             
-            ContactItemEditView(viewIdentifier: 1,
+            ContactItemEditView(viewIdentifier: phoneFieldId,
                                 kind: .phone,
                                 values: $phones,
                                 noFlyZoneEnabled: $noFlyZoneEnabled,
@@ -464,7 +473,7 @@ struct PlaceEditContentView: View {
                 .padding(.leading)
                 .padding(.bottom, 10)
             
-            ContactItemEditView(viewIdentifier: 1,
+            ContactItemEditView(viewIdentifier: emailFieldId,
                                 kind: .email,
                                 values: $emails,
                                 noFlyZoneEnabled: $noFlyZoneEnabled,
@@ -480,7 +489,7 @@ struct PlaceEditContentView: View {
                 .padding(.leading)
                 .padding(.bottom, 10)
             
-            ContactItemEditView(viewIdentifier: 1,
+            ContactItemEditView(viewIdentifier: urlFieldId,
                                 kind: .url,
                                 values: $urls,
                                 noFlyZoneEnabled: $noFlyZoneEnabled,
@@ -589,14 +598,33 @@ struct PlaceEditContentView: View {
         noFlyZoneEnabled = false
         noFlyZoneCompletionStatus = .allowed
         
+        // FIXME:
+        // 1- add some phones
+        // 2- remove the phones
+        // 3- add url
+        // 4- remove url
+        // => Receive tappedZones(count:1) with viewId == 1 (SHOULD BE 3) ==> CRASH
+        
         for z in tappedZones {
-            if z.viewId == 1 {
+            if z.viewId == phoneFieldId {
+                guard z.itemId < phones.count else {
+                    assertionFailure("Trying to remove phone[\(z.itemId)] when count is \(phones.count)")
+                    return
+                }
                 phones[z.itemId].toBeDeleted = true
             }
-            else if z.viewId == 2 {
+            else if z.viewId == emailFieldId {
+                guard z.itemId < emails.count else {
+                    assertionFailure("Trying to remove email[\(z.itemId)] when count is \(emails.count)")
+                    return
+                }
                 emails[z.itemId].toBeDeleted = true
             }
-            else if z.viewId == 3 {
+            else if z.viewId == urlFieldId {
+                guard z.itemId < urls.count else {
+                    assertionFailure("Trying to remove url[\(z.itemId)] when count is \(urls.count)")
+                    return
+                }
                 urls[z.itemId].toBeDeleted = true
             }
         }

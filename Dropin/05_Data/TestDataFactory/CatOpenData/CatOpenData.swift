@@ -181,7 +181,7 @@ final class CatOpenData {
             
             
             
-            let backPlaces = try await placeRepository.getAll()
+            let backPlaces = try await placeRepository.fetch()
             Log.debug("Places from database = \(backPlaces.count)")
         } catch {
             Log.error("Couldn't populate database: \(error)")

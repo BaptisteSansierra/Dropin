@@ -10,7 +10,7 @@ import Foundation
 
 @MainActor
 final class MockPlaceRepository: PlaceRepository {
-    
+
     private var places: [PlaceEntity]
 
     init(initialPlaces: [PlaceEntity] = []) {
@@ -24,8 +24,23 @@ final class MockPlaceRepository: PlaceRepository {
         return false
     }
     
-    func getAll() async throws -> [PlaceEntity] {
-        return places
+    func fetch(_ id: UUID) async throws -> Dropin.PlaceEntity {
+        guard let g = places.first(where: { $0.id == id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        return g
+    }
+    
+    func fetch() async throws -> [Dropin.PlaceEntity] {
+        return try await fetch(nil)
+    }
+
+    func fetch(_ filter: Dropin.PlaceFilter?) async throws -> [Dropin.PlaceEntity] {
+        guard let filter = filter, filter.isActive else {
+            // no filtering
+            return places
+        }
+        return places.filter { filter.matches($0) }
     }
     
     func create(_ place: PlaceEntity) async throws {

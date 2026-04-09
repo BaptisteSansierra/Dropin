@@ -40,6 +40,6 @@ import CoreLocation
     func updatePlace(_ place: PlaceUI) async throws {
         try await updatePlace.execute(PlaceMapper.toDomain(place))
     }
-
+    
     // MARK: - callbacks and co
 }

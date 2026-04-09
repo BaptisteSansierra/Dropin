@@ -13,5 +13,7 @@ protocol PlaceRepository: Sendable {
     func create(_ place: PlaceEntity) async throws
     func delete(_ place: PlaceEntity) async throws
     func update(_ place: PlaceEntity) async throws
-    func getAll() async throws -> [PlaceEntity]
+    func fetch(_ id: UUID) async throws -> PlaceEntity
+    func fetch() async throws -> [PlaceEntity]
+    func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity]
 }

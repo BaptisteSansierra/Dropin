@@ -49,10 +49,12 @@ struct PlaceAnnotationView: View {
                                 .fill(place.groupColor)
                                 .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
                         case .pin:
-                            MapPinView(color: place.groupColor,
-                                       icon: place.group?.icon)
-                            .frame(width: DropinApp.ui.pinHeight,
-                                   height: DropinApp.ui.pinHeight)
+                            PlacePinAnnotationView(color: place.groupColor,
+                                                   icon: place.group?.icon,
+                                                   iconExtra: place.icon,
+                                                   size: DropinApp.ui.pinHeight)
+                                .frame(width: DropinApp.ui.pinHeight,
+                                       height: DropinApp.ui.pinHeight)
                     }
                 } else {
                     switch AnnotationViewFactory.pinMode {
@@ -167,3 +169,62 @@ struct PlaceAnnotationView: View {
     }
      */
 }
+
+
+#if DEBUG
+struct MockPlaceAnnotationView: View {
+    var mock: MockContainer
+    @State var size: CGFloat = 150
+    @State var place1: PlaceUI
+    @State var place2: PlaceUI
+    @State var place3: PlaceUI
+    @State var place4: PlaceUI
+    @State var place5: PlaceUI
+
+    var body: some View {
+        VStack(spacing: 50) {
+            HStack(spacing: 50) {
+                PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place1),
+                                    isSelected: false)
+                PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place2),
+                                    isSelected: true)
+            }
+            HStack(spacing: 50) {
+                PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place3),
+                                    isSelected: false)
+                PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place4),
+                                    isSelected: false)
+            }
+            
+            ZStack {
+                RoundedRectangle(cornerSize: 10)
+                    .fill(.gray)
+                    .frame(width: 120, height: 120)
+                PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place5),
+                                    isSelected: false)
+            }
+        }
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        let places = mock.getAllPlaceUI()
+        self.place1 = places[0]
+        self.place2 = places[1]
+        self.place3 = places[2]
+        self.place4 = places[3]
+        self.place5 = places[4]
+
+        self.place2.icon = .sf("duffle.bag")
+        self.place3.icon = nil
+        self.place4.icon = .sf("figure.seated.side.left.airbag.on")
+        self.place5.icon = .sf("ivfluid.bag")
+    }
+}
+
+#Preview {
+    MockPlaceAnnotationView()
+}
+#endif
+

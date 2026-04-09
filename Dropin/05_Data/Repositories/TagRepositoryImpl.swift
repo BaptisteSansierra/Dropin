@@ -48,14 +48,14 @@ public final class TagRepositoryImpl: TagRepository {
         try modelContext.save()
     }
 
-    func getAll() async throws -> [TagEntity] {
+    func fetch() async throws -> [TagEntity] {
         let desc = FetchDescriptor<SDTag>(sortBy: [SortDescriptor(\SDTag.name),
                                                    SortDescriptor(\SDTag.creationDate)])
         let sdTags = try modelContext.fetch(desc)
         return sdTags.map { TagMapper.toDomain($0) }
     }
     
-    func get(_ id: UUID) async throws -> TagEntity {
+    func fetch(_ id: UUID) async throws -> TagEntity {
         let sdTag = try await retrieveTag(tagId: id)
         return TagMapper.toDomain(sdTag)
     }

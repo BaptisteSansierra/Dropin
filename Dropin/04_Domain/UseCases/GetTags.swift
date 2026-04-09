@@ -16,6 +16,6 @@ struct GetTags {
     }
     
     func execute() async throws -> [TagEntity] {
-        return try await repository.getAll()
+        return try await repository.fetch()
     }
 }

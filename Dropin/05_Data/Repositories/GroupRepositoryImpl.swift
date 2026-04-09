@@ -48,14 +48,14 @@ public final class GroupRepositoryImpl: GroupRepository {
         try modelContext.save()
     }
     
-    func getAll() async throws -> [GroupEntity] {
+    func fetch() async throws -> [GroupEntity] {
         let desc = FetchDescriptor<SDGroup>(sortBy: [SortDescriptor(\SDGroup.name),
                                                      SortDescriptor(\SDGroup.creationDate)])
         let sdGroups = try modelContext.fetch(desc)
         return sdGroups.map { GroupMapper.toDomain($0) }
     }
     
-    func get(_ id: UUID) async throws -> GroupEntity {
+    func fetch(_ id: UUID) async throws -> GroupEntity {
         let sdGroup = try await retrieveGroup(groupId: id)
         return GroupMapper.toDomain(sdGroup)
     }

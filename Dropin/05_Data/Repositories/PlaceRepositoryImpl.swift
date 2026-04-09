@@ -40,11 +40,27 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         modelContext.delete(model)
         try modelContext.save()
     }
-    
-    func getAll() async throws -> [PlaceEntity] {
+
+    func fetch(_ id: UUID) async throws -> PlaceEntity {
+        let sdPlace = try await retrievePlace(uuid: id)
+        return PlaceMapper.toDomain(sdPlace)
+    }
+
+    func fetch() async throws -> [PlaceEntity] {
+        return try await fetch(nil)
+    }
+
+    func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity] {
         let descriptor = FetchDescriptor<SDPlace>()
         let sdPlaces = try modelContext.fetch(descriptor)
-        return sdPlaces.map { PlaceMapper.toDomain($0) }
+        let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
+        if let filter = filter, filter.isActive {
+            return domainPlaces.filter { place in
+                filter.matches(place)
+            }
+        } else {
+            return domainPlaces
+        }
     }
     
     func update(_ place: PlaceEntity) async throws {
@@ -58,7 +74,30 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.rating = place.rating
         sdPlace.phone = place.phone.map { $0.rawValue }
         sdPlace.email = place.email.map { $0.rawValue }
+        
+        
+        Log.debug("-----UPDATE ")
+        Log.debug("EDITED PLACE URLS : ")
+        for u in place.url {
+            Log.debug(" - \(u.label) : '\(u.value)'")
+        }
+
+        
+        Log.debug("DATA PLACE URLS BEFORE: ")
+        for u in sdPlace.url {
+            Log.debug(" - \(u)'")
+        }
+        
         sdPlace.url = place.url.map { $0.rawValue }
+        
+
+        Log.debug("DATA PLACE URLS AFTER: ")
+        for u in sdPlace.url {
+            Log.debug(" - \(u)'")
+        }
+        Log.debug("-----END-")
+
+        
         sdPlace.notes = place.notes
         sdPlace.images = place.images
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
@@ -69,15 +108,18 @@ public final class PlaceRepositoryImpl: PlaceRepository {
 
     // MARK: private methods
     private func retrievePlace(domainPlace: PlaceEntity) async throws -> SDPlace {
-        let placeId = domainPlace.id
-        let predicate = #Predicate<SDPlace> { $0.identifier == placeId }
+        return try await retrievePlace(uuid: domainPlace.id)
+    }
+    
+    private func retrievePlace(uuid: UUID) async throws -> SDPlace {
+        let predicate = #Predicate<SDPlace> { $0.identifier == uuid }
         let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
         let sdPlaces = try modelContext.fetch(descriptor)
         guard let result = sdPlaces.first else {
-            throw DataError.notFound(msg: "couldn't find SDPlace with id \(domainPlace.id)")
+            throw DataError.notFound(msg: "couldn't find SDPlace with id \(uuid)")
         }
         guard sdPlaces.count < 2 else {
-            throw DataError.duplicate(msg: "found \(sdPlaces.count) SDPlaces with id \(domainPlace.id)")
+            throw DataError.duplicate(msg: "found \(sdPlaces.count) SDPlaces with id \(uuid)")
         }
         return result
     }

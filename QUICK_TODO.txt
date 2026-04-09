@@ -1,12 +1,19 @@
 
+==
+==== MVP ====
+==
+
 ---- BUGFIX
 
 * create a place by input coords : if user loc is being updated by system, cannot tip values
   Detect if update comes from manual drag and only update coords fields in this case
+
+* ContactField : removing the last item, during animation delete button is visible over bottom line
                                         
                                         
 ---- IMPROVMENTS
 
+                                        
 * Make a Rectangle() with a blurry background
                                         
 * Place details sheet: Add buttons
@@ -30,4 +37,10 @@
      -
 
 
+==
+==== FUTURE ====
+==
 
+---- IMPROVMENTS
+
+* Add favorites

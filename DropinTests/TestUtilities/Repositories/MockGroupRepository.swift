@@ -39,11 +39,11 @@ final class MockGroupRepository: GroupRepository {
     func update(_ group: GroupEntity) async throws {
     }
     
-    func getAll() async throws -> [GroupEntity] {
+    func fetch() async throws -> [GroupEntity] {
         return groups
     }
     
-    func get(_ id: UUID) async throws -> GroupEntity {
+    func fetch(_ id: UUID) async throws -> GroupEntity {
         guard let g = groups.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")
         }

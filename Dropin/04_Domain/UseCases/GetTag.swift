@@ -16,6 +16,6 @@ struct GetTag {
     }
     
     func execute(id: UUID) async throws -> TagEntity {
-        return try await repository.get(id)
+        return try await repository.fetch(id)
     }
 }

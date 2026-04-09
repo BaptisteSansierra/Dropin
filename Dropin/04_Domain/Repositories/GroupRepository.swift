@@ -13,6 +13,6 @@ protocol GroupRepository {
     func create(_ group: GroupEntity) async throws
     func delete(_ group: GroupEntity) async throws
     func update(_ group: GroupEntity) async throws
-    func getAll() async throws -> [GroupEntity]
-    func get(_ id: UUID) async throws -> GroupEntity
+    func fetch() async throws -> [GroupEntity]
+    func fetch(_ id: UUID) async throws -> GroupEntity
 }

@@ -39,11 +39,11 @@ final class MockTagRepository: TagRepository {
     func update(_ tag: TagEntity) async throws {
     }
     
-    func getAll() async throws -> [TagEntity] {
+    func fetch() async throws -> [TagEntity] {
         return tags
     }
     
-    func get(_ id: UUID) async throws -> TagEntity {
+    func fetch(_ id: UUID) async throws -> TagEntity {
         guard let g = tags.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")
         }

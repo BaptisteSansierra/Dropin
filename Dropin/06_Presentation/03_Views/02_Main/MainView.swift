@@ -63,7 +63,16 @@ struct MainView: View {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
                 DropinToolbar.Logo()
                 if selectedTab == 0 {
-                    DropinToolbar.AddPlace(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Button("common.organize_by_group",
+                               systemImage: "line.3.horizontal.decrease.circle") {
+                               //systemImage: "line.3.horizontal.decrease.circle.fill") {
+                            // viewModel.grouped.toggle()
+                        }
+                        .tint(.dropinPrimary)
+                        AddPlaceToolbarView(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
+                        //DropinToolbar.AddPlace(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
+                    }
                 } else {
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         listTrailingToolbarContent

@@ -219,18 +219,9 @@ extension PlacesMapViewVCRepresentable {
                 // Zoom into cluster
                 mapView.showAnnotations(cluster.memberAnnotations, animated: true)
             } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
-                
-                Log.debug("didSelect a place")
-                Log.info("didSelect a place")
-                Log.warning("didSelect a place")
-                Log.error("didSelect a place")
-                Log.fatal("didSelect a place")
-
                 guard !viewModel.pickingAddress else { return }
                 guard !viewModel.pickingCoordinates else { return }
 
-                
-                
                 view.isSelected = true
                 
                 let defaultSheetDetent: CGFloat = 400 // FIXME: this value should be provided somehow

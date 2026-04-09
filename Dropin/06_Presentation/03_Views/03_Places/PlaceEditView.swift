@@ -97,22 +97,29 @@ struct PlaceEditView: View {
     
     // MARK: - private methods
     private func applyEdits() {
-        let name = editedPlace.name.trimmingCharacters(in: [" "])
+        let frozenEdit = editedPlace.copy()
+        // Ensure a name is given
+        let name = frozenEdit.name.trimmingCharacters(in: [" "])
         guard !name.isEmpty else {
             showMissingName = true
             return
         }
-        guard !editedPlace.address.isEmpty else {
+        guard !frozenEdit.address.isEmpty else {
             assertionFailure("Place \(name) has an empty address")
             return
         }
+        // Remove empty contact fields
+        // Note: if not using a copy (frozenEdit), editedPlace is edited before updatePlace to be called and removed empty fields are re-added... the why should be investigated further
+        frozenEdit.phone.removeEmptyFields()
+        frozenEdit.email.removeEmptyFields()
+        frozenEdit.url.removeEmptyFields()
         // Apply edits
-        srcPlace = editedPlace
+        srcPlace = frozenEdit
         Task {
             do {
-                try await viewModel.updatePlace(editedPlace)
+                try await viewModel.updatePlace(frozenEdit)
             } catch {
-                assertionFailure("Couldn't update place \(editedPlace.name)")
+                assertionFailure("Couldn't update place \(frozenEdit.name)")
             }
         }
         // Pop

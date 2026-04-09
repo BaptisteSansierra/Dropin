@@ -16,6 +16,6 @@ struct GetGroups {
     }
     
     func execute() async throws -> [GroupEntity] {
-        return try await repository.getAll()
+        return try await repository.fetch()
     }
 }
