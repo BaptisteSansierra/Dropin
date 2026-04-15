@@ -17,7 +17,11 @@ struct RootView: View {
     ///                     2 - Main view select map tab
     ///                     3 - Map zoom on place
     @Observable final class ActionBus {
+        // TODO: at the moment action only concerns Main and it's child
+        // should we move it on MainView
         enum Action {
+            case reloadMainPlaces
+            case selectPlace(placeId: UUID)
             case showOnMap(placeId: UUID)
         }
         

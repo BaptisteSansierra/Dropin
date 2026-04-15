@@ -15,7 +15,12 @@ struct GroupView: View {
         case edit
         case none
     }
-    
+
+    enum Size {
+        case regular
+        case small
+    }
+
     // MARK: - private vars
     private var name: String
     private var color: Color
@@ -26,31 +31,36 @@ struct GroupView: View {
     private var icon: Icon?
     private var action: (() -> Void)?
     private var actionType: ActionType
-    
+    private var size: Size
+
     // MARK: - init
     init(name: String,
          color: Color,
          icon: Icon?,
          actionType: ActionType = .none,
-         action: (() -> Void)? = nil) {
+         action: (() -> Void,)? = nil,
+         size: Size = .regular) {
         self.name = name
         self.color = color
         self.icon = icon
         self.actionType = actionType
         self.action = action
+        self.size = size
         
         (self.c1, self.c2, self.c3, self.border) = GroupView.computeColors(color)
     }
     
     init(group: GroupUI,
          actionType: ActionType = .none,
-         action: (() -> Void)? = nil) {
+         action: (() -> Void)? = nil,
+         size: Size = .regular) {
         self.name = group.name
         self.color = group.color
         self.icon = group.icon
         self.actionType = actionType
         self.action = action
-        
+        self.size = size
+
         (self.c1, self.c2, self.c3, self.border) = GroupView.computeColors(color)
     }
     
@@ -58,37 +68,44 @@ struct GroupView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             HStack(alignment: .center, spacing: 10) {
-                if let icon = icon {
-                    IconView(icon: icon)
-                        .sizeBody()
-                }
+                iconView
                 Text(name)
-                    .textStyle(.groupSticker)
+                    .textStyle(size == .regular ? .groupSticker : .groupStickerSmall)
             }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 14)
+            .padding(.vertical, size == .regular ? 10 : 8)
+            .padding(.horizontal, size == .regular ? 14 : 8)
             .background {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.clear)
                     .stroke(border, style: .init(lineWidth: 3.5))
             }
             .overlay {
+                let lineW = size == .regular ? 3 : 1.5
                 ZStack {
                     GeometryReader { geom in
                         RoundedRectangle(cornerSize: 8)
                             .stroke(c1,
-                                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                    style: StrokeStyle(lineWidth: lineW,
+                                                       lineCap: .round,
+                                                       lineJoin: .round
+                                                      ))
                             .frame(width: geom.size.width,
                                    height: geom.size.height)
                         RoundedRectangle(cornerSize: 8)
                             .stroke(c2,
-                                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                    style: StrokeStyle(lineWidth: lineW,
+                                                       lineCap: .round,
+                                                       lineJoin: .round
+                                                      ))
                             .offset(x: 1, y: 1)
                             .frame(width: geom.size.width - 2,
                                    height: geom.size.height - 2)
                         RoundedRectangle(cornerSize: 8)
                             .stroke(c3,
-                                    style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                    style: StrokeStyle(lineWidth: lineW,
+                                                       lineCap: .round,
+                                                       lineJoin: .round
+                                                      ))
                             .offset(x: 2, y: 2)
                             .frame(width: geom.size.width - 4,
                                    height: geom.size.height - 4)
@@ -98,7 +115,32 @@ struct GroupView: View {
             actionButton
                 .offset(x: 14, y: -14)
         }
-        .padding(.horizontal, 10)
+    }
+    
+    @ViewBuilder
+    private var iconView: some View {
+        if let icon = icon {
+            switch size {
+                case .regular:
+                    IconView(icon: icon)
+                        .sizeBody()
+                        .fixedSize()
+                        .frame(height: 10)
+                case .small:
+                    IconView(icon: icon)
+                        .sizeCaption()
+                        .fixedSize()
+                        .frame(height: 10)
+            }
+        } else {
+            Text("-")
+                .foregroundStyle(.textPrimary)
+                .font(.system(size: 30))
+                .opacity(0.5)
+                .fixedSize()
+                .frame(height: 10)
+                .offset(x: 3, y: -2)
+        }
     }
     
     private var removeButton: some View {
@@ -204,13 +246,15 @@ struct MockGroupView: View {
                       color: .brown,
                       icon: nil,
                       actionType: .remove,
-                      action: { Log.info("Do the work") })
+                      action: { Log.info("Do the work") },
+                      size: .small)
 
             GroupView(name: "Mark",
                       color: .brown,
                       icon: .sf("carrot"),
                       actionType: .edit,
-                      action: { Log.info("Eat a carrot") })
+                      action: { Log.info("Eat a carrot") },
+                      size: .small)
 
             PlaceRectAnnotationView(color: .brown, icon: .sf("tag"))
         }

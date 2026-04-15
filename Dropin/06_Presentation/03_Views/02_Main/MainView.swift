@@ -58,25 +58,12 @@ struct MainView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            //.toolbarBackground(.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
                 DropinToolbar.Logo()
-                if selectedTab == 0 {
-                    ToolbarItemGroup(placement: .topBarTrailing) {
-                        Button("common.organize_by_group",
-                               systemImage: "line.3.horizontal.decrease.circle") {
-                               //systemImage: "line.3.horizontal.decrease.circle.fill") {
-                            // viewModel.grouped.toggle()
-                        }
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    trailingToolbarContent
                         .tint(.dropinPrimary)
-                        AddPlaceToolbarView(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
-                        //DropinToolbar.AddPlace(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
-                    }
-                } else {
-                    ToolbarItemGroup(placement: .topBarTrailing) {
-                        listTrailingToolbarContent
-                    }
                 }
             }
             .navigationDestination(for: NavigationItem.self) { navigationItem in
@@ -93,6 +80,9 @@ struct MainView: View {
                 viewModel.isPresenting = true
             }
         }
+        .onAppear {
+            onAppearCallback()
+        }
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .task {
             Task {
@@ -100,30 +90,49 @@ struct MainView: View {
             }
         }
         .accentColor(.dropinSecondary)
+        .sheet(isPresented: $viewModel.showingFilter) {
+            viewModel.updateFiltering()
+        } content: {
+            viewModel.createPlaceFilterView()
+        }
+        .onChange(of: viewModel.sortPolicy) { oldValue, newValue in
+            viewModel.updateSorting()
+        }
     }
     
     // MARK: subviews
     @ViewBuilder
-    private var listTrailingToolbarContent: some View {
-        Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
-                        viewModel.grouped.toggle()
-        }
-        .tint(.dropinPrimary)
-        Menu("common.sort", systemImage: "arrow.up.arrow.down") {
-            Picker("common.sort", selection: $viewModel.sortMode) {
-                Text("common.sort.by_distance")
-                    .textStyle(.body)
-                    .tag(PlacesListViewModel.SortMode.distance)
-                Text("common.sort.by_name")
-                    .textStyle(.body)
-                    .tag(PlacesListViewModel.SortMode.alphabetically)
-                Text("common.sort.by_creation_date")
-                    .textStyle(.body)
-                    .tag(PlacesListViewModel.SortMode.creationDate)
+    private var trailingToolbarContent: some View {
+        if selectedTab == 0 {
+            Button("common.organize_by_group",
+                   systemImage: viewModel.currentFilter == nil ?
+                     "line.3.horizontal.decrease.circle" :
+                     "line.3.horizontal.decrease.circle.fill") {
+                viewModel.showingFilter.toggle()
             }
-            .pickerStyle(.inline)
+            AddPlaceToolbarView(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
+        } else {
+            Button("common.organize_by_group",
+                   systemImage: viewModel.currentFilter == nil ?
+                     "line.3.horizontal.decrease.circle" :
+                     "line.3.horizontal.decrease.circle.fill") {
+                viewModel.showingFilter.toggle()
+            }
+            Menu("common.sort", systemImage: "arrow.up.arrow.down") {
+                Picker("common.sort", selection: $viewModel.sortPolicy) {
+                    Text("common.sort.by_distance")
+                        .textStyle(.body)
+                        .tag(PlaceSortPolicy.distance)
+                    Text("common.sort.by_name")
+                        .textStyle(.body)
+                        .tag(PlaceSortPolicy.alphabetically)
+                    Text("common.sort.by_creation_date")
+                        .textStyle(.body)
+                        .tag(PlaceSortPolicy.creationDate)
+                }
+                .pickerStyle(.inline)
+            }
         }
-        .tint(.dropinPrimary)
     }
 
     private var customTabView: some View {
@@ -266,12 +275,38 @@ struct MainView: View {
                 }
         }
     }
+
+    private func onAppearCallback() {
+        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
+            return
+        }
+        switch lastNavigationSource {
+            case .placeCreateView, .placeEditView:
+                Task {
+                    await reloadPlaces()
+                }
+            default:
+                ()
+        }
+    }
     
-    // MARK: private methods
+    private func reloadPlaces() async {
+        do {
+            try await viewModel.loadPlaces()
+            //viewModel.updateSorting(places)
+        } catch {
+            assertionFailure("couldn't reload places")
+        }
+    }
+    
     private func handleAction(_ action: RootView.ActionBus.Action) {
         switch action {
             case .showOnMap:
                 selectedTab = 0
+            case .reloadMainPlaces:
+                Task {
+                    try? await viewModel.loadPlaces()
+                }
             default:
                 ()
         }

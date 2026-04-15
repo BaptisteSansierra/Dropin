@@ -18,6 +18,8 @@ import MapKit
         case undefined
     }
     
+    //var places: [PlaceUI]
+    
     #if true
     /// Used to communicate from ViewModel to ViewRepresentable
     enum MapAction: Equatable {
@@ -143,7 +145,7 @@ import MapKit
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private let getPlaces: GetPlaces
+    //@ObservationIgnored private let getPlaces: GetPlaces
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored private var creationMode: CreationMode = .undefined  // TODO: to be used ?
     //@ObservationIgnored private let deletePlace: DeletePlace
@@ -161,13 +163,16 @@ import MapKit
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          locationManager: LocationManager,
-         getPlaces: GetPlaces,
-         createPlace: CreatePlace) {
+         //getPlaces: GetPlaces,
+         createPlace: CreatePlace,
+         //places: [PlaceUI]
+    ) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
-        self.getPlaces = getPlaces
+        //self.getPlaces = getPlaces
         self.createPlace = createPlace
+        //self.places = places
         self.mapSettings = MapSettings()
 
         //dataSource = MapDataSource()
@@ -197,6 +202,7 @@ import MapKit
     }
 
     // MARK: - Use cases
+    /*
     func loadPlaces() async throws -> [PlaceUI] {
         let domainPlaces = try await getPlaces.execute()
         //domainPlaces = domainPlaces.filter { !$0.databaseDeleted }
@@ -209,6 +215,7 @@ import MapKit
         }
         return places
     }
+     */
 
     // MARK: - Actions
     func selectPlace(_ id: UUID) {

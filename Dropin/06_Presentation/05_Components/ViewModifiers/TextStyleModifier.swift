@@ -29,6 +29,7 @@ struct TextStyleModifier: ViewModifier {
         case cellDetail
         case tagSticker
         case groupSticker
+        case groupStickerSmall
         case formSectionTitle
         case formSectionTitle2
     }
@@ -80,6 +81,8 @@ struct TextStyleModifier: ViewModifier {
                 .footnoteBold
             case .groupSticker:
                 .bodySemibold
+            case .groupStickerSmall:
+                .captionMedium
             case .formSectionTitle:
                 .bodySemibold
             case .formSectionTitle2:
@@ -121,7 +124,7 @@ struct TextStyleModifier: ViewModifier {
                 .textPrimary
             case .tagSticker:
                 .backgroundPrimary
-            case .groupSticker:
+            case .groupSticker, .groupStickerSmall:
                 .textPrimary
             case .formSectionTitle:
                 .textSecondary

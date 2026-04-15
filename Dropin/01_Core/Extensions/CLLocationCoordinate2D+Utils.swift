@@ -24,4 +24,10 @@ extension CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude + x,
                                       longitude: longitude + y)
     }
+    
+    func distance(to other: CLLocationCoordinate2D) -> Double {
+        let l1 = CLLocation(latitude: self.latitude, longitude: self.longitude)
+        let l2 = CLLocation(latitude: other.latitude, longitude: other.longitude)
+        return l1.distance(from: l2)
+    }
 }

@@ -56,9 +56,9 @@ struct PlacesMapView: View {
             }
         }
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
-        .onAppear {
-            onAppearCallback()
-        }
+//        .onAppear {
+//            onAppearCallback()
+//        }
         .onChange(of: isParentPresenting, { oldValue, newValue in
             guard isParentPresenting else { return }
             isParentPresenting.toggle()
@@ -79,9 +79,10 @@ struct PlacesMapView: View {
         .sheet(isPresented: $viewModel.showQuickCreateSheet, onDismiss: {
             viewModel.discardCreation()
             // Load the possible created place
-            Task {
-                await reloadPlaces()
-            }
+            actionBus.send(.reloadMainPlaces)
+//            Task {
+//                await reloadPlaces()
+//            }
         }, content: {
             viewModel.createPlaceCreateQuickView()
                 .presentationDetents([.height(createPlaceSheetDefaultDetent), .large])
@@ -258,6 +259,7 @@ struct PlacesMapView: View {
         }
     }
 
+    /*
     private func onAppearCallback() {
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
             return
@@ -280,6 +282,7 @@ struct PlacesMapView: View {
             assertionFailure("couldn't reload places")
         }
     }
+     */
 
     private func prepareCreatePlaceFromCoords(_ coordinates: CLLocationCoordinate2D) {
         let _ = viewModel.preparePlaceFromCoords(coords: coordinates)

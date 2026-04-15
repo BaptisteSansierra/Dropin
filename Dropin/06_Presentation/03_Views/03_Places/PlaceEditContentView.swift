@@ -94,7 +94,7 @@ struct PlaceEditContentView: View {
                    authorizedZones: noFlyAuthorizedZones,
                    onAllowed: noFlyZoneOnAllowed,
                    onBlocked: noFlyZoneOnBlocked,
-                   coloredDebugOverlay: true)
+                   coloredDebugOverlay: false)
         .onChange(of: phones) {
             applyContactUpdate()
         }

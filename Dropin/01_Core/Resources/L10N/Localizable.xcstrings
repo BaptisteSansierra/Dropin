@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "-" : {
+
+    },
     "alert.address_copied_body" : {
       "localizations" : {
         "en" : {
@@ -227,6 +230,9 @@
         }
       }
     },
+    "Apply" : {
+
+    },
     "category.accommodation" : {
       "comment" : "Icon category name",
       "extractionState" : "manual",
@@ -424,6 +430,9 @@
           }
         }
       }
+    },
+    "Clear" : {
+
     },
     "common.about" : {
       "comment" : "Sidebar ",
@@ -1705,6 +1714,9 @@
         }
       }
     },
+    "Filter places" : {
+
+    },
     "group_list_view.num_places_%lld" : {
       "localizations" : {
         "en" : {
@@ -2081,13 +2093,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tag selected"
+            "value" : "No tags"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun tag sélectionné"
+            "value" : "Aucun tag"
           }
         }
       }

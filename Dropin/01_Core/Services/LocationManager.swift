@@ -80,10 +80,11 @@ extension LocationManager: CLLocationManagerDelegate {
 // MARK: - distance utils
 extension LocationManager {
     
-    static func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
-        let l1 = CLLocation(latitude: from.latitude, longitude: from.longitude)
-        let l2 = CLLocation(latitude: to.latitude, longitude: to.longitude)
-        return l1.distance(from: l2)
+    static func distance(from l1: CLLocationCoordinate2D, to l2: CLLocationCoordinate2D) -> Double {
+//        let l1 = CLLocation(latitude: from.latitude, longitude: from.longitude)
+//        let l2 = CLLocation(latitude: to.latitude, longitude: to.longitude)
+//        return l1.distance(from: l2)
+        l1.distance(to: l2)
     }
     
     func distanceTo(_ coords: CLLocationCoordinate2D) -> Double? {

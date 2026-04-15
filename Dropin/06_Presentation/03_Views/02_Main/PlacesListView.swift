@@ -16,7 +16,7 @@ struct PlacesListView: View {
     @Binding private var places: [PlaceUI]
     @Environment(RootView.ActionBus.self) private var actionBus
     @State private var scrollPosition: ScrollPosition = .init()
-
+    
     // MARK: - Init
     init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
         self.viewModel = viewModel
@@ -27,16 +27,11 @@ struct PlacesListView: View {
     var body: some View {
         ZStack {
             contentView
-            if viewModel.loading {
-                ProgressView()
-                    .progressViewStyle(.circular)
-            }
         }
-        .onAppear(perform: onAppearCallback)
         .task {
             try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
             Task {
-                viewModel.updateSorting(places)
+                //viewModel.updateSorting(places)
             }
         }
         .sheet(item: $viewModel.selectedPlaceId,
@@ -54,7 +49,8 @@ struct PlacesListView: View {
     private var contentView: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(viewModel.sortedPlaces) { place in
+                printInViewBuilder("DISPLAY LIST first is \(places.first?.name)")
+                ForEach(places) { place in
                     placeRowView(place)
                 }
             }
@@ -94,6 +90,7 @@ struct PlacesListView: View {
     }
         
     // MARK: private methods
+    /*
     private func onAppearCallback() {
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
             return
@@ -111,11 +108,12 @@ struct PlacesListView: View {
     private func reloadPlaces() async {
         do {
             places = try await viewModel.loadPlaces()
-            viewModel.updateSorting(places)
+            //viewModel.updateSorting(places)
         } catch {
             assertionFailure("couldn't reload places")
         }
     }
+     */
 
     private func showOnMap(_ placeId: UUID) {
         actionBus.send(.showOnMap(placeId: placeId))

@@ -73,6 +73,7 @@ final class AppContainer {
     func createMainView(showingSideMenu: Binding<Bool>) -> MainView {
         let vm = MainViewModel(self,
                                coordinator: mainCoordinator,
+                               locationManager: locationManager,
                                getPlaces: GetPlaces(repository: placeRepository))
         return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
@@ -84,7 +85,7 @@ final class AppContainer {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
                                     locationManager: locationManager,
-                                    getPlaces: GetPlaces(repository: placeRepository),
+                                    //getPlaces: GetPlaces(repository: placeRepository),
                                     createPlace: CreatePlace(repository: placeRepository))
         return PlacesMapView(viewModel: vm,
                              places: places,
@@ -97,7 +98,7 @@ final class AppContainer {
         let vm = PlacesListViewModel(self,
                                      coordinator: mainCoordinator,
                                      locationManager: locationManager,
-                                     getPlaces: GetPlaces(repository: placeRepository),
+                                     //getPlaces: GetPlaces(repository: placeRepository),
                                      createPlace: CreatePlace(repository: placeRepository))
         return PlacesListView(viewModel: vm, places: places)
     }
@@ -241,6 +242,14 @@ final class AppContainer {
         return DropAPinView(viewModel: vm)
     }
     #endif
+    
+    func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
+        let vm = PlaceFilterViewModel(self,
+                                      getGroups: GetGroups(repository: groupRepository),
+                                      getTags: GetTags(repository: tagRepository),
+                                      filter: filter)
+        return PlaceFilterView(viewModel: vm)
+    }
 }
 
 #if DEBUG

@@ -11,42 +11,41 @@ import SwiftUI
 @MainActor
 @Observable class PlacesListViewModel {
     
-    enum SortMode: Int {
-        case distance = 0
-        case alphabetically = 1
-        case creationDate = 2
-    }
-
     // MARK: Properties
     private(set) var coordinator: MainCoordinator
-    var sortedPlaces: [PlaceUI] = []
-    var groupedSortedPlaces: [UUID: [PlaceUI]] = [:] // places grouped by group (key=group identifier)
-    var ungroupedSortedPlaces: [PlaceUI] = []
+    //var places: [PlaceUI]
+    //var sortedPlaces: [PlaceUI] = []
+    //var groupedSortedPlaces: [UUID: [PlaceUI]] = [:] // places grouped by group (key=group identifier)
+    //var ungroupedSortedPlaces: [PlaceUI] = []
     var searchText = ""
-    var grouped = false
-    var sortMode: SortMode = .distance
-    var loading: Bool = true
+    //var grouped = false
+    //var sortMode: SortMode = .distance
+    //var loading: Bool = true
     var selectedPlaceId: UUID?
     var detailSheetDetent: PresentationDetent = .medium
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private let getPlaces: GetPlaces
+    //@ObservationIgnored private let getPlaces: GetPlaces
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored let locationManager: LocationManager
     
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          locationManager: LocationManager,
-         getPlaces: GetPlaces,
-         createPlace: CreatePlace) {
+         //getPlaces: GetPlaces,
+         createPlace: CreatePlace,
+    //     places: [PlaceUI]
+    ) {
         self.appContainer = appContainer
         self.coordinator = coordinator
-        self.getPlaces = getPlaces
+        //self.getPlaces = getPlaces
         self.createPlace = createPlace
         self.locationManager = locationManager
+        //self.places = places
     }
     
+    /*
     func updateSorting(_ places: [PlaceUI]) {
         loading = true
         defer { loading = false }
@@ -59,6 +58,7 @@ import SwiftUI
         }
         sortGroupedPlaces(places)
     }
+     */
 
     // MARK: Navigation
     func pushPlaceDetailsView(placeId: UUID) {
@@ -66,12 +66,13 @@ import SwiftUI
     }
 
     // MARK: - Use cases
-    func loadPlaces() async throws -> [PlaceUI] {
-        let domainPlaces = try await getPlaces.execute()
-        return domainPlaces.map { PlaceMapper.toUI($0) }
-    }
+//    func loadPlaces() async throws -> [PlaceUI] {
+//        let domainPlaces = try await getPlaces.execute()
+//        return domainPlaces.map { PlaceMapper.toUI($0) }
+//    }
 
     // MARK: - private methods
+    /*
     private func sortGroupedPlaces(_ places: [PlaceUI]) {
         groupedSortedPlaces.removeAll()
         ungroupedSortedPlaces.removeAll()
@@ -128,6 +129,7 @@ import SwiftUI
                 }
         }
     }
+     */
 
     // MARK: - UI child
     func createPlaceSheetView(place: Binding<PlaceUI>, detend: Binding<PresentationDetent>) -> PlaceSheetView {
