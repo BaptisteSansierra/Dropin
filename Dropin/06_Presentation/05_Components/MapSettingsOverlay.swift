@@ -91,7 +91,7 @@ struct MapSettingsOverlay: View {
 
 
 #Preview {
-    @Previewable @State var mapSettings = MapSettings()
+    @Previewable @State var mapSettings = PlacesMapViewModel.MapSettings()
     
     MapSettingsOverlay(settingsShown: $mapSettings.settingsShown,
                        hidePointsOfInterest: $mapSettings.hidePointsOfInterest,

@@ -44,7 +44,6 @@ struct PlaceEditView: View {
                 }
             }
             .onChange(of: editedPlace.changeToken) { oldValue, newValue in
-                Log.debug("Place edited !! isEqual to source = \(editedPlace.isContentEqual(srcPlace))")
                 edited = !editedPlace.isContentEqual(srcPlace)
             }
     }

@@ -78,29 +78,28 @@ final class AppContainer {
         return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
-    func createPlacesMapView(places: Binding<[PlaceUI]>,
+    func createPlacesMapView(places: [PlaceUI],
+                             selectedPlaceId: Binding<UUID?>,
                              isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>,
                              navBarHeight: CGFloat) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
-                                    locationManager: locationManager,
-                                    //getPlaces: GetPlaces(repository: placeRepository),
-                                    createPlace: CreatePlace(repository: placeRepository))
+                                    locationManager: locationManager)
         return PlacesMapView(viewModel: vm,
                              places: places,
+                             selectedPlaceId: selectedPlaceId,
                              isParentPresenting: isParentPresenting,
                              showingCreatePlaceMenu: showingCreatePlaceMenu,
                              navBarHeight: navBarHeight)
     }
     
-    func createPlacesListView(places: Binding<[PlaceUI]>) -> PlacesListView {
+    func createPlacesListView(places: [PlaceUI],
+                              selectedPlaceId: Binding<UUID?>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
                                      coordinator: mainCoordinator,
-                                     locationManager: locationManager,
-                                     //getPlaces: GetPlaces(repository: placeRepository),
-                                     createPlace: CreatePlace(repository: placeRepository))
-        return PlacesListView(viewModel: vm, places: places)
+                                     locationManager: locationManager)
+        return PlacesListView(viewModel: vm, places: places, selectedPlaceId: selectedPlaceId)
     }
     
     func createPlaceCreateQuickView(place: PlaceUI) -> PlaceCreateQuickView {

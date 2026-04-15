@@ -14,23 +14,27 @@ struct PlacesMapView: View {
     
     // MARK: - State & Bindings
     @State private var viewModel: PlacesMapViewModel
-    @Binding private var places: [PlaceUI]
+    @Binding private var selectedPlaceId: UUID?
     /// True if parent is presenting something over the view (sidebar / menu / ...) => should hide sheetOverlays
     @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
     @Environment(RootView.ActionBus.self) private var actionBus
-    
+
+    // MARK: - Properties
+    private var places: [PlaceUI]
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
     private var navBarHeight: CGFloat
 
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
-         places: Binding<[PlaceUI]>,
+         places: [PlaceUI],
+         selectedPlaceId: Binding<UUID?>,
          isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>,
          navBarHeight: CGFloat) {
         self.viewModel = viewModel
-        self._places = places
+        self.places = places
+        self._selectedPlaceId = selectedPlaceId
         self._isParentPresenting = isParentPresenting
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
         self.navBarHeight = navBarHeight
@@ -45,7 +49,8 @@ struct PlacesMapView: View {
                 
                 // Map with bottom inset for card
                 PlacesMapViewVCRepresentable(viewModel: viewModel,
-                                             places: $places,
+                                             places: places,
+                                             selectedPlaceId: $selectedPlaceId,
                                              //topInset: 0,
                                              bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
                 
@@ -55,10 +60,15 @@ struct PlacesMapView: View {
                 }
             }
         }
+        .onChange(of: selectedPlaceId, { oldValue, newValue in
+            if newValue == nil {
+                viewModel.clearSelection()
+            }
+        })
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
-//        .onAppear {
-//            onAppearCallback()
-//        }
+        .onAppear {
+            onAppearCallback()
+        }
         .onChange(of: isParentPresenting, { oldValue, newValue in
             guard isParentPresenting else { return }
             isParentPresenting.toggle()
@@ -80,23 +90,10 @@ struct PlacesMapView: View {
             viewModel.discardCreation()
             // Load the possible created place
             actionBus.send(.reloadMainPlaces)
-//            Task {
-//                await reloadPlaces()
-//            }
         }, content: {
             viewModel.createPlaceCreateQuickView()
                 .presentationDetents([.height(createPlaceSheetDefaultDetent), .large])
         })
-        .sheet(item: $viewModel.selectedPlaceId,
-               onDismiss: {
-            viewModel.detailSheetDetent = .medium
-            viewModel.clearSelection()
-        }) { placeId in
-            createPlaceDetailsSheetView()
-                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
-                .presentationCornerRadius(20)
-                .presentationBackground(.backgroundPrimary)
-        }
         .sheetOverlay(isPresented: $viewModel.pickingAddress) {
             AddressPickerView(coords: $viewModel.addressPickerCoords,
                               address: $viewModel.pickedAddress,
@@ -200,7 +197,7 @@ struct PlacesMapView: View {
             HStack {
                 Spacer()
                 if let locauthorized = viewModel.locationManager.authorized, locauthorized {
-                    if let userLoc = viewModel.locationManager.lastKnownLocation {
+                    if let _ = viewModel.locationManager.lastKnownLocation {
                         MapIcoButton(systemImage: "location.fill",
                                      offset: CGPoint(x: -1, y: 1),
                                      imageFrame: CGSize(width: 15, height: 15)) {
@@ -258,8 +255,7 @@ struct PlacesMapView: View {
                 ()
         }
     }
-
-    /*
+    
     private func onAppearCallback() {
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
             return
@@ -267,25 +263,20 @@ struct PlacesMapView: View {
         switch lastNavigationSource {
             case .placeCreateView, .placeEditView:
                 Task {
-                    await reloadPlaces()
+                    try await Task.sleep(for: .seconds(0.1))
+                    //await reloadPlaces()
+                    
+                    // Reload map data after a quick delay (wait for MainView to reload data)
+                    // TODO: this is unsafe and should be improved
+                    viewModel.reloadMapData()
                 }
             default:
                 ()
         }
     }
 
-    private func reloadPlaces() async {
-        do {
-            places = try await viewModel.loadPlaces()
-            viewModel.reloadMapData()
-        } catch {
-            assertionFailure("couldn't reload places")
-        }
-    }
-     */
-
     private func prepareCreatePlaceFromCoords(_ coordinates: CLLocationCoordinate2D) {
-        let _ = viewModel.preparePlaceFromCoords(coords: coordinates)
+        viewModel.preparePlaceFromCoords(coords: coordinates)
         // Show the creation sheet
         viewModel.showQuickCreateSheet.toggle()
         // Center map on new place
@@ -301,8 +292,8 @@ struct PlacesMapView: View {
     }
 
     private func onPlacePickerComplete(_ coordinates: CLLocationCoordinate2D) {
-        _ = viewModel.preparePlaceFromAddress(coords: coordinates,
-                                              address: viewModel.pickedAddress)
+        viewModel.preparePlaceFromAddress(coords: coordinates,
+                                          address: viewModel.pickedAddress)
         // Reset picked address
         viewModel.pickedAddress = nil
         // Hide sheet
@@ -316,33 +307,17 @@ struct PlacesMapView: View {
     }
 }
 
-// Create Views
-extension PlacesMapView {
-    
-    private func createPlaceDetailsSheetView() -> PlaceSheetView {
-        guard let selectedPlaceId = viewModel.selectedPlaceId else {
-            fatalError("selectedPlaceId undefined")
-        }
-        guard let index = places.firstIndex(where: { $0.id == selectedPlaceId }) else {
-            fatalError("couldn't find place with id \(selectedPlaceId)")
-        }
-        return viewModel.createPlaceSheetView(place: $places[index],
-                                              detend: $viewModel.detailSheetDetent)
-    }
-}
-
-
-
-
 #if DEBUG
 struct MockPlacesMapView: View {
     var mock: MockContainer
     @State var places: [PlaceUI]
+    @State var selectedPlaceId: UUID? = nil
     @State var isParentPresenting: Bool = false
     @State var showingCreatePlaceMenu: Bool = false
 
     var body: some View {
-        mock.appContainer.createPlacesMapView(places: $places,
+        mock.appContainer.createPlacesMapView(places: places,
+                                              selectedPlaceId: $selectedPlaceId,
                                               isParentPresenting: $isParentPresenting,
                                               showingCreatePlaceMenu: $showingCreatePlaceMenu,
                                               navBarHeight: 100)

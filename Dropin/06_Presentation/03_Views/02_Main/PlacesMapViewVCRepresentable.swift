@@ -14,19 +14,25 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     
     // MARK: States & Bindings
     @Bindable private var viewModel: PlacesMapViewModel
-    @Binding private var places: [PlaceUI]
+    @Binding private var selectedPlaceId: UUID?
+    //@Binding private var places: [PlaceUI]
     @State private var tmpPlaceAnnotation: MKTempPlaceAnnotation?
     
+    private var places: [PlaceUI]
     //var topInset: CGFloat = 0
     var bottomInset: CGFloat = 0
 
     // MARK: Init
     init(viewModel: PlacesMapViewModel,
-         places: Binding<[PlaceUI]>,
+         //places: Binding<[PlaceUI]>,
+         places: [PlaceUI],
+         selectedPlaceId: Binding<UUID?>,
          //topInset: CGFloat,
          bottomInset: CGFloat) {
         self.viewModel = viewModel
-        self._places = places
+        //self._places = places
+        self.places = places
+        self._selectedPlaceId = selectedPlaceId
         self.bottomInset = bottomInset
         //self.topInset = topInset
     }
@@ -77,15 +83,17 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         updateAnnotations(mapView)
         
         // 3. Handle actions
-        if let action = viewModel.currentAction {
+        if let action = viewModel.mapActionBus.currentAction {
             // Reset action once it's catched
-            viewModel.currentAction = nil
+            viewModel.mapActionBus.currentAction = nil
             executeAction(action, on: mapView, context: context)
         }
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(viewModel: viewModel)
+        Coordinator(viewModel: viewModel, selectedPlaceId: { uuid in
+            self.selectedPlaceId = uuid
+        })
     }
     
     // MARK: private methods
@@ -104,7 +112,7 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         mapView.showsTraffic = false
     }
     
-    private func executeAction(_ action: PlacesMapViewModel.MapAction, on mapView: MKMapView, context: Context) {
+    private func executeAction(_ action: PlacesMapViewModel.MapActionBus.MapAction, on mapView: MKMapView, context: Context) {
         switch action {
             case .clearSelection:
                 for annotation in mapView.selectedAnnotations {
@@ -177,11 +185,13 @@ extension PlacesMapViewVCRepresentable {
         
         private let viewModel: PlacesMapViewModel
         private var addressPickingTask: Task<Void, Never>? = nil
+        private var selectedPlaceId: (UUID?) -> Void
         weak var mapView: MKMapView?
 
         // MARK: init
-        init(viewModel: PlacesMapViewModel) {
+        init(viewModel: PlacesMapViewModel, selectedPlaceId: @escaping (UUID?) -> Void) {
             self.viewModel = viewModel
+            self.selectedPlaceId = selectedPlaceId
         }
         
         // MARK: - gestures
@@ -194,8 +204,8 @@ extension PlacesMapViewVCRepresentable {
             let point = gesture.location(in: mapView)
             let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
             
-            _ = viewModel.preparePlaceFromCoords(coords: coordinates)
-            viewModel.performAction(.updateData)
+            viewModel.preparePlaceFromCoords(coords: coordinates)
+            viewModel.mapActionBus.performAction(.updateData)
             
             // Show the creation sheet
             viewModel.showQuickCreateSheet.toggle()
@@ -229,7 +239,8 @@ extension PlacesMapViewVCRepresentable {
                          coords: placeAnnotation.coordinate,
                          animated: true,
                          sheetHeight: defaultSheetDetent)
-                viewModel.selectPlace(placeAnnotation.id)
+                //viewModel.selectPlace(placeAnnotation.id)
+                selectedPlaceId(placeAnnotation.id)
             }
         }
         
@@ -240,7 +251,7 @@ extension PlacesMapViewVCRepresentable {
         
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
             // Update ViewModel when user pans/zooms
-            viewModel.mapSettings.currentMKCamera = mapView.camera
+            viewModel.mapSettings.currentCamera = mapView.camera
             viewModel.mapSettings.currentRegion = mapView.region
             viewModel.mapSettings.currentRect = mapView.visibleMapRect
             

@@ -74,30 +74,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.rating = place.rating
         sdPlace.phone = place.phone.map { $0.rawValue }
         sdPlace.email = place.email.map { $0.rawValue }
-        
-        
-        Log.debug("-----UPDATE ")
-        Log.debug("EDITED PLACE URLS : ")
-        for u in place.url {
-            Log.debug(" - \(u.label) : '\(u.value)'")
-        }
-
-        
-        Log.debug("DATA PLACE URLS BEFORE: ")
-        for u in sdPlace.url {
-            Log.debug(" - \(u)'")
-        }
-        
         sdPlace.url = place.url.map { $0.rawValue }
-        
-
-        Log.debug("DATA PLACE URLS AFTER: ")
-        for u in sdPlace.url {
-            Log.debug(" - \(u)'")
-        }
-        Log.debug("-----END-")
-
-        
         sdPlace.notes = place.notes
         sdPlace.images = place.images
         try await linkTags(sdPlace: sdPlace, domainPlace: place)

@@ -39,9 +39,19 @@ struct PlaceIconView: View {
 }
 
 #Preview {
+    
     VStack(spacing: 20) {
-        PlaceIconView(icon: Icon(rawValue: "sf:tag")!)
-        PlaceIconView(icon: Icon(rawValue: "sf:phone")!, shadow: false)
-        PlaceIconView(icon: Icon(rawValue: "sf:globe")!, shadow: false, size: 35)
+        HStack {
+            PlaceIconView(icon: Icon(rawValue: "sf:tag")!)
+            PlaceIconView(icon: Icon(rawValue: "fa:spa")!)
+        }
+        HStack {
+            PlaceIconView(icon: Icon(rawValue: "sf:phone")!, shadow: false)
+            PlaceIconView(icon: Icon(rawValue: "fa:pizza-slice")!, shadow: false)
+        }
+        HStack {
+            PlaceIconView(icon: Icon(rawValue: "sf:globe")!, shadow: false, size: 35)
+            PlaceIconView(icon: Icon(rawValue: "fa:ice-cream")!, shadow: false, size: 35)
+        }
     }
 }

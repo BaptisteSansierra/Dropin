@@ -11,14 +11,8 @@ struct MainView: View {
         
     // MARK: - States & Bindings
     @State private var viewModel: MainViewModel
-    @State private var selectedTab: Int = 0
-    @State private var tabViewOffsetY: CGFloat = 0
-    @State private var tabViewOpacity: CGFloat = 1
-    @Environment(RootView.ActionBus.self) private var actionBus
-
     @Binding private var showingSideMenu: Bool
-
-    @State private var navBarHeight: CGFloat = 0
+    @Environment(RootView.ActionBus.self) private var actionBus
 
     // MARK: - Init
     init(viewModel: MainViewModel, showingSideMenu: Binding<Bool>) {
@@ -31,12 +25,12 @@ struct MainView: View {
         NavigationStack(path: $viewModel.coordinator.path) {
             GeometryReader { proxy in
                 ZStack {
-                    viewModel.createPlacesMapView(navBarHeight: navBarHeight)
-                        .opacity(selectedTab == 0 ? 1 : 0)
+                    viewModel.createPlacesMapView(navBarHeight: viewModel.navBarHeight)
+                        .opacity(viewModel.selectedTab == 0 ? 1 : 0)
                         .ignoresSafeArea()
                     
                     viewModel.createPlacesListView()
-                        .opacity(selectedTab == 1 ? 1 : 0)
+                        .opacity(viewModel.selectedTab == 1 ? 1 : 0)
                     
                     customTabView
                     
@@ -44,17 +38,20 @@ struct MainView: View {
                     VStack {
                         Rectangle()
                             .fill(.ultraThinMaterial)
-                            .frame(height: navBarHeight)
+                            .frame(height: viewModel.navBarHeight)
                             .onChange(of: proxy.frame(in: .global)) { oldValue, newValue in
-                                navBarHeight = proxy.safeAreaInsets.top
+                                viewModel.navBarHeight = proxy.safeAreaInsets.top
                             }
                             .onAppear {
-                                navBarHeight = proxy.safeAreaInsets.top
+                                viewModel.navBarHeight = proxy.safeAreaInsets.top
                             }
                             .background(.thinMaterial)
                         Spacer()
                     }
                     .ignoresSafeArea(edges: .top)
+                }
+                .onAppear {
+                    onAppearCallback()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -80,9 +77,6 @@ struct MainView: View {
                 viewModel.isPresenting = true
             }
         }
-        .onAppear {
-            onAppearCallback()
-        }
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .task {
             Task {
@@ -90,20 +84,27 @@ struct MainView: View {
             }
         }
         .accentColor(.dropinSecondary)
+        // Filtering sheet
         .sheet(isPresented: $viewModel.showingFilter) {
-            viewModel.updateFiltering()
-        } content: {
             viewModel.createPlaceFilterView()
         }
-        .onChange(of: viewModel.sortPolicy) { oldValue, newValue in
-            viewModel.updateSorting()
+        // Selected place sheet
+        .sheet(item: $viewModel.selectedPlaceId,
+               onDismiss: {
+            viewModel.selectedPlaceId = nil
+            viewModel.detailSheetDetent = .medium
+        }) { placeId in
+            createPlaceDetailsSheetView()
+                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
+                .presentationCornerRadius(20)
+                .presentationBackground(.backgroundPrimary)
         }
     }
     
     // MARK: subviews
     @ViewBuilder
     private var trailingToolbarContent: some View {
-        if selectedTab == 0 {
+        if viewModel.selectedTab == 0 {
             Button("common.organize_by_group",
                    systemImage: viewModel.currentFilter == nil ?
                      "line.3.horizontal.decrease.circle" :
@@ -147,17 +148,17 @@ struct MainView: View {
                 VStack {
                     HStack(alignment: .top) {
                         Button {
-                            selectedTab = 0
+                            viewModel.selectedTab = 0
                         } label: {
                             Spacer()
                             Label {
                                 Text("common.map")
-                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary :
+                                    .foregroundStyle(viewModel.selectedTab == 0 ? .dropinSecondary :
                                                         Color(light: Color(rgba: "666666"),
                                                               dark: Color(rgba: "AAAAAA")) )
                             } icon: {
                                 Image(systemName: "map")
-                                    .foregroundStyle(selectedTab == 0 ? .dropinSecondary :
+                                    .foregroundStyle(viewModel.selectedTab == 0 ? .dropinSecondary :
                                                         Color(light: Color(rgba: "666666"),
                                                               dark: Color(rgba: "AAAAAA")) )
                             }
@@ -165,17 +166,17 @@ struct MainView: View {
                             Spacer()
                         }
                         Button {
-                            selectedTab = 1
+                            viewModel.selectedTab = 1
                         } label: {
                             Spacer()
                             Label {
                                 Text("common.list")
-                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary :
+                                    .foregroundStyle(viewModel.selectedTab == 1 ? .dropinSecondary :
                                                         Color(light: Color(rgba: "666666"),
                                                               dark: Color(rgba: "AAAAAA")) )
                             } icon: {
                                 Image(systemName: "list.bullet")
-                                    .foregroundStyle(selectedTab == 1 ? .dropinSecondary :
+                                    .foregroundStyle(viewModel.selectedTab == 1 ? .dropinSecondary :
                                                         Color(light: Color(rgba: "666666"),
                                                               dark: Color(rgba: "AAAAAA")) )
                             }
@@ -190,27 +191,9 @@ struct MainView: View {
             }
         }
         .ignoresSafeArea()
-        .opacity(tabViewOpacity)
-        .offset(y: tabViewOffsetY)
     }
 
     // MARK: private methods
-    /* obsolete TODO: remove
-    private func animateTabBar(oldNavigationPath: NavigationPath, newNavigationPath: NavigationPath) {
-        if oldNavigationPath.count == 0 && newNavigationPath.count > 0 {
-            withAnimation(.easeInOut) {
-                tabViewOffsetY = 120
-                tabViewOpacity = 0
-            }
-        } else if oldNavigationPath.count > 0 && newNavigationPath.count == 0 {
-            withAnimation(.easeInOut) {
-                tabViewOffsetY = 0
-                tabViewOpacity = 1
-            }
-        }
-    }
-     */
-
     private func createPlaceEditView(placeId: UUID) -> PlaceEditView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
@@ -224,22 +207,6 @@ struct MainView: View {
         }
         return viewModel.createLookupPlacesView(place: $viewModel.places[index])
     }
-
-    /*
-    private func createPlaceDetailsView(_ placeId: String) -> PlaceDetailsView {
-        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
-            fatalError("couldn't find any place '\(placeId)' in list")
-        }
-        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
-    }
-
-    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-        guard let index = viewModel.places.firstIndex(where: { $0.id == place.id }) else {
-            fatalError("couldn't find any place named '\(place.name)' in list")
-        }
-        return viewModel.createPlaceDetailsView(place: $viewModel.places[index], editMode: .none)
-    }
-     */
     
     @ViewBuilder
     private func resolveDestination(navigationItem: NavigationItem) -> some View {
@@ -257,8 +224,6 @@ struct MainView: View {
                                                 marker: marker,
                                                 tags: tags,
                                                 group: group)
-//            case .dropAPin:
-//                viewModel.createDropAPinView()
             // development cases
             case .undefinedDummyView:
                 ZStack {
@@ -286,6 +251,7 @@ struct MainView: View {
                     await reloadPlaces()
                 }
             default:
+                print("ignore lastNavigationSource = \(lastNavigationSource)")
                 ()
         }
     }
@@ -293,7 +259,6 @@ struct MainView: View {
     private func reloadPlaces() async {
         do {
             try await viewModel.loadPlaces()
-            //viewModel.updateSorting(places)
         } catch {
             assertionFailure("couldn't reload places")
         }
@@ -302,7 +267,7 @@ struct MainView: View {
     private func handleAction(_ action: RootView.ActionBus.Action) {
         switch action {
             case .showOnMap:
-                selectedTab = 0
+                viewModel.selectedTab = 0
             case .reloadMainPlaces:
                 Task {
                     try? await viewModel.loadPlaces()
@@ -313,16 +278,18 @@ struct MainView: View {
     }
 }
 
-private struct CenteredLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .center, spacing: 0) {
-            configuration.icon
-                .font(.subheadlineRegular)
-                .frame(height: 15)
-                .padding(.bottom, 5)
-            configuration.title
-                .font(.footnoteRegular)
+// Create Views
+extension MainView {
+    
+    private func createPlaceDetailsSheetView() -> PlaceSheetView {
+        guard let selectedPlaceId = viewModel.selectedPlaceId else {
+            fatalError("selectedPlaceId undefined")
         }
+        guard let index = viewModel.places.firstIndex(where: { $0.id == selectedPlaceId }) else {
+            fatalError("couldn't find place with id \(selectedPlaceId)")
+        }
+        return viewModel.createPlaceSheetView(place: $viewModel.places[index],
+                                              detent: $viewModel.detailSheetDetent)
     }
 }
 

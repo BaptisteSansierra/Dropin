@@ -61,7 +61,17 @@ struct IconView: View {
                 frame(width: 18, height: 18)
         }
     }
-    
+
+    @ViewBuilder
+    func sizeCallout() -> some View {
+        switch icon {
+            case .sf:
+                font(.caption)
+            default:
+                frame(width: 14, height: 14)
+        }
+    }
+
     @ViewBuilder
     func sizeCaption() -> some View {
         switch icon {
@@ -100,43 +110,63 @@ struct IconView: View {
     let ic3: Icon = .sf("birthday.cake")
 
     VStack {
+        Text("50")
         IconView(icon: ic1)
             .size(50)
         IconView(icon: ic3)
             .size(50)
         Divider()
         
-        IconView(icon: ic1)
-            .frame(width: 34, height: 34)
-        IconView(icon: ic3)
-            .font(.largeTitle)
+        Text("sizeLargeTitle")
+        HStack {
+            IconView(icon: ic1)
+                .frame(width: 34, height: 34)
+            IconView(icon: ic1)
+                .sizeLargeTitle()
+        }
+        HStack {
+            IconView(icon: ic3)
+                .font(.largeTitle)
+            IconView(icon: ic3)
+                .sizeLargeTitle()
+        }
         Divider()
+
+        Text("title")
         IconView(icon: ic1)
             .frame(width: 30, height: 30)
         IconView(icon: ic3)
             .font(.title)
         Divider()
+        
+        Text("body")
         IconView(icon: ic1)
             .frame(width: 18, height: 18)
         IconView(icon: ic3)
             .font(.body)
         Divider()
+        
         Text("callout")
         IconView(icon: ic1)
-            .frame(width: 16, height: 16)
+            .sizeCallout()
         IconView(icon: ic3)
-            .font(.callout)
+            .sizeCallout()
         Divider()
+        
+        Text("Caption")
         IconView(icon: ic1)
             .frame(width: 14, height: 14)
         IconView(icon: ic3)
             .font(.caption)
         Divider()
+
+        Text("Caption2")
         IconView(icon: ic1)
             .frame(width: 12, height: 12)
         IconView(icon: ic3)
             .font(.caption2)
         Divider()
+        
         Text("XS")
         IconView(icon: ic1)
             .sizeXS()

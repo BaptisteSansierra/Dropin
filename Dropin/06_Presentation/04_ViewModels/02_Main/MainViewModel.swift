@@ -12,11 +12,21 @@ import CoreLocation
 @MainActor
 @Observable class MainViewModel {
     
+    // MARK: - Observed properties
     var coordinator: MainCoordinator
     var places: [PlaceUI] = [PlaceUI]()
-    var filteredPlaces: [PlaceUI] = [PlaceUI]()
-    var sortedPlaces: [PlaceUI] = [PlaceUI]()
 
+    /// Places filtered with `currentFilter`
+    var filteredPlaces: [PlaceUI] {
+        guard let filter = currentFilter else { return places }
+        return filter.apply(places)
+    }
+
+    /// Places filtered with `currentFilter` ans sorted with `sortPolicy`
+    var sortedPlaces: [PlaceUI] {
+        sortPolicy.apply(filteredPlaces, userPosition: locationManager.lastKnownLocation)
+    }
+    
     /// Filter applied on map & list
     var currentFilter: PlaceFilter?
 
@@ -31,11 +41,22 @@ import CoreLocation
 
     /// Should be set to true when showing sidebar / presenting add place menu / ...
     var isPresenting: Bool = false
-    
+
+    /// Current selected place id
+    var selectedPlaceId: UUID?
+
+    /// Current place detail sheet detent
+    var detailSheetDetent: PresentationDetent = .medium
+
+    var navBarHeight: CGFloat = 0
+    var selectedTab: Int = 0
+
+    // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
     @ObservationIgnored private var getPlaces: GetPlaces
 
+    // MARK: init
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          locationManager: LocationManager,
@@ -46,22 +67,13 @@ import CoreLocation
         self.getPlaces = getPlaces
     }
 
-//    // MARK: Navigation
-//    func pushLookupPlacesView() {
-//        coordinator.pushLookupPlacesView()
-//    }
-
     // MARK: UI Child
     func createPlacesMapView(navBarHeight: CGFloat) -> PlacesMapView {
-        let bindingPlaces = Binding<[PlaceUI]>(
-            get: {
-                return self.filteredPlaces
-            }, set: { value in
-                assertionFailure("Child is not supposed to edit the full list")
-                // Child is not supposed to edit the full place list, only one place by one (EDIT)
-                // FIXME: as an improvement => do not pass a binding but a simple list + a binding to selectedPlace
-                // MainViewModel would store selectedPlace instead of both PlaceListViewModel/MapListViewModel
-            })
+        let bindingSelectedPlaceId = Binding<UUID?> {
+            self.selectedPlaceId
+        } set: { newValue in
+            self.selectedPlaceId = newValue
+        }
         let bindingShowingCreatePlaceMenu = Binding<Bool>(
             get: {
                 return self.showingCreatePlaceMenu
@@ -74,22 +86,24 @@ import CoreLocation
             }, set: { value in
                 self.isPresenting = value
             })
-        return appContainer.createPlacesMapView(places: bindingPlaces,
+        return appContainer.createPlacesMapView(places: filteredPlaces,
+                                                selectedPlaceId: bindingSelectedPlaceId,
                                                 isParentPresenting: bindingIsPresenting,
                                                 showingCreatePlaceMenu: bindingShowingCreatePlaceMenu,
                                                 navBarHeight: navBarHeight)
     }
     
     func createPlacesListView() -> PlacesListView {
-        let bindingPlaces = Binding<[PlaceUI]>(
-            get: {
-                return self.sortedPlaces
-            }, set: { value in
-                assertionFailure("Child is not supposed to edit the full list")
-                // Child is not supposed to edit the full place list, only one place by one (EDIT)
-                // FIXME: as an improvement => do not pass a binding but a simple list + a binding to selectedPlace
-            })
-        return appContainer.createPlacesListView(places: bindingPlaces)
+        let bindingSelectedPlaceId = Binding<UUID?> {
+            self.selectedPlaceId
+        } set: { newValue in
+            self.selectedPlaceId = newValue
+        }
+        return appContainer.createPlacesListView(places: sortedPlaces, selectedPlaceId: bindingSelectedPlaceId)
+    }
+
+    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+        return appContainer.createPlaceSheetView(place: place, detent: detent)
     }
 
     func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
@@ -99,11 +113,7 @@ import CoreLocation
     func createLookupPlacesView() -> LookupPlacesView {
         return appContainer.createLookupPlacesView()
     }
-
-    func createLookupPlacesView(placeId: UUID) -> LookupPlacesView {
-        return appContainer.createLookupPlacesView()
-    }
-
+    
     func createLookupPlacesView(place: Binding<PlaceUI>) -> LookupPlacesView {
         return appContainer.createLookupPlacesView(place: place)
     }
@@ -131,34 +141,9 @@ import CoreLocation
         return appContainer.createPlaceFilterView(filter: filterBinding)
     }
 
-    #if false
-    func createDropAPinView() -> DropAPinView {
-        return appContainer.createDropAPinView()
-    }
-    #endif
-
     // MARK: Use cases
     func loadPlaces() async throws {
         let domainPlaces = try await getPlaces.execute()
         places = domainPlaces.map { PlaceMapper.toUI($0) }
-        // update dependency
-        updateFiltering()
-    }
-    
-    // MARK: Actions
-    func updateFiltering() {
-        defer {
-            // update dependency
-            updateSorting()
-        }
-        guard let filter = currentFilter else {
-            filteredPlaces = places
-            return
-        }
-        filteredPlaces = filter.apply(places)
-    }
-
-    func updateSorting() {
-        sortedPlaces = sortPolicy.apply(filteredPlaces, userPosition: locationManager.lastKnownLocation)
     }
 }

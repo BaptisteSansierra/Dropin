@@ -114,8 +114,10 @@ struct MockPlacePinAnnotationView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        let group1 = mock.getGroupUI(0)
-        let group2 = mock.getGroupUI(1)
+        let group1 = mock.getGroupUI(0)  // FA Symbol
+        group1.icon = Icon.fa("spa")
+        let group2 = mock.getGroupUI(1)  // SF Symbol
+        //group2.icon = Icon.fa("pizza-slice")
 
         let place = mock.getPlaceUI()
         self.place1 = place

@@ -7,55 +7,41 @@
 
 import SwiftUI
 
-#if true
-
 struct PlacesListView: View {
     
     // MARK: - State & Bindings
     @State private var viewModel: PlacesListViewModel
-    @Binding private var places: [PlaceUI]
+    @Binding private var selectedPlaceId: UUID?
     @Environment(RootView.ActionBus.self) private var actionBus
-    @State private var scrollPosition: ScrollPosition = .init()
+    //@State private var scrollPosition: ScrollPosition = .init()
     
+    // MARK: - Properties
+    private var places: [PlaceUI]
+
     // MARK: - Init
-    init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
+    init(viewModel: PlacesListViewModel,
+         places: [PlaceUI],
+         selectedPlaceId: Binding<UUID?>) {
         self.viewModel = viewModel
-        self._places = places
+        self.places = places
+        self._selectedPlaceId = selectedPlaceId
     }
     
     // MARK: - Body
     var body: some View {
-        ZStack {
-            contentView
-        }
-        .task {
-            try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
-            Task {
-                //viewModel.updateSorting(places)
-            }
-        }
-        .sheet(item: $viewModel.selectedPlaceId,
-               onDismiss: {
-            viewModel.detailSheetDetent = .medium
-        }) { placeId in
-            createPlaceDetailsSheetView()
-                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
-                .presentationCornerRadius(20)
-                .presentationBackground(.backgroundPrimary)
-        }
+        contentView
     }
     
     // MARK: - Subviews
     private var contentView: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                printInViewBuilder("DISPLAY LIST first is \(places.first?.name)")
                 ForEach(places) { place in
                     placeRowView(place)
                 }
             }
         }
-        .scrollPosition($scrollPosition)
+        //.scrollPosition($scrollPosition)
         .background(.backgroundSecondary)
         .safeAreaPadding(.bottom, DropinApp.ui.mainTabBarHeight)
         .ignoresSafeArea(edges: .bottom)
@@ -75,8 +61,7 @@ struct PlacesListView: View {
             .padding(.bottom, 20)
             .id(place.changeToken)  // Force the update after edit
             .onTapGesture {
-                viewModel.selectedPlaceId = place.id
-                //viewModel.pushPlaceDetailsView(placeId: place.id)
+                selectedPlaceId = place.id
             }
     }
     
@@ -90,209 +75,19 @@ struct PlacesListView: View {
     }
         
     // MARK: private methods
-    /*
-    private func onAppearCallback() {
-        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
-            return
-        }
-        switch lastNavigationSource {
-            case .placeCreateView, .placeEditView:
-                Task {
-                    await reloadPlaces()
-                }
-            default:
-                ()
-        }
-    }
-    
-    private func reloadPlaces() async {
-        do {
-            places = try await viewModel.loadPlaces()
-            //viewModel.updateSorting(places)
-        } catch {
-            assertionFailure("couldn't reload places")
-        }
-    }
-     */
-
     private func showOnMap(_ placeId: UUID) {
         actionBus.send(.showOnMap(placeId: placeId))
     }
 }
 
-// Create Views
-extension PlacesListView {
-    
-    private func createPlaceDetailsSheetView() -> PlaceSheetView {
-        guard let selectedPlaceId = viewModel.selectedPlaceId else {
-            fatalError("selectedPlaceId undefined")
-        }
-        guard let index = places.firstIndex(where: { $0.id == selectedPlaceId }) else {
-            fatalError("couldn't find place with id \(selectedPlaceId)")
-        }
-        return viewModel.createPlaceSheetView(place: $places[index],
-                                              detend: $viewModel.detailSheetDetent)
-    }
-}
-
-
-
-#else
-
-struct PlacesListView: View {
-        
-    // MARK: - State & Bindings
-    @State private var viewModel: PlacesListViewModel
-    @Binding private var places: [PlaceUI]
-    @State private var readyToDisplay = false
-
-    // MARK: - Init
-    init(viewModel: PlacesListViewModel, places: Binding<[PlaceUI]>) {
-        self.viewModel = viewModel
-        self._places = places
-    }
-
-    // MARK: - Body
-    var body: some View {
-        Group {
-            if viewModel.loading || !readyToDisplay {
-                ProgressView()
-                    .progressViewStyle(.circular)
-            } else {
-                List {
-                    // Show places without groups (empty if #2)
-                    if !viewModel.grouped { flatList }
-                    // Show grouped places (empty if #1)
-                    else { groupedList }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .listStyle(.grouped)
-                // TODO: to be implemented?
-                //.searchable(text: $viewModel.searchText)
-//                    .searchPresentationToolbarBehavior(.avoidHidingContent)
-//                    .refreshable {
-//                        Task {
-//                            try await self.viewModel.loadPlaces()
-//                        }
-//                    }
-//                    .safeAreaInset(edge: .bottom) {
-//                        Color.clear
-//                            .frame(height: 15)
-//                    }
-            }
-        }
-        .task {
-            try? await Task.sleep(nanoseconds: 1_000_000) // 1ms delay
-            readyToDisplay = true
-            Task {
-                viewModel.updateSorting(places)
-            }
-        }
-        .onChange(of: viewModel.grouped) {
-            viewModel.updateSorting(places)
-        }
-        .onChange(of: viewModel.sortMode) {
-            viewModel.updateSorting(places)
-        }
-
-            
-//            .navigationDestination(for: PlaceEntity.self) { place in
-//                createPlaceDetailsView(place)
-//            }
-//            .navigationBarTitleDisplayMode(.inline)
-
-//            .toolbar {
-//                DropinToolbar.Burger()
-//                DropinToolbar.Logo()
-//                ToolbarItemGroup(placement: .topBarTrailing) {
-//                    trailingToolbarContent
-//                }
-//            }
-            
-        //}
-    }
-
-    // MARK: - Subviews
-    /*
-    private var trailingToolbarContent: some View {
-        Group {
-            Button("common.organize_by_group", systemImage: viewModel.grouped ? "rectangle.3.group.bubble" : "rectangle.3.group.bubble.fill") {
-                viewModel.grouped.toggle()
-            }
-            .tint(.dropinPrimary)
-            Menu("common.sort", systemImage: "arrow.up.arrow.down") {
-                Picker("common.sort", selection: $viewModel.sortMode) {
-                    Text("common.sort.by_distance")
-                        .tag(PlacesListViewModel.SortMode.distance)
-                    Text("common.sort.by_name")
-                        .tag(PlacesListViewModel.SortMode.alphabetically)
-                    Text("common.sort.by_creation_date")
-                        .tag(PlacesListViewModel.SortMode.creationDate)
-                }
-                .pickerStyle(.inline)
-            }
-            .tint(.dropinPrimary)
-        }
-    }
-     */
-
-    private var flatList: some View {
-        ForEach(viewModel.sortedPlaces) { place in
-            placeRowView(place)
-        }
-    }
-
-    private var groupedList: some View {
-        Group {
-            let keys: [UUID] = Array(viewModel.groupedSortedPlaces.keys)
-            let sortedKeys = keys.sorted()
-            ForEach(sortedKeys, id: \.self) { groupId in
-                if let groupPlaces = viewModel.groupedSortedPlaces[groupId],
-                   let firstPlace = groupPlaces.first,
-                   let groupName = firstPlace.group?.name {
-                    Section(groupName) {
-                        ForEach(groupPlaces) { place in
-                            placeRowView(place)
-                        }
-                    }
-                }
-            }
-            if viewModel.ungroupedSortedPlaces.count > 0 {
-                Section("common.not_grouped") {
-                    ForEach(viewModel.ungroupedSortedPlaces) { place in
-                        placeRowView(place)
-                    }
-                }
-            }
-        }
-    }
-    
-    private func placeRowView(_ place: PlaceUI) -> some View {
-        PlaceRowView(place: place, locationManager: viewModel.locationManager)
-            .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-            .onTapGesture {
-                viewModel.pushPlaceDetailsView(placeId: place.id)
-            }
-    }
-
-    
-    // MARK: private methods
-//    private func createPlaceDetailsView(_ place: PlaceEntity) -> PlaceDetailsView {
-//        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
-//            fatalError("couldn't find any place named '\(place.name)' in list")
-//        }
-//        return viewModel.createPlaceDetailsView(place: $places[index], editMode: .none)
-//    }
-}
-#endif
-
 #if DEBUG
 struct MockPlacesListView: View {
     var mock: MockContainer
     @State var places: [PlaceUI]
+    @State var selectedPlaceId: UUID?
 
     var body: some View {
-        mock.appContainer.createPlacesListView(places: $places)
+        mock.appContainer.createPlacesListView(places: places, selectedPlaceId: $selectedPlaceId)
     }
     
     init() {

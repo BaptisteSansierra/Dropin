@@ -40,7 +40,7 @@ struct MapPinView: View {
                     .offset(y: contentOffsetY)
                 if let icon = icon {
                     IconView(icon: icon)
-                        .font(.system(size: fontSize))
+                        .size(fontSize)
                         .foregroundStyle(iconColor)
                         .offset(y: contentOffsetY)
                 } else {
@@ -86,7 +86,7 @@ struct MapPinView: View {
     VStack {
         HStack {
             MapPinView(color: .red,
-                       icon: Icon(rawValue: "sf:mappin"),
+                       icon: Icon(rawValue: "sf:carrot"),
                        shadow: true)
                 .frame(width: 200, height: 200)
 
@@ -100,7 +100,7 @@ struct MapPinView: View {
                 .frame(width: 200, height: 200)
 
             MapPinView(color: .blue,
-                    icon: Icon(rawValue: "sf:mappin"),
+                    icon: Icon(rawValue: "fa:pizza-slice"),
                     shadow: true)
 
             .frame(width: 200, height: 200)
