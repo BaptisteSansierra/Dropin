@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct TagListView: View {
     
@@ -59,8 +58,8 @@ struct TagListView: View {
                     }
                 }
             } message: { tag in
-                if tag.places.count > 0 {
-                    Text("alert.remove_tag_body_\(tag.name)_\(tag.places.count)")
+                if tag.placeCount > 0 {
+                    Text("alert.remove_tag_body_\(tag.name)_\(tag.placeCount)")
                 } else {
                     Text("alert.remove_tag_empty_body_\(tag.name)")
                 }
@@ -72,7 +71,7 @@ struct TagListView: View {
         HStack {
             TagView(name: tag.name, color: tag.color)
             Spacer()
-            let nPlaces = tag.places.count
+            let nPlaces = tag.placeCount
             Text("tag_list_view.num_places_\(nPlaces)")
                 .textStyle(.placeholder)
         }

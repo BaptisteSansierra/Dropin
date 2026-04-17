@@ -9,44 +9,31 @@ import Foundation
 
 @MainActor
 extension GroupMapper {
-    
-    static func toUI(_ group: GroupEntity, skipRelationships: Bool = false) -> GroupUI {
-        var placesUI = [PlaceUI]()
-        if !skipRelationships {
-            placesUI = group.places.map { PlaceMapper.toUI($0, skipRelationships: true) }
-        }
+
+    static func toUI(_ group: GroupEntity, placeCount: Int) -> GroupUI {
+        let groupUI = toUI(group)
+        groupUI.placeCount = placeCount
+        return groupUI
+    }
+
+    static func toUI(_ group: GroupEntity) -> GroupUI {
         let groupUI = GroupUI(id: group.id,
                               name: group.name,
                               color: group.color,
                               icon: group.icon,
-                              places: placesUI,
+                              places: [],
                               createdAt: group.createdAt,
                               deletedAt: group.deletedAt)
-        if !skipRelationships {
-            for i in 0..<placesUI.count {
-                placesUI[i].group = groupUI
-            }
-        }
         return groupUI
     }
     
-    static func toDomain(_ groupUI: GroupUI, skipRelationships: Bool = false) -> GroupEntity {
-        var places = [PlaceEntity]()
-        if !skipRelationships {
-            places = groupUI.places.map { PlaceMapper.toDomain($0, skipRelationships: true) }
-        }
+    static func toDomain(_ groupUI: GroupUI) -> GroupEntity {
         let group = GroupEntity(id: groupUI.id,
                                 name: groupUI.name,
                                 color: groupUI.color.hex,
                                 icon: groupUI.icon,
-                                places: places,
                                 createdAt: groupUI.createdAt,
                                 deletedAt: groupUI.deletedAt)
-        if !skipRelationships {
-            for i in 0..<places.count {
-                places[i].group = group
-            }
-        }
         return group
     }
 }

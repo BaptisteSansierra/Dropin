@@ -12,11 +12,16 @@ import Foundation
 final class MockGroupRepository: GroupRepository {
     
     private var groups: [GroupEntity]
-    
+    //private var allPlaces: [PlaceEntity]
+
+//    init(initialGroups: [GroupEntity] = [], allPlaces: [PlaceEntity]) {
+//        self.groups = initialGroups
+//        self.allPlaces = allPlaces
+//    }
     init(initialGroups: [GroupEntity] = []) {
         self.groups = initialGroups
     }
-    
+
     func exists(_ place: GroupEntity) async throws -> Bool {
         if let _ = groups.first(where: { $0.id == place.id }) {
             return true
@@ -43,6 +48,11 @@ final class MockGroupRepository: GroupRepository {
         return groups
     }
     
+    func fetchWithPlaceCount() async throws -> [(Dropin.GroupEntity, Int)] {
+        return groups
+            .map({ ($0, 0) }) // TODO if needed
+    }
+
     func fetch(_ id: UUID) async throws -> GroupEntity {
         guard let g = groups.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")

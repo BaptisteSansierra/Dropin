@@ -35,6 +35,14 @@ final class MockPlaceRepository: PlaceRepository {
         return try await fetch(nil)
     }
 
+    func fetch(groupId: UUID) async throws -> [PlaceEntity] {
+        return [] // TODO if needed
+    }
+    
+    func fetch(tagId: UUID) async throws -> [PlaceEntity] {
+        return [] // TODO if needed
+    }
+
     func fetch(_ filter: Dropin.PlaceFilter?) async throws -> [Dropin.PlaceEntity] {
         guard let filter = filter, filter.isActive else {
             // no filtering

@@ -7,21 +7,21 @@
 
 import Foundation
 
-struct GroupEntity: Hashable {
+struct GroupEntity: Hashable, Sendable {
     let id: UUID
     let name: String
     let icon: Icon
-    var places: [PlaceEntity] = [PlaceEntity]()
     let color: String
     let createdAt: Date
     let deletedAt: Date?
-    
-    init(id: UUID, name: String, color: String, icon: Icon, places: [PlaceEntity], createdAt: Date, deletedAt: Date? = nil) {
+    // Note: places are not strores here to avoid bidirectional relationships
+    // PlaceEntity owns the relationship
+
+    init(id: UUID, name: String, color: String, icon: Icon, createdAt: Date, deletedAt: Date? = nil) {
         self.id = id
         self.name = name
         self.icon = icon
         self.color = color
-        self.places = places
         self.createdAt = createdAt
         self.deletedAt = deletedAt
     }

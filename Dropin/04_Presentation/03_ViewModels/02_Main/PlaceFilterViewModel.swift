@@ -15,12 +15,12 @@ import SwiftUI
     var filter: Binding<PlaceFilter?>
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private let getGroups: GetGroups
-    @ObservationIgnored private let getTags: GetTags
+    @ObservationIgnored private let getGroups: FetchGroups
+    @ObservationIgnored private let getTags: FetchTags
 
     init(_ appContainer: AppContainer,
-         getGroups: GetGroups,
-         getTags: GetTags,
+         getGroups: FetchGroups,
+         getTags: FetchTags,
          filter: Binding<PlaceFilter?>) {
         self.appContainer = appContainer
         self.getGroups = getGroups

@@ -74,7 +74,7 @@ final class AppContainer {
         let vm = MainViewModel(self,
                                coordinator: mainCoordinator,
                                locationManager: locationManager,
-                               getPlaces: GetPlaces(repository: placeRepository))
+                               fetchPlaces: FetchPlaces(repository: placeRepository))
         return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
@@ -111,14 +111,14 @@ final class AppContainer {
     
     func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
-                                      getTags: GetTags(repository: tagRepository),
+                                      getTags: FetchTags(repository: tagRepository),
                                       createTags: CreateTag(repository: tagRepository))
         return TagSelectorView(viewModel: vm, place: place)
     }
     
     func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
         let vm = GroupSelectorViewModel(self,
-                                        getGroups: GetGroups(repository: groupRepository),
+                                        getGroups: FetchGroups(repository: groupRepository),
                                         createGroup: CreateGroup(repository: groupRepository))
         return GroupSelectorView(viewModel: vm, place: place)
     }
@@ -159,8 +159,8 @@ final class AppContainer {
         let vm = PlaceCreateViewModel(self,
                                       coordinator: mainCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
-                                      getTag: GetTag(repository: tagRepository),
-                                      getGroup: GetGroup(repository: groupRepository))
+                                      getTag: FetchTag(repository: tagRepository),
+                                      getGroup: FetchGroup(repository: groupRepository))
         return PlaceCreateView(viewModel: vm,
                                coordinates: coordinates,
                                address: address,
@@ -173,7 +173,7 @@ final class AppContainer {
     func createTagListView(showingSideMenu: Binding<Bool>) -> TagListView {
         let vm = TagListViewModel(self,
                                   coordinator: tagCoordinator,
-                                  getTags: GetTags(repository: tagRepository),
+                                  fetchTagsWithCount: FetchTagsWithCount(repository: tagRepository),
                                   deleteTag: DeleteTag(repository: tagRepository))
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
@@ -182,14 +182,16 @@ final class AppContainer {
         let vm = TagDetailsViewModel(self,
                                      locationManager: locationManager,
                                      updateTag: UpdateTag(repository: tagRepository),
-                                     deleteTag: DeleteTag(repository: tagRepository))
+                                     deleteTag: DeleteTag(repository: tagRepository),
+                                     fetchTagPlaces: FetchTagPlaces(repository: placeRepository),
+                                     updatePlace: UpdatePlace(repository: placeRepository))
         return TagDetailsView(viewModel: vm, tag: tag)
     }
 
     func createGroupListView(showingSideMenu: Binding<Bool>) -> GroupListView {
         let vm = GroupListViewModel(self,
                                     coordinator: groupCoordinator,
-                                    getGroups: GetGroups(repository: groupRepository),
+                                    fetchGroupsWithCount: FetchGroupsWithCount(repository: groupRepository),
                                     deleteGroup: DeleteGroup(repository: groupRepository))
         return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
@@ -198,7 +200,9 @@ final class AppContainer {
         let vm = GroupDetailsViewModel(self,
                                        locationManager: locationManager,
                                        updateGroup: UpdateGroup(repository: groupRepository),
-                                       deleteGroup: DeleteGroup(repository: groupRepository))
+                                       deleteGroup: DeleteGroup(repository: groupRepository),
+                                       fetchGroupPlaces: FetchGroupPlaces(repository: placeRepository),
+                                       updatePlace: UpdatePlace(repository: placeRepository))
         return GroupDetailsView(viewModel: vm, group: group)
     }
     
@@ -244,11 +248,23 @@ final class AppContainer {
     
     func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
         let vm = PlaceFilterViewModel(self,
-                                      getGroups: GetGroups(repository: groupRepository),
-                                      getTags: GetTags(repository: tagRepository),
+                                      getGroups: FetchGroups(repository: groupRepository),
+                                      getTags: FetchTags(repository: tagRepository),
                                       filter: filter)
         return PlaceFilterView(viewModel: vm)
     }
+    
+    
+    // MARK: - settings views
+    func createSettingsView(showingSideMenu: Binding<Bool>) -> SettingsView {
+        let vm = SettingsViewModel(self,
+                                   coordinator: mainCoordinator,
+                                   fetchPlaces: FetchPlaces(repository: placeRepository),
+                                   fetchGroups: FetchGroups(repository: groupRepository),
+                                   fetchTags: FetchTags(repository: tagRepository))
+        return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
+    }
+
 }
 
 #if DEBUG

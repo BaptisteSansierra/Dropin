@@ -17,7 +17,10 @@ import SwiftUI
     var places: [PlaceUI] = [PlaceUI]()
     var createdAt: Date
     var deletedAt: Date? = nil
-    
+
+    // used to get place count when places are not populated
+    var placeCount: Int = -1
+
     var isActive: Bool {
         deletedAt == nil
     }
@@ -35,11 +38,4 @@ import SwiftUI
         self.createdAt = createdAt
         self.deletedAt = deletedAt
     }
-    
-//    init(name: String, color: String) {
-//        self.id = UUID().uuidString
-//        self.name = name
-//        self.color = color
-//        createdAt = Date()
-//    }
 }

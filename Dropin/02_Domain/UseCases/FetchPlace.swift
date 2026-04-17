@@ -1,5 +1,5 @@
 //
-//  GetPlaces 2.swift
+//  FetchPlaces.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 9/4/26.
@@ -9,7 +9,7 @@
 import Foundation
 
 @MainActor
-struct GetPlace: Sendable {
+struct FetchPlace: Sendable {
     private let repository: PlaceRepository
     
     init(repository: PlaceRepository) {

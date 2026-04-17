@@ -10,9 +10,15 @@ import Foundation
 @MainActor
 struct ExportService {
 
-    private var getPlaces: GetPlaces
-    private var getGroups: GetGroups
-    private var getTags: GetTags
+    private var fetchPlaces: FetchPlaces
+    private var getGroups: FetchGroups
+    private var getTags: FetchTags
+    
+    init(fetchPlaces: FetchPlaces, getGroups: FetchGroups, getTags: FetchTags) {
+        self.fetchPlaces = fetchPlaces
+        self.getGroups = getGroups
+        self.getTags = getTags
+    }
     
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -22,7 +28,7 @@ struct ExportService {
     }()
 
     func execute() async throws {
-        async let placesTask = getPlaces.execute()
+        async let placesTask = fetchPlaces.execute()
         async let groupsTask = getGroups.execute()
         async let tagsTask = getTags.execute()
         
@@ -35,6 +41,7 @@ struct ExportService {
         let data = try encode(dropinExport)
         let url = exportURL(for: dropinExport)
         try data.write(to: url)
+        Log.info("Exported to \"\(url.absoluteString)\"")
     }
     
     private func encode(_ export: DropinExport) throws -> Data {
@@ -42,7 +49,10 @@ struct ExportService {
     }
     
     private func exportURL(for export: DropinExport) -> URL {
-        let formatedDate = ISO8601DateFormatter().string(from: export.exportedAt)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        let formatedDate = formatter.string(from: export.exportedAt)
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("dropin-export-\(formatedDate)")
             .appendingPathExtension("json")

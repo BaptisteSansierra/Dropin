@@ -54,6 +54,13 @@ struct GroupDetailsView: View {
             }
             deleteButton
         }
+        .task {
+            do {
+                try await viewModel.fetchPlace(group.id)
+            } catch {
+                // TODO: error
+            }
+        }
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .alert("alert.remove_group_title",
@@ -70,8 +77,8 @@ struct GroupDetailsView: View {
                 }
             }
         } message: {
-            if group.places.count > 0 {
-                Text("alert.remove_group_body_\(group.name)_\(group.places.count)")
+            if viewModel.places.count > 0 {
+                Text("alert.remove_group_body_\(group.name)_\(viewModel.places.count)")
             } else {
                 Text("alert.remove_group_empty_body_\(group.name)")
             }
@@ -183,39 +190,49 @@ struct GroupDetailsView: View {
         }
     }
 
+    @ViewBuilder
     private var placesView: some View {
-        VStack(alignment: .leading) {
-            if group.places.count > 0 {
-                Text("common.related_places")
-                    .textStyle(.formSectionTitle2)
-                    .padding(.leading, 40)
-                    .padding(.top, 30)
-                Divider()
-                List {
-                    ForEach(group.places) { place in
-                        PlaceRowView(place: place, locationManager: viewModel.locationManager)
-                        .swipeActions(allowsFullSwipe: false) {
-                            Button() {
-                                guard let idx = group.places.firstIndex(where: { place.id == $0.id }) else { return }
-                                group.places.remove(at: idx)
-                                updateGroup()
-                            } label: {
-                                Text("common.unlink")
-                            }
-                            .tint(.destructive)
+        if viewModel.loadingPlaces {
+            VStack(alignment: .leading) {
+                ProgressView()
+            }
+        } else {
+            VStack(alignment: .leading) {
+                if viewModel.places.count > 0 {
+                    Text("common.related_places")
+                        .textStyle(.formSectionTitle2)
+                        .padding(.leading, 40)
+                        .padding(.top, 30)
+                    Divider()
+                    List {
+                        ForEach(viewModel.places) { place in
+                            PlaceRowView(place: place, locationManager: viewModel.locationManager)
+                                .swipeActions(allowsFullSwipe: false) {
+                                    Button() {
+                                        guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
+                                        // Remove the place from group list so UI is updated
+                                        viewModel.places.remove(at: idx)
+                                        // Remove the group from place and update the database from it
+                                        place.group = nil
+                                        updatePlace(place)
+                                    } label: {
+                                        Text("common.unlink")
+                                    }
+                                    .tint(.destructive)
+                                }
                         }
                     }
+                    .scrollContentBackground(.hidden)
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear
+                            .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
+                    }
+                } else {
+                    Text("common.no_related_places")
+                        .textStyle(.formSectionTitle2)
+                        .padding(.leading, 40)
+                        .padding(.top, 30)
                 }
-                .scrollContentBackground(.hidden)
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear
-                        .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
-                }
-            } else {
-                Text("common.no_related_places")
-                    .textStyle(.formSectionTitle2)
-                    .padding(.leading, 40)
-                    .padding(.top, 30)
             }
         }
     }
@@ -253,6 +270,17 @@ struct GroupDetailsView: View {
             } catch {
                 // TODO: handle error
                 assertionFailure("Could not delete update group")
+            }
+        }
+    }
+    
+    private func updatePlace(_ place: PlaceUI) {
+        Task {
+            do {
+                try await viewModel.updatePlace(place)
+            } catch {
+                // TODO: handle error
+                assertionFailure("Could not update place: \(error)")
             }
         }
     }

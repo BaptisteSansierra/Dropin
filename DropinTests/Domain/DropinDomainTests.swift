@@ -54,7 +54,7 @@ struct DropinDomainTests {
     @MainActor
     @Test func deletePlace() async throws {
         let placeRepo = MockPlaceRepository()
-        let getPlacesUC = GetPlaces(repository: placeRepo)
+        let fetchPlacesUC = FetchPlaces(repository: placeRepo)
         let createPlaceUC = CreatePlace(repository: placeRepo)
         let deletePlaceUC = DeletePlace(repository: placeRepo)
 
@@ -71,9 +71,9 @@ struct DropinDomainTests {
         var placesAfterInsert = [PlaceEntity]()
         var placesAfterFirstDelete = [PlaceEntity]()
         do {
-            placesOrigin = try await getPlacesUC.execute()
+            placesOrigin = try await fetchPlacesUC.execute()
             try await createPlaceUC.execute(place)
-            placesAfterInsert = try await getPlacesUC.execute()
+            placesAfterInsert = try await fetchPlacesUC.execute()
             #expect(true)
         } catch {
             Issue.record("could not create place")
@@ -83,7 +83,7 @@ struct DropinDomainTests {
         // Check 1st delete place ok
         do {
             try await deletePlaceUC.execute(place)
-            placesAfterFirstDelete = try await getPlacesUC.execute()
+            placesAfterFirstDelete = try await fetchPlacesUC.execute()
             #expect(true)
         } catch {
             Issue.record("could not delete place")
@@ -129,17 +129,27 @@ struct DropinDomainTests {
         var mockPlaces = PlaceEntity.mockPlaces()
         let mockTags = TagEntity.mockTags()
         let mockGroups = GroupEntity.mockGroups()
-        // link some objects
-        mockPlaces[0].group = mockGroups[0]
-        mockPlaces[1].group = mockGroups[0]
-        mockPlaces[2].group = mockGroups[4]
-        mockPlaces[3].group = mockGroups[5]
-        mockPlaces[4].group = mockGroups[1]
 
-        mockPlaces[0].tags = [mockTags[8], mockTags[10], mockTags[13]]
-        mockPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
-        mockPlaces[2].tags = [mockTags[6], mockTags[7]]
-        mockPlaces[3].tags = [mockTags[1]]
+        // link some objects
+        mockPlaces[0] = PlaceEntity(other: mockPlaces[0],
+                                    tags: [mockTags[8], mockTags[10], mockTags[13]],
+                                    group: mockGroups[0])
+
+        mockPlaces[1] = PlaceEntity(other: mockPlaces[1],
+                                    tags: [mockTags[8], mockTags[9], mockTags[13]],
+                                    group: mockGroups[0])
+
+        mockPlaces[2] = PlaceEntity(other: mockPlaces[2],
+                                    tags: [mockTags[6], mockTags[7]],
+                                    group: mockGroups[4])
+
+        mockPlaces[3] = PlaceEntity(other: mockPlaces[3],
+                                    tags: [mockTags[1]],
+                                    group: mockGroups[5])
+
+        mockPlaces[4] = PlaceEntity(other: mockPlaces[4],
+                                    tags: [],
+                                    group: mockGroups[1])
 
         let placeRepo = MockPlaceRepository(initialPlaces: mockPlaces)
         var fetchResult = [PlaceEntity]()

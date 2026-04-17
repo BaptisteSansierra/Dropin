@@ -13,16 +13,16 @@ import SwiftUI
     var coordinator: TagCoordinator
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var getTags: GetTags
+    @ObservationIgnored private var fetchTagsWithCount: FetchTagsWithCount
     @ObservationIgnored private var deleteTag: DeleteTag
 
     init(_ appContainer: AppContainer,
          coordinator: TagCoordinator,
-         getTags: GetTags,
+         fetchTagsWithCount: FetchTagsWithCount,
          deleteTag: DeleteTag) {
         self.appContainer = appContainer
         self.coordinator = coordinator
-        self.getTags = getTags
+        self.fetchTagsWithCount = fetchTagsWithCount
         self.deleteTag = deleteTag
     }
     
@@ -38,8 +38,8 @@ import SwiftUI
 
     // MARK: use cases
     func loadTags() async throws -> [TagUI] {
-        let domainItems = try await getTags.execute()
-        let items = domainItems.map { TagMapper.toUI($0) }
+        let result = try await fetchTagsWithCount.execute()
+        let items = result.map { TagMapper.toUI($0, placeCount: $1) }
         return items
     }
     

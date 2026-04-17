@@ -13,16 +13,16 @@ import SwiftUI
     var coordinator: GroupCoordinator
     
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var getGroups: GetGroups
+    @ObservationIgnored private var fetchGroupsWithCount: FetchGroupsWithCount
     @ObservationIgnored private var deleteGroup: DeleteGroup
 
     init(_ appContainer: AppContainer,
          coordinator: GroupCoordinator,
-         getGroups: GetGroups,
+         fetchGroupsWithCount: FetchGroupsWithCount,
          deleteGroup: DeleteGroup) {
         self.appContainer = appContainer
         self.coordinator = coordinator
-        self.getGroups = getGroups
+        self.fetchGroupsWithCount = fetchGroupsWithCount
         self.deleteGroup = deleteGroup
     }
     
@@ -38,8 +38,8 @@ import SwiftUI
 
     // MARK: use cases
     func loadGroups() async throws -> [GroupUI] {
-        let domainItems = try await getGroups.execute()
-        let items = domainItems.map { GroupMapper.toUI($0) }
+        let result = try await fetchGroupsWithCount.execute()
+        let items = result.map { GroupMapper.toUI($0, placeCount: $1) }
         return items
     }
     

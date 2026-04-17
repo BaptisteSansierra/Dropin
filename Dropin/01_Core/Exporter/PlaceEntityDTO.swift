@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import ContactFieldKit
 import CoreLocation
 
 struct PlaceEntityDTO: Decodable {
@@ -21,9 +20,9 @@ struct PlaceEntityDTO: Decodable {
     var icon: Icon?
     var createdAt: Date
     var rating: Float?
-    var phone: [ContactItem]
-    var email: [ContactItem]
-    var url: [ContactItem]
+    var phone: [String]
+    var email: [String]
+    var url: [String]
     var notes: String?
     var images: [Data]
     var deletedAt: Date? = nil
@@ -42,9 +41,9 @@ struct PlaceEntityDTO: Decodable {
         self.icon = try c.decode(Icon.self, forKey: .icon)
         self.createdAt = try c.decode(Date.self, forKey: .createdAt)
         self.rating = try c.decodeIfPresent(Float.self, forKey: .rating)
-        self.phone = try c.decode([ContactItem].self, forKey: .phone)
-        self.email = try c.decode([ContactItem].self, forKey: .email)
-        self.url = try c.decode([ContactItem].self, forKey: .url)
+        self.phone = try c.decode([String].self, forKey: .phone)
+        self.email = try c.decode([String].self, forKey: .email)
+        self.url = try c.decode([String].self, forKey: .url)
         self.notes = try c.decode(String.self, forKey: .notes)
         
         // TODO: images should not be stored within Place object...

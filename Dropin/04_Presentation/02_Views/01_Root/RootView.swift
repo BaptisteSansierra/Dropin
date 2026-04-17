@@ -74,6 +74,8 @@ struct RootView: View {
                 viewModel.createGroupListView()
             case .tags:
                 viewModel.createTagListView()
+            case .settings:
+                viewModel.createSettingsView()
             case .toBeImplemnented:
                 NavigationStack {
                     Text(verbatim: "Unavailable")

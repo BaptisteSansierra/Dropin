@@ -9,23 +9,13 @@ import Foundation
 
 public enum GroupMapper {
     
-    static func toDomain(_ sdGroup: SDGroup, skipRelationships: Bool = false) -> GroupEntity {
-        var places = [PlaceEntity]()
-        if !skipRelationships {
-            places = sdGroup.places.map { PlaceMapper.toDomain($0, skipRelationships: true) }
-        }
+    static func toDomain(_ sdGroup: SDGroup) -> GroupEntity {
         let group = GroupEntity(id: sdGroup.identifier,
                                 name: sdGroup.name,
                                 color: sdGroup.color,
                                 icon: sdGroup.icon,
-                                places: places,
                                 createdAt: sdGroup.createdAt,
                                 deletedAt: sdGroup.deletedAt)
-        if !skipRelationships {
-            for i in 0..<places.count {
-                places[i].group = group
-            }
-        }
         return group
     }
     

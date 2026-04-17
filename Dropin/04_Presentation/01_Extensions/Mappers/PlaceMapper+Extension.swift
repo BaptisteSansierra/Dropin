@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ContactFieldKit
 
 @MainActor
 extension PlaceMapper {
@@ -14,11 +15,22 @@ extension PlaceMapper {
         var groupUI: GroupUI? = nil
         var tagsUI = [TagUI]()
         if !skipRelationships {
-            tagsUI = place.tags.map { TagMapper.toUI($0, skipRelationships: true) }
+            tagsUI = place.tags.map { TagMapper.toUI($0) }
             if let group = place.group {
-                groupUI = GroupMapper.toUI(group, skipRelationships: true)
+                groupUI = GroupMapper.toUI(group)
             }
         }
+        
+        let phones = place.phone
+            .filter { ContactItem(rawValue: $0) != nil }
+            .map { ContactItem(rawValue: $0)! }
+        let emails = place.email
+            .filter { ContactItem(rawValue: $0) != nil }
+            .map { ContactItem(rawValue: $0)! }
+        let urls = place.url
+            .filter { ContactItem(rawValue: $0) != nil }
+            .map { ContactItem(rawValue: $0)! }
+        
         let placeUI = PlaceUI(id: place.id,
                               name: place.name,
                               coordinates: place.coordinates,
@@ -28,9 +40,9 @@ extension PlaceMapper {
                               group: groupUI,
                               icon: place.icon,
                               rating: place.rating,
-                              phone: place.phone,
-                              email: place.email,
-                              url: place.url,
+                              phone: phones,
+                              email: emails,
+                              url: urls,
                               notes: place.notes,
                               images: place.images,
                               createdAt: place.createdAt,
@@ -48,9 +60,9 @@ extension PlaceMapper {
         var group: GroupEntity? = nil
         var tags = [TagEntity]()
         if !skipRelationships {
-            tags = placeUI.tags.map { TagMapper.toDomain($0, skipRelationships: true) }
+            tags = placeUI.tags.map { TagMapper.toDomain($0) }
             if let groupUI = placeUI.group {
-                group = GroupMapper.toDomain(groupUI, skipRelationships: true)
+                group = GroupMapper.toDomain(groupUI)
             }
         }
         let place = PlaceEntity(id: placeUI.id,
@@ -62,19 +74,13 @@ extension PlaceMapper {
                                 group: group,
                                 icon: placeUI.icon,
                                 rating: placeUI.rating,
-                                phone: placeUI.phone,
-                                email: placeUI.email,
-                                url: placeUI.url,
+                                phone: placeUI.phone.map { $0.rawValue },
+                                email: placeUI.email.map { $0.rawValue },
+                                url: placeUI.url.map { $0.rawValue },
                                 notes: placeUI.notes,
                                 images: placeUI.images,
                                 createdAt: placeUI.createdAt,
                                 deletedAt: placeUI.deletedAt)
-        if !skipRelationships {
-            group?.places.append(place)
-            for i in 0..<tags.count {
-                tags[i].places.append(place)
-            }
-        }
         return place
     }
 }

@@ -15,11 +15,11 @@ import SwiftUI
     var tags = [TagUI]()
     
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var getTags: GetTags
+    @ObservationIgnored private var getTags: FetchTags
     @ObservationIgnored private var createTags: CreateTag
 
     init(_ appContainer: AppContainer,
-         getTags: GetTags,
+         getTags: FetchTags,
          createTags: CreateTag) {
         self.appContainer = appContainer
         self.getTags = getTags

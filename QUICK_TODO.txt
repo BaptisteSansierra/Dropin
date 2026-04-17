@@ -5,6 +5,14 @@
 
 ---- BUGFIX
 
+* First launch :
+  - map is centererd on the sea
+  - accept localization + center on user
+  - go to settings
+  - go back to places
+  - map is centererd on the sea AGAIN
+  
+
 * create a place by input coords : if user loc is being updated by system, cannot tip values
   Detect if update comes from manual drag and only update coords fields in this case
 

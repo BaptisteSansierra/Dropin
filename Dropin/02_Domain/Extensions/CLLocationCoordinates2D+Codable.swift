@@ -22,7 +22,7 @@ extension CLLocationCoordinate2D: @retroactive Codable {
     }
     
     public init(from decoder: any Decoder) throws {
-        var c = try decoder.container(keyedBy: CodingKeys.self)
+        let c = try decoder.container(keyedBy: CodingKeys.self)
         self.init(latitude: 0, longitude: 0)
         self.latitude = try c.decode(CLLocationDegrees.self, forKey: .latitude)
         self.longitude = try c.decode(CLLocationDegrees.self, forKey: .longitude)

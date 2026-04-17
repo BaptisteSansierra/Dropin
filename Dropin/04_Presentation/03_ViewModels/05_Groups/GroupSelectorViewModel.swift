@@ -13,11 +13,11 @@ import SwiftUI
     var groups = [GroupUI]()
     
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var getGroups: GetGroups
+    @ObservationIgnored private var getGroups: FetchGroups
     @ObservationIgnored private var createGroup: CreateGroup
     
     init(_ appContainer: AppContainer,
-         getGroups: GetGroups,
+         getGroups: FetchGroups,
          createGroup: CreateGroup) {
         self.appContainer = appContainer
         self.getGroups = getGroups

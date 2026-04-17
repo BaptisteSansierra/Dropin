@@ -14,5 +14,6 @@ protocol TagRepository {
     func delete(_ tag: TagEntity) async throws
     func update(_ tag: TagEntity) async throws
     func fetch() async throws -> [TagEntity]
+    func fetchWithPlaceCount() async throws -> [(TagEntity, Int)]
     func fetch(_ id: UUID) async throws -> TagEntity
 }

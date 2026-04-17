@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct GroupListView: View {
     
@@ -38,11 +37,20 @@ struct GroupListView: View {
             .navigationDestination(for: GroupNavigationItem.self) { navigationItem in
                 resolveDestination(navigationItem: navigationItem)
             }
-            .task {
+            .onAppear {
                 Task {
-                    groups = try await viewModel.loadGroups()
+                    do {
+                        groups = try await viewModel.loadGroups()
+                    } catch {
+                        // TODO: handle error
+                    }
                 }
             }
+//            .task {
+//                Task {
+//                    groups = try await viewModel.loadGroups()
+//                }
+//            }
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
             }
@@ -59,8 +67,8 @@ struct GroupListView: View {
                     }
                 }
             } message: { group in
-                if group.places.count > 0 {
-                    Text("alert.remove_group_body_\(group.name)_\(group.places.count)")
+                if group.placeCount > 0 {
+                    Text("alert.remove_group_body_\(group.name)_\(group.placeCount)")
                 } else {
                     Text("alert.remove_group_empty_body_\(group.name)")
                 }
@@ -70,9 +78,9 @@ struct GroupListView: View {
     
     private func groupRow(_ group: GroupUI) -> some View {
         HStack {
-            GroupView(group: group)
+            GroupView(group: group, size: .regular)
             Spacer()
-            let nPlaces = group.places.count
+            let nPlaces = group.placeCount
             Text("group_list_view.num_places_\(nPlaces)")
                 .textStyle(.placeholder)
         }

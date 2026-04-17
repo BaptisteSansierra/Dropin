@@ -13,11 +13,11 @@ final class SDTag {
     var identifier: UUID
     var name: String
     var color: String  // hexadecimal value
-    var places: [SDPlace]?
+    var places: [SDPlace]
     var createdAt: Date
     var deletedAt: Date?
     
-    init(identifier: UUID, name: String, color: String, places: [SDPlace]? = nil) {
+    init(identifier: UUID, name: String, color: String, places: [SDPlace] = []) {
         self.identifier = identifier
         self.name = name
         self.color = color

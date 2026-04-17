@@ -63,6 +63,25 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         }
     }
     
+    func fetch(groupId: UUID) async throws -> [PlaceEntity] {
+        let predicate = #Predicate<SDPlace> { $0.group?.identifier == groupId }
+        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
+        let sdPlaces = try modelContext.fetch(descriptor)
+        let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
+        return domainPlaces
+    }
+    
+    func fetch(tagId: UUID) async throws -> [PlaceEntity] {
+        let descriptor = FetchDescriptor<SDPlace>(
+            predicate: #Predicate { place in
+                place.tags.contains { $0.identifier == tagId }
+            }
+        )
+        let sdPlaces = try modelContext.fetch(descriptor)
+        let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
+        return domainPlaces
+    }
+    
     func update(_ place: PlaceEntity) async throws {
         let sdPlace = try await retrievePlace(domainPlace: place)
         sdPlace.name = place.name
@@ -72,9 +91,9 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.address2 = place.address2
         sdPlace.icon = place.icon
         sdPlace.rating = place.rating
-        sdPlace.phone = place.phone.map { $0.rawValue }
-        sdPlace.email = place.email.map { $0.rawValue }
-        sdPlace.url = place.url.map { $0.rawValue }
+        sdPlace.phone = place.phone
+        sdPlace.email = place.email
+        sdPlace.url = place.url
         sdPlace.notes = place.notes
         sdPlace.images = place.images
         try await linkTags(sdPlace: sdPlace, domainPlace: place)

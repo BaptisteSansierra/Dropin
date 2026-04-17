@@ -18,7 +18,7 @@ final class SDGroup {
     var createdAt: Date
     var deletedAt: Date?
 
-    init(identifier: UUID, name: String, color: String, icon: Icon, places: [SDPlace] = [SDPlace]()) {
+    init(identifier: UUID, name: String, color: String, icon: Icon, places: [SDPlace] = []) {
         self.identifier = identifier
         self.name = name
         self.places = places

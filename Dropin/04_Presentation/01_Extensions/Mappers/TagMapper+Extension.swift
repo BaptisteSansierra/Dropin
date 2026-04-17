@@ -10,41 +10,28 @@ import Foundation
 @MainActor
 extension TagMapper {
     
+    static func toUI(_ tag: TagEntity, placeCount: Int) -> TagUI {
+        let tagUI = toUI(tag)
+        tagUI.placeCount = placeCount
+        return tagUI
+    }
+
     static func toUI(_ tag: TagEntity, skipRelationships: Bool = false) -> TagUI {
-        var places = [PlaceUI]()
-        if !skipRelationships {
-            places = tag.places.map { PlaceMapper.toUI($0, skipRelationships: true) }
-        }
         let tagUI = TagUI(id: tag.id,
                           name: tag.name,
                           color: tag.color,
-                          places: places,
+                          places: [],
                           createdAt: tag.createdAt,
                           deletedAt: tag.deletedAt)
-        if !skipRelationships {
-            for i in 0..<places.count {
-                places[i].tags.append(tagUI)
-            }
-        }
         return tagUI
     }
     
-    static func toDomain(_ tagUI: TagUI, skipRelationships: Bool = false) -> TagEntity {
-        var places = [PlaceEntity]()
-        if !skipRelationships {
-            places = tagUI.places.map { PlaceMapper.toDomain($0, skipRelationships: true) }
-        }
+    static func toDomain(_ tagUI: TagUI) -> TagEntity {
         let tag = TagEntity(id: tagUI.id,
                             name: tagUI.name,
                             color: tagUI.color.hex,
-                            places: places,
                             createdAt: tagUI.createdAt,
                             deletedAt: tagUI.deletedAt)
-        if !skipRelationships {
-            for i in 0..<places.count {
-                places[i].tags.append(tag)
-            }
-        }
         return tag
     }
 }

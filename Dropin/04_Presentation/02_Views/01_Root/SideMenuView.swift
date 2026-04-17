@@ -119,7 +119,7 @@ struct SideMenuView: View {
             
             SideMenuItemView(label: "common.settings",
                              systemImage: "slider.horizontal.3",
-                             context: .toBeImplemnented,
+                             context: .settings,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
                 .frame(height: 60)

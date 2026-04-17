@@ -11,7 +11,7 @@ struct MapPinView: View {
     
     @State private var contentRadius: CGFloat = .zero
     @State private var contentOffsetY: CGFloat = .zero
-    @State private var fontSize: CGFloat = .zero
+    @State private var fontSize: CGFloat = 12
     @State private var iconColor: Color = .white
 
     private let shapeColor: Color = Color(light: .white,
@@ -43,6 +43,7 @@ struct MapPinView: View {
                         .size(fontSize)
                         .foregroundStyle(iconColor)
                         .offset(y: contentOffsetY)
+                    
                 } else {
                     PlaceholderPinShape()
                         .frame(width: contentRadius * 1.3,

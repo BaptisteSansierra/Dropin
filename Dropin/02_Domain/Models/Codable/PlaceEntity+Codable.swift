@@ -40,13 +40,13 @@ extension PlaceEntity: Encodable {
         let tagIds = tags.map { $0.id }
         try c.encode(tagIds, forKey: .tagIds)
         try c.encode(group?.id, forKey: .groupId)
-        try c.encode(icon, forKey: .icon)
+        try c.encodeIfPresent(icon, forKey: .icon)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encodeIfPresent(rating, forKey: .rating)
         try c.encode(phone, forKey: .phone)
         try c.encode(email, forKey: .email)
         try c.encode(url, forKey: .url)
-        try c.encode(notes, forKey: .notes)
+        try c.encodeIfPresent(notes, forKey: .notes)
         
         // FIXME: encode empty array for images
         try c.encode([UUID](), forKey: .images)

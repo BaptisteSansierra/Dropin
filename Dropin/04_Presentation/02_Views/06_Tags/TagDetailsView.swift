@@ -14,21 +14,21 @@ struct TagDetailsView: View {
     @Binding private var tag: TagUI
     @State private var tagColor: Color
     @State private var showingRemoveAlert: Bool = false
-
+    
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
     
     var blurEffectHeight: CGFloat {
         DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
     }
-
+    
     // MARK: - Init
     init(viewModel: TagDetailsViewModel, tag: Binding<TagUI>) {
         self.viewModel = viewModel
         self._tag = tag
         self._tagColor = State(initialValue: tag.wrappedValue.color)
     }
-
+    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -51,6 +51,13 @@ struct TagDetailsView: View {
             }
             deleteButton
         }
+        .task {
+            do {
+                try await viewModel.fetchPlace(tag.id)
+            } catch {
+                // TODO: error
+            }
+        }
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .alert("alert.remove_tag_title",
@@ -67,8 +74,8 @@ struct TagDetailsView: View {
                 }
             }
         } message: {
-            if tag.places.count > 0 {
-                Text("alert.remove_tag_body_\(tag.name)_\(tag.places.count)")
+            if viewModel.places.count > 0 {
+                Text("alert.remove_tag_body_\(tag.name)_\(viewModel.places.count)")
             } else {
                 Text("alert.remove_tag_empty_body_\(tag.name)")
             }
@@ -119,7 +126,7 @@ struct TagDetailsView: View {
                         .frame(width: 100)
                         .foregroundStyle(tagColor)
                         .padding(.leading, 40)
-                        //.padding(.trailing, 40)
+                    //.padding(.trailing, 40)
                     Spacer()
                     ColorPicker(String(""), selection: $tagColor, supportsOpacity: false)
                         .labelsHidden()
@@ -133,40 +140,51 @@ struct TagDetailsView: View {
             }
         }
     }
-
+    
+    @ViewBuilder
     private var placesView: some View {
-        VStack(alignment: .leading) {
-            if tag.places.count > 0 {
-                Text("common.related_places")
-                    .textStyle(.formSectionTitle2)
-                    .padding(.leading, 40)
-                    .padding(.top, 30)
-                Divider()
-                List {
-                    ForEach(tag.places) { place in
-                        PlaceRowView(place: place, locationManager: viewModel.locationManager)
-                        .swipeActions(allowsFullSwipe: false) {
-                            Button() {
-                                guard let idx = tag.places.firstIndex(where: { place.id == $0.id }) else { return }
-                                tag.places.remove(at: idx)
-                                updateTag()
-                            } label: {
-                                Text("common.unlink")
-                            }
-                            .tint(.destructive)
+        if viewModel.loadingPlaces {
+            VStack(alignment: .leading) {
+                ProgressView()
+            }
+        } else {
+            VStack(alignment: .leading) {
+                if viewModel.places.count > 0 {
+                    Text("common.related_places")
+                        .textStyle(.formSectionTitle2)
+                        .padding(.leading, 40)
+                        .padding(.top, 30)
+                    Divider()
+                    List {
+                        ForEach(viewModel.places) { place in
+                            PlaceRowView(place: place, locationManager: viewModel.locationManager)
+                                .swipeActions(allowsFullSwipe: false) {
+                                    Button() {
+                                        guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
+                                        guard let tagIdx = place.tags.firstIndex(where: { tag.id == $0.id }) else { return }
+                                        // Remove the place from tag list so UI is updated
+                                        viewModel.places.remove(at: idx)
+                                        // Remove the tag in place list and update the database from it
+                                        place.tags.remove(at: tagIdx)
+                                        updatePlace(place)
+                                    } label: {
+                                        Text("common.unlink")
+                                    }
+                                    .tint(.destructive)
+                                }
                         }
                     }
+                    .scrollContentBackground(.hidden)
+                    .safeAreaInset(edge: .bottom) {
+                        Color.clear
+                            .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
+                    }
+                } else {
+                    Text("common.no_related_places")
+                        .textStyle(.formSectionTitle2)
+                        .padding(.leading, 40)
+                        .padding(.top, 30)
                 }
-                .scrollContentBackground(.hidden)
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear
-                        .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
-                }
-            } else {
-                Text("common.no_related_places")
-                    .textStyle(.formSectionTitle2)
-                    .padding(.leading, 40)
-                    .padding(.top, 30)
             }
         }
     }
@@ -188,7 +206,7 @@ struct TagDetailsView: View {
                                          startPoint: .top,
                                          endPoint: .bottom))
                     .frame(height: blurEffectHeight)
-
+                
                 DestructiveButton(text: "common.delete_tag") {
                     showingRemoveAlert = true
                 }
@@ -205,6 +223,17 @@ struct TagDetailsView: View {
             } catch {
                 // TODO: handle error
                 assertionFailure("Could not update tag: \(error)")
+            }
+        }
+    }
+    
+    private func updatePlace(_ place: PlaceUI) {
+        Task {
+            do {
+                try await viewModel.updatePlace(place)
+            } catch {
+                // TODO: handle error
+                assertionFailure("Could not update place: \(error)")
             }
         }
     }

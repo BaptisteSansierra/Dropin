@@ -17,6 +17,7 @@ struct GroupView: View {
     }
 
     enum Size {
+        case big
         case regular
         case small
     }
@@ -32,6 +33,35 @@ struct GroupView: View {
     private var action: (() -> Void)?
     private var actionType: ActionType
     private var size: Size
+    
+    private var style: TextStyleModifier.Style {
+        switch size {
+            case .big: .groupStickerBig
+            case .regular: .groupSticker
+            case .small: .groupStickerSmall
+        }
+    }
+    private var textVerticalPadding: CGFloat {
+        switch size {
+            case .big: 10
+            case .regular: 8.5
+            case .small: 8
+        }
+    }
+    private var textHorizontalPadding: CGFloat {
+        switch size {
+            case .big: 14
+            case .regular: 11
+            case .small: 8
+        }
+    }
+    private var borderComponentWidth: CGFloat {
+        switch size {
+            case .big: 3
+            case .regular: 2
+            case .small: 1.5
+        }
+    }
 
     // MARK: - init
     init(name: String,
@@ -70,17 +100,17 @@ struct GroupView: View {
             HStack(alignment: .center, spacing: 10) {
                 iconView
                 Text(name)
-                    .textStyle(size == .regular ? .groupSticker : .groupStickerSmall)
+                    .textStyle(style)
             }
-            .padding(.vertical, size == .regular ? 10 : 8)
-            .padding(.horizontal, size == .regular ? 14 : 8)
+            .padding(.vertical, textVerticalPadding)
+            .padding(.horizontal, textHorizontalPadding)
             .background {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.clear)
                     .stroke(border, style: .init(lineWidth: 3.5))
             }
             .overlay {
-                let lineW = size == .regular ? 3 : 1.5
+                let lineW = borderComponentWidth
                 ZStack {
                     GeometryReader { geom in
                         RoundedRectangle(cornerSize: 8)
@@ -121,7 +151,7 @@ struct GroupView: View {
     private var iconView: some View {
         if let icon = icon {
             switch size {
-                case .regular:
+                case .regular, .big:
                     IconView(icon: icon)
                         .sizeBody()
                         .fixedSize()
@@ -210,19 +240,30 @@ struct MockGroupView: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            ZStack {
-                Rectangle()
-                    .fill(.backgroundPrimary)
-                content
+        VStack(spacing: 0) {
+            HStack {
+                GroupView(name: "BIG", color: .green, icon: .sf("tag"), size: .big)
+                GroupView(name: "RGL", color: .green, icon: .sf("tag"), size: .regular)
+                GroupView(name: "SML", color: .green, icon: .sf("tag"), size: .small)
             }
-            .environment(\.colorScheme, .light)
-            ZStack {
-                Rectangle()
-                    .fill(.backgroundPrimary)
-                content
+
+            Divider()
+                .padding(.vertical, 5)
+
+            HStack(spacing: 0) {
+                ZStack {
+                    Rectangle()
+                        .fill(.backgroundPrimary)
+                    content
+                }
+                .environment(\.colorScheme, .light)
+                ZStack {
+                    Rectangle()
+                        .fill(.backgroundPrimary)
+                    content
+                }
+                .environment(\.colorScheme, .dark)
             }
-            .environment(\.colorScheme, .dark)
         }
     }
     
@@ -257,6 +298,7 @@ struct MockGroupView: View {
                       size: .small)
 
             PlaceRectAnnotationView(color: .brown, icon: .sf("tag"))
+
         }
     }
 }

@@ -11,6 +11,8 @@ import CoreLocation
 import SwiftUI
 @testable import Dropin
 
+private class BundleFinder {}
+
 struct DropinCoreTests {
     
     @Test func testColorStuff() async throws {
@@ -52,5 +54,46 @@ struct DropinCoreTests {
         #expect(CLLocationCoordinate2D(string: "51.50986512, -0.11809234") != nil)
         #expect(CLLocationCoordinate2D(string: "51.509865  -0.118092") != nil)
         #expect(CLLocationCoordinate2D(string: "51,0") != nil)
+    }
+    
+    
+    @Test func importV1() async throws {
+
+        // Load the file from the test bundle
+        let bundle = Bundle(for: BundleFinder.self)
+        guard let url = bundle.url(forResource: "exportV1", withExtension: "json") else {
+            Issue.record("exportV1.json not found in test bundle")
+            return
+        }
+
+        let data = try Data(contentsOf: url)
+
+        // Decode
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let export = try decoder.decode(DropinExport.self, from: data)
+
+        // Assert envelope
+        #expect(export.version == 1)
+        #expect(export.exportedAt < Date())  // Check not distant future
+
+        // Assert counts 
+        #expect(export.groups.count == 10)
+        #expect(export.tags.count == 16)
+        #expect(export.places.count == 9)
+
+        // Assert relationships are coherent
+        let tagIds = Set(export.tags.map({ $0.id }))
+        let groupIds = Set(export.groups.map(\.id))
+
+        for place in export.places {
+            // Every tagId on a place references a known tag
+            let placeTagIds = place.tags.map({ $0.id })
+            #expect(placeTagIds.allSatisfy { tagIds.contains($0) })
+            // Every groupId on a place references a known group
+            if let groupId = place.group?.id {
+                #expect(groupIds.contains(groupId))
+            }
+        }
     }
 }

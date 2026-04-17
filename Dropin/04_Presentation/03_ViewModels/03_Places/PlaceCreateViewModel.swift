@@ -15,14 +15,14 @@ import CoreLocation
     @ObservationIgnored private var coordinator: MainCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let createPlace: CreatePlace
-    @ObservationIgnored private let getTag: GetTag
-    @ObservationIgnored private let getGroup: GetGroup
+    @ObservationIgnored private let getTag: FetchTag
+    @ObservationIgnored private let getGroup: FetchGroup
 
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          createPlace: CreatePlace,
-         getTag: GetTag,
-         getGroup: GetGroup) {
+         getTag: FetchTag,
+         getGroup: FetchGroup) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.createPlace = createPlace

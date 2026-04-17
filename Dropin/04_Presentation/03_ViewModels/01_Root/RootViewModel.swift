@@ -11,6 +11,7 @@ enum SideMenuContext {
     case main
     case groups
     case tags
+    case settings
     case toBeImplemnented
 }
 
@@ -47,7 +48,11 @@ enum SideMenuContext {
     func createTagListView() -> TagListView {
         return appContainer.createTagListView(showingSideMenu: bindedShowingSideMenu)
     }
-    
+
+    func createSettingsView() -> SettingsView {
+        return appContainer.createSettingsView(showingSideMenu: bindedShowingSideMenu)
+    }
+
     func switchAppIcon() {
         let icon = ["AppIcon", "AppIcon2", "AppIcon3", "AppIcon4"][Int.random(in: 0...3)]
         UIApplication.setApplicationIconWithoutAlert(icon)

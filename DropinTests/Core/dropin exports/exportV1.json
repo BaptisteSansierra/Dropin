@@ -1,0 +1,489 @@
+{
+  "places" : [
+    {
+      "phone" : [
+
+      ],
+      "address" : "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
+      "groupId" : "513FCFB1-485D-42A6-95DA-16E696DD51EB",
+      "coordinates" : {
+        "latitude" : 41.403067387301924,
+        "longitude" : 2.158858952034207
+      },
+      "icon" : "sf:carrot",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+        "E2B59654-380C-424C-B990-F1324910B87A",
+        "19AFB47F-37C4-4453-ACF7-8747190BC35F",
+        "53BE85AA-CEFF-4957-8F61-A91797F797F9"
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "Molsa Biosí",
+      "id" : "B5258A47-CD22-420E-8E62-478182442542",
+      "email" : [
+
+      ]
+    },
+    {
+      "tagIds" : [
+        "5CDA4D09-D197-4D96-BCFB-0C816EFFFCD0"
+      ],
+      "address" : "Carrer de la Providència, 30, \/nGràcia, \/n08024 Barcelona",
+      "name" : "Continental Bar",
+      "coordinates" : {
+        "latitude" : 41.40626764285292,
+        "longitude" : 2.156492157860694
+      },
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "images" : [
+
+      ],
+      "address2" : "",
+      "url" : [
+
+      ],
+      "groupId" : "C33D4826-C230-4469-A8FA-929521189371",
+      "id" : "BFCEBAF8-8E9C-40E5-9D3A-31A440BBB6B0"
+    },
+    {
+      "phone" : [
+
+      ],
+      "address" : "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
+      "groupId" : "513FCFB1-485D-42A6-95DA-16E696DD51EB",
+      "coordinates" : {
+        "latitude" : 41.40068001375675,
+        "longitude" : 2.155838283307449
+      },
+      "icon" : "sf:swirl.circle.righthalf.filled.inverse",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+        "54CC9C3B-1DBD-4565-84D4-523297AC0FD8"
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "Sincronia Yoga",
+      "id" : "2E9025E5-B755-499A-B53A-44160A7F0CD4",
+      "email" : [
+
+      ]
+    },
+    {
+      "phone" : [
+        {
+          "label" : {
+            "kind" : "phone",
+            "value" : {
+              "mobile" : {
+
+              }
+            }
+          },
+          "id" : "FA0AA49C-7F31-40DE-8C37-EA96FA445E2F",
+          "value" : "931054947"
+        },
+        {
+          "label" : {
+            "kind" : "phone",
+            "value" : {
+              "home" : {
+
+              }
+            }
+          },
+          "id" : "8D84B335-E43F-47A7-939D-F382504C26AF",
+          "value" : "633029920"
+        }
+      ],
+      "address" : "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
+      "groupId" : "5F43F446-3B6C-42E5-9C2E-12F9CE17F8AE",
+      "notes" : "Don't forget your tupper",
+      "coordinates" : {
+        "latitude" : 41.40522138362398,
+        "longitude" : 2.1598304185317847
+      },
+      "images" : [
+
+      ],
+      "url" : [
+        {
+          "label" : {
+            "kind" : "url",
+            "value" : {
+              "url" : {
+
+              }
+            }
+          },
+          "id" : "DCBDF272-C18C-4B1E-9C64-CE9755213BA4",
+          "value" : "http:\/\/lestresalacuina.com"
+        }
+      ],
+      "tagIds" : [
+        "22C71575-1E52-46E8-9608-7E59E6CF18C1",
+        "54CC9C3B-1DBD-4565-84D4-523297AC0FD8",
+        "EDD9355A-F4BB-4F9E-A75D-DD9818F541C4"
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "Les Tres a la Cuina",
+      "id" : "F1FF9AD2-4350-4426-83F8-027C815649AE",
+      "email" : [
+        {
+          "label" : {
+            "value" : {
+              "work" : {
+
+              }
+            },
+            "kind" : "email"
+          },
+          "id" : "1A6B6668-6B45-4E52-81BA-C7697A1D2E69",
+          "value" : "tres.a.la@cuina.es"
+        }
+      ]
+    },
+    {
+      "tagIds" : [
+        "D01E3B0D-EF54-44AC-9FD4-7EA8DC234F09",
+        "9FD624E5-E641-415F-9B94-49BBAAAEE59A"
+      ],
+      "address" : "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
+      "name" : "Chiringuito Karamba",
+      "coordinates" : {
+        "latitude" : 41.44511384541266,
+        "longitude" : 2.2495646936392317
+      },
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "images" : [
+
+      ],
+      "address2" : "",
+      "url" : [
+
+      ],
+      "groupId" : "72DCDAC9-F618-43E0-AE7A-4020C8E333C1",
+      "id" : "786DBE75-9F5A-4705-A667-D39A15FDA31F"
+    },
+    {
+      "phone" : [
+
+      ],
+      "address" : "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
+      "groupId" : "C33D4826-C230-4469-A8FA-929521189371",
+      "coordinates" : {
+        "latitude" : 41.40602900686343,
+        "longitude" : 2.160639939265184
+      },
+      "icon" : "sf:figure.socialdance",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+        "19AFB47F-37C4-4453-ACF7-8747190BC35F",
+        "0ED90212-B7B6-40C3-BF10-A3FE490A1395"
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "El Col·leccionista",
+      "id" : "F2454E78-49F1-47E6-975C-C584377540F9",
+      "email" : [
+
+      ]
+    },
+    {
+      "phone" : [
+
+      ],
+      "address" : "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
+      "groupId" : null,
+      "coordinates" : {
+        "latitude" : 41.40622777528736,
+        "longitude" : 2.1595467749244204
+      },
+      "icon" : "sf:carrot.fill",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+        "C688BE08-B332-48DE-A163-52935A628370",
+        "D01E3B0D-EF54-44AC-9FD4-7EA8DC234F09",
+        "5CDA4D09-D197-4D96-BCFB-0C816EFFFCD0",
+        "F91FC6B6-A3CA-4497-A186-7AF26BDFEC62",
+        "E2B59654-380C-424C-B990-F1324910B87A",
+        "22C71575-1E52-46E8-9608-7E59E6CF18C1",
+        "19AFB47F-37C4-4453-ACF7-8747190BC35F",
+        "BD61D2C4-9242-49FB-8436-5CD4E2583B0C",
+        "9FD624E5-E641-415F-9B94-49BBAAAEE59A",
+        "53BE85AA-CEFF-4957-8F61-A91797F797F9",
+        "EDD9355A-F4BB-4F9E-A75D-DD9818F541C4",
+        "78F5860F-6645-45CC-9C1F-BD80193665FC",
+        "A34EFBA6-5519-4A89-B95B-E89184C64A5A"
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "La Chitarra",
+      "id" : "166F4F37-270C-49F7-8B61-E8BECB4C2E14",
+      "email" : [
+
+      ]
+    },
+    {
+      "phone" : [
+
+      ],
+      "address" : "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
+      "groupId" : null,
+      "coordinates" : {
+        "latitude" : 41.399426209480154,
+        "longitude" : 2.154584065083631
+      },
+      "icon" : "sf:basket",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "Be Laundry Joanic",
+      "id" : "8634697D-A290-453D-B30D-28ADFC82C283",
+      "email" : [
+
+      ]
+    },
+    {
+      "phone" : [
+
+      ],
+      "address" : "Rasafi Street,\nBaghdad,\nBaghdad Governorate, Irak",
+      "groupId" : "C33D4826-C230-4469-A8FA-929521189371",
+      "coordinates" : {
+        "latitude" : 33.321589923265904,
+        "longitude" : 44.416811639303546
+      },
+      "icon" : "sf:pianokeys",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+        "5CDA4D09-D197-4D96-BCFB-0C816EFFFCD0"
+      ],
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "address2" : "",
+      "name" : "Bagdad café",
+      "id" : "85990111-5288-4029-8701-700BBDE771EB",
+      "email" : [
+
+      ]
+    }
+  ],
+  "version" : 1,
+  "exportedAt" : "2026-04-17T11:24:35Z",
+  "groups" : [
+    {
+      "name" : "Amusement",
+      "icon" : "sf:figure.play",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "72DCDAC9-F618-43E0-AE7A-4020C8E333C1",
+      "color" : "DD8855"
+    },
+    {
+      "name" : "Bar",
+      "icon" : "sf:wineglass",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "CF179FE6-5010-445B-BB6C-556C7301CC76",
+      "color" : "CC22AA"
+    },
+    {
+      "name" : "Body health",
+      "icon" : "sf:figure.mind.and.body",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "513FCFB1-485D-42A6-95DA-16E696DD51EB",
+      "color" : "4dd333"
+    },
+    {
+      "name" : "Culture",
+      "icon" : "sf:text.book.closed",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "40AED8DB-0B9A-44D2-B2F5-8728F23D089C",
+      "color" : "2255DD"
+    },
+    {
+      "name" : "Disco",
+      "icon" : "sf:opticaldisc",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "C33D4826-C230-4469-A8FA-929521189371",
+      "color" : "7788CC"
+    },
+    {
+      "name" : "Fishing spot",
+      "icon" : "sf:figure.fishing",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "F8257C4D-59FA-48D4-8D37-ED617AFFFB7A",
+      "color" : "456699"
+    },
+    {
+      "name" : "Laundry",
+      "icon" : "sf:tshirt",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "24F0DF6A-7FF8-44F5-BDD9-75EC4CB1D524",
+      "color" : "334dd3"
+    },
+    {
+      "name" : "Restaurant",
+      "icon" : "sf:fork.knife.circle",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "5F43F446-3B6C-42E5-9C2E-12F9CE17F8AE",
+      "color" : "9944AA"
+    },
+    {
+      "name" : "Shop",
+      "icon" : "sf:cart",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "D19759DB-43C7-4913-BA95-4D3A222C681C",
+      "color" : "FF6600"
+    },
+    {
+      "name" : "Trekking",
+      "icon" : "sf:figure.walk",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "59DBA938-5550-472F-AAC8-ACB2FA8F2A9E",
+      "color" : "FF9999"
+    }
+  ],
+  "tags" : [
+    {
+      "name" : "5 ⭐️ ",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "EDD9355A-F4BB-4F9E-A75D-DD9818F541C4",
+      "color" : "AA5588"
+    },
+    {
+      "name" : "Bad food",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "D01E3B0D-EF54-44AC-9FD4-7EA8DC234F09",
+      "color" : "AA8855"
+    },
+    {
+      "name" : "Burger",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "78F5860F-6645-45CC-9C1F-BD80193665FC",
+      "color" : "7744AA"
+    },
+    {
+      "name" : "Clean restrooms",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "6D2723F4-A5D3-4705-AC2E-EE6AECDB23D7",
+      "color" : "9944AA"
+    },
+    {
+      "name" : "Cool",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "19AFB47F-37C4-4453-ACF7-8747190BC35F",
+      "color" : "449966"
+    },
+    {
+      "name" : "Eco",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "E2B59654-380C-424C-B990-F1324910B87A",
+      "color" : "9045A3"
+    },
+    {
+      "name" : "Healthy",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "54CC9C3B-1DBD-4565-84D4-523297AC0FD8",
+      "color" : "AA44FF"
+    },
+    {
+      "name" : "Kidz friendly",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "id" : "9FD624E5-E641-415F-9B94-49BBAAAEE59A",
+      "color" : "FF4433"
+    },
+    {
+      "color" : "50A348",
+      "id" : "53BE85AA-CEFF-4957-8F61-A91797F797F9",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Lavomatic"
+    },
+    {
+      "color" : "FF4433",
+      "id" : "BD61D2C4-9242-49FB-8436-5CD4E2583B0C",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Nature"
+    },
+    {
+      "color" : "AAFF99",
+      "id" : "F91FC6B6-A3CA-4497-A186-7AF26BDFEC62",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Pasta"
+    },
+    {
+      "color" : "997766",
+      "id" : "C688BE08-B332-48DE-A163-52935A628370",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Pizza"
+    },
+    {
+      "color" : "000000",
+      "id" : "0ED90212-B7B6-40C3-BF10-A3FE490A1395",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Rock"
+    },
+    {
+      "color" : "7744AA",
+      "id" : "A34EFBA6-5519-4A89-B95B-E89184C64A5A",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Salad"
+    },
+    {
+      "color" : "0054F8",
+      "id" : "22C71575-1E52-46E8-9608-7E59E6CF18C1",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Take away"
+    },
+    {
+      "color" : "3388CC",
+      "id" : "5CDA4D09-D197-4D96-BCFB-0C816EFFFCD0",
+      "createdAt" : "2026-04-17T11:19:11Z",
+      "name" : "Ugly restrooms"
+    }
+  ]
+}

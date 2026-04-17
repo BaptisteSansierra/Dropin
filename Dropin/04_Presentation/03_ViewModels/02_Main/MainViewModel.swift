@@ -54,17 +54,17 @@ import CoreLocation
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
-    @ObservationIgnored private var getPlaces: GetPlaces
+    @ObservationIgnored private var fetchPlaces: FetchPlaces
 
     // MARK: init
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          locationManager: LocationManager,
-         getPlaces: GetPlaces) {
+         fetchPlaces: FetchPlaces) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
-        self.getPlaces = getPlaces
+        self.fetchPlaces = fetchPlaces
     }
 
     // MARK: UI Child
@@ -143,7 +143,7 @@ import CoreLocation
 
     // MARK: Use cases
     func loadPlaces() async throws {
-        let domainPlaces = try await getPlaces.execute()
+        let domainPlaces = try await fetchPlaces.execute()
         places = domainPlaces.map { PlaceMapper.toUI($0) }
     }
 }

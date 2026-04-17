@@ -1,5 +1,5 @@
 //
-//  GetTags.swift
+//  FetchGroups.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 3/10/25.
@@ -8,14 +8,14 @@
 import Foundation
 
 @MainActor
-struct GetTags {
-    private let repository: TagRepository
+struct FetchGroups {
+    private let repository: GroupRepository
     
-    init(repository: TagRepository) {
+    init(repository: GroupRepository) {
         self.repository = repository
     }
     
-    func execute() async throws -> [TagEntity] {
+    func execute() async throws -> [GroupEntity] {
         return try await repository.fetch()
     }
 }

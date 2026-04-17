@@ -8,9 +8,11 @@
 import Foundation
 
 struct DropinExport: Codable {
-    
-    let currentVersion: Int = 1
-    let exportedAt: Date
+
+    let CURRENT_VERSION: Int = 1
+
+    private(set) var version: Int
+    private(set) var exportedAt: Date
     private(set) var groups: [GroupEntity]
     private(set) var tags: [TagEntity]
     private(set) var places: [PlaceEntity]
@@ -27,6 +29,7 @@ struct DropinExport: Codable {
          places: [PlaceEntity],
          groups: [GroupEntity],
          tags: [TagEntity]) {
+        self.version = CURRENT_VERSION
         self.exportedAt = exportedAt
         self.places = places
         self.groups = groups
@@ -35,7 +38,7 @@ struct DropinExport: Codable {
     
     func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(currentVersion, forKey: .version)
+        try c.encode(version, forKey: .version)
         try c.encode(exportedAt, forKey: .exportedAt)
         try c.encode(groups, forKey: .groups)
         try c.encode(tags, forKey: .tags)
@@ -46,41 +49,31 @@ struct DropinExport: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let version = try container.decode(Int.self, forKey: .version)
-        guard version <= currentVersion else {
+        guard version <= CURRENT_VERSION else {
             throw CodingError.decodingUnknownVersion(version: version)
         }
         Log.info("Importing dropin data v.\(version)")
-        
-        self.exportedAt = try container.decode(Date.self, forKey: .exportedAt)
-        let tagsDTO = try container.decode([TagEntity].self, forKey: .tags)
-        let groupsDTO = try container.decode([GroupEntity].self, forKey: .groups)
-        let placesDTO = try container.decode([PlaceEntityDTO].self, forKey: .places)
-        
+
+        self.version = -1
+        self.exportedAt = Date.distantFuture
         self.places = []
         self.groups = []
         self.tags = []
-        
-        // Create groups
-        self.groups = groupsDTO.map({ groupDTO in
-            return GroupEntity(id: groupDTO.id,
-                               name: groupDTO.name,
-                               color: groupDTO.color,
-                               icon: groupDTO.icon,
-                               places: [],
-                               createdAt: groupDTO.createdAt,
-                               deletedAt: groupDTO.deletedAt)
-        })
-        
-        // Create tags
-        self.tags = tagsDTO.map({ tagDTO in
-            return TagEntity(id: tagDTO.id,
-                             name: tagDTO.name,
-                             color: tagDTO.color,
-                             places: [],
-                             createdAt: tagDTO.createdAt,
-                             deletedAt: tagDTO.deletedAt)
-        })
-        
+
+        if version == 1 {
+            try loadV1(container)
+        } else {
+            fatalError("This version '\(version)' is not handled")
+        }
+    }
+    
+    private mutating func loadV1(_ container: KeyedDecodingContainer<CodingKeys>) throws {
+        self.exportedAt = try container.decode(Date.self, forKey: .exportedAt)
+
+        self.tags = try container.decode([TagEntity].self, forKey: .tags)
+        self.groups = try container.decode([GroupEntity].self, forKey: .groups)
+        let placesDTO = try container.decode([PlaceEntityDTO].self, forKey: .places)
+
         // Create places
         self.places = placesDTO.map({ placeDTO in
             let placeTags = tags.filter({ placeDTO.tagIds.contains($0.id) })
@@ -105,35 +98,5 @@ struct DropinExport: Codable {
                                createdAt: placeDTO.createdAt,
                                deletedAt: placeDTO.deletedAt)
         })
-        
-        /*
-        // Link groups to places
-        groups = groups.map({ group in
-            let places = self.places.filter {
-                guard let placeGroup = $0.group else { return false }
-                return placeGroup.id == group.id
-            }
-            return GroupEntity(id: group.id,
-                               name: group.name,
-                               color: group.color,
-                               icon: group.icon,
-                               places: places,
-                               createdAt: group.createdAt,
-                               deletedAt: group.deletedAt)
-        })
-        
-        // Link tags to places
-        tags = tags.map({ tag in
-            let places = self.places.filter { place in
-                place.tags.first(where: { $0.id == tag.id }) != nil
-            }
-            return TagEntity(id: tag.id,
-                             name: tag.name,
-                             color: tag.color,
-                             places: places,
-                             createdAt: tag.createdAt,
-                             deletedAt: tag.deletedAt)
-        })
-         */
     }
 }

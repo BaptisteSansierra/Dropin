@@ -43,6 +43,10 @@ final class MockTagRepository: TagRepository {
         return tags
     }
     
+    func fetchWithPlaceCount() async throws -> [(TagEntity, Int)] {
+        return tags.map({ ($0, 0) }) // TODO if needed
+    }
+    
     func fetch(_ id: UUID) async throws -> TagEntity {
         guard let g = tags.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")

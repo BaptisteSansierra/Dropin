@@ -44,7 +44,6 @@ public final class GroupRepositoryImpl: GroupRepository {
         let model = try await retrieveGroup(domainGroup: group)
         model.name = group.name
         model.color = group.color
-        try await linkPlaces(sdGroup: model, domainGroup: group)
         try modelContext.save()
     }
     
@@ -54,7 +53,14 @@ public final class GroupRepositoryImpl: GroupRepository {
         let sdGroups = try modelContext.fetch(desc)
         return sdGroups.map { GroupMapper.toDomain($0) }
     }
-    
+
+    func fetchWithPlaceCount() async throws -> [(GroupEntity, Int)] {
+        let desc = FetchDescriptor<SDGroup>(sortBy: [SortDescriptor(\SDGroup.name),
+                                                     SortDescriptor(\SDGroup.createdAt)])
+        let sdGroups = try modelContext.fetch(desc)
+        return sdGroups.map { (GroupMapper.toDomain($0), $0.places.count) }
+    }
+
     func fetch(_ id: UUID) async throws -> GroupEntity {
         let sdGroup = try await retrieveGroup(groupId: id)
         return GroupMapper.toDomain(sdGroup)
@@ -77,23 +83,5 @@ public final class GroupRepositoryImpl: GroupRepository {
             throw DataError.duplicate(msg: "found \(sdGroups.count) SDPlaces with id \(groupId)")
         }
         return result
-    }
-    
-    private func linkPlaces(sdGroup: SDGroup, domainGroup: GroupEntity) async throws {
-        guard domainGroup.places.count > 0 else {
-            sdGroup.places = []
-            return
-        }
-        let placeIdentifiers = domainGroup.places.map { $0.id }
-        let predicate = #Predicate<SDPlace> { placeIdentifiers.contains($0.identifier) }
-        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
-        let sdPlaces = try modelContext.fetch(descriptor)
-        if sdPlaces.count < placeIdentifiers.count {
-            throw DataError.notFound(msg: "some groups from list \(placeIdentifiers) couldn't be found")
-        }
-        if sdPlaces.count > placeIdentifiers.count {
-            throw DataError.duplicate(msg: "found \(sdPlaces.count) SDGroups when looking for \(placeIdentifiers.count) ids : \(placeIdentifiers)")
-        }
-        sdGroup.places = sdPlaces
     }
 }

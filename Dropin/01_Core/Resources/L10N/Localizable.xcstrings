@@ -785,6 +785,17 @@
         }
       }
     },
+    "common.export" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        }
+      }
+    },
     "common.favorites" : {
       "localizations" : {
         "en" : {

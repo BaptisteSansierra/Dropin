@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Icon: RawRepresentable, Identifiable, Hashable {
+enum Icon: RawRepresentable, Identifiable, Hashable, Sendable {
     
     case sf(String)
     case fa(String)

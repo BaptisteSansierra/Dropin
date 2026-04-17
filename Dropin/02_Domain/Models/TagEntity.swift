@@ -7,19 +7,19 @@
 
 import Foundation
 
-struct TagEntity: Hashable {
+struct TagEntity: Hashable, Sendable {
     let id: UUID
     let name: String
     let color: String
-    var places: [PlaceEntity] = [PlaceEntity]()
     let createdAt: Date
     let deletedAt: Date?
+    // Note: places are not strores here to avoid bidirectional relationships
+    // PlaceEntity owns the relationship
 
-    init(id: UUID, name: String, color: String, places: [PlaceEntity], createdAt: Date, deletedAt: Date? = nil) {
+    init(id: UUID, name: String, color: String, createdAt: Date, deletedAt: Date? = nil) {
         self.id = id
         self.name = name
         self.color = color
-        self.places = places
         self.createdAt = createdAt
         self.deletedAt = deletedAt
     }
