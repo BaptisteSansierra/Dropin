@@ -48,7 +48,7 @@ final class MockContainer {
 
     func getAllPlaceUI() -> [PlaceUI] {
         do {
-            let sorts = [SortDescriptor(\SDPlace.name), SortDescriptor(\SDPlace.creationDate)]
+            let sorts = [SortDescriptor(\SDPlace.name), SortDescriptor(\SDPlace.createdAt)]
             let sdArray = try mockModelContext.fetch(FetchDescriptor<SDPlace>(sortBy: sorts)) as [SDPlace]
             let domainItems = sdArray.map { PlaceMapper.toDomain($0) }
             return domainItems.map { PlaceMapper.toUI($0) }
@@ -59,7 +59,7 @@ final class MockContainer {
 
     func getAllGroupUI() -> [GroupUI] {
         do {
-            let sorts = [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.creationDate)]
+            let sorts = [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.createdAt)]
             let sdArray = try mockModelContext.fetch(FetchDescriptor<SDGroup>(sortBy: sorts)) as [SDGroup]
             let domainItems = sdArray.map { GroupMapper.toDomain($0) }
             return domainItems.map { GroupMapper.toUI($0) }
@@ -70,7 +70,7 @@ final class MockContainer {
 
     func getAllTagUI() -> [TagUI] {
         do {
-            let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.creationDate)]
+            let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.createdAt)]
             let sdArray = try mockModelContext.fetch(FetchDescriptor<SDTag>(sortBy: sorts)) as [SDTag]
             let domainItems = sdArray.map { TagMapper.toDomain($0) }
             return domainItems.map { TagMapper.toUI($0) }
@@ -81,7 +81,7 @@ final class MockContainer {
     
     func getPlaceUI(_ index: Int = 0) -> PlaceUI {
         do {
-            let sorts = [SortDescriptor(\SDPlace.name), SortDescriptor(\SDPlace.creationDate)]
+            let sorts = [SortDescriptor(\SDPlace.name), SortDescriptor(\SDPlace.createdAt)]
             let sdArray = try mockModelContext.fetch(FetchDescriptor<SDPlace>(sortBy: sorts)) as [SDPlace]
             let domainItem = PlaceMapper.toDomain(sdArray[index])
             return PlaceMapper.toUI(domainItem)
@@ -92,7 +92,7 @@ final class MockContainer {
     
     func getTagUI(_ index: Int = 0) -> TagUI {
         do {
-            let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.creationDate)]
+            let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.createdAt)]
             let sdArray = try mockModelContext.fetch(FetchDescriptor<SDTag>(sortBy: sorts))
             let domainItem = TagMapper.toDomain(sdArray[index])
             return TagMapper.toUI(domainItem)
@@ -103,7 +103,7 @@ final class MockContainer {
     
     func getGroupUI(_ index: Int = 0) -> GroupUI {
         do {
-            let sorts = [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.creationDate)]
+            let sorts = [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.createdAt)]
             let sdArray = try mockModelContext.fetch(FetchDescriptor<SDGroup>(sortBy: sorts))
             let domainItem = GroupMapper.toDomain(sdArray[index])
             return GroupMapper.toUI(domainItem)

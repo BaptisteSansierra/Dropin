@@ -13,16 +13,14 @@
                                         
 ---- IMPROVMENTS
 
-                                        
-* Make a Rectangle() with a blurry background
-                                        
-* Place details sheet: Add buttons
-    - Edit
-    - Email
-    - Map (show on map only visible from LIST)
+* Improve Contact creation : do not able any label dependiung on type ?
 
-* Allow tap on group / tag to see details ?
-                                        
+* Export data to json
+ - versionning
+ - export with default layer
+
+* About
+
 * Center on a place manually : should not only center but also zoom
 
 * Center on user : should not only center but also zoom
@@ -36,6 +34,15 @@
      - Clustering option ? (cluster size/sensitivity ?)
      -
 
+* Make a Rectangle() with a blurry background (for GroupDetailsView / TagDetailsView places list bottom )
+                                        
+* Place details sheet: Add buttons
+    - Edit
+    - Email
+    - Map (show on map only visible from LIST)
+
+* Allow tap on group / tag to see details ?
+                                        
 
 ==
 ==== FUTURE ====

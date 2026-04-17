@@ -24,7 +24,7 @@ struct DropinDomainTests {
                                 address2: "",
                                 tags: [],
                                 icon: .sf("tag"),
-                                creationDate: Date())
+                                createdAt: Date())
         // Check first creation is ok
         do {
             try await createPlaceUC.execute(place)
@@ -45,7 +45,7 @@ struct DropinDomainTests {
                                              address2: "",
                                              tags: [],
                                              icon: .sf("tag"),
-                                             creationDate: Date())
+                                             createdAt: Date())
         await #expect(throws: DomainError.Place.missingName, performing: {
             try await createPlaceUC.execute(placeWithEmptyName)
         })
@@ -65,7 +65,7 @@ struct DropinDomainTests {
                                 address2: "",
                                 tags: [],
                                 icon: .sf("tag"),
-                                creationDate: Date())
+                                createdAt: Date())
         
         var placesOrigin = [PlaceEntity]()
         var placesAfterInsert = [PlaceEntity]()

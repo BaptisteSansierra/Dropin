@@ -25,7 +25,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("fork.knife.circle"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
 
         let l2 = PlaceEntity(id: UUID(),
@@ -44,7 +44,7 @@ extension PlaceEntity {  // Mock extension
                              email: [ContactItem(value: "tres.a.la@cuina.es", label: ContactLabel(kind: .email, label: .work))],
                              url: [ContactItem(value: "http://lestresalacuina.com", label: ContactLabel(kind: .url, label: .url))],
                              notes: "Don't forget your tupper",
-                             creationDate: Date(),
+                             createdAt: Date(),
                              )
 
         let l3 = PlaceEntity(id: UUID(),
@@ -55,7 +55,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("fork.knife.circle"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
 
         let l4 = PlaceEntity(id: UUID(),
@@ -66,7 +66,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("wineglass"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
 
         let l5 = PlaceEntity(id: UUID(),
@@ -77,7 +77,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("pianokeys"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
 
         let l6 = PlaceEntity(id: UUID(),
@@ -88,7 +88,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("figure.socialdance"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
 
         let l7 = PlaceEntity(id: UUID(),
@@ -99,7 +99,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("carrot"),
-                             creationDate: Date()
+                             createdAt: Date()
                             )
 
         let l8 = PlaceEntity(id: UUID(),
@@ -110,7 +110,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("swirl.circle.righthalf.filled.inverse"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
 
 
@@ -122,7 +122,7 @@ extension PlaceEntity {  // Mock extension
                              tags: [],
                              group: nil,
                              icon: .sf("basket"),
-                             creationDate: Date()
+                             createdAt: Date()
                              )
         
         let l10 = PlaceEntity(id: UUID(),
@@ -133,7 +133,7 @@ extension PlaceEntity {  // Mock extension
                               tags: [],
                               group: nil,
                               icon: nil,
-                              creationDate: Date()
+                              createdAt: Date()
                               )
 
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10]

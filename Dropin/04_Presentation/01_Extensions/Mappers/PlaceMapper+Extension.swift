@@ -1,0 +1,80 @@
+//
+//  PlaceMapper+Extension.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 13/10/25.
+//
+
+import Foundation
+
+@MainActor
+extension PlaceMapper {
+    
+    static func toUI(_ place: PlaceEntity, skipRelationships: Bool = false) -> PlaceUI {
+        var groupUI: GroupUI? = nil
+        var tagsUI = [TagUI]()
+        if !skipRelationships {
+            tagsUI = place.tags.map { TagMapper.toUI($0, skipRelationships: true) }
+            if let group = place.group {
+                groupUI = GroupMapper.toUI(group, skipRelationships: true)
+            }
+        }
+        let placeUI = PlaceUI(id: place.id,
+                              name: place.name,
+                              coordinates: place.coordinates,
+                              address: place.address,
+                              address2: place.address2,
+                              tags: tagsUI,
+                              group: groupUI,
+                              icon: place.icon,
+                              rating: place.rating,
+                              phone: place.phone,
+                              email: place.email,
+                              url: place.url,
+                              notes: place.notes,
+                              images: place.images,
+                              createdAt: place.createdAt,
+                              deletedAt: place.deletedAt)
+        if !skipRelationships {
+            groupUI?.places.append(placeUI)
+            for i in 0..<tagsUI.count {
+                tagsUI[i].places.append(placeUI)
+            }
+        }
+        return placeUI
+    }
+    
+    static func toDomain(_ placeUI: PlaceUI, skipRelationships: Bool = false) -> PlaceEntity {
+        var group: GroupEntity? = nil
+        var tags = [TagEntity]()
+        if !skipRelationships {
+            tags = placeUI.tags.map { TagMapper.toDomain($0, skipRelationships: true) }
+            if let groupUI = placeUI.group {
+                group = GroupMapper.toDomain(groupUI, skipRelationships: true)
+            }
+        }
+        let place = PlaceEntity(id: placeUI.id,
+                                name: placeUI.name,
+                                coordinates: placeUI.coordinates,
+                                address: placeUI.address,
+                                address2: placeUI.address2,
+                                tags: tags,
+                                group: group,
+                                icon: placeUI.icon,
+                                rating: placeUI.rating,
+                                phone: placeUI.phone,
+                                email: placeUI.email,
+                                url: placeUI.url,
+                                notes: placeUI.notes,
+                                images: placeUI.images,
+                                createdAt: placeUI.createdAt,
+                                deletedAt: placeUI.deletedAt)
+        if !skipRelationships {
+            group?.places.append(place)
+            for i in 0..<tags.count {
+                tags[i].places.append(place)
+            }
+        }
+        return place
+    }
+}
