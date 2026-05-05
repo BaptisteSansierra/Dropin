@@ -3,11 +3,14 @@ TODO
 ARCHI
 .DS_Store
 
-
+ico/
+svg/
+DATA/
 
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+xcshareddata/
 
 ## User settings
 xcuserdata/
