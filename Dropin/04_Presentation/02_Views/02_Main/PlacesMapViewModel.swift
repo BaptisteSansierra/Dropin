@@ -170,15 +170,14 @@ extension PlacesMapViewModel {
 extension PlacesMapViewModel {
 
     @Observable class MapSettings {
-        
+
         // MARK: - Published properties
-        /// The current map camera.
-        public var currentCamera: MKMapCamera = .init()
-        /// A map region approximating the view of the map's camera.
-        public var currentRegion: MKCoordinateRegion = .zero
-        /// A map rect approximating the view of the map's camera.
-        public var currentRect: MKMapRect = .null
         /// `settingsShown` show/hide the settings menu in the main map
         var settingsShown: Bool = false
+
+        // MARK: - Non-observed camera state (written by map delegate — must NOT trigger SwiftUI re-renders)
+        @ObservationIgnored public var currentCamera: MKMapCamera = .init()
+        @ObservationIgnored public var currentRegion: MKCoordinateRegion = .zero
+        @ObservationIgnored public var currentRect: MKMapRect = .null
     }
 }

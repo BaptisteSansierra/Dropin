@@ -146,6 +146,7 @@ extension DropinApp {
         static let addressPickerSheetHeight: CGFloat = 225
         static let coordinatesPickerSheetHeight: CGFloat = 300
         //static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
+        static let mapLabelHideAltitude: Double = 10_000 // meters — labels hidden above this camera altitude
     }
     struct userDefaultsKeys {
         static let pinStyle = "settings.map.pinStyle"

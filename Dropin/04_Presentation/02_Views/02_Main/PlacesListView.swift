@@ -13,8 +13,8 @@ struct PlacesListView: View {
     @State private var viewModel: PlacesListViewModel
     @Binding private var selectedPlaceId: UUID?
     @Environment(RootView.ActionBus.self) private var actionBus
-    //@State private var scrollPosition: ScrollPosition = .init()
-    
+    @Environment(AppSettings.self) private var appSettings
+
     // MARK: - Properties
     private var places: [PlaceUI]
 
@@ -56,6 +56,7 @@ struct PlacesListView: View {
             }, preview: {
                 placeRowContentView(place)
                     .frame(width: UIScreen.main.bounds.width)
+                    .environment(appSettings)
             })
             .background(.backgroundPrimary)
             .padding(.bottom, 20)

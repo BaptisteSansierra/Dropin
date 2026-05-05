@@ -25,7 +25,7 @@ struct AnnotationViewFactory {
     }
     
     private var appSettings: AppSettings
-    
+
     init(appSettings: AppSettings) {
         self.appSettings = appSettings
     }
@@ -124,8 +124,9 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? HostingAnnotationView
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
+        view.showLabel = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
         view.configure(appSettings: appSettings)
-        //view.clusteringIdentifier = "PlaceCluster"
+        view.clusteringIdentifier = "PlaceCluster"
         view.canShowCallout = false
         view.displayPriority = .defaultHigh
         view.collisionMode = .circle

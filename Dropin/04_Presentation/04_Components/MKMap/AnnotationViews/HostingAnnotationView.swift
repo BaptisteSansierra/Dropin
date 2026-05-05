@@ -14,6 +14,12 @@ class HostingAnnotationView: MKAnnotationView {
     var temporary: Bool = false
     var pinStyle: PinStyle?
     var pinSize: CGFloat?
+    var showLabel: Bool = true {
+        didSet {
+            guard oldValue != showLabel else { return }
+            configure()
+        }
+    }
 
     // MARK: property overrides
     override var isSelected: Bool {
@@ -98,7 +104,8 @@ class HostingAnnotationView: MKAnnotationView {
             configure(view: PlaceAnnotationView(annotation: placeAnnotation,
                                                 isSelected: isSelected,
                                                 pinStyle: pinStyle,
-                                                pinSize: pinSize))
+                                                pinSize: pinSize,
+                                                showLabel: showLabel))
         } else {
             assertionFailure("annotation type not handled '\(type(of: annotation))' : \(annotation)")
         }
@@ -111,7 +118,8 @@ class HostingAnnotationView: MKAnnotationView {
         let swiftUIView = PlaceAnnotationView(annotation: placeAnnotation,
                                               isSelected: isSelected,
                                               pinStyle: pinStyle,
-                                              pinSize: pinSize)
+                                              pinSize: pinSize,
+                                              showLabel: showLabel)
         hostingController?.rootView = swiftUIView
     }
 }

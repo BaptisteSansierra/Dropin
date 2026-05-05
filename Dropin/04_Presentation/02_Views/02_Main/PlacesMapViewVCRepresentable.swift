@@ -55,34 +55,24 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     func updateUIViewController(_ viewController: PlacesMapViewController, context: Context) {
         guard let mapView = context.coordinator.mapView else { assertionFailure(); return }
         // Set additional safe area insets
-        viewController.additionalSafeAreaInsets = UIEdgeInsets(
-            top: 0,
-            left: 0,
-            bottom: bottomInset,
-            right: 0
-        )
-        
-        // 0. Map style
+        viewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0,
+                                                               left: 0,
+                                                               bottom: bottomInset,
+                                                               right: 0)
+
+        // Map style
         applyMapStyle(to: mapView,
                       satellite: appSettings.satellite,
                       hidePointsOfInterest: appSettings.hidePOI)
 
-        // 1. Update region (only if changed)
-        if !mapView.region.isApproximatelyEqual(to: viewModel.mapSettings.currentRegion) {
-            mapView.setRegion(viewModel.mapSettings.currentRegion, animated: true)
+        // Update annotations — only rebuild when the active place set actually changed
+        let activeIds = Set(places.lazy.filter { $0.isActive }.map { $0.id })
+        if activeIds != context.coordinator.lastActiveIds {
+            context.coordinator.lastActiveIds = activeIds
+            updateAnnotations(mapView)
         }
-        
-        // 2. Update annotations
-        
-        // Update region (only if changed to avoid loops)
-        if !mapView.region.isApproximatelyEqual(to: viewModel.mapSettings.currentRegion) {
-            mapView.setRegion(viewModel.mapSettings.currentRegion, animated: true)
-        }
-        
-        // Update annotations
-        updateAnnotations(mapView)
-        
-        // 3. Handle actions
+
+        // Handle actions
         if let action = viewModel.mapActionBus.currentAction {
             // Reset action once it's catched
             viewModel.mapActionBus.currentAction = nil
@@ -124,6 +114,7 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
                 context.coordinator.centerOn(mapView, coords: coords, animated: animated, sheetHeight: sheetHeight)
             case .reloadData:
                 reloadAnnotations(mapView)
+                context.coordinator.lastActiveIds = []
             case .updateData:
                 updateAnnotations(mapView)
             case .updatePlacePickerPositions:
@@ -152,27 +143,22 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     }
     
     private func updateAnnotations(_ mapView: MKMapView) {
-        let newAnnotations = places
-            .filter { $0.isActive }
-            .map { MKPlaceAnnotation(place: $0) }
-
+        let activePlaces = places.filter { $0.isActive }
         let current = mapView.annotations.compactMap { $0 as? MKPlaceAnnotation }
-        
-        // Remove deleted annotations
-        let toRemove = current.filter { currentAnnotation in
-            !newAnnotations.contains { $0.id == currentAnnotation.id }
-        }
+
+        let newIds = Set(activePlaces.map { $0.id })
+        let currentIds = Set(current.map { $0.id })
+
+        let toRemove = current.filter { !newIds.contains($0.id) }
         mapView.removeAnnotations(toRemove)
-        
-        // Add new annotations
-        let toAdd = newAnnotations.filter { newAnnotation in
-            !current.contains { $0.id == newAnnotation.id }
-        }
+
+        let toAdd = activePlaces
+            .filter { !currentIds.contains($0.id) }
+            .map { MKPlaceAnnotation(place: $0) }
         mapView.addAnnotations(toAdd)
 
-        // Add / remove temporary place
-        let tmps = mapView.annotations.compactMap { $0 as? MKTempPlaceAnnotation }
-        mapView.removeAnnotations(tmps)
+        // Temporary place
+        mapView.removeAnnotations(mapView.annotations.compactMap { $0 as? MKTempPlaceAnnotation })
         if let tmpPlace = viewModel.tmpPlace {
             mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
         }
@@ -184,7 +170,7 @@ extension PlacesMapViewVCRepresentable {
 
     @MainActor
     class Coordinator: NSObject, MKMapViewDelegate {
-        
+
         private let viewModel: PlacesMapViewModel
         private var addressPickingTask: Task<Void, Never>? = nil
         private var selectedPlaceId: (UUID?) -> Void
@@ -192,6 +178,11 @@ extension PlacesMapViewVCRepresentable {
         fileprivate var annotationViewFactory: AnnotationViewFactory
 
         weak var mapView: MKMapView?
+
+        // Annotation update guard
+        var lastActiveIds: Set<UUID> = []
+        // Label visibility state
+        private var labelsVisible: Bool = true
 
         // MARK: init
         init(viewModel: PlacesMapViewModel,
@@ -258,11 +249,19 @@ extension PlacesMapViewVCRepresentable {
         }
         
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-            // Update ViewModel when user pans/zooms
             viewModel.mapSettings.currentCamera = mapView.camera
             viewModel.mapSettings.currentRegion = mapView.region
             viewModel.mapSettings.currentRect = mapView.visibleMapRect
-            
+
+            // Hide labels when zoomed far out — only update views when crossing the threshold
+            let shouldShowLabels = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
+            if shouldShowLabels != labelsVisible {
+                labelsVisible = shouldShowLabels
+                for annotation in mapView.annotations {
+                    (mapView.view(for: annotation) as? HostingAnnotationView)?.showLabel = shouldShowLabels
+                }
+            }
+
             if viewModel.pickingAddress || viewModel.pickingCoordinates {
                 updatePlacePickerPositions(mapView)
             }

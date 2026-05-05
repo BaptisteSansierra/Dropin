@@ -21,20 +21,23 @@ struct PlaceAnnotationView: View {
     private let isSelected: Bool
     private let pinStyle: PinStyle
     private let pinSize: CGFloat
+    private let showLabel: Bool
 
     // MARK: init
-    init(annotation: MKPlaceAnnotation, isSelected: Bool, pinStyle: PinStyle, pinSize: CGFloat) {
+    init(annotation: MKPlaceAnnotation, isSelected: Bool, pinStyle: PinStyle, pinSize: CGFloat, showLabel: Bool = true) {
         self.place = annotation.place
         self.isSelected = isSelected
         self.pinStyle = pinStyle
         self.pinSize = pinSize
+        self.showLabel = showLabel
     }
-    
+
     init(tempAnnotation: MKTempPlaceAnnotation, pinStyle: PinStyle, pinSize: CGFloat) {
         self.place = nil
         self.isSelected = false
         self.pinStyle = pinStyle
         self.pinSize = pinSize
+        self.showLabel = false
     }
     
     // MARK: body
@@ -96,15 +99,15 @@ struct PlaceAnnotationView: View {
                     }})
             
             // Outlined title
-            if let place = place {
+            if let place = place, showLabel {
                 Text(place.name)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(.white)
                     .outline(color: Color(light: .white, dark: .black.opacity(0.5)),
                              width: 0.5)
                     .overlay {
                         Text(place.name)
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(Color(light: Color(rgba: "#222222"),
                                                    dark: Color(rgba: "#DDDDDD")))
                     }
