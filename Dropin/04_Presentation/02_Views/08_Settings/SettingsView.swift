@@ -33,6 +33,7 @@ struct SettingsView: View {
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
             }
+            .sheet(isPresented: $viewModel.showMapstrConfig, content: mapstrConfigSheetContent)
             .sheet(isPresented: $viewModel.pickFile, content: importSheetContent)
             .sheet(item: $viewModel.exportedTemporaryFile, content: exportSheetContent)
             .overlay(content: deleteDatabaseOverlay)
@@ -95,7 +96,7 @@ struct SettingsView: View {
                     viewModel.isImporting = true
                 })
                 Button("Mapstr (GeoJSON)" as String, action: {
-                    //viewModel.isImporting = true
+                    viewModel.showMapstrConfig = true
                 })
                 Button("Google (GeoJSON)" as String, action: {
                     //viewModel.isImporting = true
@@ -163,6 +164,14 @@ struct SettingsView: View {
         }
     }
     
+    private func mapstrConfigSheetContent() -> some View {
+        MapstrImportConfigView(tagName: $viewModel.mapstrMarkerTagName) {
+            viewModel.importSource = .mapstr
+            viewModel.pickFile = true
+        }
+        .presentationDetents([.medium])
+    }
+
     private func importSheetContent() -> some View {
         ImportPicker(source: viewModel.importSource, onPick: onPickedFile)
     }
@@ -191,7 +200,11 @@ struct SettingsView: View {
     private func onPickedFile(_ url: URL) {
         Task {
             do {
-                try await viewModel.importDropin(url)
+                switch viewModel.importSource {
+                case .dropin:  try await viewModel.importDropin(url)
+                case .mapstr:  try await viewModel.importMapstr(url)
+                default: break
+                }
             } catch {
                 // TODO handle error
             }

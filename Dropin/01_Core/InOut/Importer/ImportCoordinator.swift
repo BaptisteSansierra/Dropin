@@ -18,7 +18,8 @@ final class ImportCoordinator {
          url: URL,
          upsertPlace: UpsertPlace,
          upsertGroup: UpsertGroup,
-         upsertTag: UpsertTag) throws {
+         upsertTag: UpsertTag,
+         markerTagName: String? = nil) throws {
         self.source = source
         self.url = url
         switch source {
@@ -26,6 +27,10 @@ final class ImportCoordinator {
                 importService = ImportDropinService(upsertPlace: upsertPlace,
                                                     upsertGroup: upsertGroup,
                                                     upsertTag: upsertTag)
+            case .mapstr:
+                importService = ImportMapstrService(upsertPlace: upsertPlace,
+                                                    upsertTag: upsertTag,
+                                                    markerTagName: markerTagName ?? "Mapstr")
             default:
                 throw ImportError.unrecognizedFormat(url.pathExtension)
         }

@@ -56,7 +56,7 @@ struct AnnotationViewFactory {
             return createClusterView(for: cluster, on: mapView)
         }
 
-        // Tmp
+        // Temporary place (used for creation)
         if let tmp = annotation as? MKTempPlaceAnnotation {
             return createTmpPlaceView(for: tmp, on: mapView)
         }
@@ -99,6 +99,7 @@ struct AnnotationViewFactory {
         return view
     }
 
+    // Create an apple default Marker (development only)
     private func createPlaceMarkerView(for placeAnnotation: MKPlaceAnnotation,
                                               on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.applePlace
@@ -115,6 +116,7 @@ struct AnnotationViewFactory {
         return view
     }
 
+    // Create a regular place
     private func createPlaceView(for placeAnnotation: MKPlaceAnnotation,
                                  on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.place
@@ -123,9 +125,9 @@ struct AnnotationViewFactory {
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
         view.configure(appSettings: appSettings)
-        view.clusteringIdentifier = "PlaceCluster"
+        //view.clusteringIdentifier = "PlaceCluster"
         view.canShowCallout = false
-        view.displayPriority = .required
+        view.displayPriority = .defaultHigh
         view.collisionMode = .circle
         return view
     }

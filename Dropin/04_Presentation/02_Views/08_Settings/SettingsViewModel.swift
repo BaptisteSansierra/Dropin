@@ -17,6 +17,8 @@ import SwiftUI
     var importSource: ImportSource = .unknown
     var pickFile = false
     var isImporting = false
+    var showMapstrConfig = false
+    var mapstrMarkerTagName: String = "Mapstr"
 
     var exportedTemporaryFile: IdentifiableURL?
     var isExporting = false
@@ -62,6 +64,16 @@ import SwiftUI
     
     func resetDatabase() async throws {
         try await deleteLibrary()
+    }
+
+    func importMapstr(_ url: URL) async throws {
+        let impCoord = try ImportCoordinator(source: .mapstr,
+                                             url: url,
+                                             upsertPlace: upsertPlace,
+                                             upsertGroup: upsertGroup,
+                                             upsertTag: upsertTag,
+                                             markerTagName: mapstrMarkerTagName)
+        try await impCoord.process()
     }
 
     func importDropin(_ url: URL) async throws {

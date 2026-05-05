@@ -1237,6 +1237,23 @@
         }
       }
     },
+    "common.next" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivant"
+          }
+        }
+      }
+    },
     "common.no_related_places" : {
       "localizations" : {
         "en" : {
@@ -2328,8 +2345,73 @@
         }
       }
     },
-    "Reset database" : {
-
+    "settings.mapstr_import.tag_footer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All imported places will be tagged with this label so you can find them easily."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les lieux importés seront tagués avec ce label pour les retrouver facilement."
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.tag_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom du tag"
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.tag_section" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import tag"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag d'import"
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from Mapstr"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer depuis Mapstr"
+          }
+        }
+      }
     },
     "settings.pin_size" : {
       "extractionState" : "manual",
