@@ -10,14 +10,12 @@ import MapKit
 @MainActor
 struct AnnotationViewFactory {
 
+    // DEBUG: switch Apple vs. custom Annotations
     enum MapPinMode {
         case apple
         case custom
     }
-    enum PinMode {
-        case rect
-        case pin
-    }
+    var mapPinMode: MapPinMode = .custom
 
     private enum Identifiers {
         static let applePlace = "ApplePlacePin"
@@ -25,12 +23,14 @@ struct AnnotationViewFactory {
         static let tempPlace = "TmpPlacePin"
         static let cluster = "ClusterPin"
     }
+    
+    private var appSettings: AppSettings
+    
+    init(appSettings: AppSettings) {
+        self.appSettings = appSettings
+    }
 
-//  TODO: MOVE THIS ELSEWHERE AND PERSIST IT !!!
-    static var mapPinMode: MapPinMode = .custom
-    static var pinMode: PinMode = .pin
-
-    static func registerViews(for mapView: MKMapView) {
+    func registerViews(for mapView: MKMapView) {
         mapView.register(HostingAnnotationView.self,
                          forAnnotationViewWithReuseIdentifier: Identifiers.tempPlace)
         if mapPinMode == .apple {
@@ -45,7 +45,7 @@ struct AnnotationViewFactory {
                          forAnnotationViewWithReuseIdentifier: Identifiers.cluster)
     }
 
-    static func view(for annotation: MKAnnotation, in mapView: MKMapView) -> MKAnnotationView? {
+    func view(for annotation: MKAnnotation, in mapView: MKMapView) -> MKAnnotationView? {
         // User location
         if annotation is MKUserLocation {
             return nil
@@ -73,7 +73,7 @@ struct AnnotationViewFactory {
     }
 
     
-    static private func createClusterView(for cluster: MKClusterAnnotation,
+    private func createClusterView(for cluster: MKClusterAnnotation,
                                           on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.cluster
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
@@ -85,32 +85,21 @@ struct AnnotationViewFactory {
         return view
     }
     
-    static private func createTmpPlaceView(for placeAnnotation: MKTempPlaceAnnotation,
+    private func createTmpPlaceView(for placeAnnotation: MKTempPlaceAnnotation,
                                            on mapView: MKMapView) -> MKAnnotationView {
-        /*
-        let identifier = Identifiers.tempPlace
-        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
-                                                         for: placeAnnotation) as? MKMarkerAnnotationView
-            ?? MKMarkerAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
-        view.annotation = placeAnnotation
-        view.glyphImage = placeAnnotation.icon
-        view.canShowCallout = true
-        
-        PinView(icon: Icon(rawValue: "sf:pin"))
-         */
-        
         let identifier = Identifiers.tempPlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
                                                          for: placeAnnotation) as? HostingAnnotationView
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
+        view.configure(appSettings: appSettings)
         view.temporary = true
         view.isEnabled = false
         view.canShowCallout = false
         return view
     }
 
-    static private func createPlaceMarkerView(for placeAnnotation: MKPlaceAnnotation,
+    private func createPlaceMarkerView(for placeAnnotation: MKPlaceAnnotation,
                                               on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.applePlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
@@ -126,13 +115,14 @@ struct AnnotationViewFactory {
         return view
     }
 
-    static private func createPlaceView(for placeAnnotation: MKPlaceAnnotation,
+    private func createPlaceView(for placeAnnotation: MKPlaceAnnotation,
                                  on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.place
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
                                                          for: placeAnnotation) as? HostingAnnotationView
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
+        view.configure(appSettings: appSettings)
         view.clusteringIdentifier = "PlaceCluster"
         view.canShowCallout = false
         view.displayPriority = .required

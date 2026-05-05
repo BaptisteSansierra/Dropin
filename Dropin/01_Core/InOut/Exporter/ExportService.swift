@@ -10,14 +10,14 @@ import Foundation
 @MainActor
 struct ExportService {
 
-    private var fetchPlaces: FetchPlaces
-    private var getGroups: FetchGroups
-    private var getTags: FetchTags
+    private let fetchPlaces: FetchPlaces
+    private let fetchGroups: FetchGroups
+    private let fetchTags: FetchTags
     
-    init(fetchPlaces: FetchPlaces, getGroups: FetchGroups, getTags: FetchTags) {
+    init(fetchPlaces: FetchPlaces, fetchGroups: FetchGroups, fetchTags: FetchTags) {
         self.fetchPlaces = fetchPlaces
-        self.getGroups = getGroups
-        self.getTags = getTags
+        self.fetchGroups = fetchGroups
+        self.fetchTags = fetchTags
     }
     
     private let encoder: JSONEncoder = {
@@ -27,14 +27,14 @@ struct ExportService {
         return encoder
     }()
 
-    func execute() async throws {
-        async let placesTask = fetchPlaces.execute()
-        async let groupsTask = getGroups.execute()
-        async let tagsTask = getTags.execute()
+    func execute() async throws -> URL {
+        async let placesTask = fetchPlaces()
+        async let groupsTask = fetchGroups()
+        async let tagsTask = fetchTags()
         
         let (places, groups, tags) = try await (placesTask, groupsTask, tagsTask)
 
-        let dropinExport = DropinExport(exportedAt: Date(),
+        let dropinExport = DropinInOut(exportedAt: Date(),
                                         places: places,
                                         groups: groups,
                                         tags: tags)
@@ -42,20 +42,21 @@ struct ExportService {
         let url = exportURL(for: dropinExport)
         try data.write(to: url)
         Log.info("Exported to \"\(url.absoluteString)\"")
+        return url
     }
     
-    private func encode(_ export: DropinExport) throws -> Data {
+    private func encode(_ export: DropinInOut) throws -> Data {
         try encoder.encode(export)
     }
     
-    private func exportURL(for export: DropinExport) -> URL {
+    private func exportURL(for export: DropinInOut) -> URL {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd_HH-mm"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         let formatedDate = formatter.string(from: export.exportedAt)
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("dropin-export-\(formatedDate)")
-            .appendingPathExtension("json")
+            .appendingPathExtension(DropinApp.strings.exportExtension)
         return url
     }
 }

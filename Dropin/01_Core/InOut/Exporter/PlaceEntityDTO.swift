@@ -34,17 +34,15 @@ struct PlaceEntityDTO: Decodable {
         self.coordinates = try c.decode(CLLocationCoordinate2D.self, forKey: .coordinates)
         self.address = try c.decode(String.self, forKey: .address)
         self.address2 = try c.decode(String.self, forKey: .address2)
-
         self.tagIds = try c.decode([UUID].self, forKey: .tagIds)
         self.groupId = try c.decodeIfPresent(UUID.self, forKey: .groupId)
-
-        self.icon = try c.decode(Icon.self, forKey: .icon)
+        self.icon = try c.decodeIfPresent(Icon.self, forKey: .icon)
         self.createdAt = try c.decode(Date.self, forKey: .createdAt)
         self.rating = try c.decodeIfPresent(Float.self, forKey: .rating)
         self.phone = try c.decode([String].self, forKey: .phone)
         self.email = try c.decode([String].self, forKey: .email)
         self.url = try c.decode([String].self, forKey: .url)
-        self.notes = try c.decode(String.self, forKey: .notes)
+        self.notes = try c.decodeIfPresent(String.self, forKey: .notes)
         
         // TODO: images should not be stored within Place object...
         self.images = []

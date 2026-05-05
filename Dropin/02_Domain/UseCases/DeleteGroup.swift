@@ -15,7 +15,7 @@ struct DeleteGroup {
         self.repository = repository
     }
     
-    func execute(_ group: GroupEntity) async throws {
+    func callAsFunction(_ group: GroupEntity) async throws {
         if try await !repository.exists(group) {
             throw DomainError.Group.notFound
         }

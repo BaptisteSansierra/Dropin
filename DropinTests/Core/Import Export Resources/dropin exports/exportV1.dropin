@@ -1,0 +1,582 @@
+{
+  "version" : 1,
+  "groups" : [
+    {
+      "icon" : "sf:figure.socialdance",
+      "color" : "#655991",
+      "createdAt" : "2026-04-18T11:13:16Z",
+      "name" : "Disco",
+      "id" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30"
+    },
+    {
+      "icon" : "sf:person.2.fill",
+      "color" : "#FF6900",
+      "createdAt" : "2026-04-18T10:50:46Z",
+      "name" : "Family",
+      "id" : "1C513430-57C8-4330-870B-C7692C5976A0"
+    },
+    {
+      "icon" : "sf:figure.2",
+      "color" : "#D95000",
+      "createdAt" : "2026-04-18T11:20:56Z",
+      "name" : "Friends",
+      "id" : "C144E896-238D-4DC4-9847-0112CE491850"
+    },
+    {
+      "icon" : "sf:tshirt",
+      "color" : "#13FF15",
+      "createdAt" : "2026-04-20T06:56:49Z",
+      "name" : "Laundry",
+      "id" : "80E31DDF-2B24-4F71-B406-BC854C8852DD"
+    },
+    {
+      "icon" : "sf:fork.knife",
+      "color" : "#619B97",
+      "createdAt" : "2026-04-18T11:33:03Z",
+      "name" : "Restaurant",
+      "id" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F"
+    },
+    {
+      "icon" : "sf:cart",
+      "color" : "#954DBB",
+      "createdAt" : "2026-04-20T06:59:47Z",
+      "name" : "SuperMarket",
+      "id" : "B13C1BBB-0351-4F6A-B6ED-9C2D86BFB785"
+    },
+    {
+      "icon" : "sf:takeoutbag.and.cup.and.straw",
+      "color" : "#00A0D7",
+      "createdAt" : "2026-04-18T11:00:59Z",
+      "name" : "TakeAway",
+      "id" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2"
+    }
+  ],
+  "tags" : [
+    {
+      "id" : "8E6FE6FF-2BC8-436B-927D-64949C3DDB44",
+      "createdAt" : "2026-04-20T07:00:05Z",
+      "name" : "BeurreSalé",
+      "color" : "#8996C8"
+    },
+    {
+      "id" : "B74249E1-CF65-44F8-AD5B-132488AE6F18",
+      "createdAt" : "2026-04-18T11:34:02Z",
+      "name" : "CatalanFood",
+      "color" : "#B6AC00"
+    },
+    {
+      "id" : "940BBF00-BF58-4415-95BB-89AD4F9D3007",
+      "createdAt" : "2026-04-20T07:00:16Z",
+      "name" : "Créme fraiche",
+      "color" : "#8A7F40"
+    },
+    {
+      "id" : "60FAE0A2-394C-404C-B8ED-6BCDE0120B98",
+      "createdAt" : "2026-04-18T11:11:28Z",
+      "name" : "Eco",
+      "color" : "#95C479"
+    },
+    {
+      "id" : "8159D29C-FC32-47A2-A75E-C0B204038728",
+      "createdAt" : "2026-04-18T11:04:31Z",
+      "name" : "Healthy",
+      "color" : "#659C33"
+    },
+    {
+      "id" : "298BDA71-9E12-4E48-9F4C-E813EDC59A50",
+      "createdAt" : "2026-04-18T11:09:45Z",
+      "name" : "Italian",
+      "color" : "#6B7A72"
+    },
+    {
+      "id" : "E8384CAB-6AAC-4E75-A8B5-FA4DBFCE448A",
+      "createdAt" : "2026-04-18T11:09:41Z",
+      "name" : "Pasta",
+      "color" : "#48CBAF"
+    },
+    {
+      "id" : "4148982C-129B-4BEB-A100-6C98201519F1",
+      "createdAt" : "2026-04-18T11:01:14Z",
+      "name" : "Pollo",
+      "color" : "#BF91B0"
+    },
+    {
+      "id" : "EC05572E-E8B8-4E7A-8588-965C3AE5DFD3",
+      "createdAt" : "2026-04-18T11:04:12Z",
+      "name" : "Veggie",
+      "color" : "#75BA3F"
+    }
+  ],
+  "places" : [
+    {
+      "phone" : [
+        "{\"label\":{\"kind\":\"phone\",\"value\":{\"custom\":{\"_0\":\"Papa\"}}},\"id\":\"D252CBB8-B8F1-47E1-BFE9-C2F6B558825F\",\"value\":\"0033 649 555 748\"}",
+        "{\"label\":{\"value\":{\"custom\":{\"_0\":\"Maman\"}},\"kind\":\"phone\"},\"id\":\"788ABB52-0C07-44BD-B36C-D5899EDFB4C6\",\"value\":\" +33675497964\"}"
+      ],
+      "createdAt" : "2026-04-18T10:53:23Z",
+      "id" : "E3831B8E-A814-4EA7-89C7-2676589D1A4B",
+      "name" : "Papa & Maman",
+      "email" : [
+        "{\"id\":\"030F3885-8D5D-41D0-A0F1-6BDE424B0F32\",\"label\":{\"kind\":\"email\",\"value\":{\"email\":{}}},\"value\":\"luis.sansierra@sfr.fr\"}"
+      ],
+      "tagIds" : [
+
+      ],
+      "address2" : "",
+      "images" : [
+
+      ],
+      "address" : "4 Rue de la Passerelle, 17180 Périgny, France",
+      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "url" : [
+
+      ],
+      "coordinates" : {
+        "latitude" : 46.1553535,
+        "longitude" : -1.0858623
+      }
+    },
+    {
+      "phone" : [
+        "{\"label\":{\"kind\":\"phone\",\"value\":{\"phone\":{}}},\"value\":\"+34640301813\",\"id\":\"7160780A-B94D-4695-932D-D9C388BF1788\"}"
+      ],
+      "url" : [
+
+      ],
+      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "id" : "F1813C35-2F70-4B34-AA65-C3256C1739FE",
+      "name" : "Virtu",
+      "address" : "Calle de Honduras, 2, 28822 Coslada, Madrid, Spain",
+      "email" : [
+
+      ],
+      "images" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "createdAt" : "2026-04-18T10:55:35Z",
+      "coordinates" : {
+        "latitude" : 40.424296,
+        "longitude" : -3.5466109
+      },
+      "address2" : "5 D"
+    },
+    {
+      "phone" : [
+        "{\"id\":\"E7490850-078A-46E3-ACA1-98433A371DAB\",\"label\":{\"kind\":\"phone\",\"value\":{\"custom\":{\"_0\":\"Miguel\"}}},\"value\":\"+34656271872\"}"
+      ],
+      "url" : [
+
+      ],
+      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "id" : "97D00388-165A-4855-A2DF-40D1AFB55AEB",
+      "name" : "Miguel",
+      "address" : "Calle de Manuel Lamela, 6, 28025 Madrid, Spain",
+      "email" : [
+
+      ],
+      "images" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "createdAt" : "2026-04-18T10:58:42Z",
+      "coordinates" : {
+        "latitude" : 40.3859037,
+        "longitude" : -3.7335163
+      },
+      "address2" : "3b"
+    },
+    {
+      "createdAt" : "2026-04-18T11:01:42Z",
+      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "coordinates" : {
+        "latitude" : 41.4082609,
+        "longitude" : 2.1578795
+      },
+      "address2" : "",
+      "tagIds" : [
+        "4148982C-129B-4BEB-A100-6C98201519F1"
+      ],
+      "phone" : [
+        "{\"label\":{\"value\":{\"phone\":{}},\"kind\":\"phone\"},\"id\":\"AAB5970E-A71B-4B2E-B4F8-E500FF2B8B3A\",\"value\":\"932849412\"}"
+      ],
+      "url" : [
+
+      ],
+      "name" : "Rosti 79",
+      "id" : "ED3C182C-5A6F-4B0C-8BBF-D74F9E0A2CCB",
+      "address" : "Carrer de Martí, 79, 08024 Barcelona, Spain",
+      "email" : [
+
+      ],
+      "images" : [
+
+      ]
+    },
+    {
+      "createdAt" : "2026-04-18T11:05:33Z",
+      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "coordinates" : {
+        "latitude" : 41.4052178,
+        "longitude" : 2.1598388
+      },
+      "address2" : "",
+      "tagIds" : [
+        "EC05572E-E8B8-4E7A-8588-965C3AE5DFD3",
+        "8159D29C-FC32-47A2-A75E-C0B204038728"
+      ],
+      "phone" : [
+        "{\"value\":\"931054947\",\"label\":{\"kind\":\"phone\",\"value\":{\"phone\":{}}},\"id\":\"A4A76C8C-ED38-4396-889F-E455FABC7DBE\"}"
+      ],
+      "url" : [
+        "{\"value\":\"http:\\\/\\\/lestresalacuina.com\\\/lestres\\\/\",\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"id\":\"DCCEAB42-94C8-4EC0-A152-FAC621A3FD79\"}"
+      ],
+      "name" : "Les Tres a la Cuina",
+      "id" : "93D004EB-EB36-4156-8128-EBFCE7AA7029",
+      "address" : "Carrer de Sant Lluís, 35, 08012 Barcelona, Spain",
+      "email" : [
+
+      ],
+      "images" : [
+
+      ]
+    },
+    {
+      "address2" : "",
+      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"value\":\"http:\\\/\\\/www.chitarraecologica.com\\\/\",\"id\":\"E7454372-9C26-49CD-8FD5-3A16040EFD95\"}"
+      ],
+      "images" : [
+
+      ],
+      "phone" : [
+        "{\"id\":\"083C9B57-5F35-4953-A7CD-9E75ACF35D1B\",\"value\":\"932853315\",\"label\":{\"kind\":\"phone\",\"value\":{\"phone\":{}}}}"
+      ],
+      "tagIds" : [
+        "E8384CAB-6AAC-4E75-A8B5-FA4DBFCE448A",
+        "298BDA71-9E12-4E48-9F4C-E813EDC59A50",
+        "60FAE0A2-394C-404C-B8ED-6BCDE0120B98"
+      ],
+      "address" : "Carrer de Joan Blanques, 56, 08024 Barcelona, Spain",
+      "coordinates" : {
+        "latitude" : 41.4062052,
+        "longitude" : 2.1595675
+      },
+      "createdAt" : "2026-04-18T11:11:32Z",
+      "id" : "412D1940-C334-4C0F-9DBE-B6B23E6DF7B4",
+      "name" : "La Chitarra"
+    },
+    {
+      "address2" : "",
+      "groupId" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30",
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "images" : [
+
+      ],
+      "phone" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "address" : "Carrer del Torrent de les Flors, 46, 08024 Barcelona, Spain",
+      "coordinates" : {
+        "latitude" : 41.4059549,
+        "longitude" : 2.1606693
+      },
+      "createdAt" : "2026-04-18T11:13:24Z",
+      "id" : "6D2A8828-5A1E-4615-AF8E-A1EECA461E97",
+      "name" : "El Col-leccionista"
+    },
+    {
+      "name" : "Guillaume",
+      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "phone" : [
+        "{\"value\":\"+34 717 70 47 07\",\"id\":\"F99C25BF-AAFB-45D0-A5B4-1825EBF76A9C\",\"label\":{\"value\":{\"phone\":{}},\"kind\":\"phone\"}}"
+      ],
+      "id" : "B9247771-6D5D-45F5-B90D-D1ED0EF4C516",
+      "createdAt" : "2026-04-18T11:21:51Z",
+      "coordinates" : {
+        "latitude" : 41.4034047,
+        "longitude" : 2.1575808
+      },
+      "email" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "url" : [
+
+      ],
+      "address2" : "",
+      "images" : [
+
+      ],
+      "address" : "Carrer de Verdi, 12, 08012 Barcelona, Spain"
+    },
+    {
+      "email" : [
+
+      ],
+      "address2" : "4-2",
+      "id" : "F5277962-C3E1-4E0D-9775-74CC3C445C30",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "coordinates" : {
+        "latitude" : 41.4047309,
+        "longitude" : 2.1577579
+      },
+      "createdAt" : "2026-04-18T11:26:57Z",
+      "phone" : [
+        "{\"label\":{\"kind\":\"phone\",\"value\":{\"custom\":{\"_0\":\"Louis\"}}},\"value\":\"+34 648 69 11 25\",\"id\":\"50FB080A-FA4E-4CFB-9E3F-F68B6FDCA996\"}",
+        "{\"id\":\"1B18B302-B65F-4C83-8624-EA7567C06B0B\",\"value\":\"+34 669 30 95 63\",\"label\":{\"value\":{\"custom\":{\"_0\":\"Marilo\"}},\"kind\":\"phone\"}}"
+      ],
+      "address" : "Carrer de l'Or, 44, 08012 Barcelona, Spain",
+      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "name" : "Louis & Marilo",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "coordinates" : {
+        "latitude" : 41.4073537,
+        "longitude" : 2.1604522
+      },
+      "name" : "Steph & Jesse",
+      "address2" : "3-4",
+      "id" : "1EA4CB68-EA22-469B-85C7-922C9F3BE5BE",
+      "createdAt" : "2026-04-18T11:30:03Z",
+      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "phone" : [
+        "{\"value\":\"+34 691 52 82 33\",\"id\":\"21519EB0-27A2-4CB0-82D1-744980B0B447\",\"label\":{\"value\":{\"custom\":{\"_0\":\"Stephanie\"}},\"kind\":\"phone\"}}"
+      ],
+      "address" : "Carrer de Reig i Bonet, 12, 08024 Barcelona, Spain",
+      "email" : [
+
+      ],
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "rating" : 4,
+      "url" : [
+        "{\"value\":\"https:\\\/\\\/elglopbarcelona.com\\\/\",\"label\":{\"kind\":\"url\",\"value\":{\"custom\":{\"_0\":\"menu\"}}},\"id\":\"938D728A-5002-4F3E-9947-29589D7F69A5\"}",
+        "{\"value\":\"http:\\\/\\\/www.elglop.com\\\/\",\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"id\":\"1E69F834-A17F-46C4-ABCD-E52B93A1ED21\"}"
+      ],
+      "tagIds" : [
+        "B74249E1-CF65-44F8-AD5B-132488AE6F18"
+      ],
+      "createdAt" : "2026-04-18T11:35:48Z",
+      "id" : "BC3CC486-4B7C-460F-8D38-B26BB425BA89",
+      "email" : [
+
+      ],
+      "coordinates" : {
+        "latitude" : 41.4048869,
+        "longitude" : 2.1595457
+      },
+      "name" : "Taverna El Glop",
+      "address2" : "",
+      "groupId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
+      "address" : "Carrer de Sant Lluís, 24(Montmany con Sant Lluís), 08012 Barcelona, Spain",
+      "phone" : [
+        "{\"value\":\"932137058\",\"label\":{\"kind\":\"phone\",\"value\":{\"phone\":{}}},\"id\":\"2C20BFD1-0B18-4C7A-AB52-89A48421E91A\"}"
+      ],
+      "images" : [
+
+      ]
+    },
+    {
+      "id" : "CCE41A62-24BF-4EB2-A330-C5F562264807",
+      "phone" : [
+        "{\"label\":{\"kind\":\"phone\",\"value\":{\"phone\":{}}},\"value\":\"932177946\",\"id\":\"985D54C8-035F-4A5B-A6EB-1E97C84E92A9\"}"
+      ],
+      "name" : "Can Punyetes",
+      "address" : "Carrer de Francisco Giner, 8, 08012 Barcelona, Spain",
+      "coordinates" : {
+        "latitude" : 41.3987162,
+        "longitude" : 2.1596424
+      },
+      "groupId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
+      "createdAt" : "2026-04-18T11:42:42Z",
+      "address2" : "",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"343B23C6-75BB-4373-8B7B-6B3603564AAB\",\"label\":{\"value\":{\"url\":{}},\"kind\":\"url\"},\"value\":\"http:\\\/\\\/www.canpunyetes.com\\\/\"}"
+      ],
+      "tagIds" : [
+        "B74249E1-CF65-44F8-AD5B-132488AE6F18"
+      ],
+      "images" : [
+
+      ]
+    },
+    {
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "notes" : "Candado 574",
+      "createdAt" : "2026-04-18T13:53:40Z",
+      "id" : "BEC186D7-912D-4523-A3D9-699EBF24E1A0",
+      "email" : [
+
+      ],
+      "coordinates" : {
+        "latitude" : 41.405693452720676,
+        "longitude" : 2.158253137846314
+      },
+      "name" : "Jardi Alzina",
+      "icon" : "sf:tree",
+      "address2" : "",
+      "address" : "Carrer de Manrique de Lara, 8\n08024 Barcelona Barcelona\nSpain",
+      "groupId" : null,
+      "phone" : [
+
+      ],
+      "images" : [
+
+      ]
+    },
+    {
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "address" : "La Minoterie, 17220 La Jarrie, France",
+      "coordinates" : {
+        "latitude" : 46.1223068,
+        "longitude" : -1.0230316
+      },
+      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "createdAt" : "2026-04-20T06:53:43Z",
+      "id" : "D6FF324C-7C16-44A8-B1EF-5F73D225D73E",
+      "tagIds" : [
+
+      ],
+      "name" : "Julie",
+      "phone" : [
+
+      ],
+      "address2" : "",
+      "email" : [
+
+      ]
+    },
+    {
+      "images" : [
+
+      ],
+      "id" : "4395DE0A-512C-4448-9EF7-305E27A82266",
+      "name" : "Be Laundry",
+      "coordinates" : {
+        "latitude" : 41.3992015,
+        "longitude" : 2.1544836
+      },
+      "groupId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD",
+      "createdAt" : "2026-04-20T06:56:52Z",
+      "phone" : [
+
+      ],
+      "address2" : "",
+      "address" : "Travessera de Gràcia, 106, 08012 Barcelona, Spain",
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "name" : "Be Laundry",
+      "address" : "Carrer de l'Escorial, 20, 08024 Barcelona, Spain",
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "groupId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD",
+      "createdAt" : "2026-04-20T06:57:16Z",
+      "images" : [
+
+      ],
+      "url" : [
+
+      ],
+      "address2" : "",
+      "coordinates" : {
+        "latitude" : 41.4063976,
+        "longitude" : 2.1624256
+      },
+      "id" : "68E20D85-FD70-4773-93D9-D6702D0C8C00",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "tagIds" : [
+        "8E6FE6FF-2BC8-436B-927D-64949C3DDB44",
+        "940BBF00-BF58-4415-95BB-89AD4F9D3007"
+      ],
+      "groupId" : "B13C1BBB-0351-4F6A-B6ED-9C2D86BFB785",
+      "phone" : [
+
+      ],
+      "createdAt" : "2026-04-20T07:00:40Z",
+      "images" : [
+
+      ],
+      "address2" : "",
+      "address" : "Carrer de Pere Serafí, 11, 08012 Barcelona, Spain",
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Sorli",
+      "coordinates" : {
+        "latitude" : 41.400796,
+        "longitude" : 2.1557274
+      },
+      "id" : "C7AD9BD3-2451-4355-983A-2B212FD4517C"
+    }
+  ],
+  "exportedAt" : "2026-04-20T07:02:39Z"
+}

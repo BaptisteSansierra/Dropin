@@ -67,13 +67,10 @@ struct PlaceCreateQuickView: View {
         .fullScreenCover(isPresented: $viewModel.showingMarkerList) {
             MarkerListView(selected: $place.icon)
         }
-        .alert("alert.missing_name.title", isPresented: $viewModel.missingName) {
-            Button("common.ok") {
-                isNameFocused = true
-            }
-        } message: {
-            Text("alert.missing_name.body")
-        }
+        .alertOk(isPresented: $viewModel.missingName,
+                 title: "alert.missing_name.title",
+                 body: "alert.missing_name.body",
+                 action: { isNameFocused = true })
     }
 
     // MARK: - Actions

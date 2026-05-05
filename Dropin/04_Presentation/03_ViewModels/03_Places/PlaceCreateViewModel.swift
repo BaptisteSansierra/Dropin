@@ -49,14 +49,14 @@ import CoreLocation
     // MARK: Use cases
     func save(place: PlaceUI) async throws {
         let placeEntity = PlaceMapper.toDomain(place)
-        try await createPlace.execute(placeEntity)
+        try await createPlace(placeEntity)
     }
     
     func retrieveTags(tagIds: [UUID]) async -> [TagUI] {
         var tags = [TagUI]()
         for tagId in tagIds {
             do {
-                let tagEntity = try await getTag.execute(id: tagId)
+                let tagEntity = try await getTag(id: tagId)
                 tags.append(TagMapper.toUI(tagEntity))
             } catch {
                 assertionFailure("couldn't retrieve tag with id \(tagId)")
@@ -67,7 +67,7 @@ import CoreLocation
 
     func retrieveGroup(groupId: UUID) async -> GroupUI? {
         do {
-            let groupEntity = try await getGroup.execute(id: groupId)
+            let groupEntity = try await getGroup(id: groupId)
             return GroupMapper.toUI(groupEntity)
         } catch {
             assertionFailure("couldn't retrieve tag with id \(groupId)")

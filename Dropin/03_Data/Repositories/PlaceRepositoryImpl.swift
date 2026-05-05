@@ -102,6 +102,37 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         try modelContext.save()
     }
 
+    func upsert(_ place: PlaceEntity) async throws {
+        let placeId = place.id
+        let predicate = #Predicate<SDPlace> { $0.identifier == placeId }
+        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
+        if let existing = try modelContext.fetch(descriptor).first {
+            // Update
+            existing.name = place.name
+            existing.latitude = place.coordinates.latitude
+            existing.longitude = place.coordinates.longitude
+            existing.address = place.address
+            existing.address2 = place.address2
+            existing.icon = place.icon
+            existing.rating = place.rating
+            existing.phone = place.phone
+            existing.email = place.email
+            existing.url = place.url
+            existing.notes = place.notes
+            existing.images = place.images
+            try await linkTags(sdPlace: existing, domainPlace: place)
+            try await linkGroup(sdPlace: existing, domainPlace: place)
+            existing.deletedAt = place.deletedAt
+        } else {
+            // Insert
+            let sdPlace = PlaceMapper.toData(place)
+            try await linkTags(sdPlace: sdPlace, domainPlace: place)
+            try await linkGroup(sdPlace: sdPlace, domainPlace: place)
+            modelContext.insert(sdPlace)
+        }
+        try modelContext.save()
+    }
+
     // MARK: private methods
     private func retrievePlace(domainPlace: PlaceEntity) async throws -> SDPlace {
         return try await retrievePlace(uuid: domainPlace.id)
@@ -140,6 +171,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     
     private func linkGroup(sdPlace: SDPlace, domainPlace: PlaceEntity) async throws {
         guard let group = domainPlace.group else {
+            print("    -> NO Group")
             sdPlace.group = nil
             return
         }
@@ -153,6 +185,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         guard sdGroups.count < 2 else {
             throw DataError.duplicate(msg: "found \(sdGroups.count) SDGroups with id \(group.id)")
         }
+        print("    -> Assign Group \(sdGroup.name)")
         sdPlace.group = sdGroup
     }
 }

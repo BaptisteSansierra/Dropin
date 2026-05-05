@@ -15,7 +15,7 @@ struct FetchGroupPlaces: Sendable {
         self.repository = repository
     }
     
-    func execute(_ groupId: UUID) async throws -> [PlaceEntity] {
+    func callAsFunction(_ groupId: UUID) async throws -> [PlaceEntity] {
         return try await repository.fetch(groupId: groupId)
     }
 }

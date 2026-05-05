@@ -18,6 +18,7 @@ struct PlaceEditContentView: View {
     @Binding private var place: PlaceUI
     @Binding private var showMissingName: Bool
     @FocusState private var isNameFocused
+    @Environment(AppSettings.self) private var appSettings
 
     //private var isNameFocused: FocusState<Bool>.Binding
 
@@ -104,13 +105,10 @@ struct PlaceEditContentView: View {
         .onChange(of: urls) {
             applyContactUpdate()
         }
-        .alert("alert.missing_name.title", isPresented: $showMissingName) {
-            Button("common.ok") {
-                isNameFocused = true
-            }
-        } message: {
-            Text("alert.missing_name.body")
-        }
+        .alertOk(isPresented: $showMissingName,
+                 title: "alert.missing_name.title",
+                 body: "alert.missing_name.body",
+                 action: { isNameFocused = true })
     }
     
     // MARK: - Subviews
@@ -126,13 +124,13 @@ struct PlaceEditContentView: View {
             
             VStack {
                 Spacer()
-                switch AnnotationViewFactory.pinMode {
+                switch appSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,
                                                 iconExtra: place.icon,
                                                 size: annotationSize)
-                    case .pin:
+                    case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
                                                icon: place.group?.icon,
                                                iconExtra: place.icon,

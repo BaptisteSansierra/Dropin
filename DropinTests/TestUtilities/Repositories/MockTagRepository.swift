@@ -53,4 +53,7 @@ final class MockTagRepository: TagRepository {
         }
         return g
     }
+    
+    func upsert(_ tag: TagEntity) async throws {
+    }
 }

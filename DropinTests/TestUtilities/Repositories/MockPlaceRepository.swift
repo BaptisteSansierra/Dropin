@@ -66,4 +66,7 @@ final class MockPlaceRepository: PlaceRepository {
     
     func update(_ place: PlaceEntity) async throws {
     }
+    
+    func upsert(_ place: PlaceEntity) async throws {
+    }
 }

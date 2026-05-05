@@ -71,14 +71,9 @@ struct CoordinatesPickerView: View {
         .onChange(of: coords) { _, newValue in
             tfCoords = coords.formatted()
         }
-        .alert("alert.invalid_coords.title",
-               isPresented: $showInvalidAlert,
-               actions: {
-            Button("common.ok", role: .cancel) { }
-        },
-               message: {
-            Text("alert.invalid_coords.body")
-        })
+        .alertOk(isPresented: $showInvalidAlert,
+                 title: "alert.invalid_coords.title",
+                 body: "alert.invalid_coords.body")
     }
 
     // MARK: - subviews

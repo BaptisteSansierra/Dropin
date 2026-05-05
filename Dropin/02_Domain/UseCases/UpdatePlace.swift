@@ -15,7 +15,7 @@ struct UpdatePlace {
         self.repository = repository
     }
     
-    func execute(_ place: PlaceEntity) async throws {
+    func callAsFunction(_ place: PlaceEntity) async throws {
         guard place.name.count > 0 else {
             throw DomainError.Place.missingName
         }

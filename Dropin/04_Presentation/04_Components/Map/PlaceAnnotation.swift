@@ -14,7 +14,8 @@ struct PlaceAnnotation: MapContent {
     // MARK: - State & Bindables
     @Binding var selectedPlaceId: UUID?
     @Binding var place: PlaceUI
-    
+    @Environment(AppSettings.self) private var appSettings
+
     // MARK: - init
     init(place: Binding<PlaceUI>) {
         self._place = place
@@ -30,23 +31,23 @@ struct PlaceAnnotation: MapContent {
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             VStack(spacing: 0) {
-                switch AnnotationViewFactory.pinMode {
+                switch appSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,
                                                 iconExtra: place.icon)
-                        let rectHeight = PlaceRectAnnotationView.heightFor(size: DropinApp.ui.pinHeight)
-                        let arrrowHeight = DropinApp.ui.pinHeight - rectHeight
+                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.pinSize)
+                        let arrrowHeight = appSettings.pinSize - rectHeight
                         BellCurveShape()
                             .fill(place.groupColor)
                             .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
-                    case .pin:
+                    case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
                                                icon: place.group?.icon,
                                                iconExtra: place.icon)
                 }
             }
-            .offset(y: -DropinApp.ui.pinHeight * 0.5)
+            //.offset(y: -DropinApp.ui.pinHeight * 0.5)
             .onTapGesture {
                 selectedPlaceId = place.id
             }

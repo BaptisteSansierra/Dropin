@@ -59,4 +59,7 @@ final class MockGroupRepository: GroupRepository {
         }
         return g
     }
+    
+    func upsert(_ group: GroupEntity) async throws {
+    }
 }

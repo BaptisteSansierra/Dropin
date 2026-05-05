@@ -36,11 +36,11 @@ import SwiftUI
     
     // MARK: use cases
     func updateGroup(_ group: GroupUI) async throws {
-        try await updateGroup.execute(GroupMapper.toDomain(group))
+        try await updateGroup(GroupMapper.toDomain(group))
     }
     
     func deleteGroup(_ group: GroupUI) async throws {
-        try await deleteGroup.execute(GroupMapper.toDomain(group))
+        try await deleteGroup(GroupMapper.toDomain(group))
         if group.deletedAt == nil {
             assertionFailure("Model should have been marked deleted already for SwiftUI safety")
             group.deletedAt = Date()
@@ -49,12 +49,12 @@ import SwiftUI
 
     func fetchPlace(_ groupId: UUID) async throws {
         loadingPlaces = true
-        places = try await fetchGroupPlaces.execute(groupId)
+        places = try await fetchGroupPlaces(groupId)
             .map({ PlaceMapper.toUI($0) })
         loadingPlaces = false
     }
 
     func updatePlace(_ place: PlaceUI) async throws {
-        try await updatePlace.execute(PlaceMapper.toDomain(place))
+        try await updatePlace(PlaceMapper.toDomain(place))
     }
 }

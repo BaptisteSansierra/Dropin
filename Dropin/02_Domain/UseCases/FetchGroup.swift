@@ -15,7 +15,7 @@ struct FetchGroup {
         self.repository = repository
     }
     
-    func execute(id: UUID) async throws -> GroupEntity {
+    func callAsFunction(id: UUID) async throws -> GroupEntity {
         return try await repository.fetch(id)
     }
 }

@@ -18,6 +18,7 @@ struct DropinApp: App {
     // MARK: - Properties
     private var appContainer: AppContainer
     private var modelContainer: ModelContainer
+    private var appSettings = AppSettings()
 
     // MARK: - Body
     var body: some Scene {
@@ -44,6 +45,12 @@ struct DropinApp: App {
                     IcoRenderer(variant: .logo, colorScheme: .dark, imageSize: 300, bgColor: .clear)
 #endif
                 }
+                .onOpenURL { url in
+                    guard url.pathExtension == "dropin" else { return }
+                    // TODO
+                    //importCoordinator.handle(url)
+                }
+                .environment(appSettings)
         }
     }
         
@@ -57,7 +64,7 @@ struct DropinApp: App {
             if true {
                 do {
                     let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
-                    if places.count == 0 {
+                    if places.count == 0 && false {
                         Log.info("Empty database, mock populating")
                         try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
                     } else {
@@ -121,6 +128,8 @@ extension DropinApp {
     struct strings {
         static let app = "Dropin"
         static let developer = "Baptiste Sansierra"
+        static let exportExtension = "dropin"
+        static let exportUTTypeId = "com.dropin.export"
     }
     struct defaults {
         static let latitude: Double = 46.232193
@@ -136,10 +145,12 @@ extension DropinApp {
         }
         static let addressPickerSheetHeight: CGFloat = 225
         static let coordinatesPickerSheetHeight: CGFloat = 300
-        static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
+        //static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
     }
     struct userDefaultsKeys {
-        static let mapHidePointsOfInterest = "map.hidePointsOfInterest"
-        static let mapSatellite = "map.satellite"
+        static let pinStyle = "settings.map.pinStyle"
+        static let pinSize = "settings.map.pinSize"
+        static let hidePOI = "settings.map.hidePOI"
+        static let satellite = "settings.map.satellite"
     }
 }

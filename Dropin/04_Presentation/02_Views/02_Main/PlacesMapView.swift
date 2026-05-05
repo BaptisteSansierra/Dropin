@@ -19,6 +19,7 @@ struct PlacesMapView: View {
     @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
     @Environment(RootView.ActionBus.self) private var actionBus
+    @Environment(AppSettings.self) private var appSettings
 
     // MARK: - Properties
     private var places: [PlaceUI]
@@ -77,10 +78,8 @@ struct PlacesMapView: View {
         })
         // Overlays
         .overlay {
-            MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown,
-                               hidePointsOfInterest: $viewModel.mapSettings.hidePointsOfInterest,
-                               satellite: $viewModel.mapSettings.satellite)
-            .padding(.top, navBarHeight)
+            MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown)
+                .padding(.top, navBarHeight)
         }
         .overlay {
             zoomOnUserOverlay
@@ -236,7 +235,7 @@ struct PlacesMapView: View {
     
     @ViewBuilder
     private var pickingMarkerView: some View {
-        let markerSize: CGFloat = DropinApp.ui.pinHeight
+        let markerSize: CGFloat = appSettings.pinSize
         let offsetY: CGFloat = viewModel.pickingAddress ?
                                 viewModel.addressPickerViewCoords.y :
                                 viewModel.coordinatesPickerViewCoords.y

@@ -111,14 +111,14 @@ final class AppContainer {
     
     func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
-                                      getTags: FetchTags(repository: tagRepository),
+                                      fetchTags: FetchTags(repository: tagRepository),
                                       createTags: CreateTag(repository: tagRepository))
         return TagSelectorView(viewModel: vm, place: place)
     }
     
     func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
         let vm = GroupSelectorViewModel(self,
-                                        getGroups: FetchGroups(repository: groupRepository),
+                                        fetchGroups: FetchGroups(repository: groupRepository),
                                         createGroup: CreateGroup(repository: groupRepository))
         return GroupSelectorView(viewModel: vm, place: place)
     }
@@ -248,8 +248,8 @@ final class AppContainer {
     
     func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
         let vm = PlaceFilterViewModel(self,
-                                      getGroups: FetchGroups(repository: groupRepository),
-                                      getTags: FetchTags(repository: tagRepository),
+                                      fetchGroups: FetchGroups(repository: groupRepository),
+                                      fetchTags: FetchTags(repository: tagRepository),
                                       filter: filter)
         return PlaceFilterView(viewModel: vm)
     }
@@ -261,7 +261,13 @@ final class AppContainer {
                                    coordinator: mainCoordinator,
                                    fetchPlaces: FetchPlaces(repository: placeRepository),
                                    fetchGroups: FetchGroups(repository: groupRepository),
-                                   fetchTags: FetchTags(repository: tagRepository))
+                                   fetchTags: FetchTags(repository: tagRepository),
+                                   upsertPlace: UpsertPlace(repository: placeRepository),
+                                   upsertGroup: UpsertGroup(repository: groupRepository),
+                                   upsertTag: UpsertTag(repository: tagRepository),
+                                   deleteLibrary: DeleteLibrary(placeRepository: placeRepository,
+                                                                groupRepository: groupRepository,
+                                                                tagRepository: tagRepository))
         return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 

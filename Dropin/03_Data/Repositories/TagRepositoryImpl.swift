@@ -65,7 +65,22 @@ public final class TagRepositoryImpl: TagRepository {
         let sdTag = try await retrieveTag(tagId: id)
         return TagMapper.toDomain(sdTag)
     }
-        
+    
+    func upsert(_ tag: TagEntity) async throws {
+        let descriptor = FetchDescriptor<SDTag>(predicate: #Predicate { $0.identifier == tag.id })
+        if let existing = try modelContext.fetch(descriptor).first {
+            // Update
+            existing.name      = tag.name
+            existing.color     = tag.color
+            existing.deletedAt = tag.deletedAt
+        } else {
+            // Insert
+            let sdTag = TagMapper.toData(tag)
+            modelContext.insert(sdTag)
+        }
+        try modelContext.save()
+    }
+    
     // MARK: private methods
     private func retrieveTag(domainTag: TagEntity) async throws -> SDTag {
         let tagId = domainTag.id

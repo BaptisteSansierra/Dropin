@@ -66,6 +66,22 @@ public final class GroupRepositoryImpl: GroupRepository {
         return GroupMapper.toDomain(sdGroup)
     }
     
+    func upsert(_ group: GroupEntity) async throws {
+        let descriptor = FetchDescriptor<SDGroup>(predicate: #Predicate { $0.identifier == group.id })
+        if let existing = try modelContext.fetch(descriptor).first {
+            // Update
+            existing.name      = group.name
+            existing.color     = group.color
+            existing.icon      = group.icon
+            existing.deletedAt = group.deletedAt
+        } else {
+            // Insert
+            let sdGroup = GroupMapper.toData(group)
+            modelContext.insert(sdGroup)
+        }
+        try modelContext.save()
+    }
+    
     // MARK: private methods
     private func retrieveGroup(domainGroup: GroupEntity) async throws -> SDGroup {
         let groupId = domainGroup.id

@@ -15,11 +15,12 @@ struct PlaceHeaderViewV2: View {
     @State private var showingAddressToClipboard: Bool = false
     @Binding private var place: PlaceUI
     @Binding private var showingMarkerList: Bool
-    private var isNameFocused: FocusState<Bool>.Binding
-    
-    // MARK: - private var
+    @Environment(AppSettings.self) private var appSettings
+
+    // MARK: - private properties
     private var editEnabled: Bool
-    
+    private var isNameFocused: FocusState<Bool>.Binding
+
     // MARK: - init
     init(place: Binding<PlaceUI>,
          showingMarkerList: Binding<Bool>,
@@ -37,7 +38,7 @@ struct PlaceHeaderViewV2: View {
             HStack(alignment: .center) {
                 
                 ZStack(alignment: .topLeading) {
-                    switch AnnotationViewFactory.pinMode {
+                    switch appSettings.pinStyle {
                         case .rect:
                             PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,
@@ -48,7 +49,7 @@ struct PlaceHeaderViewV2: View {
                                       action: { showingMarkerList.toggle() })
                                 .padding(0)
                                 .opacity(editEnabled ? 1 : 0)
-                        case .pin:
+                        case .rounded:
                             PlacePinAnnotationView(color: place.groupColor,
                                                    icon: place.group?.icon,
                                                    iconExtra: place.icon,
@@ -87,14 +88,9 @@ struct PlaceHeaderViewV2: View {
                                 bottom: 0,
                                 trailing: 15))
         }
-        .alert("alert.address_copied_title",
-               isPresented: $showingAddressToClipboard,
-               actions: {
-            Button("common.ok", role: .cancel) { }
-        },
-               message: {
-            Text("alert.address_copied_body")
-        })
+        .alertOk(isPresented: $showingAddressToClipboard,
+                 title: "alert.address_copied_title",
+                 body: "alert.address_copied_body")
     }
     
     // MARK: - Subviews

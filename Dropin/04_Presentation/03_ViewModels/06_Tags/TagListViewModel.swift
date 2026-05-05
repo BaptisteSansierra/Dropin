@@ -38,13 +38,13 @@ import SwiftUI
 
     // MARK: use cases
     func loadTags() async throws -> [TagUI] {
-        let result = try await fetchTagsWithCount.execute()
+        let result = try await fetchTagsWithCount()
         let items = result.map { TagMapper.toUI($0, placeCount: $1) }
         return items
     }
     
     func deleteTag(_ tag: TagUI) async throws {
-        try await deleteTag.execute(TagMapper.toDomain(tag))
+        try await deleteTag(TagMapper.toDomain(tag))
         if tag.deletedAt == nil {
             assertionFailure("Model should have been marked deleted already for SwiftUI safety")
             tag.deletedAt = Date()

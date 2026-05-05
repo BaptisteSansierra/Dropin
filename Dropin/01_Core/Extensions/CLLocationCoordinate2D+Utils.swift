@@ -20,7 +20,7 @@ extension CLLocationCoordinate2D {
                self.longitude <= maxLongitude
     }
 
-    func offset(x: Double, y: Double) -> CLLocationCoordinate2D {
+    func offset(x: CLLocationDegrees = 0, y: CLLocationDegrees = 0) -> CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude + x,
                                       longitude: longitude + y)
     }

@@ -15,14 +15,14 @@ import SwiftUI
     var tags = [TagUI]()
     
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var getTags: FetchTags
+    @ObservationIgnored private var fetchTags: FetchTags
     @ObservationIgnored private var createTags: CreateTag
 
     init(_ appContainer: AppContainer,
-         getTags: FetchTags,
+         fetchTags: FetchTags,
          createTags: CreateTag) {
         self.appContainer = appContainer
-        self.getTags = getTags
+        self.fetchTags = fetchTags
         self.createTags = createTags
     }
     
@@ -36,7 +36,7 @@ import SwiftUI
     // MARK: Uses cases
     func createTag(name: String, color: String) async throws -> TagUI {
         let domainTag = TagEntity(name: name, color: color)
-        try await createTags.execute(domainTag)
+        try await createTags(domainTag)
         let tagUI = TagMapper.toUI(domainTag)
         tags.append(tagUI)
         tags = tags.defaultSorted()
@@ -44,7 +44,7 @@ import SwiftUI
     }
 
     func loadTags() async throws {
-        let domainTags = try await getTags.execute()
+        let domainTags = try await fetchTags()
         tags = domainTags.map { TagMapper.toUI($0) }
     }
 }

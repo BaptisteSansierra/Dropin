@@ -1,5 +1,5 @@
 //
-//  DropinExport.swift
+//  DropinInOut.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 16/4/26.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct DropinExport: Codable {
+struct DropinInOut: Codable {
 
-    let CURRENT_VERSION: Int = 1
+    private let CURRENT_VERSION: Int = 1
 
     private(set) var version: Int
     private(set) var exportedAt: Date
@@ -47,12 +47,6 @@ struct DropinExport: Codable {
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        let version = try container.decode(Int.self, forKey: .version)
-        guard version <= CURRENT_VERSION else {
-            throw CodingError.decodingUnknownVersion(version: version)
-        }
-        Log.info("Importing dropin data v.\(version)")
 
         self.version = -1
         self.exportedAt = Date.distantFuture
@@ -60,6 +54,9 @@ struct DropinExport: Codable {
         self.groups = []
         self.tags = []
 
+        // Check version
+        self.version = try container.decode(Int.self, forKey: .version)
+        Log.info("Importing dropin data v.\(version)")
         if version == 1 {
             try loadV1(container)
         } else {

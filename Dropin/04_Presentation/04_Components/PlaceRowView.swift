@@ -11,10 +11,11 @@ import SwiftUI
 struct PlaceRowView: View {
     
     // MARK: - States & Bindings
-    private var locationManager: LocationManager
-    
+    @Environment(AppSettings.self) private var appSettings
+
     // MARK: - private vars
     private var place: PlaceUI
+    private var locationManager: LocationManager
 
     // MARK: - init
     init(place: PlaceUI,
@@ -26,14 +27,14 @@ struct PlaceRowView: View {
     // MARK: - Body
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            switch AnnotationViewFactory.pinMode {
+            switch appSettings.pinStyle {
                 case .rect:
                     PlaceRectAnnotationView(color: place.groupColor,
                                             icon: place.group?.icon,
                                             iconExtra: place.icon)
                     .padding(.trailing)
                     .padding(.top, place.icon == nil ? 0 : 10)
-                case .pin:
+                case .rounded:
                     PlacePinAnnotationView(color: place.groupColor,
                                            icon: place.group?.icon,
                                            iconExtra: place.icon,

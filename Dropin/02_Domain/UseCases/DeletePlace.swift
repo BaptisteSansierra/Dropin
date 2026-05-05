@@ -15,7 +15,7 @@ struct DeletePlace {
         self.repository = repository
     }
     
-    func execute(_ place: PlaceEntity) async throws {
+    func callAsFunction(_ place: PlaceEntity) async throws {
         if try await !repository.exists(place) {
             throw DomainError.Place.notFound
         }

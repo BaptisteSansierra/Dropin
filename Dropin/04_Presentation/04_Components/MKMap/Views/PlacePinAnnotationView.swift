@@ -83,6 +83,9 @@ struct MockPlacePinAnnotationView: View {
             
             Divider()
         }
+        .onChange(of: size) { oldValue, newValue in
+            print("newValue:\(newValue)")
+        }
     }
     
     var contentView: some View {

@@ -13,21 +13,21 @@ import SwiftUI
     var groups = [GroupUI]()
     
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var getGroups: FetchGroups
+    @ObservationIgnored private var fetchGroups: FetchGroups
     @ObservationIgnored private var createGroup: CreateGroup
     
     init(_ appContainer: AppContainer,
-         getGroups: FetchGroups,
+         fetchGroups: FetchGroups,
          createGroup: CreateGroup) {
         self.appContainer = appContainer
-        self.getGroups = getGroups
+        self.fetchGroups = fetchGroups
         self.createGroup = createGroup
     }
     
     // MARK: Uses cases
     func createGroup(name: String, color: String, icon: Icon) async throws -> GroupUI {
         let domainGroup = GroupEntity(name: name, color: color, icon: icon)
-        try await createGroup.execute(domainGroup)
+        try await createGroup(domainGroup)
         let group = GroupMapper.toUI(domainGroup)
         groups.append(group)
         groups = groups.defaultSorted()
@@ -35,7 +35,7 @@ import SwiftUI
     }
 
     func loadGroups() async throws {
-        let domainGroups = try await getGroups.execute()
+        let domainGroups = try await fetchGroups()
         groups = domainGroups.map { GroupMapper.toUI($0) }
     }
 }

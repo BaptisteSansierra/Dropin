@@ -15,7 +15,7 @@ struct FetchTags {
         self.repository = repository
     }
     
-    func execute() async throws -> [TagEntity] {
+    func callAsFunction() async throws -> [TagEntity] {
         return try await repository.fetch()
     }
 }

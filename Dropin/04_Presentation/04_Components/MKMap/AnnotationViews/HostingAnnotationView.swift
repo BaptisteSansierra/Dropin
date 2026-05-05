@@ -9,9 +9,11 @@ import MapKit
 import SwiftUI
 
 class HostingAnnotationView: MKAnnotationView {
-
+    
     // MARK: public properties
     var temporary: Bool = false
+    var pinStyle: PinStyle?
+    var pinSize: CGFloat?
 
     // MARK: property overrides
     override var isSelected: Bool {
@@ -44,8 +46,15 @@ class HostingAnnotationView: MKAnnotationView {
         hostingController?.view.removeFromSuperview()
         hostingController = nil
     }
-    
-    // MARK: private methods    
+
+    // MARK: public methods
+    func configure(appSettings: AppSettings) {
+        pinStyle = appSettings.pinStyle
+        pinSize = appSettings.pinSize
+        configure()
+    }
+
+    // MARK: private methods
     private func configure(view: PlaceAnnotationView) {
         if let hostingController = hostingController {
             hostingController.rootView = view
@@ -63,12 +72,13 @@ class HostingAnnotationView: MKAnnotationView {
         hostingController.view.frame = CGRect(origin: .zero, size: size)
         bounds = CGRect(origin: .zero, size: size)
         
+        guard let pinSize = pinSize else { fatalError("undefined pinSize") }
         // Set the offset (pin bottom should be centered on coordinate)
         if let _ = annotation as? MKTempPlaceAnnotation {
             // No text below pin
             centerOffset = CGPoint(x: 0, y: -(size.height / 2))
         } else {
-            let pinHeight: CGFloat = DropinApp.ui.pinHeight
+            let pinHeight: CGFloat = pinSize
             let bottomHeight = size.height - pinHeight // text + spacing
             let offset: CGFloat = -size.height * 0.5 + bottomHeight
             centerOffset = CGPoint(x: 0, y: offset)
@@ -77,18 +87,31 @@ class HostingAnnotationView: MKAnnotationView {
     
     private func configure() {
         guard let _ = annotation else { return }
+        guard let pinStyle = pinStyle else { return }
+        guard let pinSize = pinSize else { return }
+
         if let tempPlaceAnnotation = annotation as? MKTempPlaceAnnotation {
-            configure(view: PlaceAnnotationView(tempAnnotation: tempPlaceAnnotation))
+            configure(view: PlaceAnnotationView(tempAnnotation: tempPlaceAnnotation,
+                                                pinStyle: pinStyle,
+                                                pinSize: pinSize))
         } else if let placeAnnotation = annotation as? MKPlaceAnnotation {
-            configure(view: PlaceAnnotationView(annotation: placeAnnotation, isSelected: isSelected))
+            configure(view: PlaceAnnotationView(annotation: placeAnnotation,
+                                                isSelected: isSelected,
+                                                pinStyle: pinStyle,
+                                                pinSize: pinSize))
         } else {
             assertionFailure("annotation type not handled '\(type(of: annotation))' : \(annotation)")
         }
     }
 
     private func updateSelection() {
+        guard let pinStyle = pinStyle else { fatalError("undefined pinStyle") }
+        guard let pinSize = pinSize else { fatalError("undefined pinSize") }
         guard let placeAnnotation = annotation as? MKPlaceAnnotation else { return }
-        let swiftUIView = PlaceAnnotationView(annotation: placeAnnotation, isSelected: isSelected)
+        let swiftUIView = PlaceAnnotationView(annotation: placeAnnotation,
+                                              isSelected: isSelected,
+                                              pinStyle: pinStyle,
+                                              pinSize: pinSize)
         hostingController?.rootView = swiftUIView
     }
 }

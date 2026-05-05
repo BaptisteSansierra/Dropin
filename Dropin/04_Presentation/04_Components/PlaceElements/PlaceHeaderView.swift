@@ -84,14 +84,9 @@ struct PlaceHeaderView: View {
             Divider()
                 .padding(.horizontal)
         }
-        .alert("alert.address_copied_title",
-               isPresented: $showingAddressToClipboard,
-               actions: {
-            Button("common.ok", role: .cancel) { }
-        },
-               message: {
-            Text("alert.address_copied_body")
-        })
+        .alertOk(isPresented: $showingAddressToClipboard,
+                 title: "alert.address_copied_title",
+                 body: "alert.address_copied_body")
     }
     
     // MARK: - Subviews

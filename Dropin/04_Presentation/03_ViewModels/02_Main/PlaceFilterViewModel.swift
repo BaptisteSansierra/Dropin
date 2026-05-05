@@ -15,23 +15,23 @@ import SwiftUI
     var filter: Binding<PlaceFilter?>
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private let getGroups: FetchGroups
-    @ObservationIgnored private let getTags: FetchTags
+    @ObservationIgnored private let fetchGroups: FetchGroups
+    @ObservationIgnored private let fetchTags: FetchTags
 
     init(_ appContainer: AppContainer,
-         getGroups: FetchGroups,
-         getTags: FetchTags,
+         fetchGroups: FetchGroups,
+         fetchTags: FetchTags,
          filter: Binding<PlaceFilter?>) {
         self.appContainer = appContainer
-        self.getGroups = getGroups
-        self.getTags = getTags
+        self.fetchGroups = fetchGroups
+        self.fetchTags = fetchTags
         self.filter = filter
     }
     
     func loadData() async throws {
-        groups = try await getGroups.execute()
+        groups = try await fetchGroups()
             .map { GroupMapper.toUI($0) }
-        tags = try await getTags.execute()
+        tags = try await fetchTags()
             .map { TagMapper.toUI($0) }
     }
 }

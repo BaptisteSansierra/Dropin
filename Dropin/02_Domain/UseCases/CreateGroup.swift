@@ -15,7 +15,7 @@ struct CreateGroup {
         self.repository = repository
     }
     
-    func execute(_ group: GroupEntity) async throws {
+    func callAsFunction(_ group: GroupEntity) async throws {
         guard group.name.count > 0 else {
             throw DomainError.Group.missingName
         }

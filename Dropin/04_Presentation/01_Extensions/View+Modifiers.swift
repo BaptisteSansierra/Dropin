@@ -31,7 +31,13 @@ extension View {
     //        modifier(IfModifier(condition: condition, action: action))
     //    }
     
-    
+    func alertOk(isPresented: Binding<Bool>,
+                 title: LocalizedStringKey,
+                 body: LocalizedStringKey? = nil,
+                 action: (() -> Void)? = nil) -> some View {
+        modifier(AlertOk(isPresented: isPresented, title: title, body: body, action: action))
+    }
+
     @ViewBuilder
     func `if`<Content: View>(_ condition: Bool, action: (Self) -> Content, elseAction: ((Self) -> Content)? = nil) -> some View {
         if condition {

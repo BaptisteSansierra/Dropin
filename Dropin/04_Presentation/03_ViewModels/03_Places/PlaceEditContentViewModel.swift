@@ -57,11 +57,11 @@ import CoreLocation
     // MARK: Use cases
     func updatePlace(_ place: PlaceUI) async throws {
         let placeEntity = PlaceMapper.toDomain(place)
-        try await updatePlace.execute(placeEntity)
+        try await updatePlace(placeEntity)
     }
 
     func deletePlace(_ place: PlaceUI) async throws {
-        try await deletePlace.execute(PlaceMapper.toDomain(place))
+        try await deletePlace(PlaceMapper.toDomain(place))
         if place.deletedAt == nil {
             assertionFailure("Model should have been marked deleted already for SwiftUI safety")
             place.deletedAt = Date()

@@ -53,7 +53,7 @@ import CoreLocation
     // MARK: Use cases
     func save(place: PlaceUI) async throws {
         let placeEntity = PlaceMapper.toDomain(place)
-        try await createPlace.execute(placeEntity)
+        try await createPlace(placeEntity)
     }
     
     // MARK: - Actions

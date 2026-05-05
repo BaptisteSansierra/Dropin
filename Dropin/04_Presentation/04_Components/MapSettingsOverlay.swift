@@ -12,20 +12,15 @@ struct MapSettingsOverlay: View {
 
     // MARK: - States & Bindings
     @Binding private var settingsShown: Bool
-    @Binding private var hidePointsOfInterest: Bool
-    @Binding private var satellite: Bool
+    @Environment(AppSettings.self) private var appSettings
 
     // MARK: - private properties
     private var settingsOpacity: CGFloat { settingsShown ? 1 : 0 }
     private var settingsOffsetY: CGFloat { settingsShown ? 0 : -20 }
 
     // MARK: - Init
-    init(settingsShown: Binding<Bool>,
-         hidePointsOfInterest: Binding<Bool>,
-         satellite: Binding<Bool>) {
+    init(settingsShown: Binding<Bool>) {
         self._settingsShown = settingsShown
-        self._hidePointsOfInterest = hidePointsOfInterest
-        self._satellite = satellite
     }
 
     // MARK: - Body
@@ -50,13 +45,13 @@ struct MapSettingsOverlay: View {
     private var poiButton: some View {
         HStack(alignment: .center) {
             // TODO: translate strings
-            let poiCaption = hidePointsOfInterest ? "Show points of interest" : "Hide points of interest"
+            let poiCaption = appSettings.hidePOI ? "Show points of interest" : "Hide points of interest"
             let sysImg = "mappin" // mapSettings.hidePointsOfInterest ? "mappin" : "mappin.slash"
             MapIcoButton(systemImage: sysImg,
                          imageFrame: CGSize(width: 15, height: 15),
                          rightCaption: poiCaption,
                          action: {
-                hidePointsOfInterest.toggle()
+                appSettings.hidePOI.toggle()
                 settingsShown = false
             })
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 0))
@@ -71,12 +66,12 @@ struct MapSettingsOverlay: View {
     private var modeButton: some View {
         HStack(alignment: .center) {
             // TODO: translate strings
-            let mapModeCaption = satellite ? "Default" : "Satellite"
+            let mapModeCaption = appSettings.satellite ? "Default" : "Satellite"
             MapIcoButton(systemImage: "square.2.layers.3d",
                          imageFrame: CGSize(width: 15, height: 15),
                          rightCaption: mapModeCaption,
                          action: {
-                satellite.toggle()
+                appSettings.satellite.toggle()
                 settingsShown = false
             })
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 0))
@@ -91,10 +86,9 @@ struct MapSettingsOverlay: View {
 
 
 #Preview {
-    @Previewable @State var mapSettings = PlacesMapViewModel.MapSettings()
+    @Previewable @State var settingsShown: Bool = false
     
-    MapSettingsOverlay(settingsShown: $mapSettings.settingsShown,
-                       hidePointsOfInterest: $mapSettings.hidePointsOfInterest,
-                       satellite: $mapSettings.satellite)
+    MapSettingsOverlay(settingsShown: $settingsShown)
         .background(.brown)
+        .environment(AppSettings())
 }

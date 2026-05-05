@@ -179,27 +179,28 @@ extension PlacesMapViewModel {
         /// A map rect approximating the view of the map's camera.
         public var currentRect: MKMapRect = .null
         
-        /// `hidePointsOfInterest` show/hide the POI in the main map
-        var hidePointsOfInterest: Bool = true {
-            didSet {
-                saveSettings()
-            }
-        }
-        /// `satellite` enable/disable the satellite view in the main map
-        var satellite: Bool = false {
-            didSet {
-                saveSettings()
-            }
-        }
+//        /// `hidePointsOfInterest` show/hide the POI in the main map
+//        var hidePointsOfInterest: Bool = true {
+//            didSet {
+//                saveSettings()
+//            }
+//        }
+//        /// `satellite` enable/disable the satellite view in the main map
+//        var satellite: Bool = false {
+//            didSet {
+//                saveSettings()
+//            }
+//        }
         /// `settingsShown` show/hide the settings menu in the main map
         var settingsShown: Bool = false
         
         // MARK: - Init
         init() {
-            loadSettings()
+            //loadSettings()
         }
         
         // MARK: - private methods
+        /*
         private func loadSettings() {
             let ud = UserDefaults.standard
             // Hide Points Of Interest
@@ -221,5 +222,6 @@ extension PlacesMapViewModel {
             ud.set(hidePointsOfInterest, forKey: DropinApp.userDefaultsKeys.mapHidePointsOfInterest)
             ud.set(satellite, forKey: DropinApp.userDefaultsKeys.mapSatellite)
         }
+         */
     }
 }

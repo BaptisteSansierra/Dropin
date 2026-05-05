@@ -19,16 +19,22 @@ struct PlaceAnnotationView: View {
     // MARK: private properties
     private let place: PlaceUI?
     private let isSelected: Bool
-    
+    private let pinStyle: PinStyle
+    private let pinSize: CGFloat
+
     // MARK: init
-    init(annotation: MKPlaceAnnotation, isSelected: Bool) {
+    init(annotation: MKPlaceAnnotation, isSelected: Bool, pinStyle: PinStyle, pinSize: CGFloat) {
         self.place = annotation.place
         self.isSelected = isSelected
+        self.pinStyle = pinStyle
+        self.pinSize = pinSize
     }
     
-    init(tempAnnotation: MKTempPlaceAnnotation) {
+    init(tempAnnotation: MKTempPlaceAnnotation, pinStyle: PinStyle, pinSize: CGFloat) {
         self.place = nil
         self.isSelected = false
+        self.pinStyle = pinStyle
+        self.pinSize = pinSize
     }
     
     // MARK: body
@@ -37,38 +43,38 @@ struct PlaceAnnotationView: View {
             VStack(spacing: 0) {
 
                 if let place = place {
-                    switch AnnotationViewFactory.pinMode {
+                    switch pinStyle {
                         case .rect:
                             PlaceRectAnnotationView(color: place.groupColor,
                                                     icon: place.group?.icon,
                                                     iconExtra: place.icon,
-                                                    size: DropinApp.ui.pinHeight)
-                            let rectHeight = PlaceRectAnnotationView.heightFor(size: DropinApp.ui.pinHeight)
-                            let arrrowHeight = DropinApp.ui.pinHeight - rectHeight
+                                                    size: pinSize)
+                            let rectHeight = PlaceRectAnnotationView.heightFor(size: pinSize)
+                            let arrrowHeight = pinSize - rectHeight
                             BellCurveShape()
                                 .fill(place.groupColor)
                                 .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
-                        case .pin:
+                        case .rounded:
                             PlacePinAnnotationView(color: place.groupColor,
                                                    icon: place.group?.icon,
                                                    iconExtra: place.icon,
-                                                   size: DropinApp.ui.pinHeight)
-                                .frame(width: DropinApp.ui.pinHeight,
-                                       height: DropinApp.ui.pinHeight)
+                                                   size: pinSize)
+                                .frame(width: pinSize,
+                                       height: pinSize)
                     }
                 } else {
-                    switch AnnotationViewFactory.pinMode {
+                    switch pinStyle {
                         case .rect:
-                            PlaceRectAnnotationView(size: DropinApp.ui.pinHeight)
-                            let rectHeight = PlaceRectAnnotationView.heightFor(size: DropinApp.ui.pinHeight)
-                            let arrrowHeight = DropinApp.ui.pinHeight - rectHeight
+                            PlaceRectAnnotationView(size: pinSize)
+                            let rectHeight = PlaceRectAnnotationView.heightFor(size: pinSize)
+                            let arrrowHeight = pinSize - rectHeight
                             BellCurveShape()
                                 .fill(.gray)
                                 .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
-                        case .pin:
+                        case .rounded:
                             MapPinView()
-                                .frame(width: DropinApp.ui.pinHeight,
-                                       height: DropinApp.ui.pinHeight)
+                                .frame(width: pinSize,
+                                       height: pinSize)
                     }
                 }
             }
@@ -174,6 +180,8 @@ struct PlaceAnnotationView: View {
 #if DEBUG
 struct MockPlaceAnnotationView: View {
     var mock: MockContainer
+    var pinStyle = PinStyle.rounded
+    var pinSize: CGFloat = 36
     @State var size: CGFloat = 150
     @State var place1: PlaceUI
     @State var place2: PlaceUI
@@ -182,26 +190,42 @@ struct MockPlaceAnnotationView: View {
     @State var place5: PlaceUI
 
     var body: some View {
-        VStack(spacing: 50) {
+        VStack(spacing: 0) {
             HStack(spacing: 50) {
                 PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place1),
-                                    isSelected: false)
+                                    isSelected: false,
+                                    pinStyle: pinStyle,
+                                    pinSize: pinSize)
                 PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place2),
-                                    isSelected: true)
+                                    isSelected: false,
+                                    pinStyle: pinStyle,
+                                    pinSize: pinSize)
             }
+            .padding(.bottom, 50)
             HStack(spacing: 50) {
                 PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place3),
-                                    isSelected: false)
+                                    isSelected: false,
+                                    pinStyle: pinStyle,
+                                    pinSize: pinSize)
                 PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place4),
-                                    isSelected: false)
+                                    isSelected: false,
+                                    pinStyle: pinStyle,
+                                    pinSize: pinSize)
             }
-            
+            .padding(.bottom, 50)
+
             ZStack {
                 RoundedRectangle(cornerSize: 10)
                     .fill(.gray)
                     .frame(width: 120, height: 120)
                 PlaceAnnotationView(annotation: MKPlaceAnnotation(place: place5),
-                                    isSelected: false)
+                                    isSelected: true,
+                                    pinStyle: pinStyle,
+                                    pinSize: pinSize)
+                Text(verbatim: "SELECTED")
+                    .fontWeight(.heavy)
+                    .foregroundStyle(.white)
+                    .padding(.top, 90)
             }
         }
     }

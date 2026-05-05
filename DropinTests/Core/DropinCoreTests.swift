@@ -61,8 +61,9 @@ struct DropinCoreTests {
 
         // Load the file from the test bundle
         let bundle = Bundle(for: BundleFinder.self)
-        guard let url = bundle.url(forResource: "exportV1", withExtension: "json") else {
-            Issue.record("exportV1.json not found in test bundle")
+        guard let url = bundle.url(forResource: "exportV1",
+                                   withExtension: DropinApp.strings.exportExtension) else {
+            Issue.record("exportV1.\(DropinApp.strings.exportExtension) not found in test bundle")
             return
         }
 
@@ -71,16 +72,16 @@ struct DropinCoreTests {
         // Decode
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let export = try decoder.decode(DropinExport.self, from: data)
+        let export = try decoder.decode(DropinInOut.self, from: data)
 
         // Assert envelope
         #expect(export.version == 1)
         #expect(export.exportedAt < Date())  // Check not distant future
 
         // Assert counts 
-        #expect(export.groups.count == 10)
-        #expect(export.tags.count == 16)
-        #expect(export.places.count == 9)
+        #expect(export.groups.count == 7)
+        #expect(export.tags.count == 9)
+        #expect(export.places.count == 17)
 
         // Assert relationships are coherent
         let tagIds = Set(export.tags.map({ $0.id }))

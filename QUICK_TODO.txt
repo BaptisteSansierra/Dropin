@@ -5,6 +5,9 @@
 
 ---- BUGFIX
 
+
+* CRASH : create a place by address,choose an address, once the create view is shown, try to edit address
+
 * First launch :
   - map is centererd on the sea
   - accept localization + center on user
@@ -20,6 +23,12 @@
                                         
                                         
 ---- IMPROVMENTS
+
+* Listes (Places / Groupes / Tags) : Ajouter un placeholder when empty
+
+* Icones a ajouter : Pollo / TakeAway / Moto / Viande /
+
+* Ajouter un price rating ? €€€€€
 
 * Improve Contact creation : do not able any label dependiung on type ?
 

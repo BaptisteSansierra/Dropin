@@ -38,13 +38,13 @@ import SwiftUI
 
     // MARK: use cases
     func loadGroups() async throws -> [GroupUI] {
-        let result = try await fetchGroupsWithCount.execute()
+        let result = try await fetchGroupsWithCount()
         let items = result.map { GroupMapper.toUI($0, placeCount: $1) }
         return items
     }
     
     func deleteGroup(_ group: GroupUI) async throws {
-        try await deleteGroup.execute(GroupMapper.toDomain(group))
+        try await deleteGroup(GroupMapper.toDomain(group))
         if group.deletedAt == nil {
             assertionFailure("Model should have been marked deleted already for SwiftUI safety")
             group.deletedAt = Date()

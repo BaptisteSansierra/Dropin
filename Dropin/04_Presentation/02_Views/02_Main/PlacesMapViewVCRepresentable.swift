@@ -15,9 +15,9 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     // MARK: States & Bindings
     @Bindable private var viewModel: PlacesMapViewModel
     @Binding private var selectedPlaceId: UUID?
-    //@Binding private var places: [PlaceUI]
     @State private var tmpPlaceAnnotation: MKTempPlaceAnnotation?
-    
+    @Environment(AppSettings.self) private var appSettings
+
     private var places: [PlaceUI]
     //var topInset: CGFloat = 0
     var bottomInset: CGFloat = 0
@@ -36,7 +36,7 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         self.bottomInset = bottomInset
         //self.topInset = topInset
     }
-    
+        
     func makeUIViewController(context: Context) -> PlacesMapViewController {
         let viewController = PlacesMapViewController()
         viewController.coordinator = context.coordinator
@@ -64,8 +64,8 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         
         // 0. Map style
         applyMapStyle(to: mapView,
-                      satellite: viewModel.mapSettings.satellite,
-                      hidePointsOfInterest: viewModel.mapSettings.hidePointsOfInterest)
+                      satellite: appSettings.satellite,
+                      hidePointsOfInterest: appSettings.hidePOI)
 
         // 1. Update region (only if changed)
         if !mapView.region.isApproximatelyEqual(to: viewModel.mapSettings.currentRegion) {
@@ -91,7 +91,9 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(viewModel: viewModel, selectedPlaceId: { uuid in
+        Coordinator(viewModel: viewModel,
+                    appSettings: appSettings,
+                    selectedPlaceId: { uuid in
             self.selectedPlaceId = uuid
         })
     }
@@ -186,11 +188,17 @@ extension PlacesMapViewVCRepresentable {
         private let viewModel: PlacesMapViewModel
         private var addressPickingTask: Task<Void, Never>? = nil
         private var selectedPlaceId: (UUID?) -> Void
+
+        fileprivate var annotationViewFactory: AnnotationViewFactory
+
         weak var mapView: MKMapView?
 
         // MARK: init
-        init(viewModel: PlacesMapViewModel, selectedPlaceId: @escaping (UUID?) -> Void) {
+        init(viewModel: PlacesMapViewModel,
+             appSettings: AppSettings,
+             selectedPlaceId: @escaping (UUID?) -> Void) {
             self.viewModel = viewModel
+            self.annotationViewFactory = AnnotationViewFactory(appSettings: appSettings)
             self.selectedPlaceId = selectedPlaceId
         }
         
@@ -215,7 +223,7 @@ extension PlacesMapViewVCRepresentable {
         
         // MARK: - MKMapViewDelegate
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            AnnotationViewFactory.view(for: annotation, in: mapView)
+            annotationViewFactory.view(for: annotation, in: mapView)
         }
         
         func mapView(_ mapView: MKMapView, shouldSelect view: MKAnnotationView) -> Bool {
@@ -340,14 +348,15 @@ extension PlacesMapViewVCRepresentable {
 class PlacesMapViewController: UIViewController {
 
     var mapView: MKMapView
-    weak var coordinator: PlacesMapViewVCRepresentable.Coordinator?
-    
+    fileprivate weak var coordinator: PlacesMapViewVCRepresentable.Coordinator?
+    fileprivate weak var appSettings: AppSettings?
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.mapView = MKMapView()
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
-    convenience init(coordinator: PlacesMapViewVCRepresentable.Coordinator? = nil) {
+    convenience init(coordinator: PlacesMapViewVCRepresentable.Coordinator) {
         self.init(nibName: nil, bundle: nil)
         self.coordinator = coordinator
     }
@@ -365,7 +374,7 @@ class PlacesMapViewController: UIViewController {
         mapView.userTrackingMode = .follow // Track user location at launch
         mapView.mapType = .standard
         
-        AnnotationViewFactory.registerViews(for: mapView)
+        coordinator.annotationViewFactory.registerViews(for: mapView)
 
         view.addSubview(mapView)
         mapView.translatesAutoresizingMaskIntoConstraints = false

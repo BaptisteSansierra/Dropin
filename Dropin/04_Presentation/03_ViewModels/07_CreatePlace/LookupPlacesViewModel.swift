@@ -154,7 +154,7 @@ struct LookupResolvedItem: Identifiable {
     
     // MARK: Use cases
     func updatePlace(_ place: PlaceUI) async throws {
-        try await updatePlace.execute(PlaceMapper.toDomain(place))
+        try await updatePlace(PlaceMapper.toDomain(place))
     }
 
     // MARK: - public methods

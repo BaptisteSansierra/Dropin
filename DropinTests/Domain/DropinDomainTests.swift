@@ -27,14 +27,14 @@ struct DropinDomainTests {
                                 createdAt: Date())
         // Check first creation is ok
         do {
-            try await createPlaceUC.execute(place)
+            try await createPlaceUC(place)
             #expect(true)
         } catch {
             Issue.record("could not create place")
         }
         // Check 2nd creation of same object throws an error
         await #expect(throws: DomainError.Place.alreadyExists, performing: {
-            try await createPlaceUC.execute(place)
+            try await createPlaceUC(place)
         })
         
         // Check empty names are not accepted
@@ -47,7 +47,7 @@ struct DropinDomainTests {
                                              icon: .sf("tag"),
                                              createdAt: Date())
         await #expect(throws: DomainError.Place.missingName, performing: {
-            try await createPlaceUC.execute(placeWithEmptyName)
+            try await createPlaceUC(placeWithEmptyName)
         })
     }
     
@@ -71,9 +71,9 @@ struct DropinDomainTests {
         var placesAfterInsert = [PlaceEntity]()
         var placesAfterFirstDelete = [PlaceEntity]()
         do {
-            placesOrigin = try await fetchPlacesUC.execute()
-            try await createPlaceUC.execute(place)
-            placesAfterInsert = try await fetchPlacesUC.execute()
+            placesOrigin = try await fetchPlacesUC()
+            try await createPlaceUC(place)
+            placesAfterInsert = try await fetchPlacesUC()
             #expect(true)
         } catch {
             Issue.record("could not create place")
@@ -82,8 +82,8 @@ struct DropinDomainTests {
         #expect(placesAfterInsert.count == 1)
         // Check 1st delete place ok
         do {
-            try await deletePlaceUC.execute(place)
-            placesAfterFirstDelete = try await fetchPlacesUC.execute()
+            try await deletePlaceUC(place)
+            placesAfterFirstDelete = try await fetchPlacesUC()
             #expect(true)
         } catch {
             Issue.record("could not delete place")
@@ -91,7 +91,7 @@ struct DropinDomainTests {
         #expect(placesAfterFirstDelete.count == 0)
         // Check 2nd delete place fails
         await #expect(throws: DomainError.Place.notFound, performing: {
-            try await deletePlaceUC.execute(place)
+            try await deletePlaceUC(place)
         })
     }
     
@@ -102,13 +102,13 @@ struct DropinDomainTests {
         // Check invalid icons are not accepted
 //        let groupWithoutIco = GroupEntity(name: "dummy", color: "#000000", icon: Icon("none:none"))
 //        await #expect(throws: DomainError.Group.undefinedMarker, performing: {
-//            try await createGroupUC.execute(groupWithoutIco)
+//            try await createGroupUC()groupWithoutIco)
 //        })
         
         // Check invalid colors are not accepted
         let groupWithoutColor = GroupEntity(name: "dummy", color: "#0Z0T", icon: Icon.sf("tag"))
         await #expect(throws: DomainError.Group.invalidColor, performing: {
-            try await createGroupUC.execute(groupWithoutColor)
+            try await createGroupUC(groupWithoutColor)
         })
     }
     
@@ -119,7 +119,7 @@ struct DropinDomainTests {
         // Check invalid colors are not accepted
         let tag = TagEntity(name: "dummy", color: "1234")
         await #expect(throws: DomainError.Tag.invalidColor, performing: {
-            try await createTagUC.execute(tag)
+            try await createTagUC(tag)
         })
     }
     

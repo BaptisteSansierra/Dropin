@@ -15,7 +15,7 @@ struct CreateTag {
         self.repository = repository
     }
     
-    func execute(_ tag: TagEntity) async throws {
+    func callAsFunction(_ tag: TagEntity) async throws {
         guard tag.name.count > 0 else {
             throw DomainError.Tag.missingName
         }

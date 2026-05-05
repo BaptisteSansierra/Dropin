@@ -36,11 +36,11 @@ import SwiftUI
     
     // MARK: use cases
     func updateTag(_ tag: TagUI) async throws {
-        try await updateTag.execute(TagMapper.toDomain(tag))
+        try await updateTag(TagMapper.toDomain(tag))
     }
     
     func deleteTag(_ tag: TagUI) async throws {
-        try await deleteTag.execute(TagMapper.toDomain(tag))
+        try await deleteTag(TagMapper.toDomain(tag))
         if tag.deletedAt == nil {
             assertionFailure("Model should have been marked deleted already for SwiftUI safety")
             tag.deletedAt = Date()
@@ -49,13 +49,13 @@ import SwiftUI
     
     func fetchPlace(_ tagId: UUID) async throws {
         loadingPlaces = true
-        places = try await fetchTagPlaces.execute(tagId)
+        places = try await fetchTagPlaces(tagId)
             .map({ PlaceMapper.toUI($0) })
         loadingPlaces = false
         print("\(places.count) PLACES LOADED")
     }
 
     func updatePlace(_ place: PlaceUI) async throws {
-        try await updatePlace.execute(PlaceMapper.toDomain(place))
+        try await updatePlace(PlaceMapper.toDomain(place))
     }
 }

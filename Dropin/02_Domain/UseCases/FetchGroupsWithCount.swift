@@ -15,7 +15,7 @@ struct FetchGroupsWithCount {
         self.repository = repository
     }
     
-    func execute() async throws -> [(GroupEntity, Int)] {
+    func callAsFunction() async throws -> [(GroupEntity, Int)] {
         return try await repository.fetchWithPlaceCount()
     }
 }

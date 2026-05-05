@@ -143,7 +143,7 @@ import CoreLocation
 
     // MARK: Use cases
     func loadPlaces() async throws {
-        let domainPlaces = try await fetchPlaces.execute()
+        let domainPlaces = try await fetchPlaces()
         places = domainPlaces.map { PlaceMapper.toUI($0) }
     }
 }
