@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          2.0704445,
+          42.5684838
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2020-01-31T23:12:55Z",
+        "google_maps_url": "http://maps.google.com/?cid=2885733410798628238",
+        "location": {
+          "address": "Rte du Pla del Mir, 66210 Les Angles, France",
+          "country_code": "FR",
+          "name": "Les Chalets de l'Isard - Vacancéole"
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          1.7335630,
+          42.5398131
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2018-02-24T17:33:56Z",
+        "google_maps_url": "http://maps.google.com/?cid=10974930629227388666",
+        "location": {
+          "address": "Av. d'Encamp, 39, AD200 Pas de la Casa, Andorra",
+          "country_code": "AD",
+          "name": "El Provencal"
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          1.7318285,
+          42.5419867
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2018-02-24T17:33:20Z",
+        "google_maps_url": "http://maps.google.com/?cid=30269181208281945",
+        "location": {
+          "address": "Carrer Bearn, 24, AD200 Pas de la Casa, Andorra",
+          "country_code": "AD",
+          "name": "Daguisa Hotel Font d'Argent Pas de la Casa"
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1691442,
+          41.3739480
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2016-06-23T15:44:30Z",
+        "google_maps_url": "http://maps.google.com/?cid=10881957173733891677",
+        "location": {
+          "address": "Carrer de Vila i Vilà, 71, Sants-Montjuïc, 08004 Barcelona, Spain",
+          "country_code": "ES",
+          "name": "Elche Restaurant"
+        }
+      },
+      "type": "Feature"
+    }
+  ]
+}

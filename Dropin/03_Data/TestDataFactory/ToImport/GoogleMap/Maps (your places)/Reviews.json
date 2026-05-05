@@ -1,0 +1,191 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          -1.1286694,
+          46.1688507
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2025-09-03T17:10:21.715155Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0xd8e7974b024787e3",
+        "location": {
+          "address": "5 Rue des Géraniums, 17000 La Rochelle, France",
+          "name": "SENSAS La Rochelle"
+        },
+        "review_text_published": "T'es au top Hugo"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1623568,
+          41.4063917
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2025-07-10T17:15:13.261068Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0xe3f2041ec987cae3",
+        "location": {
+          "address": "Carrer de l'Escorial, 20, loc-2, Gràcia, 08024 Barcelona, Spain",
+          "name": "Be Laundry Joanic - lavandería autoservicio"
+        },
+        "review_text_published": "Todo fue muy fácil de usar y se ve muy bonito y limpio por dentro. Mi ropa salió super limpia y oliendo muy bien y el lavado y secado fue rápido. Las secadoras también secan muy rápido. Muy recomendable."
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.2495617,
+          41.4451035
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2025-07-06T09:09:03.955898Z",
+        "five_star_rating_published": 1,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0xd4a2b6e304e68dbc",
+        "location": {
+          "address": "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona, Spain",
+          "country_code": "ES",
+          "name": "Guingueta Karamba"
+        },
+        "questions": [
+          {
+            "question": "Price per person",
+            "selected_option": "€20–30"
+          },
+          {
+            "question": "Food",
+            "rating": 1
+          },
+          {
+            "question": "Service",
+            "rating": 2
+          },
+          {
+            "question": "Atmosphere",
+            "rating": 3
+          },
+          {
+            "question": "Group size",
+            "selected_options": [
+              "9+ people"
+            ]
+          }
+        ],
+        "review_text_published": "Calidad de comida muy baja, hamburguesas malas,  ensalada lleva pepinos podridos\nCamareros hasta los huevos de su trabajo"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1544932,
+          41.3992210
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2024-04-03T08:12:30.086069Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0xec773f084e93cff",
+        "location": {
+          "address": "Travessera de Gràcia, 106, Gràcia, 08012 Barcelona, Spain",
+          "name": "Be Laundry Gracia - lavandería autoservicio"
+        },
+        "review_text_published": "Nice and clean place 👍"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1562090,
+          41.3991000
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2022-10-21T15:57:43.286902Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0xbe1e0d1ba737cf04",
+        "location": {
+          "address": "Carrer Gran de Gràcia, 43, Gràcia, 08012 Barcelona, Spain",
+          "country_code": "ES",
+          "name": "Dormity Gran de Gràcia"
+        },
+        "review_text_published": "Hemos venido varias veces a mirar colchones hasta que nos hemos decidido, tanto Monica como Rafa nos han atendido con mucha profesionalidad y cercania. Muy contentos con la atencion recibida."
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1544827,
+          41.3940672
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2019-04-14T08:06:04.096225Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0x34068093b7951235",
+        "location": {
+          "address": "Carrer d'Enric Granados, 116, 2-2, Eixample, 08008 Barcelona, Spain",
+          "country_code": "ES",
+          "name": "Ma Gestalt"
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1581158,
+          41.4025070
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2019-04-11T17:01:40.620525Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0x3659ba7e396b75a4",
+        "location": {
+          "address": "Plaça de la Revolució, 15, Gràcia, 08012 Barcelona, Spain",
+          "country_code": "ES",
+          "name": "Pizzeria Espiga take away"
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          2.1618280,
+          41.4017780
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "date": "2019-03-25T11:38:18.751197Z",
+        "five_star_rating_published": 5,
+        "google_maps_url": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x0:0xaadd08260dd96bfe",
+        "location": {
+          "address": "Carrer de Milà i Fontanals, 54, Gràcia, 08012 Barcelona, Spain",
+          "name": "La Pandora events"
+        },
+        "review_text_published": "Nice place / Nice people !"
+      },
+      "type": "Feature"
+    }
+  ]
+}
