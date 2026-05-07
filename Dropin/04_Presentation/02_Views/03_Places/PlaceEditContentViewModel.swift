@@ -92,7 +92,8 @@ import CoreLocation
 
     func addImage(to place: PlaceUI, image: UIImage) {
         Task {
-            let thumbImage = await image.byPreparingThumbnail(ofSize: CGSize(width: 250, height: 250)) ?? image
+            let size = DropinApp.storage.thumbnailSize
+            let thumbImage = await image.byPreparingThumbnail(ofSize: CGSize(width: size, height: size)) ?? image
             guard let thumbnailData = thumbImage.jpegData(compressionQuality: 0.8) else { return }
             place.images.append(PlaceImageUI(thumbnail: thumbnailData, fullImage: image))
         }

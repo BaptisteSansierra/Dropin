@@ -149,7 +149,7 @@ extension DropinApp {
         static let mapLabelHideAltitude: Double = 10_000 // meters — labels hidden above this camera altitude
     }
     struct storage {
-        static let thumbnailSize: CGFloat = 250
+        static let thumbnailSize: CGFloat = 400
         static let thumbnailCompression: CGFloat = 0.7
         static let imageMaxSize: CGFloat = 1200
         static let imageMaxDiskSize: Int = 150_000  // 150KB
