@@ -576,6 +576,22 @@
         }
       }
     },
+    "common.camera" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appareil photo"
+          }
+        }
+      }
+    },
     "common.cancel" : {
       "localizations" : {
         "en" : {
@@ -1363,6 +1379,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Téléphone"
+          }
+        }
+      }
+    },
+    "common.photo_library" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo Library"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bibliothèque de photos"
+          }
+        }
+      }
+    },
+    "common.photos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos"
           }
         }
       }
@@ -2257,6 +2305,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune icône"
+          }
+        }
+      }
+    },
+    "placeholder.no_images.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No photos yet.\nEdit the place to add some."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune photo.\nModifiez le lieu pour en ajouter."
+          }
+        }
+      }
+    },
+    "placeholder.no_images.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Photos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune photo"
           }
         }
       }

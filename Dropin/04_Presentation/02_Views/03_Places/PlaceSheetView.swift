@@ -62,6 +62,21 @@ struct PlaceSheetView: View {
                 viewModel.selectedMenu = .overview
             }
         }
+        .onAppear {
+            viewModel.loadThumbnails(placeId: place.id)
+        }
+        .fullScreenCover(isPresented: Binding(get: {
+            viewModel.selectedImageIndex != nil
+        }, set: { v in
+            if !v { viewModel.selectedImageIndex = nil }
+        })) {
+            ImageFullscreenOverlay(
+                thumbnails: viewModel.thumbnails,
+                initialIndex: viewModel.selectedImageIndex ?? 0,
+                loadFull: { id in await viewModel.getFullImage(id: id) },
+                onDismiss: { viewModel.selectedImageIndex = nil }
+            )
+        }
     }
     
     // MARK: - Subviews
@@ -283,6 +298,15 @@ struct PlaceSheetView: View {
                 } else {
                     contactView
                 }
+            case .images:
+                if viewModel.thumbnails.isEmpty {
+                    picturePlaceholderView
+                } else {
+                    PlaceImagesTabView(thumbnails: viewModel.thumbnails,
+                                       onTapImage: { index in
+                        viewModel.selectedImageIndex = index
+                    })
+                }
         }
     }
     
@@ -338,6 +362,15 @@ struct PlaceSheetView: View {
         }
     }
     
+    private var picturePlaceholderView: some View {
+        VStack {
+            ContentUnavailableView("placeholder.no_images.title",
+                                   systemImage: "photo.on.rectangle",
+                                   description: Text("placeholder.no_images.body"))
+            MainButton(text: "common.edit", action: edit)
+        }
+    }
+
     private var contactView: some View {
         VStack(alignment: .leading, spacing : 0) {
             ContactItemView(contactItems: $place.phone)
@@ -398,7 +431,7 @@ struct PlaceSheetView: View {
     private func updateSelectedMenu(_ item: PlaceSheetViewModel.MenuItem) {
         viewModel.selectedMenu = item
         switch item {
-            case .contact:
+            case .contact, .images:
                 currentDetent = .large
             default:
                 ()

@@ -95,7 +95,6 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.email = place.email
         sdPlace.url = place.url
         sdPlace.notes = place.notes
-        sdPlace.images = place.images
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
         try await linkGroup(sdPlace: sdPlace, domainPlace: place)
         sdPlace.deletedAt = place.deletedAt
@@ -119,7 +118,6 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             existing.email = place.email
             existing.url = place.url
             existing.notes = place.notes
-            existing.images = place.images
             try await linkTags(sdPlace: existing, domainPlace: place)
             try await linkGroup(sdPlace: existing, domainPlace: place)
             existing.deletedAt = place.deletedAt

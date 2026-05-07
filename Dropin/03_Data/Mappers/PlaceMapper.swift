@@ -32,7 +32,7 @@ public enum PlaceMapper {
                                 email: sdPlace.email,
                                 url: sdPlace.url,
                                 notes: sdPlace.notes,
-                                images: sdPlace.images,
+                                images: sdPlace.images.map(\.id),
                                 createdAt: sdPlace.createdAt,
                                 deletedAt: sdPlace.deletedAt)
         return place
@@ -52,7 +52,6 @@ public enum PlaceMapper {
                        phone: place.phone,
                        email: place.email,
                        url: place.url,
-                       notes: place.notes,
-                       images: place.images)
+                       notes: place.notes)
     }
 }

@@ -10,6 +10,7 @@ import ContactFieldKit
 import NoFlyZone
 import UIKit
 
+
 struct PlaceEditContentView: View {
     
     // MARK: - States & Bindings
@@ -39,6 +40,10 @@ struct PlaceEditContentView: View {
     @State private var phones: [ContactItemUI] = []
     @State private var emails: [ContactItemUI] = []
     @State private var urls: [ContactItemUI] = []
+    @State private var showingImagePicker: Bool = false
+    @State private var showingCamera: Bool = false
+    @State private var showingImageSourceMenu: Bool = false
+    @State private var selectedImageId: UUID? = nil
     // NoFlyZone states
     @State private var noFlyZoneEnabled: Bool = false
     @State private var noFlyAuthorizedZones: [NoFlyZoneData] = []
@@ -109,6 +114,40 @@ struct PlaceEditContentView: View {
                  title: "alert.missing_name.title",
                  body: "alert.missing_name.body",
                  action: { isNameFocused = true })
+        .onAppear {
+            viewModel.loadThumbnails(for: place)
+        }
+        .sheet(isPresented: $showingImagePicker) {
+            PHPickerRepresentable { image in
+                viewModel.addImage(to: place, image: image)
+            }
+        }
+        .fullScreenCover(isPresented: $showingCamera) {
+            CameraPickerRepresentable { image in
+                viewModel.addImage(to: place, image: image)
+            }
+        }
+        .fullScreenCover(isPresented: Binding(get: {
+            selectedImageId != nil
+        }, set: { v in
+            if !v { selectedImageId = nil }
+        })) {
+            let displayThumbnails = place.images.compactMap { img -> (id: UUID, thumbnail: Data)? in
+                guard let thumb = img.thumbnail else { return nil }
+                return (id: img.id, thumbnail: thumb)
+            }
+            ImageFullscreenOverlay(
+                thumbnails: displayThumbnails,
+                initialIndex: displayThumbnails.firstIndex(where: { $0.id == selectedImageId }) ?? 0,
+                loadFull: { localId in
+                    guard let img = place.images.first(where: { $0.id == localId }) else { return nil }
+                    if let uiImage = img.fullImage { return uiImage.jpegData(compressionQuality: 0.9) }
+                    guard let dbId = img.dbId else { return nil }
+                    return await viewModel.getFullImage(dbId: dbId)
+                },
+                onDismiss: { selectedImageId = nil }
+            )
+        }
     }
     
     // MARK: - Subviews
@@ -175,6 +214,8 @@ struct PlaceEditContentView: View {
                 tagView
                     .padding(.top, 20)
                 iconView
+                    .padding(.top, 20)
+                imagesView
                     .padding(.top, 20)
                 ratingView
                     .padding(.top, 20)
@@ -399,6 +440,84 @@ struct PlaceEditContentView: View {
         }
     }
     
+    private var imagesView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("common.photos")
+                .textStyle(.formSectionTitle2)
+                .padding(.leading)
+                .padding(.bottom, 10)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    if place.images.count < 5 {
+                        Button {
+                            showingImageSourceMenu = true
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [5]))
+                                    .foregroundStyle(.disabled)
+                                    .frame(width: 75, height: 75)
+                                Image(systemName: "plus")
+                                    .font(.title2)
+                                    .foregroundStyle(.disabled)
+                            }
+                        }
+                        .confirmationDialog("", isPresented: $showingImageSourceMenu) {
+                            Button("common.photo_library") { showingImagePicker = true }
+                            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                                Button("common.camera") { showingCamera = true }
+                            }
+                        }
+                    }
+
+                    ForEach(place.images) { item in
+                        ZStack(alignment: .topTrailing) {
+                            Button {
+                                if item.thumbnail != nil { selectedImageId = item.id }
+                            } label: {
+                                if let thumb = item.thumbnail, let image = UIImage(data: thumb) {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 75, height: 75)
+                                        .clipped()
+                                        .cornerRadius(8)
+                                } else {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(.backgroundSecondary)
+                                            .frame(width: 75, height: 75)
+                                        if item.isThumbnailLoading {
+                                            ProgressView()
+                                        }
+                                    }
+                                }
+                            }
+                            .disabled(item.thumbnail == nil)
+                            Button {
+                                viewModel.removeImage(withId: item.id, from: place)
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(.black.opacity(0.6))
+                                        .frame(width: 20, height: 20)
+                                    Image(systemName: "xmark")
+                                        .font(.system(size: 9, weight: .bold))
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            .offset(x: 5, y: -5)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+            }
+            .background(.backgroundPrimary)
+        }
+    }
+
     private var ratingView: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("common.rating")
@@ -683,6 +802,7 @@ struct MockPlaceEditContentView: View {
     NavigationStack {
         MockPlaceEditContentView(5)
     }
+    .environment(AppSettings())
 }
 
 #endif

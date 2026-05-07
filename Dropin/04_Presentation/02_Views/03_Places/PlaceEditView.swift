@@ -44,6 +44,7 @@ struct PlaceEditView: View {
                 }
             }
             .onChange(of: editedPlace.changeToken) { oldValue, newValue in
+                print("CHNAGE TOKEN UPDATED ")
                 edited = !editedPlace.isContentEqual(srcPlace)
             }
     }
@@ -112,11 +113,18 @@ struct PlaceEditView: View {
         frozenEdit.phone.removeEmptyFields()
         frozenEdit.email.removeEmptyFields()
         frozenEdit.url.removeEmptyFields()
+        // Compute image diff before srcPlace is overwritten
+        let origDbIds = Set(srcPlace.images.compactMap(\.dbId))
+        let editDbIds = Set(frozenEdit.images.compactMap(\.dbId))
+        let imageIdsToDelete = Array(origDbIds.subtracting(editDbIds))
+        let imagesToAdd = frozenEdit.images.filter { $0.dbId == nil }
         // Apply edits
         srcPlace = frozenEdit
         Task {
             do {
-                try await viewModel.updatePlace(frozenEdit)
+                try await viewModel.updatePlace(frozenEdit,
+                                                addImages: imagesToAdd,
+                                                deleteImageIds: imageIdsToDelete)
             } catch {
                 assertionFailure("Couldn't update place \(frozenEdit.name)")
             }

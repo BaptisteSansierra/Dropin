@@ -28,5 +28,8 @@ enum DomainError: Error {
         case invalidColor
         case notFound
     }
+    enum Image: Error {
+        case invalidData
+    }
 }
 

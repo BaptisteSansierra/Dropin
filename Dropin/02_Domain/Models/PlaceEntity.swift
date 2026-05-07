@@ -24,7 +24,7 @@ struct PlaceEntity: Hashable, Sendable {
     let email: [String]
     let url: [String]
     let notes: String?
-    let images: [Data]
+    let images: [UUID]
     let deletedAt: Date?
 
     init(id: UUID,
@@ -40,7 +40,7 @@ struct PlaceEntity: Hashable, Sendable {
          email: [String] = [],
          url: [String] = [],
          notes: String? = nil,
-         images: [Data] = [],
+         images: [UUID] = [],
          createdAt: Date,
          deletedAt: Date? = nil) {
         self.id = id

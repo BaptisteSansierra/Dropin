@@ -17,6 +17,7 @@ final class AppContainer {
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
     private let groupRepository: GroupRepository
+    private let imageRepository: ImageRepository
     // Coordinators
     private let mainCoordinator: MainCoordinator
     private let tagCoordinator: TagCoordinator
@@ -31,6 +32,7 @@ final class AppContainer {
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        imageRepository = ImageRepositoryImpl(modelContext: modelContext)
         // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
@@ -50,6 +52,7 @@ final class AppContainer {
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
         groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        imageRepository = ImageRepositoryImpl(modelContext: modelContext)
         // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
@@ -126,7 +129,9 @@ final class AppContainer {
     func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
         let vm = PlaceSheetViewModel(self,
                                      coordinator: mainCoordinator,
-                                     locationManager: locationManager)
+                                     locationManager: locationManager,
+                                     getPlaceThumbnails: GetPlaceThumbnails(repository: imageRepository),
+                                     getPlaceImage: GetPlaceImage(repository: imageRepository))
         return PlaceSheetView(viewModel: vm,
                               place: place,
                               detent: detent)
@@ -139,6 +144,8 @@ final class AppContainer {
                                            coordinator: mainCoordinator,
                                            updatePlace: UpdatePlace(repository: placeRepository),
                                            deletePlace: DeletePlace(repository: placeRepository),
+                                           getPlaceThumbnails: GetPlaceThumbnails(repository: imageRepository),
+                                           getPlaceImage: GetPlaceImage(repository: imageRepository),
                                            mode: mode)
         return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
     }
@@ -146,7 +153,9 @@ final class AppContainer {
     func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
         let vm = PlaceEditViewModel(self,
                                     coordinator: mainCoordinator,
-                                    updatePlace: UpdatePlace(repository: placeRepository))
+                                    updatePlace: UpdatePlace(repository: placeRepository),
+                                    addPlaceImage: AddPlaceImage(repository: imageRepository),
+                                    removePlaceImage: RemovePlaceImage(repository: imageRepository))
         return PlaceEditView(viewModel: vm, place: place)
     }
 
@@ -160,7 +169,8 @@ final class AppContainer {
                                       coordinator: mainCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
                                       getTag: FetchTag(repository: tagRepository),
-                                      getGroup: FetchGroup(repository: groupRepository))
+                                      getGroup: FetchGroup(repository: groupRepository),
+                                      addPlaceImage: AddPlaceImage(repository: imageRepository))
         return PlaceCreateView(viewModel: vm,
                                coordinates: coordinates,
                                address: address,

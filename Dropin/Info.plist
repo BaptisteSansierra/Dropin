@@ -49,6 +49,9 @@
     
     <key>LSSupportsOpeningDocumentsInPlace</key>
     <true/>
-    
+
+    <key>NSCameraUsageDescription</key>
+    <string>Dropin uses the camera to add photos to your places.</string>
+
 </dict>
 </plist>

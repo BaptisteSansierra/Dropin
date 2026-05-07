@@ -18,6 +18,7 @@ final class SDPlace {
     var address2: String
     @Relationship(deleteRule: .nullify, inverse: \SDTag.places) var tags: [SDTag]
     @Relationship(deleteRule: .nullify, inverse: \SDGroup.places) var group: SDGroup?
+    @Relationship(deleteRule: .cascade, inverse: \SDImage.place) var images: [SDImage]
     var icon: Icon? = nil
     var createdAt: Date
     // Metadata
@@ -26,7 +27,6 @@ final class SDPlace {
     var email: [String]
     var url: [String]
     var notes: String?
-    @Attribute(.externalStorage) var images: [Data]
     var deletedAt: Date?
 
     init(identifier: UUID,
@@ -43,7 +43,7 @@ final class SDPlace {
          email: [String] = [],
          url: [String] = [],
          notes: String? = nil,
-         images: [Data] = []) {
+         images: [SDImage] = []) {
         self.identifier = identifier
         self.createdAt = Date()
         self.name = name

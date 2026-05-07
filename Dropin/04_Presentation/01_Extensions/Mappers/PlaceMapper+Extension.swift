@@ -44,7 +44,7 @@ extension PlaceMapper {
                               email: emails,
                               url: urls,
                               notes: place.notes,
-                              images: place.images,
+                              images: place.images.map { PlaceImageUI(dbId: $0) },
                               createdAt: place.createdAt,
                               deletedAt: place.deletedAt)
         if !skipRelationships {
@@ -78,7 +78,7 @@ extension PlaceMapper {
                                 email: placeUI.email.map { $0.rawValue },
                                 url: placeUI.url.map { $0.rawValue },
                                 notes: placeUI.notes,
-                                images: placeUI.images,
+                                images: placeUI.images.compactMap(\.dbId),
                                 createdAt: placeUI.createdAt,
                                 deletedAt: placeUI.deletedAt)
         return place

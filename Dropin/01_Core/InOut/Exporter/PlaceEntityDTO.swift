@@ -24,7 +24,7 @@ struct PlaceEntityDTO: Decodable {
     var email: [String]
     var url: [String]
     var notes: String?
-    var images: [Data]
+    var images: [UUID]
     var deletedAt: Date? = nil
     
     init(from decoder: any Decoder) throws {

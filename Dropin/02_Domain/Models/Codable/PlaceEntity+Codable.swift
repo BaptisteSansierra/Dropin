@@ -48,8 +48,7 @@ extension PlaceEntity: Encodable {
         try c.encode(url, forKey: .url)
         try c.encodeIfPresent(notes, forKey: .notes)
         
-        // FIXME: encode empty array for images
-        try c.encode([UUID](), forKey: .images)
+        try c.encode(images, forKey: .images)
         
         try c.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }

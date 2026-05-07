@@ -9,6 +9,22 @@ import SwiftUI
 import CoreLocation
 import ContactFieldKit
 
+struct PlaceImageUI: Identifiable {
+    let id: UUID            // local identity, always set
+    var dbId: UUID?         // nil = not yet in DB
+    var thumbnail: Data?
+    var fullImage: UIImage? // only set for pending additions (dbId == nil)
+
+    var isThumbnailLoading: Bool { dbId != nil && thumbnail == nil }
+
+    init(id: UUID = UUID(), dbId: UUID? = nil, thumbnail: Data? = nil, fullImage: UIImage? = nil) {
+        self.id = id
+        self.dbId = dbId
+        self.thumbnail = thumbnail
+        self.fullImage = fullImage
+    }
+}
+
 @MainActor
 @Observable class PlaceUI: Identifiable, @MainActor Equatable {
 
@@ -25,10 +41,12 @@ import ContactFieldKit
     var email: [ContactItem] = []
     var url: [ContactItem] = []
     var notes: String? = nil
-    var images: [Data] = []
+    var images: [PlaceImageUI] = []
     var createdAt: Date
     var deletedAt: Date? = nil
 
+    
+    
     var groupColor: Color {
         guard let group = self.group else { return .dropinPrimary }
         return group.color
@@ -46,6 +64,7 @@ import ContactFieldKit
         hasher.combine(address2)
         hasher.combine(icon?.rawValue)
         hasher.combine(tags.map(\.id))
+        hasher.combine(images.map(\.id))  // local UUIDs: changes on add/remove, not on thumbnail load
         hasher.combine(group?.id)
         hasher.combine(rating)
         hasher.combine(phone.map(\.rawValue))
@@ -72,7 +91,7 @@ import ContactFieldKit
          email: [ContactItem] = [],
          url: [ContactItem] = [],
          notes: String? = nil,
-         images: [Data] = [],
+         images: [PlaceImageUI] = [],
          createdAt: Date,
          deletedAt: Date? = nil) {
         self.id = id
@@ -132,7 +151,10 @@ import ContactFieldKit
         guard email == other.email else { return false }
         guard url == other.url else { return false }
         guard notes == other.notes else { return false }
-        guard images == other.images else { return false }
+        let selfDbIds = Set(images.compactMap(\.dbId))
+        let otherDbIds = Set(other.images.compactMap(\.dbId))
+        let hasPending = images.contains { $0.dbId == nil }
+        guard selfDbIds == otherDbIds && !hasPending else { return false }
         return true
     }
 }

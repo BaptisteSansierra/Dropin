@@ -15,33 +15,44 @@ import CoreLocation
     enum MenuItem: Int, CaseIterable {
         case overview = 0
         case contact = 1
+        case images = 2
         var label: String {
             switch self {
                 case .overview:
                     "Overview"
                 case .contact:
                     "Contact"
+                case .images:
+                    "Photos"
             }
         }
     }
-    
+
     var showingTagsSelector = false
     var selectedMenu: MenuItem = .overview
     var openURLAlert: OpenURLAlert? = nil
     var showingNavigationDialog: Bool = false
     var phoneScale: CGFloat = 1
     var urlScale: CGFloat = 1
-    
+    var thumbnails: [(id: UUID, thumbnail: Data)] = []
+    var selectedImageIndex: Int? = nil
+
     @ObservationIgnored private var coordinator: MainCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
+    @ObservationIgnored private var getPlaceThumbnails: GetPlaceThumbnails
+    @ObservationIgnored private var getPlaceImage: GetPlaceImage
 
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
-         locationManager: LocationManager) {
+         locationManager: LocationManager,
+         getPlaceThumbnails: GetPlaceThumbnails,
+         getPlaceImage: GetPlaceImage) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
+        self.getPlaceThumbnails = getPlaceThumbnails
+        self.getPlaceImage = getPlaceImage
     }
     
     // MARK: Navigation
@@ -102,5 +113,24 @@ import CoreLocation
     
     func distanceStringTo(_ coords: CLLocationCoordinate2D) -> String? {
         return locationManager.distanceStringTo(coords)
+    }
+
+    func loadThumbnails(placeId: UUID) {
+        Task {
+            do {
+                thumbnails = try await getPlaceThumbnails(placeId: placeId)
+            } catch {
+                Log.error("Failed to load thumbnails for place \(placeId): \(error)")
+            }
+        }
+    }
+
+    func getFullImage(id: UUID) async -> Data? {
+        do {
+            return try await getPlaceImage(id: id)
+        } catch {
+            Log.error("Failed to load full image \(id): \(error)")
+            return nil
+        }
     }
 }

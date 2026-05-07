@@ -5,6 +5,7 @@
 
 ---- BUGFIX
 
+* Handle multiple import of the same file
 
 * CRASH : create a place by address,choose an address, once the create view is shown, try to edit address
 

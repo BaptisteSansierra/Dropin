@@ -57,7 +57,7 @@ struct DropinApp: App {
     // MARK: - init
     init() {
         do {
-            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self)
+            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
@@ -147,6 +147,12 @@ extension DropinApp {
         static let coordinatesPickerSheetHeight: CGFloat = 300
         //static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
         static let mapLabelHideAltitude: Double = 10_000 // meters — labels hidden above this camera altitude
+    }
+    struct storage {
+        static let thumbnailSize: CGFloat = 250
+        static let thumbnailCompression: CGFloat = 0.7
+        static let imageMaxSize: CGFloat = 1200
+        static let imageMaxDiskSize: Int = 150_000  // 150KB
     }
     struct userDefaultsKeys {
         static let pinStyle = "settings.map.pinStyle"
