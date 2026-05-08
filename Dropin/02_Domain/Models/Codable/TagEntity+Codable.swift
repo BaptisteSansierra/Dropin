@@ -14,6 +14,7 @@ extension TagEntity: Codable {
         case name
         case color
         case createdAt
+        case updatedAt
         case deletedAt
     }
 
@@ -23,6 +24,7 @@ extension TagEntity: Codable {
         try c.encode(name, forKey: .name)
         try c.encode(color, forKey: .color)
         try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(updatedAt, forKey: .updatedAt)
         try c.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
@@ -31,7 +33,9 @@ extension TagEntity: Codable {
         self.id = try c.decode(UUID.self, forKey: .id)
         self.name = try c.decode(String.self, forKey: .name)
         self.color = try c.decode(String.self, forKey: .color)
+        // Dates
         self.createdAt = try c.decode(Date.self, forKey: .createdAt)
+        self.updatedAt = try c.decode(Date.self, forKey: .updatedAt)
         self.deletedAt = try c.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
 }

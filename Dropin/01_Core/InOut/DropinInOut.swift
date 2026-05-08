@@ -85,14 +85,15 @@ struct DropinInOut: Codable {
                                address2: placeDTO.address2,
                                tags: placeTags,
                                group: placeGroup,
+                               images: [],
                                icon: placeDTO.icon,
                                rating: placeDTO.rating,
                                phone: placeDTO.phone,
                                email: placeDTO.email,
                                url: placeDTO.url,
                                notes: placeDTO.notes,
-                               images: [],
                                createdAt: placeDTO.createdAt,
+                               updatedAt: placeDTO.updatedAt,
                                deletedAt: placeDTO.deletedAt)
         })
     }

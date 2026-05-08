@@ -12,15 +12,23 @@ struct TagEntity: Hashable, Sendable {
     let name: String
     let color: String
     let createdAt: Date
+    let updatedAt: Date
     let deletedAt: Date?
-    // Note: places are not strores here to avoid bidirectional relationships
+    // Note: places are not stored here to avoid bidirectional relationships
     // PlaceEntity owns the relationship
 
-    init(id: UUID, name: String, color: String, createdAt: Date, deletedAt: Date? = nil) {
+    // Used by mappers
+    init(id: UUID,
+         name: String,
+         color: String,
+         createdAt: Date,
+         updatedAt: Date,
+         deletedAt: Date?) {
         self.id = id
         self.name = name
         self.color = color
         self.createdAt = createdAt
+        self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
     
@@ -28,7 +36,9 @@ struct TagEntity: Hashable, Sendable {
         self.id = UUID()
         self.name = name
         self.color = color
-        self.createdAt = Date()
+        let now = Date()
+        self.createdAt = now
+        self.updatedAt = now
         self.deletedAt = nil
     }
     

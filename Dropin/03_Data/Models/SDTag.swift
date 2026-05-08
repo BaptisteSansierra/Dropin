@@ -14,15 +14,21 @@ final class SDTag {
     var name: String
     var color: String  // hexadecimal value
     var places: [SDPlace]
-    var createdAt: Date
-    var deletedAt: Date?
+    // Dates
+    var createdAt: Date     // Set at creation
+    var updatedAt: Date     // Set on every mutation; drives dirty detection
+    var syncedAt: Date?     // Set on successful push; nil = never synced
+    var deletedAt: Date?    // Soft delete
     
     init(identifier: UUID, name: String, color: String, places: [SDPlace] = []) {
         self.identifier = identifier
         self.name = name
         self.color = color
         self.places = places
-        self.createdAt = Date()
+        let now = Date()
+        self.createdAt = now
+        self.updatedAt = now
+        self.syncedAt = nil
         self.deletedAt = nil
     }
 }

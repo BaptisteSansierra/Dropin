@@ -26,14 +26,15 @@ public enum PlaceMapper {
                                 address2: sdPlace.address2,
                                 tags: tags,
                                 group: group,
+                                images: sdPlace.images.map(\.id),
                                 icon: sdPlace.icon,
                                 rating: sdPlace.rating,
                                 phone: sdPlace.phone,
                                 email: sdPlace.email,
                                 url: sdPlace.url,
                                 notes: sdPlace.notes,
-                                images: sdPlace.images.map(\.id),
                                 createdAt: sdPlace.createdAt,
+                                updatedAt: sdPlace.updatedAt,
                                 deletedAt: sdPlace.deletedAt)
         return place
     }
@@ -47,6 +48,7 @@ public enum PlaceMapper {
                        address2: place.address2,
                        tags: [SDTag](),
                        group: nil,
+                       images: [],
                        icon: place.icon,
                        rating: place.rating,
                        phone: place.phone,

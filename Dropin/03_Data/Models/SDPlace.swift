@@ -20,14 +20,17 @@ final class SDPlace {
     @Relationship(deleteRule: .nullify, inverse: \SDGroup.places) var group: SDGroup?
     @Relationship(deleteRule: .cascade, inverse: \SDImage.place) var images: [SDImage]
     var icon: Icon? = nil
-    var createdAt: Date
     // Metadata
     var rating: Float? = nil
     var phone: [String]
     var email: [String]
     var url: [String]
     var notes: String?
-    var deletedAt: Date?
+    // Dates
+    var createdAt: Date     // Set at creation
+    var updatedAt: Date     // Set on every mutation; drives dirty detection
+    var syncedAt: Date?     // Set on successful push; nil = never synced
+    var deletedAt: Date?    // Soft delete
 
     init(identifier: UUID,
          name: String,
@@ -37,15 +40,14 @@ final class SDPlace {
          address2: String = "",
          tags: [SDTag] = [],
          group: SDGroup? = nil,
+         images: [SDImage] = [],
          icon: Icon? = nil,
          rating: Float? = nil,
          phone: [String] = [],
          email: [String] = [],
          url: [String] = [],
-         notes: String? = nil,
-         images: [SDImage] = []) {
+         notes: String? = nil) {
         self.identifier = identifier
-        self.createdAt = Date()
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
@@ -53,13 +55,17 @@ final class SDPlace {
         self.address2 = address2
         self.tags = tags
         self.group = group
+        self.images = images
         self.icon = icon
         self.rating = rating
         self.phone = phone
         self.email = email
         self.url = url
         self.notes = notes
-        self.images = images
+        let now = Date()
+        self.createdAt = now
+        self.updatedAt = now
+        self.syncedAt = nil
         self.deletedAt = nil
     }
 }

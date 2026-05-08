@@ -15,6 +15,7 @@ extension GroupEntity: Codable {
         case icon
         case color
         case createdAt
+        case updatedAt
         case deletedAt
     }
 
@@ -25,6 +26,7 @@ extension GroupEntity: Codable {
         try c.encode(icon, forKey: .icon)
         try c.encode(color, forKey: .color)
         try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(updatedAt, forKey: .updatedAt)
         try c.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
@@ -35,6 +37,7 @@ extension GroupEntity: Codable {
         self.icon = try c.decode(Icon.self, forKey: .icon)
         self.color = try c.decode(String.self, forKey: .color)
         self.createdAt = try c.decode(Date.self, forKey: .createdAt)
+        self.updatedAt = try c.decode(Date.self, forKey: .updatedAt)
         self.deletedAt = try c.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
 }

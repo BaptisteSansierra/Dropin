@@ -147,7 +147,7 @@ struct PlaceFilterView: View {
     
     private var bottomView: some View {
         HStack {
-            SecondaryButton(text: "Clear") {
+            SecondaryButton(text: "common.clear") {
                 clear()
             }
             .padding(.leading)

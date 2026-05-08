@@ -23,6 +23,7 @@ extension GroupMapper {
                               icon: group.icon,
                               places: [],
                               createdAt: group.createdAt,
+                              updatedAt: group.updatedAt,
                               deletedAt: group.deletedAt)
         return groupUI
     }
@@ -33,6 +34,7 @@ extension GroupMapper {
                                 color: groupUI.color.hex,
                                 icon: groupUI.icon,
                                 createdAt: groupUI.createdAt,
+                                updatedAt: groupUI.updatedAt,
                                 deletedAt: groupUI.deletedAt)
         return group
     }

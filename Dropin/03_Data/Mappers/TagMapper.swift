@@ -14,6 +14,7 @@ public enum TagMapper {
                             name: sdTag.name,
                             color: sdTag.color,
                             createdAt: sdTag.createdAt,
+                            updatedAt: sdTag.updatedAt,
                             deletedAt: sdTag.deletedAt)
         return tag
     }

@@ -55,9 +55,8 @@ struct ImportDropinService: ImportServiceProtocol {
         for tag in export.tags {
             try await upsertTag(tag)
         }
-        // Upsert places, reconnecting relationships
-        for dto in export.places {
-            let place = PlaceEntity(other: dto, tags: dto.tags, group: dto.group)
+        // Upsert places
+        for place in export.places {
             try await upsertPlace(place)
         }
     }

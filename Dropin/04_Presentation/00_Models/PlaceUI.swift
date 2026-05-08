@@ -36,16 +36,15 @@ struct PlaceImageUI: Identifiable {
     var icon: Icon? = nil
     var tags: [TagUI] = [TagUI]()
     var group: GroupUI? = nil
+    var images: [PlaceImageUI] = []
     var rating: Float? = nil
     var phone: [ContactItem] = []
     var email: [ContactItem] = []
     var url: [ContactItem] = []
     var notes: String? = nil
-    var images: [PlaceImageUI] = []
     var createdAt: Date
+    var updatedAt: Date
     var deletedAt: Date? = nil
-
-    
     
     var groupColor: Color {
         guard let group = self.group else { return .dropinPrimary }
@@ -85,14 +84,15 @@ struct PlaceImageUI: Identifiable {
          address2: String,
          tags: [TagUI],
          group: GroupUI? = nil,
+         images: [PlaceImageUI] = [],
          icon: Icon? = nil,
          rating: Float? = nil,
          phone: [ContactItem] = [],
          email: [ContactItem] = [],
          url: [ContactItem] = [],
          notes: String? = nil,
-         images: [PlaceImageUI] = [],
          createdAt: Date,
+         updatedAt: Date,
          deletedAt: Date? = nil) {
         self.id = id
         self.name = name
@@ -101,21 +101,24 @@ struct PlaceImageUI: Identifiable {
         self.address2 = address2
         self.tags = tags
         self.group = group
+        self.images = images
         self.icon = icon
         self.rating = rating
         self.phone = phone
         self.email = email
         self.url = url
         self.notes = notes
-        self.images = images
         self.createdAt = createdAt
+        self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
 
     init(coordinates: CLLocationCoordinate2D) {
         id = UUID()
         self.coordinates = coordinates
-        createdAt = Date()
+        let now = Date()
+        createdAt = now
+        updatedAt = now
     }
     
     func copy() -> PlaceUI {
@@ -126,14 +129,15 @@ struct PlaceImageUI: Identifiable {
                        address2: address2,
                        tags: tags,
                        group: group,
+                       images: images,
                        icon: icon,
                        rating: rating,
                        phone: phone,
                        email: email,
                        url: url,
                        notes: notes,
-                       images: images,
                        createdAt: createdAt,
+                       updatedAt: updatedAt,
                        deletedAt: deletedAt)
     }
     

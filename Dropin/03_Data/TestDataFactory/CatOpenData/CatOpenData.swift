@@ -158,10 +158,8 @@ final class CatOpenData {
                                     name: item.titol,
                                     coordinates: item.coords,
                                     address: item.address,
-                                    address2: "",
                                     tags: placeTags,
-                                    group: group,
-                                    createdAt: Date())
+                                    group: group)
             places.append(place)
         }
         

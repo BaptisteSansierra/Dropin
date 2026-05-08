@@ -35,11 +35,9 @@ struct MapSettingsPreviewView: View {
                                 name: "Abbey Road",
                                 coordinates: CLLocationCoordinate2D.abbeyRoad,
                                 address: "",
-                                address2: "",
                                 tags: [],
                                 group: group,
-                                icon: .sf("pianokeys"),
-                                createdAt: Date())
+                                icon: .sf("pianokeys"))
         self.place = PlaceMapper.toUI(place)
     }
     

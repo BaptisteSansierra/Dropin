@@ -15,6 +15,7 @@ public enum GroupMapper {
                                 color: sdGroup.color,
                                 icon: sdGroup.icon,
                                 createdAt: sdGroup.createdAt,
+                                updatedAt: sdGroup.updatedAt,
                                 deletedAt: sdGroup.deletedAt)
         return group
     }

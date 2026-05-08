@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 
+// Data transfer object: same properties as PlaceEntity but relationship refers to object ids
 struct PlaceEntityDTO: Decodable {
     
     let id: UUID
@@ -17,15 +18,16 @@ struct PlaceEntityDTO: Decodable {
     var address2: String
     var tagIds: [UUID]
     var groupId: UUID?
+    var images: [UUID]
     var icon: Icon?
-    var createdAt: Date
     var rating: Float?
     var phone: [String]
     var email: [String]
     var url: [String]
     var notes: String?
-    var images: [UUID]
-    var deletedAt: Date? = nil
+    var createdAt: Date
+    var updatedAt: Date
+    var deletedAt: Date?
     
     init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: PlaceEntity.CodingKeys.self)
@@ -36,18 +38,16 @@ struct PlaceEntityDTO: Decodable {
         self.address2 = try c.decode(String.self, forKey: .address2)
         self.tagIds = try c.decode([UUID].self, forKey: .tagIds)
         self.groupId = try c.decodeIfPresent(UUID.self, forKey: .groupId)
+        self.images = []  // Not supported
         self.icon = try c.decodeIfPresent(Icon.self, forKey: .icon)
-        self.createdAt = try c.decode(Date.self, forKey: .createdAt)
         self.rating = try c.decodeIfPresent(Float.self, forKey: .rating)
         self.phone = try c.decode([String].self, forKey: .phone)
         self.email = try c.decode([String].self, forKey: .email)
         self.url = try c.decode([String].self, forKey: .url)
         self.notes = try c.decodeIfPresent(String.self, forKey: .notes)
         
-        // TODO: images should not be stored within Place object...
-        self.images = []
-        //let images = try c.decode([Data].self, forKey: .images)
-        
+        self.createdAt = try c.decode(Date.self, forKey: .createdAt)
+        self.updatedAt = try c.decode(Date.self, forKey: .updatedAt)
         self.deletedAt = try c.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
 }

@@ -93,10 +93,8 @@ struct ImportMapstrService: ImportServiceProtocol {
                                         longitude: feature.geometry.coordinates[0]
                                     ),
                                     address: feature.properties.address ?? "",
-                                    address2: "",
                                     tags: [markerTag] + placeTags,
-                                    icon: Self.mapIcon(feature.properties.icon),
-                                    createdAt: Date())
+                                    icon: Self.mapIcon(feature.properties.icon))
             try await upsertPlace(place)
         }
     }

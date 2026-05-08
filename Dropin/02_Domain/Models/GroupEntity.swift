@@ -13,16 +13,25 @@ struct GroupEntity: Hashable, Sendable {
     let icon: Icon
     let color: String
     let createdAt: Date
+    let updatedAt: Date
     let deletedAt: Date?
     // Note: places are not strores here to avoid bidirectional relationships
     // PlaceEntity owns the relationship
 
-    init(id: UUID, name: String, color: String, icon: Icon, createdAt: Date, deletedAt: Date? = nil) {
+    // Used by mappers
+    init(id: UUID,
+         name: String,
+         color: String,
+         icon: Icon,
+         createdAt: Date,
+         updatedAt: Date,
+         deletedAt: Date?) {
         self.id = id
         self.name = name
         self.icon = icon
         self.color = color
         self.createdAt = createdAt
+        self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
     
@@ -31,7 +40,9 @@ struct GroupEntity: Hashable, Sendable {
         self.name = name
         self.color = color
         self.icon = icon
-        createdAt = Date()
+        let now = Date()
+        createdAt = now
+        updatedAt = now
         deletedAt = nil
     }
     

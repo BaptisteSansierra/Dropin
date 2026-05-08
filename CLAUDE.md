@@ -4,16 +4,16 @@ I use clean architecture with coordinators + MVVM
 
 There's 4 layers :
 * Domain : contains Models (structs) / Repositories protocols / UsesCases 
-* Data : Repositories implementations / data models (SwiftData objects)
+* Data : Data models / Repositories implementations : Local (SwiftData) + WIP Remote (Supabase)
 * Presentations: UI Models (classes) / Views / ViewModels 
 * Core: App / Services (LocationManager / AddresslookupService / ReachabilityService) / Resources / Logger / DependencyInjection / Coordinators
 I'm in pre-MVP state
-Persistency will be handled by SwiftData+icloud (not implemented yet) or by creating a server backend
 
-MVP goal :
-* Authentication
-* Handle places / groups / tags
-* Offline access
-* Import / Export dropin format
-* Import mapstr format 
+MVP goals :
+* Handle places / groups / tags / pictures (Implemented)
+* Import / Export dropin format (Implemented)
+* Import mapstr format (Implemented)
+* Offline access (Implemented)
+* Remote storage (WIP with a supabase solution)
+* Authentication (Missing)
 

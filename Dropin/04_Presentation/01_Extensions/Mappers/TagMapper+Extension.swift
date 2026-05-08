@@ -22,6 +22,7 @@ extension TagMapper {
                           color: tag.color,
                           places: [],
                           createdAt: tag.createdAt,
+                          updatedAt: tag.updatedAt,
                           deletedAt: tag.deletedAt)
         return tagUI
     }
@@ -31,6 +32,7 @@ extension TagMapper {
                             name: tagUI.name,
                             color: tagUI.color.hex,
                             createdAt: tagUI.createdAt,
+                            updatedAt: tagUI.updatedAt,
                             deletedAt: tagUI.deletedAt)
         return tag
     }

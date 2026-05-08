@@ -38,14 +38,15 @@ extension PlaceMapper {
                               address2: place.address2,
                               tags: tagsUI,
                               group: groupUI,
+                              images: place.images.map { PlaceImageUI(dbId: $0) },
                               icon: place.icon,
                               rating: place.rating,
                               phone: phones,
                               email: emails,
                               url: urls,
                               notes: place.notes,
-                              images: place.images.map { PlaceImageUI(dbId: $0) },
                               createdAt: place.createdAt,
+                              updatedAt: place.updatedAt,
                               deletedAt: place.deletedAt)
         if !skipRelationships {
             groupUI?.places.append(placeUI)
@@ -72,14 +73,15 @@ extension PlaceMapper {
                                 address2: placeUI.address2,
                                 tags: tags,
                                 group: group,
+                                images: placeUI.images.compactMap(\.dbId),
                                 icon: placeUI.icon,
                                 rating: placeUI.rating,
                                 phone: placeUI.phone.map { $0.rawValue },
                                 email: placeUI.email.map { $0.rawValue },
                                 url: placeUI.url.map { $0.rawValue },
                                 notes: placeUI.notes,
-                                images: placeUI.images.compactMap(\.dbId),
                                 createdAt: placeUI.createdAt,
+                                updatedAt: placeUI.updatedAt,
                                 deletedAt: placeUI.deletedAt)
         return place
     }
