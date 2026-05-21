@@ -48,6 +48,17 @@ struct Log {
         print("[DRPN][\(priority.emo)] \(message)")
         #endif
     }
+    static private func log(_ priority: VerboseLevel, _ context: String, _ message: String) {
+        #if DEBUG
+        guard priority.rawValue >= Log.verboseLevel.rawValue else { return }
+        //print("[DRPN][\(priority.emo)\(priority.str)] \(message)")
+        print("[DRPN][\(context)] \(message)")
+        #endif
+    }
+
+    static func custom(priority: VerboseLevel, context: String, _ message: String) {
+        Log.log(priority, context, message)
+    }
     
     static func debug(_ message: String, condition: Bool = true) {
         guard condition else { return }

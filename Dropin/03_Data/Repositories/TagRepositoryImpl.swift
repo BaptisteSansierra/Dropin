@@ -44,18 +44,25 @@ public final class TagRepositoryImpl: TagRepository {
         let model = try await retrieveTag(domainTag: tag)
         model.name = tag.name
         model.color = tag.color
+        model.updatedAt = tag.updatedAt
         try modelContext.save()
     }
 
     func fetch() async throws -> [TagEntity] {
-        let desc = FetchDescriptor<SDTag>(sortBy: [SortDescriptor(\SDTag.name),
+        let predicate: Predicate<SDTag>? = nil
+        //let predicate = #Predicate<SDTag> { $0.deletedAt == nil }
+        let desc = FetchDescriptor<SDTag>(predicate: predicate,
+                                          sortBy: [SortDescriptor(\SDTag.name),
                                                    SortDescriptor(\SDTag.createdAt)])
         let sdTags = try modelContext.fetch(desc)
         return sdTags.map { TagMapper.toDomain($0) }
     }
 
     func fetchWithPlaceCount() async throws -> [(TagEntity, Int)] {
-        let desc = FetchDescriptor<SDTag>(sortBy: [SortDescriptor(\SDTag.name),
+        let predicate: Predicate<SDTag>? = nil
+        //let predicate = #Predicate<SDTag> { $0.deletedAt == nil }
+        let desc = FetchDescriptor<SDTag>(predicate: predicate,
+                                          sortBy: [SortDescriptor(\SDTag.name),
                                                    SortDescriptor(\SDTag.createdAt)])
         let sdTags = try modelContext.fetch(desc)
         return sdTags.map { (TagMapper.toDomain($0), $0.places.count) }
@@ -72,6 +79,7 @@ public final class TagRepositoryImpl: TagRepository {
             // Update
             existing.name      = tag.name
             existing.color     = tag.color
+            existing.updatedAt = tag.updatedAt
             existing.deletedAt = tag.deletedAt
         } else {
             // Insert

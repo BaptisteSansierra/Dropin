@@ -12,9 +12,64 @@ import ContactFieldKit
 @testable import Dropin
 
 extension PlaceEntity {  // Mock extension
-    
-    // TODO: load a json here
-    
+
+    // Convenience init for tests — mirrors the old signature, defaults new sync fields.
+    init(id: UUID,
+         name: String,
+         coordinates: CLLocationCoordinate2D,
+         address: String,
+         address2: String = "",
+         tags: [TagEntity] = [],
+         group: GroupEntity? = nil,
+         images: [UUID] = [],
+         icon: Icon? = nil,
+         rating: Float? = nil,
+         phone: [String] = [],
+         email: [String] = [],
+         url: [String] = [],
+         notes: String? = nil,
+         createdAt: Date = Date(),
+         deletedAt: Date? = nil) {
+        self.init(id: id,
+                  name: name,
+                  coordinates: coordinates,
+                  address: address,
+                  address2: address2,
+                  tags: tags,
+                  group: group,
+                  images: images,
+                  icon: icon,
+                  rating: rating,
+                  phone: phone,
+                  email: email,
+                  url: url,
+                  notes: notes,
+                  createdAt: createdAt,
+                  updatedAt: createdAt,
+                  deletedAt: deletedAt)
+    }
+
+    // Convenience init for copying a place with new tags/group.
+    init(other: PlaceEntity, tags: [TagEntity], group: GroupEntity? = nil) {
+        self.init(id: other.id,
+                  name: other.name,
+                  coordinates: other.coordinates,
+                  address: other.address,
+                  address2: other.address2,
+                  tags: tags,
+                  group: group,
+                  images: other.images,
+                  icon: other.icon,
+                  rating: other.rating,
+                  phone: other.phone,
+                  email: other.email,
+                  url: other.url,
+                  notes: other.notes,
+                  createdAt: other.createdAt,
+                  updatedAt: other.updatedAt,
+                  deletedAt: other.deletedAt)
+    }
+
     static func mockPlaces() -> [PlaceEntity] {
 
         let l1 = PlaceEntity(id: UUID(),

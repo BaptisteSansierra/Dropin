@@ -65,8 +65,17 @@ final class MockPlaceRepository: PlaceRepository {
     }
     
     func update(_ place: PlaceEntity) async throws {
+        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        places[index] = place
     }
-    
+
     func upsert(_ place: PlaceEntity) async throws {
+        if let index = places.firstIndex(where: { $0.id == place.id }) {
+            places[index] = place
+        } else {
+            places.append(place)
+        }
     }
 }

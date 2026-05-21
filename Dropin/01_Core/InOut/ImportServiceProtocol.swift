@@ -9,5 +9,7 @@ import Foundation
 
 @MainActor
 protocol ImportServiceProtocol {
-    func execute(_ url: URL) async throws
+    func execute(_ url: URL,
+                 onPlacesCountResolved: ((Int) -> Void),
+                 completion: ((Int) -> Void)) async throws
 }

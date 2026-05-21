@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D8E8A052FADEE2600DC59D9 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 4D8E8A042FADEE2600DC59D9 /* Auth */; };
+		4D8E8A072FADEE2600DC59D9 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 4D8E8A062FADEE2600DC59D9 /* Storage */; };
+		4D8E8A092FADEE2600DC59D9 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 4D8E8A082FADEE2600DC59D9 /* Supabase */; };
+		4D8E968E2FB4BA4E00DC59D9 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */; };
 		4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90AA802F432643003614A2 /* NoFlyZone */; };
 		4D90AEBD2F4C8CFD003614A2 /* ContactFieldKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90AEBC2F4C8CFD003614A2 /* ContactFieldKit */; };
 		4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */ = {isa = PBXBuildFile; productRef = 4D90A6152F374426003614A2 /* NoFlyZone */; };
@@ -31,10 +35,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4D2AC4992F73F7FA00AD2298 /* QUICK_TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = QUICK_TODO.txt; sourceTree = "<group>"; };
 		4D42C73A2E2BFAFF00B50940 /* Dropin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dropin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D42C74A2E2BFB0100B50940 /* DropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D42C7542E2BFB0100B50940 /* DropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -73,9 +77,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D8E8A092FADEE2600DC59D9 /* Supabase in Frameworks */,
+				4D8E8A072FADEE2600DC59D9 /* Storage in Frameworks */,
 				4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */,
 				4DC9DFF72F640DC500C1C60A /* SheetOverlay in Frameworks */,
 				4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */,
+				4D8E8A052FADEE2600DC59D9 /* Auth in Frameworks */,
 				4D90AEBD2F4C8CFD003614A2 /* ContactFieldKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,12 +107,12 @@
 		4D42C7312E2BFAFF00B50940 = {
 			isa = PBXGroup;
 			children = (
-				4D2AC4992F73F7FA00AD2298 /* QUICK_TODO.txt */,
 				4D42C73C2E2BFAFF00B50940 /* Dropin */,
 				4D42C74D2E2BFB0100B50940 /* DropinTests */,
 				4D42C7572E2BFB0100B50940 /* DropinUITests */,
 				4D90AA7E2F432177003614A2 /* Frameworks */,
 				4D42C73B2E2BFAFF00B50940 /* Products */,
+				4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,6 +157,9 @@
 				4D90AA802F432643003614A2 /* NoFlyZone */,
 				4D90AEBC2F4C8CFD003614A2 /* ContactFieldKit */,
 				4DC9DFF62F640DC500C1C60A /* SheetOverlay */,
+				4D8E8A042FADEE2600DC59D9 /* Auth */,
+				4D8E8A062FADEE2600DC59D9 /* Storage */,
+				4D8E8A082FADEE2600DC59D9 /* Supabase */,
 			);
 			productName = Dropin;
 			productReference = 4D42C73A2E2BFAFF00B50940 /* Dropin.app */;
@@ -238,6 +248,7 @@
 				4D90AA7F2F432643003614A2 /* XCRemoteSwiftPackageReference "NoFlyZone" */,
 				4D90AEBB2F4C8CFD003614A2 /* XCRemoteSwiftPackageReference "ContactFieldKit" */,
 				4DC9DFF52F640DC500C1C60A /* XCRemoteSwiftPackageReference "SheetOverlay" */,
+				4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D42C73B2E2BFAFF00B50940 /* Products */;
@@ -256,6 +267,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D8E968E2FB4BA4E00DC59D9 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +327,7 @@
 /* Begin XCBuildConfiguration section */
 		4D42C75C2E2BFB0100B50940 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -378,6 +391,7 @@
 		};
 		4D42C75D2E2BFB0100B50940 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -653,6 +667,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
 		4D90AA7F2F432643003614A2 /* XCRemoteSwiftPackageReference "NoFlyZone" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/BaptisteSansierra/NoFlyZone";
@@ -680,6 +702,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4D8E8A042FADEE2600DC59D9 /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		4D8E8A062FADEE2600DC59D9 /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		4D8E8A082FADEE2600DC59D9 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
 		4D90A6152F374426003614A2 /* NoFlyZone */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = NoFlyZone;

@@ -1,6 +1,7 @@
 TODO.txt
 TODO
 ARCHI
+CURL
 .DS_Store
 
 ico/
@@ -40,6 +41,9 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+
+# Supabase credentials — never commit
+Config.xcconfig
 
 # CocoaPods
 #

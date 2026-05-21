@@ -27,7 +27,7 @@ final class MockContainer {
         do {
             // Create a mock database
             let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
-            let mockModelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self,
+            let mockModelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self, SDProfile.self,
                                                         configurations: modelConfiguration)
             let mockModelContext = mockModelContainer.mainContext
             mockModelContext.autosaveEnabled = false

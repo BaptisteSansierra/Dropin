@@ -51,7 +51,10 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
 
     func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity] {
-        let descriptor = FetchDescriptor<SDPlace>()
+        let predicate: Predicate<SDPlace>? = nil
+        // predicate = #Predicate<SDPlace> { $0.deletedAt == nil }
+        let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
+        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)
         let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
         if let filter = filter, filter.isActive {
@@ -64,18 +67,20 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
     
     func fetch(groupId: UUID) async throws -> [PlaceEntity] {
-        let predicate = #Predicate<SDPlace> { $0.group?.identifier == groupId }
-        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
+        let predicate = #Predicate<SDPlace> { /*$0.deletedAt == nil &&*/ $0.group?.identifier == groupId }
+        let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
+        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)
         let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
         return domainPlaces
     }
     
     func fetch(tagId: UUID) async throws -> [PlaceEntity] {
+        let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
         let descriptor = FetchDescriptor<SDPlace>(
             predicate: #Predicate { place in
-                place.tags.contains { $0.identifier == tagId }
-            }
+                /*place.deletedAt == nil &&*/ place.tags.contains { $0.identifier == tagId }
+            }, sortBy: sorts
         )
         let sdPlaces = try modelContext.fetch(descriptor)
         let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
@@ -95,6 +100,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.email = place.email
         sdPlace.url = place.url
         sdPlace.notes = place.notes
+        sdPlace.updatedAt = place.updatedAt
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
         try await linkGroup(sdPlace: sdPlace, domainPlace: place)
         sdPlace.deletedAt = place.deletedAt
@@ -118,6 +124,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             existing.email = place.email
             existing.url = place.url
             existing.notes = place.notes
+            existing.updatedAt = place.updatedAt
             try await linkTags(sdPlace: existing, domainPlace: place)
             try await linkGroup(sdPlace: existing, domainPlace: place)
             existing.deletedAt = place.deletedAt
@@ -169,7 +176,6 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     
     private func linkGroup(sdPlace: SDPlace, domainPlace: PlaceEntity) async throws {
         guard let group = domainPlace.group else {
-            print("    -> NO Group")
             sdPlace.group = nil
             return
         }
@@ -183,7 +189,6 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         guard sdGroups.count < 2 else {
             throw DataError.duplicate(msg: "found \(sdGroups.count) SDGroups with id \(group.id)")
         }
-        print("    -> Assign Group \(sdGroup.name)")
         sdPlace.group = sdGroup
     }
 }

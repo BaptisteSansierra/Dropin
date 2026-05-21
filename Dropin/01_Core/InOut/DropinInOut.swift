@@ -56,7 +56,7 @@ struct DropinInOut: Codable {
 
         // Check version
         self.version = try container.decode(Int.self, forKey: .version)
-        Log.info("Importing dropin data v.\(version)")
+        Log.info("Decoding dropin data v.\(version)")
         if version == 1 {
             try loadV1(container)
         } else {

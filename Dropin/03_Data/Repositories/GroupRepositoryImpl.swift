@@ -44,18 +44,25 @@ public final class GroupRepositoryImpl: GroupRepository {
         let model = try await retrieveGroup(domainGroup: group)
         model.name = group.name
         model.color = group.color
+        model.updatedAt = group.updatedAt
         try modelContext.save()
     }
     
     func fetch() async throws -> [GroupEntity] {
-        let desc = FetchDescriptor<SDGroup>(sortBy: [SortDescriptor(\SDGroup.name),
+        let predicate: Predicate<SDGroup>? = nil
+        //let predicate = #Predicate<SDGroup> { $0.deletedAt == nil }
+        let desc = FetchDescriptor<SDGroup>(predicate: predicate,
+                                            sortBy: [SortDescriptor(\SDGroup.name),
                                                      SortDescriptor(\SDGroup.createdAt)])
         let sdGroups = try modelContext.fetch(desc)
         return sdGroups.map { GroupMapper.toDomain($0) }
     }
 
     func fetchWithPlaceCount() async throws -> [(GroupEntity, Int)] {
-        let desc = FetchDescriptor<SDGroup>(sortBy: [SortDescriptor(\SDGroup.name),
+        let predicate: Predicate<SDGroup>? = nil
+        //let predicate = #Predicate<SDGroup> { $0.deletedAt == nil }
+        let desc = FetchDescriptor<SDGroup>(predicate: predicate,
+                                            sortBy: [SortDescriptor(\SDGroup.name),
                                                      SortDescriptor(\SDGroup.createdAt)])
         let sdGroups = try modelContext.fetch(desc)
         return sdGroups.map { (GroupMapper.toDomain($0), $0.places.count) }
@@ -73,6 +80,7 @@ public final class GroupRepositoryImpl: GroupRepository {
             existing.name      = group.name
             existing.color     = group.color
             existing.icon      = group.icon
+            existing.updatedAt = group.updatedAt
             existing.deletedAt = group.deletedAt
         } else {
             // Insert

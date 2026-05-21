@@ -55,5 +55,10 @@ final class MockTagRepository: TagRepository {
     }
     
     func upsert(_ tag: TagEntity) async throws {
+        if let index = tags.firstIndex(where: { $0.id == tag.id }) {
+            tags[index] = tag
+        } else {
+            tags.append(tag)
+        }
     }
 }

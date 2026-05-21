@@ -31,6 +31,8 @@ enum PinStyle: Int, CaseIterable, Identifiable {
     /// `satellite` enable/disable the satellite view in the main map
     var satellite: Bool { didSet { store() } }
 
+    var clustering: Bool { didSet { store() } }
+
     static let pinSizeRange: ClosedRange<Double> = 25...55
 
     init() {
@@ -39,6 +41,7 @@ enum PinStyle: Int, CaseIterable, Identifiable {
         let pinSizeKey = DropinApp.userDefaultsKeys.pinSize
         let hidePOIKey = DropinApp.userDefaultsKeys.hidePOI
         let satelliteKey = DropinApp.userDefaultsKeys.satellite
+        let clusteringKey = DropinApp.userDefaultsKeys.clustering
         pinStyle = .rounded
         if let _ = store.object(forKey: pinStyleKey) {
             pinStyle = PinStyle(rawValue: store.integer(forKey: pinStyleKey)) ?? .rounded
@@ -55,6 +58,10 @@ enum PinStyle: Int, CaseIterable, Identifiable {
         if let _ = store.object(forKey: satelliteKey) {
             satellite = store.bool(forKey: satelliteKey)
         }
+        clustering = true
+        if let _ = store.object(forKey: clusteringKey) {
+            clustering = store.bool(forKey: clusteringKey)
+        }
     }
     
     private func store() {
@@ -63,9 +70,11 @@ enum PinStyle: Int, CaseIterable, Identifiable {
         let pinSizeKey = DropinApp.userDefaultsKeys.pinSize
         let hidePOIKey = DropinApp.userDefaultsKeys.hidePOI
         let satelliteKey = DropinApp.userDefaultsKeys.satellite
+        let clusteringKey = DropinApp.userDefaultsKeys.clustering
         store.set(pinStyle.rawValue, forKey: pinStyleKey)
         store.set(pinSize, forKey: pinSizeKey)
         store.set(hidePOI, forKey: hidePOIKey)
         store.set(satellite, forKey: satelliteKey)
+        store.set(clustering, forKey: clusteringKey)
     }
 }

@@ -12,12 +12,14 @@ import MapKit
 
 @MainActor
 final class AppContainer {
-    
+
     // Repositories
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
     private let groupRepository: GroupRepository
     private let imageRepository: ImageRepository
+    private let profileRepository: ProfileRepository
+    private let imageLoader: ImageLoader
     // Coordinators
     private let mainCoordinator: MainCoordinator
     private let tagCoordinator: TagCoordinator
@@ -26,13 +28,12 @@ final class AppContainer {
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
     private let reachabilityService: ReachabilityService
+    private let supabaseService: SupabaseService?
+    let authService: any AuthServiceProtocol
+    let profileService: any ProfileServiceProtocol
+    private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
 
     init(modelContext: ModelContext) {
-        // Repos
-        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
-        tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
-        imageRepository = ImageRepositoryImpl(modelContext: modelContext)
         // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
@@ -41,18 +42,52 @@ final class AppContainer {
         locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
         reachabilityService = ReachabilityService()
+        // Supabase + auth
+        let supabaseService = SupabaseService()
+        let authService = AuthService(client: supabaseService.client)
+        self.supabaseService = supabaseService
+        self.authService = authService
+        // Local repos (raw — used by SyncService for push)
+        let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext)
+        let localGroupRepo = GroupRepositoryImpl(modelContext: modelContext)
+        let localTagRepo = TagRepositoryImpl(modelContext: modelContext)
+        let localImageRepo = ImageRepositoryImpl(modelContext: modelContext)
+        let localProfileRepo = ProfileRepositoryImpl(modelContext: modelContext)
+        // Remote repos
+        let remotePlaceRepo = SupabasePlaceRepository(client: supabaseService.client, auth: authService)
+        let remoteGroupRepo = SupabaseGroupRepository(client: supabaseService.client, auth: authService)
+        let remoteTagRepo = SupabaseTagRepository(client: supabaseService.client, auth: authService)
+        let remoteImageRepo = SupabaseImageRepository(client: supabaseService.client, auth: authService)
+        let remoteProfileRepo = SupabaseProfileRepository(client: supabaseService.client, auth: authService)
+        // Sync
+        let syncService = SyncService(localPlaceRepo: localPlaceRepo,
+                                      localGroupRepo: localGroupRepo,
+                                      localTagRepo: localTagRepo,
+                                      localImageRepo: localImageRepo,
+                                      localProfileRepo: localProfileRepo,
+                                      remotePlaceRepo: remotePlaceRepo,
+                                      remoteGroupRepo: remoteGroupRepo,
+                                      remoteTagRepo: remoteTagRepo,
+                                      remoteImageRepo: remoteImageRepo,
+                                      remoteProfileRepo: remoteProfileRepo,
+                                      reachability: reachabilityService)
+        self.syncService = syncService
+        // Wrap local repos so mutations notify SyncService
+        placeRepository = SyncingPlaceRepository(wrapped: localPlaceRepo, sync: syncService)
+        groupRepository = SyncingGroupRepository(wrapped: localGroupRepo, sync: syncService)
+        tagRepository = SyncingTagRepository(wrapped: localTagRepo, sync: syncService)
+        imageRepository = SyncingImageRepository(wrapped: localImageRepo, sync: syncService)
+        profileRepository = SyncingProfileRepository(wrapped: localProfileRepo, sync: syncService)
+        imageLoader = ImageLoader(local: imageRepository, remote: remoteImageRepo)
+        profileService = ProfileService(local: profileRepository, remote: remoteProfileRepo)
     }
-    
-    /// Used by mock container which owns the services for convenience purpose
+
+    #if DEBUG
+    /// Used by mock container (previews + tests). Skips real Supabase wiring.
     init(modelContext: ModelContext,
          locationManager: LocationManager,
          addressLookupService: AddressLookupService,
          reachabilityService: ReachabilityService) {
-        // Repos
-        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
-        tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
-        imageRepository = ImageRepositoryImpl(modelContext: modelContext)
         // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
@@ -61,10 +96,33 @@ final class AppContainer {
         self.locationManager = locationManager
         self.addressLookupService = addressLookupService
         self.reachabilityService = reachabilityService
+        // Stub auth + sync
+        self.supabaseService = nil
+        let authService = StubAuthService()
+        let syncService = StubSyncService()
+        self.authService = authService
+        self.syncService = syncService
+        // Repos — no syncing wrapper needed (stub would no-op anyway)
+        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
+        tagRepository = TagRepositoryImpl(modelContext: modelContext)
+        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        imageRepository = ImageRepositoryImpl(modelContext: modelContext)
+        profileRepository = ProfileRepositoryImpl(modelContext: modelContext)
+        imageLoader = ImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
+        profileService = StubProfileService()
     }
-    
+    #endif
+
     func startLocationManager() {
         locationManager.start()
+    }
+
+    func syncAll() async {
+        await syncService.syncAll()
+    }
+
+    func restoreSession() async {
+        await authService.restoreSession()
     }
 
     // MARK: - create views
@@ -77,7 +135,8 @@ final class AppContainer {
         let vm = MainViewModel(self,
                                coordinator: mainCoordinator,
                                locationManager: locationManager,
-                               fetchPlaces: FetchPlaces(repository: placeRepository))
+                               fetchPlaces: FetchPlaces(repository: placeRepository),
+                               syncStatus: syncService.syncStatus)
         return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
@@ -85,6 +144,7 @@ final class AppContainer {
                              selectedPlaceId: Binding<UUID?>,
                              isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>,
+                             mapReloadGen: Int,
                              navBarHeight: CGFloat) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: mainCoordinator,
@@ -94,6 +154,7 @@ final class AppContainer {
                              selectedPlaceId: selectedPlaceId,
                              isParentPresenting: isParentPresenting,
                              showingCreatePlaceMenu: showingCreatePlaceMenu,
+                             mapReloadGen: mapReloadGen,
                              navBarHeight: navBarHeight)
     }
     
@@ -130,8 +191,8 @@ final class AppContainer {
         let vm = PlaceSheetViewModel(self,
                                      coordinator: mainCoordinator,
                                      locationManager: locationManager,
-                                     getPlaceThumbnails: GetPlaceThumbnails(repository: imageRepository),
-                                     getPlaceImage: GetPlaceImage(repository: imageRepository))
+                                     getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
+                                     getPlaceImage: GetPlaceImage(loader: imageLoader))
         return PlaceSheetView(viewModel: vm,
                               place: place,
                               detent: detent)
@@ -144,8 +205,8 @@ final class AppContainer {
                                            coordinator: mainCoordinator,
                                            updatePlace: UpdatePlace(repository: placeRepository),
                                            deletePlace: DeletePlace(repository: placeRepository),
-                                           getPlaceThumbnails: GetPlaceThumbnails(repository: imageRepository),
-                                           getPlaceImage: GetPlaceImage(repository: imageRepository),
+                                           getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
+                                           getPlaceImage: GetPlaceImage(loader: imageLoader),
                                            mode: mode)
         return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
     }
@@ -184,7 +245,8 @@ final class AppContainer {
         let vm = TagListViewModel(self,
                                   coordinator: tagCoordinator,
                                   fetchTagsWithCount: FetchTagsWithCount(repository: tagRepository),
-                                  deleteTag: DeleteTag(repository: tagRepository))
+                                  deleteTag: DeleteTag(repository: tagRepository),
+                                  syncStatus: syncService.syncStatus)
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
@@ -202,7 +264,8 @@ final class AppContainer {
         let vm = GroupListViewModel(self,
                                     coordinator: groupCoordinator,
                                     fetchGroupsWithCount: FetchGroupsWithCount(repository: groupRepository),
-                                    deleteGroup: DeleteGroup(repository: groupRepository))
+                                    deleteGroup: DeleteGroup(repository: groupRepository),
+                                    syncStatus: syncService.syncStatus)
         return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
@@ -277,7 +340,8 @@ final class AppContainer {
                                    upsertTag: UpsertTag(repository: tagRepository),
                                    deleteLibrary: DeleteLibrary(placeRepository: placeRepository,
                                                                 groupRepository: groupRepository,
-                                                                tagRepository: tagRepository))
+                                                                tagRepository: tagRepository),
+                                   sync: syncService)
         return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 

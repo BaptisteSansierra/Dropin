@@ -26,6 +26,21 @@ struct DropinApp: App {
             appContainer.createRootView()
                 .task {
                     appContainer.startLocationManager()
+                    await appContainer.restoreSession()
+                    
+                    // TEMP smoke test — remove once the auth UI exists.
+                    // Signs in the test user only if no session was restored.
+                    if appContainer.authService.session == nil {
+                        do {
+                            try await appContainer.authService.signIn(email: "test@dropin.local",
+                                                                      password: "test12345")
+                            Log.info("Smoke test: signed in as test@dropin.local")
+                        } catch {
+                            Log.error("Smoke test sign-in failed: \(error)")
+                        }
+                    }
+                    await appContainer.profileService.load()
+                    await appContainer.syncAll()
 
 #if false
                     // Enable to generate new AppIcons + logo assets
@@ -50,6 +65,9 @@ struct DropinApp: App {
                     // TODO
                     //importCoordinator.handle(url)
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    Task { await appContainer.syncAll() }
+                }
                 .environment(appSettings)
         }
     }
@@ -57,7 +75,7 @@ struct DropinApp: App {
     // MARK: - init
     init() {
         do {
-            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self)
+            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self, SDProfile.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
@@ -159,5 +177,7 @@ extension DropinApp {
         static let pinSize = "settings.map.pinSize"
         static let hidePOI = "settings.map.hidePOI"
         static let satellite = "settings.map.satellite"
+        static let clustering = "settings.map.clustering"
+        static let lastSyncedAt = "service.sync.last"
     }
 }

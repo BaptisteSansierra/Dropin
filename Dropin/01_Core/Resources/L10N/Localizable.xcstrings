@@ -247,6 +247,12 @@
             "state" : "translated",
             "value" : "This will permanently delete all your places, groups and tags. This action cannot be undone."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette action supprimera définitivement tous vos lieux, groupes et tags. Elle est irréversible."
+          }
         }
       }
     },
@@ -258,6 +264,12 @@
             "state" : "translated",
             "value" : "Type “%@” to confirm"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tapez “%@” pour confirmer"
+          }
         }
       }
     },
@@ -268,6 +280,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reset database"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialiser la base de données"
           }
         }
       }
@@ -469,9 +487,6 @@
           }
         }
       }
-    },
-    "Clear" : {
-
     },
     "common.about" : {
       "comment" : "Sidebar ",
@@ -1955,9 +1970,6 @@
         }
       }
     },
-    "Filter places" : {
-
-    },
     "group_list_view.num_places_%lld" : {
       "localizations" : {
         "en" : {
@@ -2042,6 +2054,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mettre dans un groupe ?"
+          }
+        }
+      }
+    },
+    "lookup.searching" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking up..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche..."
+          }
+        }
+      }
+    },
+    "main.syncing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Syncing..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchronisation..."
           }
         }
       }
@@ -2163,13 +2209,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Go with Apple map"
+            "value" : "Go with Apple Maps"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple map"
+            "value" : "Apple Maps"
           }
         }
       }
@@ -2179,13 +2225,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Go with Google map"
+            "value" : "Go with Google Maps"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google map"
+            "value" : "Google Maps"
           }
         }
       }
@@ -2202,6 +2248,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waze"
+          }
+        }
+      }
+    },
+    "place_filter_view.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter places"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtrer les lieux"
           }
         }
       }
@@ -2291,6 +2354,40 @@
         }
       }
     },
+    "placeholder.no_groups.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create groups by editing a place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créez des groupes en éditant un lieu"
+          }
+        }
+      }
+    },
+    "placeholder.no_groups.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No groups yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun groupe"
+          }
+        }
+      }
+    },
     "placeholder.no_icon" : {
       "comment" : "No icon associated to place",
       "extractionState" : "manual",
@@ -2341,6 +2438,40 @@
         }
       }
     },
+    "placeholder.no_places.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long press on the map to add your first place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez longuement sur la carte pour ajouter votre premier lieu"
+          }
+        }
+      }
+    },
+    "placeholder.no_places.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun lieu"
+          }
+        }
+      }
+    },
     "placeholder.no_rating" : {
       "comment" : "No rating associated to place",
       "extractionState" : "manual",
@@ -2367,6 +2498,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun tag"
+          }
+        }
+      }
+    },
+    "placeholder.no_tags.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create tags by editing a place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créez des tags en éditant un lieu"
+          }
+        }
+      }
+    },
+    "placeholder.no_tags.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tags yet"
           }
         },
         "fr" : {
@@ -2421,6 +2586,190 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au tag"
+          }
+        }
+      }
+    },
+    "settings.clustering" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clustering"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regroupement"
+          }
+        }
+      }
+    },
+    "settings.import.google" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google (GeoJSON)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google (GeoJSON)"
+          }
+        }
+      }
+    },
+    "settings.import.mapstr" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapstr (GeoJSON)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapstr (GeoJSON)"
+          }
+        }
+      }
+    },
+    "settings.import.success_body_%lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place imported successfully"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places imported successfully"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieu importé avec succès"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieux importés avec succès"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "settings.import.success_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import successful"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import réussi"
+          }
+        }
+      }
+    },
+    "settings.import.error_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import failed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec de l'import"
+          }
+        }
+      }
+    },
+    "settings.importing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importing..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import en cours..."
+          }
+        }
+      }
+    },
+    "settings.importing_count_%lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Importing %lld place..."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Importing %lld places..."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Import de %lld lieu..."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Import de %lld lieux..."
+                }
+              }
+            }
           }
         }
       }

@@ -21,13 +21,19 @@ struct ImportMapstrService: ImportServiceProtocol {
         self.markerTagName = markerTagName
     }
 
-    func execute(_ url: URL) async throws {
+    func execute(_ url: URL,
+                 onPlacesCountResolved: ((Int) -> Void),
+                 completion: ((Int) -> Void)) async throws {
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
 
         let data = try Data(contentsOf: url)
         let collection = try decode(data)
+        Log.info("Found \(collection.features.count) Mapstr places")
+        onPlacesCountResolved(collection.features.count)
         try await persist(collection)
+        Log.info(" -> persisted")
+        completion(collection.features.count)
     }
 
     // MARK: - GeoJSON decoding

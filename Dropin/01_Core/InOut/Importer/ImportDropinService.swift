@@ -20,7 +20,9 @@ struct ImportDropinService: ImportServiceProtocol {
         self.upsertTag = upsertTag
     }
 
-    func execute(_ url: URL) async throws {
+    func execute(_ url: URL,
+                 onPlacesCountResolved: ((Int) -> Void),
+                 completion: ((Int) -> Void)) async throws {
         // Handle the security scoping since the file lives outside sandbox
         let accessed = url.startAccessingSecurityScopedResource()
         defer {
@@ -29,7 +31,11 @@ struct ImportDropinService: ImportServiceProtocol {
 
         let data = try Data(contentsOf: url)
         let export = try decode(data)
+        Log.info("Found \(export.places.count) places, \(export.tags.count) tags, \(export.groups.count) groups")
+        onPlacesCountResolved(export.places.count)
         try await persist(export)
+        Log.info(" -> persisted")
+        completion(export.places.count)
     }
 
     // MARK: - Private
