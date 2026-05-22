@@ -41,7 +41,9 @@ struct PlacesListView: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(places) { place in
-                    placeRowView(place)
+                    if place.isActive {
+                        placeRowView(place)
+                    }
                 }
             }
         }

@@ -259,6 +259,10 @@ extension PlacesMapViewVCRepresentable {
             viewModel.mapSettings.currentRect = mapView.visibleMapRect
 
             // Hide labels when zoomed far out — only update views when crossing the threshold
+            /* FIXME: Commented as it introduced a bug: decorrelating annotations position from map
+             Also the final effect does not seem right (less readability / no reason to hide for a unique visible annotation / ...)
+             Should be improved...
+             
             let shouldShowLabels = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
             if shouldShowLabels != labelsVisible {
                 labelsVisible = shouldShowLabels
@@ -266,6 +270,7 @@ extension PlacesMapViewVCRepresentable {
                     (mapView.view(for: annotation) as? HostingAnnotationView)?.showLabel = shouldShowLabels
                 }
             }
+             */
 
             if viewModel.pickingAddress || viewModel.pickingCoordinates {
                 updatePlacePickerPositions(mapView)
