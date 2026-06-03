@@ -77,7 +77,7 @@ struct SettingsView: View {
             settingsRow(icon: "mappin",
                         iconColor: .accentColor,
                         title: "settings.pin_style",
-                        value: appSettings.pinStyle.displayName,
+                        value: appSettings.mapSettings.pinStyle.displayName,
                         isActive: viewModel.mapEditMode == .style) {
                 viewModel.mapEditMode = viewModel.mapEditMode == .style ? .none : .style
             }
@@ -86,7 +86,7 @@ struct SettingsView: View {
             settingsRow(icon: "ruler",
                         iconColor: .orange,
                         title: "settings.pin_size",
-                        value: "\(Int(appSettings.pinSize)) pt",
+                        value: "\(Int(appSettings.mapSettings.pinSize)) pt",
                         isActive: viewModel.mapEditMode == .size) {
                 viewModel.mapEditMode = viewModel.mapEditMode == .size ? .none : .size
             }
@@ -97,9 +97,8 @@ struct SettingsView: View {
                 Text("settings.clustering")
                     .foregroundStyle(.primary)
                 Spacer()
-                Toggle("", isOn: $appSettings.clustering)
+                Toggle("", isOn: $appSettings.mapSettings.clustering)
             }
-            
         } header: {
             Text("settings.section.map_config")
         }
@@ -275,11 +274,26 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
-    
-    @Previewable @State var mock = MockContainer()
-    @Previewable @State var showingSideMenu = false
+#if DEBUG
 
-    mock.appContainer.createSettingsView(showingSideMenu: $showingSideMenu)
-        .environment(AppSettings())
+struct MOCKSettingsView: View {
+
+    @State var mock = MockContainer()
+    @State var showingSideMenu = false
+    @State private var appSettings: AppSettings
+    
+    var body: some View {
+        mock.appContainer.createSettingsView(showingSideMenu: $showingSideMenu)
+            .environment(appSettings)
+    }
+    
+    init() {
+        appSettings = AppSettings()
+    }
 }
+
+#Preview {
+    MOCKSettingsView()
+}
+
+#endif

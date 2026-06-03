@@ -54,9 +54,9 @@ class HostingAnnotationView: MKAnnotationView {
     }
 
     // MARK: public methods
-    func configure(appSettings: AppSettings) {
-        pinStyle = appSettings.pinStyle
-        pinSize = appSettings.pinSize
+    func configure(mapSettings: MapSettings) {
+        pinStyle = mapSettings.pinStyle
+        pinSize = mapSettings.pinSize
         configure()
     }
 
@@ -73,6 +73,23 @@ class HostingAnnotationView: MKAnnotationView {
         }
         guard let hostingController = hostingController else { return }
         
+        let size = hostingController.sizeThatFits(in: UIView.layoutFittingCompressedSize)
+        let pinSize = pinSize ?? size.height
+        let offsetY: CGFloat = {
+            if annotation is MKTempPlaceAnnotation { return -(size.height / 2) }
+            let bottomHeight = size.height - pinSize
+            return -size.height * 0.5 + bottomHeight
+        }()
+
+        // Avoid any animation, when updating 
+        UIView.performWithoutAnimation {
+            hostingController.view.frame = CGRect(origin: .zero, size: size)
+            bounds       = CGRect(origin: .zero, size: size)
+            centerOffset = CGPoint(x: 0, y: offsetY)
+            layer.removeAllAnimations()    // belt + suspenders if a parent block started one
+        }
+
+        /* OLD implementation
         // Set the size
         let size = hostingController.sizeThatFits(in: UIView.layoutFittingCompressedSize)
         hostingController.view.frame = CGRect(origin: .zero, size: size)
@@ -89,6 +106,7 @@ class HostingAnnotationView: MKAnnotationView {
             let offset: CGFloat = -size.height * 0.5 + bottomHeight
             centerOffset = CGPoint(x: 0, y: offset)
         }
+         */
     }
     
     private func configure() {

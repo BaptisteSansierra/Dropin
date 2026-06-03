@@ -22,18 +22,39 @@ enum PinStyle: Int, CaseIterable, Identifiable {
     }
 }
 
-@MainActor
-@Observable class AppSettings {
-    var pinStyle: PinStyle { didSet { store() } }
-    var pinSize: Double { didSet { store() } }
+struct MapSettings: Equatable {
+    var pinStyle: PinStyle
+    var pinSize: Double
     /// `hidePOI` show/hide the Points Of Interest in the main map
-    var hidePOI: Bool { didSet { store() } }
+    var hidePOI: Bool
     /// `satellite` enable/disable the satellite view in the main map
-    var satellite: Bool { didSet { store() } }
-
-    var clustering: Bool { didSet { store() } }
+    var satellite: Bool
+    var clustering: Bool
 
     static let pinSizeRange: ClosedRange<Double> = 25...55
+    
+    func isDiffAffectsAnnotations(_ other: MapSettings) -> Bool {
+        return pinStyle != other.pinStyle ||
+               pinSize != other.pinSize ||
+               clustering != other.clustering
+    }
+}
+
+@MainActor
+@Observable class AppSettings {
+    
+//    var pinStyle: PinStyle { didSet { store() } }
+//    var pinSize: Double { didSet { store() } }
+//    /// `hidePOI` show/hide the Points Of Interest in the main map
+//    var hidePOI: Bool { didSet { store() } }
+//    /// `satellite` enable/disable the satellite view in the main map
+//    var satellite: Bool { didSet { store() } }
+//
+//    var clustering: Bool { didSet { store() } }
+//
+//    static let pinSizeRange: ClosedRange<Double> = 25...55
+
+    var mapSettings: MapSettings { didSet { store() } }
 
     init() {
         let store = UserDefaults.standard
@@ -42,26 +63,34 @@ enum PinStyle: Int, CaseIterable, Identifiable {
         let hidePOIKey = DropinApp.userDefaultsKeys.hidePOI
         let satelliteKey = DropinApp.userDefaultsKeys.satellite
         let clusteringKey = DropinApp.userDefaultsKeys.clustering
-        pinStyle = .rounded
+        mapSettings = MapSettings(pinStyle: .rounded,
+                                  pinSize: 36,
+                                  hidePOI: true,
+                                  satellite: false,
+                                  clustering: true)
         if let _ = store.object(forKey: pinStyleKey) {
-            pinStyle = PinStyle(rawValue: store.integer(forKey: pinStyleKey)) ?? .rounded
+            mapSettings.pinStyle = PinStyle(rawValue: store.integer(forKey: pinStyleKey)) ?? .rounded
         }
-        pinSize = 36
         if let _ = store.object(forKey: pinSizeKey) {
-            pinSize = store.double(forKey: pinSizeKey).clamped(to: AppSettings.pinSizeRange)
+            mapSettings.pinSize = store.double(forKey: pinSizeKey).clamped(to: MapSettings.pinSizeRange)
         }
-        hidePOI = true
         if let _ = store.object(forKey: hidePOIKey) {
-            hidePOI = store.bool(forKey: hidePOIKey)
+            mapSettings.hidePOI = store.bool(forKey: hidePOIKey)
         }
-        satellite = false
         if let _ = store.object(forKey: satelliteKey) {
-            satellite = store.bool(forKey: satelliteKey)
+            mapSettings.satellite = store.bool(forKey: satelliteKey)
         }
-        clustering = true
         if let _ = store.object(forKey: clusteringKey) {
-            clustering = store.bool(forKey: clusteringKey)
+            mapSettings.clustering = store.bool(forKey: clusteringKey)
         }
+    }
+    
+    func equals(_ other: AppSettings) -> Bool {
+        mapSettings.pinStyle == other.mapSettings.pinStyle &&
+        mapSettings.pinSize == other.mapSettings.pinSize &&
+        mapSettings.hidePOI == other.mapSettings.hidePOI &&
+        mapSettings.satellite == other.mapSettings.satellite &&
+        mapSettings.clustering == other.mapSettings.clustering
     }
     
     private func store() {
@@ -71,10 +100,10 @@ enum PinStyle: Int, CaseIterable, Identifiable {
         let hidePOIKey = DropinApp.userDefaultsKeys.hidePOI
         let satelliteKey = DropinApp.userDefaultsKeys.satellite
         let clusteringKey = DropinApp.userDefaultsKeys.clustering
-        store.set(pinStyle.rawValue, forKey: pinStyleKey)
-        store.set(pinSize, forKey: pinSizeKey)
-        store.set(hidePOI, forKey: hidePOIKey)
-        store.set(satellite, forKey: satelliteKey)
-        store.set(clustering, forKey: clusteringKey)
+        store.set(mapSettings.pinStyle.rawValue, forKey: pinStyleKey)
+        store.set(mapSettings.pinSize, forKey: pinSizeKey)
+        store.set(mapSettings.hidePOI, forKey: hidePOIKey)
+        store.set(mapSettings.satellite, forKey: satelliteKey)
+        store.set(mapSettings.clustering, forKey: clusteringKey)
     }
 }

@@ -38,7 +38,7 @@ struct PlaceHeaderViewV2: View {
             HStack(alignment: .center) {
                 
                 ZStack(alignment: .topLeading) {
-                    switch appSettings.pinStyle {
+                    switch appSettings.mapSettings.pinStyle {
                         case .rect:
                             PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,

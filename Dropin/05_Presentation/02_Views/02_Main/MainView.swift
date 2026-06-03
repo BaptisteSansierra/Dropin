@@ -114,6 +114,15 @@ struct MainView: View {
     @ViewBuilder
     private var trailingToolbarContent: some View {
         if viewModel.selectedTab == 0 {
+            
+            /*
+            Button(String("TEST"),
+                   systemImage: "arrow.clockwise.circle") {
+                viewModel.mapReloadGen += 1
+            }
+            .accentColor(.red)
+            */
+            
             Button("common.organize_by_group",
                    systemImage: viewModel.currentFilter == nil ?
                      "line.3.horizontal.decrease.circle" :

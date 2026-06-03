@@ -21,6 +21,6 @@ extension CLLocationCoordinate2D {
     }
     
     static var abbeyRoad: CLLocationCoordinate2D {
-        .init(latitude: 51.54628490625393, longitude: -0.14414066635706183)
+        .init(latitude: 51.532037370634704, longitude: -0.17728675540781802)
     }
 }

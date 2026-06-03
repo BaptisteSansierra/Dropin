@@ -33,7 +33,7 @@ public extension MKCoordinateRegion {
     static var abbeyRoad: MKCoordinateRegion {
         .init(
             center: CLLocationCoordinate2D.abbeyRoad,
-            span: .init(squareDelta: 0.01)
+            span: .init(squareDelta: 0.005)
         )
     }
     
@@ -41,6 +41,14 @@ public extension MKCoordinateRegion {
         MKCoordinateRegion(
             center: self.center.offset(x: lat, y: lon),
             span: self.span
+        )
+    }
+    
+    func zoom(_ zoom: Double) -> MKCoordinateRegion {
+        MKCoordinateRegion(
+            center: self.center,
+            span: .init(latitudeDelta: self.span.latitudeDelta * zoom,
+                        longitudeDelta: self.span.longitudeDelta * zoom)
         )
     }
 

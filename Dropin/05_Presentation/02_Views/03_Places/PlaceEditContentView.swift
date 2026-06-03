@@ -164,7 +164,7 @@ struct PlaceEditContentView: View {
             
             VStack {
                 Spacer()
-                switch appSettings.pinStyle {
+                switch appSettings.mapSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,

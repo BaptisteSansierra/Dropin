@@ -47,4 +47,17 @@ import SwiftUI
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
+    
+    #if DEBUG
+    init(color: String) {
+        self.id = UUID()
+        self.name = "RANDOM"
+        self.icon = Icon(sf: "infinity.circle")!
+        self.color = Color(rgba: color)
+        self.places = []
+        self.createdAt = Date()
+        self.updatedAt = Date()
+        self.deletedAt = nil
+    }
+    #endif
 }

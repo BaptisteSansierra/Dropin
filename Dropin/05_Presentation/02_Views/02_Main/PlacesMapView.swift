@@ -43,7 +43,7 @@ struct PlacesMapView: View {
         self.mapReloadGen = mapReloadGen
         self.navBarHeight = navBarHeight
     }
-
+    
     // MARK: - Body
     var body: some View {
         GeometryReader { proxy in
@@ -51,24 +51,53 @@ struct PlacesMapView: View {
             ZStack(alignment: .top) {
                 creationDialogPlaceholderView
                 
+                /*
+                init(config: Configuration,
+                     places: [PlaceUI],
+                     tempPlace: PlaceUI? = nil,
+                     selectedPlaceId: Binding<UUID?>,
+                     onPlaceSelected: ((UUID) -> Void)? = nil,
+                     onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
+                     onMapCameraUpdate: MapCameraUpdateHandler? = nil,
+                     isSelectionEnabled: @escaping (() -> Bool),
+                     mapReloadGen: Int = 0,
+                     bottomInset: CGFloat = 0) {
+                 */
+
+                
+                PlacesMKMapVCR(config: .interactive,
+                               mapController: viewModel.mapController,
+                               places: places,
+                               pendingCoordinate: viewModel.tmpPlace?.coordinates,
+                               selectedPlaceId: $selectedPlaceId,
+                               onLongPress: viewModel.onLongPress,
+                               onMapCameraUpdate: viewModel.onCameraUpdate,
+                               isSelectionEnabled: viewModel.isSelectionEnabled,
+                               mapReloadGen: mapReloadGen,
+                               bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
+                
+/*
                 // Map with bottom inset for card
                 PlacesMapViewVCRepresentable(viewModel: viewModel,
                                              places: places,
                                              selectedPlaceId: $selectedPlaceId,
                                              mapReloadGen: mapReloadGen,
                                              bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
-                
+*/
+ 
                 if viewModel.pickingAddress || viewModel.pickingCoordinates {
                     pickingMarkerView
                         .allowsHitTesting(false)
                 }
             }
         }
+        /*  Legacy ?
         .onChange(of: selectedPlaceId, { oldValue, newValue in
             if newValue == nil {
                 viewModel.clearSelection()
             }
         })
+         */
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .onChange(of: isParentPresenting, { oldValue, newValue in
             guard isParentPresenting else { return }
@@ -78,7 +107,7 @@ struct PlacesMapView: View {
         })
         // Overlays
         .overlay {
-            MapSettingsOverlay(settingsShown: $viewModel.mapSettings.settingsShown)
+            MapSettingsOverlay(settingsShown: $viewModel.mapConfig.settingsShown)
                 .padding(.top, navBarHeight)
         }
         .overlay {
@@ -235,7 +264,7 @@ struct PlacesMapView: View {
     
     @ViewBuilder
     private var pickingMarkerView: some View {
-        let markerSize: CGFloat = appSettings.pinSize
+        let markerSize: CGFloat = appSettings.mapSettings.pinSize
         let offsetY: CGFloat = viewModel.pickingAddress ?
                                 viewModel.addressPickerViewCoords.y :
                                 viewModel.coordinatesPickerViewCoords.y
@@ -249,7 +278,7 @@ struct PlacesMapView: View {
     private func handleAction(_ action: RootView.ActionBus.Action) {
         switch action {
             case .showOnMap(let placeId):
-                viewModel.manualSelectPlace(placeId)
+                selectedPlaceId = placeId
             default:
                 ()
         }
@@ -260,7 +289,7 @@ struct PlacesMapView: View {
         // Show the creation sheet
         viewModel.showQuickCreateSheet.toggle()
         // Center map on new place
-        viewModel.centerOnCoords(coordinates, sheetHeight: 400) // FIXME: 400
+        viewModel.centerOn(coordinates)
     }
     
     private func onAddressPickerComplete() {
@@ -317,6 +346,8 @@ struct MockPlacesMapView: View {
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
     }
+    .environment(AppSettings())
+    .environment(RootView.ActionBus())
 }
 
 #endif

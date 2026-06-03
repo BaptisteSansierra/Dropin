@@ -24,10 +24,10 @@ struct AnnotationViewFactory {
         static let cluster = "ClusterPin"
     }
     
-    private var appSettings: AppSettings
+    private var mapSettings: MapSettings
 
-    init(appSettings: AppSettings) {
-        self.appSettings = appSettings
+    init(mapSettings: MapSettings) {
+        self.mapSettings = mapSettings
     }
 
     func registerViews(for mapView: MKMapView) {
@@ -45,7 +45,8 @@ struct AnnotationViewFactory {
                          forAnnotationViewWithReuseIdentifier: Identifiers.cluster)
     }
 
-    func view(for annotation: MKAnnotation, in mapView: MKMapView) -> MKAnnotationView? {
+    func view(for annotation: MKAnnotation,
+              in mapView: MKMapView) -> MKAnnotationView? {
         // User location
         if annotation is MKUserLocation {
             return nil
@@ -92,7 +93,7 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? HostingAnnotationView
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        view.configure(appSettings: appSettings)
+        view.configure(mapSettings: mapSettings)
         view.temporary = true
         view.isEnabled = false
         view.canShowCallout = false
@@ -112,7 +113,9 @@ struct AnnotationViewFactory {
             view.glyphImage = UIImage(icon: group.icon)
         }
         view.canShowCallout = true
-        view.clusteringIdentifier = "PlaceCluster"
+        if mapSettings.clustering {
+            view.clusteringIdentifier = "PlaceCluster"
+        }
         return view
     }
 
@@ -125,10 +128,12 @@ struct AnnotationViewFactory {
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
         view.showLabel = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
-        view.configure(appSettings: appSettings)
-        view.clusteringIdentifier = "PlaceCluster"
+        view.configure(mapSettings: mapSettings)
+        if mapSettings.clustering {
+            view.clusteringIdentifier = "PlaceCluster"
+        }
         view.canShowCallout = false
-        view.displayPriority = .defaultHigh
+        view.displayPriority = .required // .defaultHigh
         view.collisionMode = .circle
         return view
     }

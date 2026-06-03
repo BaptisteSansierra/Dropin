@@ -27,7 +27,7 @@ struct PlaceRowView: View {
     // MARK: - Body
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            switch appSettings.pinStyle {
+            switch appSettings.mapSettings.pinStyle {
                 case .rect:
                     PlaceRectAnnotationView(color: place.groupColor,
                                             icon: place.group?.icon,

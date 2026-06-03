@@ -31,13 +31,13 @@ struct PlaceAnnotation: MapContent {
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
             VStack(spacing: 0) {
-                switch appSettings.pinStyle {
+                switch appSettings.mapSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,
                                                 iconExtra: place.icon)
-                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.pinSize)
-                        let arrrowHeight = appSettings.pinSize - rectHeight
+                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.mapSettings.pinSize)
+                        let arrrowHeight = appSettings.mapSettings.pinSize - rectHeight
                         BellCurveShape()
                             .fill(place.groupColor)
                             .frame(width: arrrowHeight * 3.33, height: arrrowHeight)

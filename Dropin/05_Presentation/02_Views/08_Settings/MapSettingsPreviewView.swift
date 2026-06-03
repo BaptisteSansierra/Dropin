@@ -8,8 +8,8 @@
 import SwiftUI
 import MapKit
 
-enum MapEditSettingsMode {
-    case size
+enum MapEditSettingsMode: Int {
+    case size = 0
     case style
     case none
 }
@@ -25,9 +25,10 @@ struct MapSettingsPreviewView: View {
     private var clusterPlace1: PlaceUI
     private var clusterPlace2: PlaceUI
     private var position: MapCameraPosition {
-        MapCameraPosition.region(.abbeyRoad.offset(lat: -0.002))
+        MapCameraPosition.region(.abbeyRoad.offset(lat: -0.0005))
     }
-    
+    @State private var mapReloadGen: Int = 0
+
     // MARK: init
     init(mapEditMode: Binding<MapEditSettingsMode>) {
         self._mapEditMode = mapEditMode
@@ -42,24 +43,25 @@ struct MapSettingsPreviewView: View {
                                 icon: .sf("pianokeys"))
         self.place = PlaceMapper.toUI(place)
         
-        let group1 = GroupEntity(name: "", color: "#678AF0", icon: .sf("tag"))
+        let group1 = GroupEntity(name: "", color: "#678AF0", icon: .sf("bolt.fill"))
         let cp1 = PlaceEntity(id: UUID(),
-                              name: "Spot 1",
-                              coordinates: .init(latitude: 51.54384339885454,
-                                                 longitude: -0.14536248206413874),
+                              name: "Recharge station",
+                              coordinates: .init(latitude: 51.530865828646834,
+                                                 longitude: -0.1793235955181529),
                               address: "",
                               tags: [],
                               group: group1,
                               icon: nil)
         self.clusterPlace1 = PlaceMapper.toUI(cp1)
         
+        let group2 = GroupEntity(name: "", color: "#8A67F0", icon: .sf("microphone"))
         let cp2 = PlaceEntity(id: UUID(),
-                              name: "Spot 2",
-                              coordinates: .init(latitude: 51.54395339885454,
-                                                 longitude: -0.14586248206413874),
+                              name: "Recording studio",
+                              coordinates: .init(latitude: 51.530665828646834,
+                                                 longitude: -0.1799235955181529),
                               address: "",
                               tags: [],
-                              group: nil,
+                              group: group2,
                               icon: nil)
         self.clusterPlace2 = PlaceMapper.toUI(cp2)
     }
@@ -79,42 +81,41 @@ struct MapSettingsPreviewView: View {
     }
     
     // MARK: subviews
+    @ViewBuilder
     var mapView: some View {
 
-/*
- TODO: Replace by swiftMap by MKMap
- 
-        // Map with bottom inset for card
-        PlacesMapViewVCRepresentable(viewModel: PlacesMapViewModel,
-                                     places: places,
-                                     selectedPlaceId: $selectedPlaceId,
-                                     //topInset: 0,
-                                     bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
-*/
+        PlacesMKMapVCR(config: .preview,
+                       mapController: MapController(),
+                       places: [place, clusterPlace1, clusterPlace2],
+                       selectedPlaceId: .constant(nil),
+                       isSelectionEnabled: { false },
+                       mapReloadGen: mapReloadGen)
 
-        Map(initialPosition: position, interactionModes: []) {
-            annotation(place)
-            annotation(clusterPlace1)
-            annotation(clusterPlace2)
-        }
+        /*
+            Map(initialPosition: position, interactionModes: []) {
+                annotation(place)
+                annotation(clusterPlace1)
+                annotation(clusterPlace2)
+            }
+         */
     }
     
     private func annotation(_ place: PlaceUI) -> some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
-            switch appSettings.pinStyle {
+            switch appSettings.mapSettings.pinStyle {
                 case .rounded:
                     PlacePinAnnotationView(color: place.groupColor,
                                            icon: place.group?.icon,
                                            iconExtra: place.icon,
-                                           size: appSettings.pinSize)
+                                           size: appSettings.mapSettings.pinSize)
                 case .rect:
                     VStack(spacing: 0) {
                         PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,
                                                 iconExtra: place.icon,
-                                                size: appSettings.pinSize)
-                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.pinSize)
-                        let arrrowHeight = appSettings.pinSize - rectHeight
+                                                size: appSettings.mapSettings.pinSize)
+                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.mapSettings.pinSize)
+                        let arrrowHeight = appSettings.mapSettings.pinSize - rectHeight
                         BellCurveShape()
                             .fill(place.groupColor)
                             .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
@@ -149,13 +150,13 @@ struct MapSettingsPreviewView: View {
             Image(systemName: "mappin")
                 .font(.system(size: 13))
                 .foregroundStyle(.secondary)
-            Slider(value: $appSettings.pinSize,
-                   in: AppSettings.pinSizeRange,
+            Slider(value: $appSettings.mapSettings.pinSize,
+                   in: MapSettings.pinSizeRange,
                    step: 1)
             Image(systemName: "mappin")
                 .font(.system(size: 19))
                 .foregroundStyle(.secondary)
-            Text("\(Int(appSettings.pinSize))")
+            Text("\(Int(appSettings.mapSettings.pinSize))")
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
                 .frame(width: 28, alignment: .trailing)
@@ -166,7 +167,7 @@ struct MapSettingsPreviewView: View {
         HStack(spacing: 10) {
             ForEach(PinStyle.allCases, id: \.id) { style in
                 Button {
-                    appSettings.pinStyle = style
+                    appSettings.mapSettings.pinStyle = style
                 } label: {
                     HStack(spacing: 0) {
                         Spacer()
@@ -191,36 +192,76 @@ struct MapSettingsPreviewView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 25)
                     .padding(.vertical, 10)
-                    .background(appSettings.pinStyle == style
+                    .background(appSettings.mapSettings.pinStyle == style
                                 ? Color.accentColor.opacity(0.12)
                                 : Color(.systemBackground).opacity(0.6))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(
-                                appSettings.pinStyle == style
+                                appSettings.mapSettings.pinStyle == style
                                 ? Color.accentColor
                                 : Color(.systemGray4),
-                                lineWidth: appSettings.pinStyle == style ? 1.5 : 0.5
+                                lineWidth: appSettings.mapSettings.pinStyle == style ? 1.5 : 0.5
                             )
                     }
                 }
                 .foregroundStyle(
-                    appSettings.pinStyle == style ? Color.accentColor : .primary
+                    appSettings.mapSettings.pinStyle == style ? Color.accentColor : .primary
                 )
                 .buttonStyle(.plain)
-                .animation(.easeInOut(duration: 0.15), value: appSettings.pinStyle)
+                .animation(.easeInOut(duration: 0.15), value: appSettings.mapSettings.pinStyle)
             }
         }
     }
 
 }
 
-#Preview {
-    @Previewable @State var mapEditMode = MapEditSettingsMode.style
+#if DEBUG
 
-    NavigationStack {
-        MapSettingsPreviewView(mapEditMode: $mapEditMode)
-            .environment(AppSettings())
+struct MOCKMapSettingsPreviewView: View {
+    
+    @State var mapEditMode = MapEditSettingsMode.style
+    @State var settings = AppSettings()
+
+    var body: some View {
+        NavigationStack {
+            VStack {
+                MapSettingsPreviewView(mapEditMode: $mapEditMode)
+                    .environment(settings)
+                    .onAppear {
+                        settings.mapSettings.satellite = false
+                        settings.mapSettings.clustering = false
+                    }
+                    .frame(height: 280)
+
+                VStack {
+                    Picker("Control", selection: $mapEditMode) {
+                        Text("size").tag(MapEditSettingsMode.size)
+                        Text("style").tag(MapEditSettingsMode.style)
+                        Text("none").tag(MapEditSettingsMode.none)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.top, 30)
+                    .padding(.horizontal, 30)
+
+                    Toggle("Clustering", isOn: $settings.mapSettings.clustering)
+                        .padding(.horizontal, 30)
+                        .padding(.top)
+                        .padding(.bottom, 30)
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.gray.opacity(0.2))
+                        .padding()
+                )
+            }
+        }
     }
 }
+
+#Preview {
+    MOCKMapSettingsPreviewView()
+}
+
+#endif

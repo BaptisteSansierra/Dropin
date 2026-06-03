@@ -51,5 +51,11 @@ enum Icon: RawRepresentable, Identifiable, Hashable, Sendable {
             return nil
         }
     }
+    
+    #if DEBUG
+    init?(sf: String) {
+        self.init(rawValue: "sf:\(sf)")
+    }
+    #endif
 }
 

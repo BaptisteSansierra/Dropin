@@ -5,13 +5,15 @@
 //  Created by baptiste sansierra on 25/3/26.
 //
 
+#if false
+
 import SwiftUI
 import UIKit
 import MapKit
 
 @MainActor
 struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
-    
+
     // MARK: States & Bindings
     @Bindable private var viewModel: PlacesMapViewModel
     @Binding private var selectedPlaceId: UUID?
@@ -34,7 +36,7 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         self._selectedPlaceId = selectedPlaceId
         self.bottomInset = bottomInset
     }
-        
+
     func makeUIViewController(context: Context) -> PlacesMapViewController {
         let viewController = PlacesMapViewController()
         viewController.coordinator = context.coordinator
@@ -60,8 +62,8 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
 
         // Map style
         applyMapStyle(to: mapView,
-                      satellite: appSettings.satellite,
-                      hidePointsOfInterest: appSettings.hidePOI)
+                      satellite: appSettings.mapSettings.satellite,
+                      hidePointsOfInterest: appSettings.mapSettings.hidePOI)
 
         // Reload annotations (places were reloaded from )
         if context.coordinator.lastReloadGen != mapReloadGen {
@@ -108,7 +110,9 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         mapView.showsTraffic = false
     }
     
-    private func executeAction(_ action: PlacesMapViewModel.MapActionBus.MapAction, on mapView: MKMapView, context: Context) {
+    private func executeAction(_ action: PlacesMapViewModel.MapActionBus.MapAction,
+                               on mapView: MKMapView,
+                               context: Context) {
         switch action {
             case .clearSelection:
                 for annotation in mapView.selectedAnnotations {
@@ -194,7 +198,7 @@ extension PlacesMapViewVCRepresentable {
              appSettings: AppSettings,
              selectedPlaceId: @escaping (UUID?) -> Void) {
             self.viewModel = viewModel
-            self.annotationViewFactory = AnnotationViewFactory(appSettings: appSettings)
+            self.annotationViewFactory = AnnotationViewFactory(mapSettings: appSettings.mapSettings)
             self.selectedPlaceId = selectedPlaceId
         }
         
@@ -396,3 +400,50 @@ class PlacesMapViewController: UIViewController {
         ])
     }
 }
+
+/*
+struct MockPlacesMapViewVCRepresentable: View {
+    var mock: MockContainer
+    @State var places: [PlaceUI]
+    @State var selectedPlaceId: UUID? = nil
+    @State var vm: PlacesMapViewModel
+
+    var body: some View {
+        
+        PlacesMapViewVCRepresentable(viewModel: vm,
+                                     places: places,
+                                     selectedPlaceId: $selectedPlaceId,
+                                     mapReloadGen: 0,
+                                     bottomInset: 0)
+
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        //self.places = mock.getAllPlaceUI()
+        let place1 = PlaceUI(coordinates: .barcelona)
+        let place2 = PlaceUI(coordinates: .barcelona.offset(x: 0.01))
+        let place3 = PlaceUI(coordinates: .barcelona.offset(y: 0.01))
+        self.places = [place1, place2, place3]
+
+        
+        self.vm = PlacesMapViewModel(mock.appContainer,
+                                     coordinator: MainCoordinator(),
+                                     locationManager: mock.locationManager)
+    }
+}
+
+#Preview {
+    NavigationStack {
+        MockPlacesMapViewVCRepresentable()
+            .navigationTitle("Map")
+            .navigationBarTitleDisplayMode(.inline)
+            .environment(AppSettings())
+    }
+}
+
+ */
+
+#endif
+

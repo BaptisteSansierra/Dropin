@@ -15,7 +15,7 @@ import CoreLocation
     // MARK: - Observed properties
     var coordinator: MainCoordinator
     var places: [PlaceUI] = [PlaceUI]()
-    private(set) var mapReloadGen: Int = 0    // bumps after each significant reload
+    /*private(set)*/ var mapReloadGen: Int = 0    // bumps after each significant reload
 
     var syncStatus: SyncStatus
 
