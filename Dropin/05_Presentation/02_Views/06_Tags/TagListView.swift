@@ -129,12 +129,24 @@ struct TagListView: View {
         return viewModel.createTagDetailsView(tag: $tags[index])
     }
     
+    private func createTagMapView(_ tagId: UUID) -> TagMapView {
+        return viewModel.createTagMapView(tagId: tagId)
+    }
+    
+    private func createPlaceEditView(_ placeRef: PlaceUIRef) -> PlaceEditView {
+        return viewModel.createPlaceEditView(place: placeRef.place)
+    }
+
     @ViewBuilder
     private func resolveDestination(navigationItem: TagNavigationItem) -> some View {
         
         switch navigationItem {
             case .tagDetails(let tagId):
                 createTagDetailsView(tagId)
+            case .tagMap(let tagId):
+                createTagMapView(tagId)
+            case .tagPlace(let placeRef):
+                createPlaceEditView(placeRef)
             case .undefinedDummyView:
                 ZStack {
                     Color.orange

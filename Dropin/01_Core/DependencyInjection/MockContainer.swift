@@ -35,6 +35,7 @@ final class MockContainer {
             self.mockModelContainer = mockModelContainer
             self.mockModelContext = mockModelContext
             self.appContainer = AppContainer(modelContext: mockModelContext,
+                                             appContext: AppContext(),
                                              locationManager: locationManager,
                                              addressLookupService: addressLookupService,
                                              reachabilityService: reachabilityService)

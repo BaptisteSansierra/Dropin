@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-@Observable class TagCoordinator {
+@Observable class TagCoordinator: PlaceNavigationCoordinator {
     
     var path: [TagNavigationItem] = [] {
         didSet {
@@ -16,10 +16,19 @@ import SwiftUI
         }
     }
     
+    // MARK: navigation methods
+    func pushPlaceEditView(placeRef: PlaceUIRef) {
+        path.append(TagNavigationItem.tagPlace(placeRef: placeRef))
+    }
+
     func pushTagDetailsView(tagId: UUID) {
         path.append(TagNavigationItem.tagDetails(tagId: tagId))
     }
     
+    func pushTagMapView(tagId: UUID) {
+        path.append(TagNavigationItem.tagMap(tagId: tagId))
+    }
+
     func pushUndefinedDummyView() {
         path.append(TagNavigationItem.undefinedDummyView)
     }
@@ -31,6 +40,8 @@ import SwiftUI
 
 enum TagNavigationItem: Hashable {
     case tagDetails(tagId: UUID)
+    case tagMap(tagId: UUID)
+    case tagPlace(placeRef: PlaceUIRef)
     // development
     case undefinedDummyView
 }

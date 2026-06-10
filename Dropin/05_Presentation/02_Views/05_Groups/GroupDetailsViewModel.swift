@@ -9,29 +9,43 @@ import SwiftUI
 
 @MainActor
 @Observable class GroupDetailsViewModel {
-
+    
     var loadingPlaces = false
     var places: [PlaceUI] = []
-
+    var selectedPlaceId: UUID? = nil
+    
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored var locationManager: LocationManager
+    @ObservationIgnored private var coordinator: GroupCoordinator
     @ObservationIgnored private var updateGroup: UpdateGroup
     @ObservationIgnored private var deleteGroup: DeleteGroup
     @ObservationIgnored private var fetchGroupPlaces: FetchGroupPlaces
     @ObservationIgnored private var updatePlace: UpdatePlace
-
+    
     init(_ appContainer: AppContainer,
          locationManager: LocationManager,
+         coordinator: GroupCoordinator,
          updateGroup: UpdateGroup,
          deleteGroup: DeleteGroup,
          fetchGroupPlaces: FetchGroupPlaces,  // TODO : useless ?
          updatePlace: UpdatePlace) {
         self.appContainer = appContainer
         self.locationManager = locationManager
+        self.coordinator = coordinator
         self.updateGroup = updateGroup
         self.deleteGroup = deleteGroup
         self.fetchGroupPlaces = fetchGroupPlaces
         self.updatePlace = updatePlace
+    }
+    
+    // MARK: Navigation
+    func pushGroupMapView(groupId: UUID) {
+        coordinator.pushGroupMapView(groupId: groupId)
+    }
+    
+    // MARK: UI Child
+    func createPlaceSheetView(place: Binding<PlaceUI>) -> PlaceSheetView {
+        return appContainer.createPlaceSheetView(place: place, detent: .constant(.medium))
     }
     
     // MARK: use cases
@@ -46,14 +60,14 @@ import SwiftUI
             group.deletedAt = Date()
         }
     }
-
+    
     func fetchPlace(_ groupId: UUID) async throws {
         loadingPlaces = true
         places = try await fetchGroupPlaces(groupId)
             .map({ PlaceMapper.toUI($0) })
         loadingPlaces = false
     }
-
+    
     func updatePlace(_ place: PlaceUI) async throws {
         try await updatePlace(PlaceMapper.toDomain(place))
     }

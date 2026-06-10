@@ -12,14 +12,14 @@ import CoreLocation
 @MainActor
 @Observable class PlaceEditViewModel {
 
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: any NavigationCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let updatePlace: UpdatePlace
     @ObservationIgnored private let addPlaceImage: AddPlaceImage
     @ObservationIgnored private let removePlaceImage: RemovePlaceImage
 
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: any NavigationCoordinator,
          updatePlace: UpdatePlace,
          addPlaceImage: AddPlaceImage,
          removePlaceImage: RemovePlaceImage) {

@@ -15,21 +15,21 @@ struct GroupDetailsView: View {
     @State private var groupColor: Color
     @State private var showingRemoveAlert: Bool = false
     @State private var showingMarkerList: Bool = false
-
+    
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
-
+    
     var blurEffectHeight: CGFloat {
         DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
     }
-
+    
     // MARK: - Init
     init(viewModel: GroupDetailsViewModel, group: Binding<GroupUI>) {
         self.viewModel = viewModel
         self._group = group
         self._groupColor = State(initialValue: group.wrappedValue.color)
     }
-
+    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -63,6 +63,15 @@ struct GroupDetailsView: View {
         }
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.pushGroupMapView(groupId: group.id)
+                } label: {
+                    Image(systemName: "globe.europe.africa")
+                }
+            }
+        }
         .alert("alert.remove_group_title",
                isPresented: $showingRemoveAlert) {
             Button("common.cancel", role: .cancel) { }
@@ -140,7 +149,7 @@ struct GroupDetailsView: View {
                         .frame(width: 100)
                         .foregroundStyle(groupColor)
                         .padding(.leading, 40)
-                        //.padding(.trailing, 40)
+                    //.padding(.trailing, 40)
                     Spacer()
                     ColorPicker(String(""), selection: $groupColor, supportsOpacity: false)
                         .labelsHidden()
@@ -183,13 +192,13 @@ struct GroupDetailsView: View {
                     IcoButton(systemImage: "ellipsis",
                               icoSize: 14,
                               action: { showingMarkerList.toggle() })
-                        .padding(0)
-                        .padding(.trailing, 40)
+                    .padding(0)
+                    .padding(.trailing, 40)
                 }
             }
         }
     }
-
+    
     @ViewBuilder
     private var placesView: some View {
         if viewModel.loadingPlaces {
@@ -220,12 +229,25 @@ struct GroupDetailsView: View {
                                     }
                                     .tint(.destructive)
                                 }
+                                .onTapGesture {
+                                    viewModel.selectedPlaceId = place.id
+                                }
                         }
                     }
                     .scrollContentBackground(.hidden)
                     .safeAreaInset(edge: .bottom) {
                         Color.clear
                             .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
+                    }
+                    // Selected place sheet
+                    .sheet(item: $viewModel.selectedPlaceId,
+                           onDismiss: {
+                        viewModel.selectedPlaceId = nil
+                    }) { placeId in
+                        createPlaceDetailsSheetView()
+                            .presentationDetents([.medium, .large])
+                            .presentationCornerRadius(20)
+                            .presentationBackground(.backgroundPrimary)
                     }
                 } else {
                     Text("common.no_related_places")
@@ -253,7 +275,7 @@ struct GroupDetailsView: View {
                                          startPoint: .top,
                                          endPoint: .bottom))
                     .frame(height: blurEffectHeight)
-
+                
                 DestructiveButton(text: "common.delete_group") {
                     showingRemoveAlert = true
                 }
@@ -261,7 +283,7 @@ struct GroupDetailsView: View {
             }
         }
     }
-
+    
     // MARK: private methods
     private func updateGroup() {
         Task {
@@ -283,6 +305,16 @@ struct GroupDetailsView: View {
                 assertionFailure("Could not update place: \(error)")
             }
         }
+    }
+    
+    private func createPlaceDetailsSheetView() -> PlaceSheetView {
+        guard let selectedPlaceId = viewModel.selectedPlaceId else {
+            fatalError("selectedPlaceId undefined")
+        }
+        guard let index = viewModel.places.firstIndex(where: { $0.id == selectedPlaceId }) else {
+            fatalError("couldn't find place with id \(selectedPlaceId)")
+        }
+        return viewModel.createPlaceSheetView(place: $viewModel.places[index])
     }
 }
 

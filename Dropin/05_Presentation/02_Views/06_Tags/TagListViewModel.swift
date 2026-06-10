@@ -34,6 +34,14 @@ import SwiftUI
         return appContainer.createTagDetailsView(tag: tag)
     }
 
+    func createTagMapView(tagId: UUID) -> TagMapView {
+        return appContainer.createTagMapView(tagId: tagId)
+    }
+    
+    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
+        return appContainer.createPlaceEditView(place: place)
+    }
+
     // MARK: Navigation
     func pushTagDetailsView(tagId: UUID) {
         coordinator.pushTagDetailsView(tagId: tagId)

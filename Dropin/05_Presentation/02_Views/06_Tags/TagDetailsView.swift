@@ -58,6 +58,15 @@ struct TagDetailsView: View {
                 // TODO: error
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.pushTagMapView(tagId: tag.id)
+                } label: {
+                    Image(systemName: "globe.europe.africa")
+                }
+            }
+        }
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .alert("alert.remove_tag_title",
@@ -172,12 +181,25 @@ struct TagDetailsView: View {
                                     }
                                     .tint(.destructive)
                                 }
+                                .onTapGesture {
+                                    viewModel.selectedPlaceId = place.id
+                                }
                         }
                     }
                     .scrollContentBackground(.hidden)
                     .safeAreaInset(edge: .bottom) {
                         Color.clear
                             .frame(height: blurEffectHeight - UIApplication.rootBottomSafeArea())
+                    }
+                    // Selected place sheet
+                    .sheet(item: $viewModel.selectedPlaceId,
+                           onDismiss: {
+                        viewModel.selectedPlaceId = nil
+                    }) { placeId in
+                        createPlaceDetailsSheetView()
+                            .presentationDetents([.medium, .large])
+                            .presentationCornerRadius(20)
+                            .presentationBackground(.backgroundPrimary)
                     }
                 } else {
                     Text("common.no_related_places")
@@ -236,6 +258,16 @@ struct TagDetailsView: View {
                 assertionFailure("Could not update place: \(error)")
             }
         }
+    }
+    
+    private func createPlaceDetailsSheetView() -> PlaceSheetView {
+        guard let selectedPlaceId = viewModel.selectedPlaceId else {
+            fatalError("selectedPlaceId undefined")
+        }
+        guard let index = viewModel.places.firstIndex(where: { $0.id == selectedPlaceId }) else {
+            fatalError("couldn't find place with id \(selectedPlaceId)")
+        }
+        return viewModel.createPlaceSheetView(place: $viewModel.places[index])
     }
 }
 

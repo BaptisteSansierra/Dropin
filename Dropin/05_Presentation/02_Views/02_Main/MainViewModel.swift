@@ -112,7 +112,7 @@ import CoreLocation
         return appContainer.createPlaceSheetView(place: place, detent: detent)
     }
 
-    func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
+    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
         return appContainer.createPlaceEditView(place: place)
     }
 

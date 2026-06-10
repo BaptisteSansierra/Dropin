@@ -19,7 +19,10 @@ enum SideMenuContext {
 @Observable class RootViewModel {
 
     /// side menu selected section
-    var currentSideMenuContext: SideMenuContext = .main
+    //var currentSideMenuContext: SideMenuContext = .main
+    //var currentSideMenuContext: Binding<SideMenuContext> //= .main
+    var appContext: AppContext
+
     /// show/hide the side menu
     var showingSideMenu: Bool = false
     
@@ -33,8 +36,11 @@ enum SideMenuContext {
 
     @ObservationIgnored private var appContainer: AppContainer
     
-    init(_ appContainer: AppContainer) {
+    init(_ appContainer: AppContainer, appContext: AppContext) {
         self.appContainer = appContainer
+        self.appContext = appContext
+        
+        //self.currentSideMenuContext.wrappedValue = .tags
     }
     
     func createMainView() -> MainView {

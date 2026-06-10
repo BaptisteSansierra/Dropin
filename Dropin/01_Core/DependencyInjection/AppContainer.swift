@@ -13,6 +13,8 @@ import MapKit
 @MainActor
 final class AppContainer {
 
+    // App context
+    var appContext: AppContext
     // Repositories
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
@@ -33,7 +35,9 @@ final class AppContainer {
     let profileService: any ProfileServiceProtocol
     private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext,
+         appContext: AppContext) {
+        self.appContext = appContext
         // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
@@ -85,9 +89,11 @@ final class AppContainer {
     #if DEBUG
     /// Used by mock container (previews + tests). Skips real Supabase wiring.
     init(modelContext: ModelContext,
+         appContext: AppContext,
          locationManager: LocationManager,
          addressLookupService: AddressLookupService,
          reachabilityService: ReachabilityService) {
+        self.appContext = appContext
         // Coordinators
         mainCoordinator = MainCoordinator()
         tagCoordinator = TagCoordinator()
@@ -127,7 +133,17 @@ final class AppContainer {
 
     // MARK: - create views
     func createRootView() -> RootView {
-        let vm = RootViewModel(self)
+//        let currentSideMenuContextB = Binding<SideMenuContext> {
+//            let v = self.appContext.currentSideMenuContext
+//            print("🟠 GET on \(ObjectIdentifier(self)) → \(v)")
+//            return v
+//        } set: { v in
+//            print("🟢 SET on \(ObjectIdentifier(self)) → \(v)")
+//            self.appContext.currentSideMenuContext = v
+//            print("🟢 AC stored value now → \(self.appContext.currentSideMenuContext)")
+//        }
+
+        let vm = RootViewModel(self, appContext: appContext)
         return RootView(viewModel: vm)
     }
     
@@ -186,10 +202,23 @@ final class AppContainer {
                                         createGroup: CreateGroup(repository: groupRepository))
         return GroupSelectorView(viewModel: vm, place: place)
     }
-
+    
     func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+        var relevantCoordinator: any PlaceNavigationCoordinator {
+            switch appContext.currentSideMenuContext {
+                case .main:
+                    return mainCoordinator
+                case .groups:
+                    return groupCoordinator
+                case .tags:
+                    return tagCoordinator
+                default:
+                    assertionFailure("This section doesn't support place edition")
+                    return mainCoordinator
+            }
+        }
         let vm = PlaceSheetViewModel(self,
-                                     coordinator: mainCoordinator,
+                                     coordinator: currentPlaceCoordinator(),
                                      locationManager: locationManager,
                                      getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                      getPlaceImage: GetPlaceImage(loader: imageLoader))
@@ -211,9 +240,9 @@ final class AppContainer {
         return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
     }
 
-    func createPlaceEditView(place: Binding<PlaceUI>) -> PlaceEditView {
+    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
         let vm = PlaceEditViewModel(self,
-                                    coordinator: mainCoordinator,
+                                    coordinator: currentCoordinator(),
                                     updatePlace: UpdatePlace(repository: placeRepository),
                                     addPlaceImage: AddPlaceImage(repository: imageRepository),
                                     removePlaceImage: RemovePlaceImage(repository: imageRepository))
@@ -253,11 +282,19 @@ final class AppContainer {
     func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
         let vm = TagDetailsViewModel(self,
                                      locationManager: locationManager,
+                                     coordinator: tagCoordinator,
                                      updateTag: UpdateTag(repository: tagRepository),
                                      deleteTag: DeleteTag(repository: tagRepository),
                                      fetchTagPlaces: FetchTagPlaces(repository: placeRepository),
                                      updatePlace: UpdatePlace(repository: placeRepository))
         return TagDetailsView(viewModel: vm, tag: tag)
+    }
+    
+    func createTagMapView(tagId: UUID) -> TagMapView {
+        let vm = TagMapViewModel(self,
+                                 tagId: tagId,
+                                 fetchTagPlaces: FetchTagPlaces(repository: placeRepository))
+        return TagMapView(viewModel: vm)
     }
 
     func createGroupListView(showingSideMenu: Binding<Bool>) -> GroupListView {
@@ -272,13 +309,21 @@ final class AppContainer {
     func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
         let vm = GroupDetailsViewModel(self,
                                        locationManager: locationManager,
+                                       coordinator: groupCoordinator,
                                        updateGroup: UpdateGroup(repository: groupRepository),
                                        deleteGroup: DeleteGroup(repository: groupRepository),
                                        fetchGroupPlaces: FetchGroupPlaces(repository: placeRepository),
                                        updatePlace: UpdatePlace(repository: placeRepository))
         return GroupDetailsView(viewModel: vm, group: group)
     }
-    
+
+    func createGroupMapView(groupId: UUID) -> GroupMapView {
+        let vm = GroupMapViewModel(self,
+                                   groupId: groupId,
+                                   fetchGroupPlaces: FetchGroupPlaces(repository: placeRepository))
+        return GroupMapView(viewModel: vm)
+    }
+
     func createLookupPlacesView() -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
                                        coordinator: mainCoordinator,
@@ -345,6 +390,34 @@ final class AppContainer {
         return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
+    // MARK: - private methods
+    private func currentCoordinator() -> any NavigationCoordinator {
+        switch appContext.currentSideMenuContext {
+            case .main:
+                return mainCoordinator
+            case .groups:
+                return groupCoordinator
+            case .tags:
+                return tagCoordinator
+            default:
+                assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
+                return mainCoordinator
+        }
+    }
+    
+    private func currentPlaceCoordinator() -> any PlaceNavigationCoordinator {
+        switch appContext.currentSideMenuContext {
+            case .main:
+                return mainCoordinator
+            case .groups:
+                return groupCoordinator
+            case .tags:
+                return tagCoordinator
+            default:
+                assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
+                return mainCoordinator
+        }
+    }
 }
 
 #if DEBUG

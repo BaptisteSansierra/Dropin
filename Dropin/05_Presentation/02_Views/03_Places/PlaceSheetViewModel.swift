@@ -37,14 +37,14 @@ import CoreLocation
     var thumbnails: [(id: UUID, state: ImageLoadState)] = []
     var selectedImageIndex: Int? = nil
 
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: any PlaceNavigationCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
     @ObservationIgnored private var getPlaceThumbnails: GetPlaceThumbnails
     @ObservationIgnored private var getPlaceImage: GetPlaceImage
 
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: any PlaceNavigationCoordinator,
          locationManager: LocationManager,
          getPlaceThumbnails: GetPlaceThumbnails,
          getPlaceImage: GetPlaceImage) {
@@ -56,8 +56,8 @@ import CoreLocation
     }
     
     // MARK: Navigation
-    func pushPlaceEditView(placeId: UUID) {
-        coordinator.pushPlaceEditView(placeId: placeId)
+    func pushPlaceEditView(placeRef: PlaceUIRef) {
+        coordinator.pushPlaceEditView(placeRef: placeRef)
     }
     
     // MARK: - callbacks and co

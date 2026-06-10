@@ -11,9 +11,11 @@ struct PlaceEditView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: PlaceEditViewModel
-    @Binding private var srcPlace: PlaceUI
     @State private var showMissingName: Bool = false
     @Environment(RootView.ActionBus.self) private var actionBus
+
+    // MARK: - private properties
+    private var srcPlace: PlaceUI
 
     // To be moved in VM
     @State private var editedPlace: PlaceUI
@@ -21,10 +23,10 @@ struct PlaceEditView: View {
     @State private var edited: Bool = false // true if contains some edits
 
     // MARK: - Init
-    init(viewModel: PlaceEditViewModel, place: Binding<PlaceUI>) {
+    init(viewModel: PlaceEditViewModel, place: PlaceUI) {
         self.viewModel = viewModel
-        self._srcPlace = place
-        self.editedPlace = place.wrappedValue.copy()
+        self.srcPlace = place
+        self.editedPlace = place.copy()
     }
     
     // MARK: - Body
@@ -120,7 +122,7 @@ struct PlaceEditView: View {
         let imageIdsToDelete = Array(origDbIds.subtracting(editDbIds))
         let imagesToAdd = frozenEdit.images.filter { $0.dbId == nil }
         // Apply edits
-        srcPlace = frozenEdit
+        srcPlace.update(from: frozenEdit)
         Task {
             do {
                 try await viewModel.updatePlace(frozenEdit,
@@ -156,7 +158,7 @@ struct MockPlaceEditView: View {
     @State var place: PlaceUI
     
     var body: some View {
-        mock.appContainer.createPlaceEditView(place: $place)
+        mock.appContainer.createPlaceEditView(place: place)
     }
     
     init(_ index: Int) {

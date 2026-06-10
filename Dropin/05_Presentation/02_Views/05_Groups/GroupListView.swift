@@ -132,12 +132,27 @@ struct GroupListView: View {
         }
         return viewModel.createGroupDetailsView(group: $groups[index])
     }
+
+    private func createGroupMapView(_ groupId: UUID) -> GroupMapView {
+        //guard let _ = groups.firstIndex(where: { $0.id == groupId }) else {
+        //    fatalError("couldn't find any group id '\(groupId)' in list")
+        //}
+        return viewModel.createGroupMapView(groupId: groupId)
+    }
     
+    private func createPlaceEditView(_ placeRef: PlaceUIRef) -> PlaceEditView {
+        return viewModel.createPlaceEditView(place: placeRef.place)
+    }
+
     @ViewBuilder
     private func resolveDestination(navigationItem: GroupNavigationItem) -> some View {
         switch navigationItem {
             case .groupDetails(let groupId):
                 createGroupDetailsView(groupId)
+            case .groupMap(let groupId):
+                createGroupMapView(groupId)
+            case .groupPlace(let placeRef):
+                createPlaceEditView(placeRef)
             case .undefinedDummyView:
                 ZStack {
                     Color.orange

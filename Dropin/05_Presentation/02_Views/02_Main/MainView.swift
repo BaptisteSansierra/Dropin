@@ -237,7 +237,7 @@ struct MainView: View {
         guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
             fatalError("couldn't find any place '\(placeId)' in list")
         }
-        return viewModel.createPlaceEditView(place: $viewModel.places[index])
+        return viewModel.createPlaceEditView(place: viewModel.places[index])
     }
 
     private func createLookupPlacesView(placeId: UUID) -> LookupPlacesView {

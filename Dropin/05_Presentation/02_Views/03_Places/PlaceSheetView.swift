@@ -137,7 +137,7 @@ struct PlaceSheetView: View {
                 .padding(.leading, place.icon == nil ? 15 : 8)
             Spacer()
             Button {
-                viewModel.pushPlaceEditView(placeId: place.id)
+                viewModel.pushPlaceEditView(placeRef: PlaceUIRef(place: place))
                 dismiss()
             } label: {
                 ZStack {
@@ -469,7 +469,7 @@ struct PlaceSheetView: View {
     }
     
     private func edit() {
-        viewModel.pushPlaceEditView(placeId: place.id)
+        viewModel.pushPlaceEditView(placeRef: PlaceUIRef(place: place))
         dismiss()
     }
 

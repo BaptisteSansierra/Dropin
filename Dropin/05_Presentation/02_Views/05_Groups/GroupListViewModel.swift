@@ -34,6 +34,14 @@ import SwiftUI
         return appContainer.createGroupDetailsView(group: group)
     }
 
+    func createGroupMapView(groupId: UUID) -> GroupMapView {
+        return appContainer.createGroupMapView(groupId: groupId)
+    }
+    
+    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
+        return appContainer.createPlaceEditView(place: place)
+    }
+
     // MARK: Navigation
     func pushGroupDetailsView(groupId: UUID) {
         coordinator.pushGroupDetailsView(groupId: groupId)

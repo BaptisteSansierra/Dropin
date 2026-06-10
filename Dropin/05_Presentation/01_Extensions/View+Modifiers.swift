@@ -14,6 +14,10 @@ extension View {
     func onFirstAppear(_ action: @escaping () -> ()) -> some View {
         modifier(FirstAppear(action: action))
     }
+
+    func taskOnce(_ action: @escaping () async -> ()) -> some View {
+        modifier(TaskOnce(action: action))
+    }
     
     func textStyle(_ style: TextStyleModifier.Style) -> some View {
         modifier(TextStyleModifier(style: style))

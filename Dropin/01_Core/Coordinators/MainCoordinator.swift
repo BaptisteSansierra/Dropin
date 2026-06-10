@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 @MainActor
-@Observable class MainCoordinator {
+@Observable class MainCoordinator: PlaceNavigationCoordinator {
     
     struct NavigationEvent {
         let from: NavigationItem?
@@ -36,8 +36,8 @@ import CoreLocation
     
     // MARK: navigation methods
     
-    func pushPlaceEditView(placeId: UUID) {
-        push(NavigationItem.placeEditView(placeId: placeId))
+    func pushPlaceEditView(placeRef: PlaceUIRef) {
+        push(NavigationItem.placeEditView(placeId: placeRef.place.id))
     }
     
     func pushLookupPlacesView() {
@@ -105,6 +105,9 @@ import CoreLocation
 }
 
 enum NavigationItem: Hashable {
+    
+    // WARNING: Update Kind for any item added / removed
+    
     case placeEditView(placeId: UUID)
     case lookupPlacesView
     case lookupPlacesEditView(placeId: UUID)
@@ -114,7 +117,8 @@ enum NavigationItem: Hashable {
                          marker: String?,
                          tags: [UUID],
                          group: UUID?)
-    case dropAPin
+    //case dropAPin
+    
     // development
     case undefinedDummyView
 }
@@ -125,7 +129,7 @@ extension NavigationItem {
         case lookupPlacesView
         case lookupPlacesEditView
         case placeCreateView
-        case dropAPin
+        //case dropAPin
         case undefinedDummyView
     }
 
@@ -139,8 +143,8 @@ extension NavigationItem {
                 return .lookupPlacesEditView
             case .placeCreateView:
                 return .placeCreateView
-            case .dropAPin:
-                return .dropAPin
+            //case .dropAPin:
+            //    return .dropAPin
             case .undefinedDummyView:
                 return .undefinedDummyView
         }

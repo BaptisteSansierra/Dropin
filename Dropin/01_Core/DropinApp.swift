@@ -12,6 +12,12 @@ import CoreLocation
 // Note:
 // - 'Infer Sendable for Methods and Key Path Literals' set to Yes to avoid SortDescriptor warning (swift6 concurrency) cf. https://stackoverflow.com/questions/79000052/fetchdescriptor-including-sortdescriptor-returns-warning-in-xcode16
 
+
+@MainActor
+@Observable final class AppContext {
+    var currentSideMenuContext: SideMenuContext = .main
+}
+
 @main
 struct DropinApp: App {
     
@@ -19,6 +25,7 @@ struct DropinApp: App {
     private var appContainer: AppContainer
     private var modelContainer: ModelContainer
     private var appSettings = AppSettings()
+    private var appContext = AppContext()
 
     // MARK: - Body
     var body: some Scene {
@@ -107,7 +114,8 @@ struct DropinApp: App {
             #endif
             
             // Create app container
-            appContainer = AppContainer(modelContext: modelContainer.mainContext)
+            appContainer = AppContainer(modelContext: modelContainer.mainContext,
+                                        appContext: appContext)
             self.modelContainer = modelContainer
 
         } catch {

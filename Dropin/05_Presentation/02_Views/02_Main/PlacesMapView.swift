@@ -51,20 +51,7 @@ struct PlacesMapView: View {
             ZStack(alignment: .top) {
                 creationDialogPlaceholderView
                 
-                /*
-                init(config: Configuration,
-                     places: [PlaceUI],
-                     tempPlace: PlaceUI? = nil,
-                     selectedPlaceId: Binding<UUID?>,
-                     onPlaceSelected: ((UUID) -> Void)? = nil,
-                     onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
-                     onMapCameraUpdate: MapCameraUpdateHandler? = nil,
-                     isSelectionEnabled: @escaping (() -> Bool),
-                     mapReloadGen: Int = 0,
-                     bottomInset: CGFloat = 0) {
-                 */
-
-                
+                // Map with bottom inset for card
                 PlacesMKMapVCR(config: .interactive,
                                mapController: viewModel.mapController,
                                places: places,
@@ -75,16 +62,7 @@ struct PlacesMapView: View {
                                isSelectionEnabled: viewModel.isSelectionEnabled,
                                mapReloadGen: mapReloadGen,
                                bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
-                
-/*
-                // Map with bottom inset for card
-                PlacesMapViewVCRepresentable(viewModel: viewModel,
-                                             places: places,
-                                             selectedPlaceId: $selectedPlaceId,
-                                             mapReloadGen: mapReloadGen,
-                                             bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
-*/
- 
+                 
                 if viewModel.pickingAddress || viewModel.pickingCoordinates {
                     pickingMarkerView
                         .allowsHitTesting(false)

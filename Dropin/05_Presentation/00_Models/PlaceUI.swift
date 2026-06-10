@@ -9,6 +9,12 @@ import SwiftUI
 import CoreLocation
 import ContactFieldKit
 
+struct PlaceUIRef: Hashable {
+    let place: PlaceUI
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.place.id == rhs.place.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(place.id) }
+}
+
 struct PlaceImageUI: Identifiable {
     let id: UUID            // local identity, always set
     var dbId: UUID?         // nil = not yet in DB
@@ -139,6 +145,23 @@ struct PlaceImageUI: Identifiable {
                        createdAt: createdAt,
                        updatedAt: updatedAt,
                        deletedAt: deletedAt)
+    }
+    
+    func update(from other: PlaceUI) {
+        name        = other.name
+        coordinates = other.coordinates
+        address     = other.address
+        address2    = other.address2
+        tags        = other.tags
+        group       = other.group
+        images      = other.images
+        icon        = other.icon
+        rating      = other.rating
+        phone       = other.phone
+        email       = other.email
+        url         = other.url
+        notes       = other.notes
+        updatedAt   = Date()
     }
     
     func isContentEqual(_ other: PlaceUI) -> Bool {

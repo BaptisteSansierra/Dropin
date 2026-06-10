@@ -285,28 +285,28 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
 
 // MARK: Coordinator
 extension PlacesMKMapVCR {
-
+    
     @MainActor
-    class Coordinator: NSObject, MKMapViewDelegate {
-
+    class Coordinator: NSObject {
+        
         fileprivate var config: Configuration
         fileprivate var annotationViewFactory: AnnotationViewFactory
         fileprivate var mapSettings: MapSettings
-
+        
         private let onPlaceSelected: ((UUID) -> Void)
         private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
         private let onMapCameraUpdate: MapCameraUpdateHandler?
         private let isSelectionEnabled: (() -> Bool)
         private(set) var pendingCoordinate: CLLocationCoordinate2D? = nil
-
+        
         var lastReloadGen: Int = 0
         weak var mapView: MKMapView?
-
+        
         // Annotation update guard
         var lastActiveIds: Set<UUID> = []
         // Label visibility state
         private var labelsVisible: Bool = true
-
+        
         // MARK: init
         init(config: Configuration,
              mapSettings: MapSettings,
@@ -331,36 +331,110 @@ extension PlacesMKMapVCR {
         // MARK: - gestures
         @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
             /*
-            guard !viewModel.pickingAddress else { return }
-            guard !viewModel.pickingCoordinates else { return }
-            guard gesture.state == .began else { return }
-            
-            let mapView = gesture.view as! MKMapView
-            let point = gesture.location(in: mapView)
-            let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
-            
-            viewModel.preparePlaceFromCoords(coords: coordinates)
-            viewModel.mapActionBus.performAction(.updateData)
-            
-            // Show the creation sheet
-            viewModel.showQuickCreateSheet.toggle()
-            // Center map on new place
-            centerOn(mapView, coords: coordinates, animated: true, sheetHeight: 400)
+             guard !viewModel.pickingAddress else { return }
+             guard !viewModel.pickingCoordinates else { return }
+             guard gesture.state == .began else { return }
+             
+             let mapView = gesture.view as! MKMapView
+             let point = gesture.location(in: mapView)
+             let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
+             
+             viewModel.preparePlaceFromCoords(coords: coordinates)
+             viewModel.mapActionBus.performAction(.updateData)
+             
+             // Show the creation sheet
+             viewModel.showQuickCreateSheet.toggle()
+             // Center map on new place
+             centerOn(mapView, coords: coordinates, animated: true, sheetHeight: 400)
              */
             
-
+            
             guard let onLongPress = onLongPress else { return }
             // TODO: guard picking
             guard gesture.state == .began else { return }
-
+            
             let mapView = gesture.view as! MKMapView
             let point = gesture.location(in: mapView)
             let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
-
+            
             onLongPress(coordinates)
         }
         
-        // MARK: - MKMapViewDelegate
+        func fitAll(animated: Bool) {
+            guard let mapView else { return }
+            let placeAnnotations = mapView.annotations.compactMap { $0 as? MKPlaceAnnotation }
+            guard !placeAnnotations.isEmpty else { return }
+            mapView.showAnnotations(placeAnnotations, animated: animated)
+        }
+        
+        func centerOn(coords: CLLocationCoordinate2D,
+                      withSheetOffset: Bool,
+                      animated: Bool = true) {
+            guard let mapView = mapView else { return }
+            centerOn(mapView,
+                     coords: coords,
+                     withSheetOffset: withSheetOffset,
+                     animated: true)
+        }
+        
+        func updatePendingCoordinate(_ coords: CLLocationCoordinate2D) {
+            guard pendingCoordinate != coords else { return }
+            pendingCoordinate = coords
+            centerOn(coords: coords,
+                     withSheetOffset: true,
+                     animated: true)
+        }
+        
+        func resetPendingCoordinate() {
+            pendingCoordinate = nil
+        }
+        
+        // MARK: - private methods
+        private func centerOn(_ mapView: MKMapView,
+                              coords: CLLocationCoordinate2D,
+                              withSheetOffset: Bool,
+                              animated: Bool = true) {
+            
+            let sheetHeight: CGFloat? = withSheetOffset ? 400 : nil // FIXME: this value should be provided somehow
+            let comfortableSpan: CLLocationDistance = 1_500 // 1500 meters
+            
+            let bottomPadding = sheetHeight ?? 0
+            
+            // -- Case 1: zoom in needed (current view is wider than comfortable) --
+            let metersPerMP   = MKMetersPerMapPointAtLatitude(coords.latitude)
+            let comfortable   = comfortableSpan / metersPerMP
+            let current       = mapView.visibleMapRect.size.width
+            
+            if current > comfortable {
+                let p = MKMapPoint(coords)
+                let rect = MKMapRect(x: p.x - comfortable/2,
+                                     y: p.y - comfortable/2,
+                                     width: comfortable,
+                                     height: comfortable)
+                mapView.setVisibleMapRect(
+                    rect,
+                    edgePadding: UIEdgeInsets(top: 0, left: 0,
+                                              bottom: bottomPadding, right: 0),
+                    animated: animated)
+                return
+            }
+            // else: already close enough — fall through to pan-only
+            
+            // -- Case 2: pan only (preserve zoom), apply sheet offset --
+            guard bottomPadding > 0 else {
+                mapView.setCenter(coords, animated: animated)
+                return
+            }
+            let upwardShift = bottomPadding / 2
+            let pinNow      = mapView.convert(coords, toPointTo: mapView)
+            let newCenterPt = CGPoint(x: pinNow.x, y: pinNow.y + upwardShift)
+            let newCenter   = mapView.convert(newCenterPt, toCoordinateFrom: mapView)
+            mapView.setCenter(newCenter, animated: animated)
+        }
+    }
+}
+    // MARK: - MKMapViewDelegate
+    extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             annotationViewFactory.view(for: annotation, in: mapView)
         }
@@ -426,73 +500,8 @@ extension PlacesMKMapVCR {
                               mapView.region,
                               mapView.visibleMapRect)
         }
-        
-        func centerOn(coords: CLLocationCoordinate2D,
-                      withSheetOffset: Bool,
-                      animated: Bool = true) {
-            guard let mapView = mapView else { return }
-            centerOn(mapView,
-                     coords: coords,
-                     withSheetOffset: withSheetOffset,
-                     animated: true)
-        }
-
-        func updatePendingCoordinate(_ coords: CLLocationCoordinate2D) {
-            guard pendingCoordinate != coords else { return }
-            pendingCoordinate = coords
-            centerOn(coords: coords,
-                     withSheetOffset: true,
-                     animated: true)
-        }
-        
-        func resetPendingCoordinate() {
-            pendingCoordinate = nil
-        }
-        
-        // MARK: - private methods
-        private func centerOn(_ mapView: MKMapView,
-                              coords: CLLocationCoordinate2D,
-                              withSheetOffset: Bool,
-                              animated: Bool = true) {
-            
-            let sheetHeight: CGFloat? = withSheetOffset ? 400 : nil // FIXME: this value should be provided somehow
-            let comfortableSpan: CLLocationDistance = 1_500 // 1500 meters
-
-            let bottomPadding = sheetHeight ?? 0
-
-            // -- Case 1: zoom in needed (current view is wider than comfortable) --
-            let metersPerMP   = MKMetersPerMapPointAtLatitude(coords.latitude)
-            let comfortable   = comfortableSpan / metersPerMP
-            let current       = mapView.visibleMapRect.size.width
-
-            if current > comfortable {
-                let p = MKMapPoint(coords)
-                let rect = MKMapRect(x: p.x - comfortable/2,
-                                     y: p.y - comfortable/2,
-                                     width: comfortable,
-                                     height: comfortable)
-                mapView.setVisibleMapRect(
-                    rect,
-                    edgePadding: UIEdgeInsets(top: 0, left: 0,
-                                              bottom: bottomPadding, right: 0),
-                    animated: animated)
-                return
-            }
-            // else: already close enough — fall through to pan-only
-
-            // -- Case 2: pan only (preserve zoom), apply sheet offset --
-            guard bottomPadding > 0 else {
-                mapView.setCenter(coords, animated: animated)
-                return
-            }
-            let upwardShift = bottomPadding / 2
-            let pinNow      = mapView.convert(coords, toPointTo: mapView)
-            let newCenterPt = CGPoint(x: pinNow.x, y: pinNow.y + upwardShift)
-            let newCenter   = mapView.convert(newCenterPt, toCoordinateFrom: mapView)
-            mapView.setCenter(newCenter, animated: animated)
-        }
     }
-}
+
 
 
 

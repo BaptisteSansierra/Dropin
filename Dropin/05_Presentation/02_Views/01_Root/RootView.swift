@@ -53,7 +53,7 @@ struct RootView: View {
         ZStack {
             currentContentView
             SideMenuView(showingSideMenu: $viewModel.showingSideMenu,
-                         currentSideMenuContext: $viewModel.currentSideMenuContext)
+                         currentSideMenuContext: $viewModel.appContext.currentSideMenuContext)
         }
         .task {
             // Make life fun, switch app icon
@@ -67,7 +67,10 @@ struct RootView: View {
 
     @ViewBuilder
     private var currentContentView: some View {
-        switch viewModel.currentSideMenuContext {
+        //let currentSideMenuContext = viewModel.currentSideMenuContext.wrappedValue
+        printInViewBuilder("🟡 createPlaceSheetView reads → \(viewModel.appContext.currentSideMenuContext)")
+        
+        switch viewModel.appContext.currentSideMenuContext {
             case .main:
                 viewModel.createMainView()
             case .groups:

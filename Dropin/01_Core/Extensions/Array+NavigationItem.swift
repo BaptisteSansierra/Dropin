@@ -13,3 +13,4 @@ extension Array where Element == NavigationItem {
         contains { $0.kind == kind }
     }
 }
+
