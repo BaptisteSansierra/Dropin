@@ -138,6 +138,15 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         try modelContext.save()
     }
 
+    func clearTable() async throws {
+        // Batch delete is more efficient but has a limitation, it can't honor relationship rules, may be fixed at some point ?...
+        // try modelContext.delete(model: SDPlace.self)
+
+        let all = try modelContext.fetch(FetchDescriptor<SDPlace>())
+        for item in all { modelContext.delete(item) }
+        try modelContext.save()
+    }
+
     // MARK: private methods
     private func retrievePlace(domainPlace: PlaceEntity) async throws -> SDPlace {
         return try await retrievePlace(uuid: domainPlace.id)

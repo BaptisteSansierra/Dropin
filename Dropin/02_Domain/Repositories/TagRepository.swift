@@ -17,4 +17,5 @@ protocol TagRepository {
     func fetchWithPlaceCount() async throws -> [(TagEntity, Int)]
     func fetch(_ id: UUID) async throws -> TagEntity
     func upsert(_ tag: TagEntity) async throws
+    func clearTable() async throws
 }

@@ -67,4 +67,8 @@ final class MockGroupRepository: GroupRepository {
             groups.append(group)
         }
     }
+    
+    func clearTable() async throws {
+        groups.removeAll()
+    }
 }

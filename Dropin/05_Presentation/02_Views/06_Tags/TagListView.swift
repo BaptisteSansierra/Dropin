@@ -9,11 +9,19 @@ import SwiftUI
 
 struct TagListView: View {
     
+    // Create a specific struct so Now each row's body is its own observation context.
+    // Then when tag.name changes via the detail view's mutation, only that row's body re-evaluates
+    private struct TagListRow: View {
+        let tag: TagUI       // TagUI is @Observable; tag is a reference
+        var body: some View {
+            TagView(name: tag.name, color: tag.color)
+            //            ^^^^^^^^         ^^^^^^^^^
+            //       read happens inside TagListRow's body — observation is per-row
+        }
+    }
+
     // MARK: - State & Bindings
     @State private var viewModel: TagListViewModel
-    @State private var tags: [TagUI] = [TagUI]()
-    @State private var showingRemoveAlert: Bool = false
-    @State private var tagToRemove: TagUI? = nil
     @Binding private var showingSideMenu: Bool
         
     // MARK: - init
@@ -26,14 +34,15 @@ struct TagListView: View {
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
             List {
-                ForEach(tags) { tag in
-                    if tag.isActive {
+                ForEach(viewModel.tags) { tag in
+                    //if tag.isActive {
                         tagRow(tag)
-                    }
+                    //}
                 }
             }
             .overlay {
-                if tags.filter(\.isActive).isEmpty {
+                //if viewModel.tags.filter(\.isActive).isEmpty {
+                if viewModel.tags.isEmpty {
                     placeholderView
                 }
             }
@@ -44,18 +53,18 @@ struct TagListView: View {
             }
             .task{
                 Task {
-                    tags = try await viewModel.loadTags()
+                    try await viewModel.loadTags()
                 }
             }
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
             }
             .alert("alert.remove_tag_title",
-                   isPresented: $showingRemoveAlert,
-                   presenting: tagToRemove) { tag in
+                   isPresented: $viewModel.showingRemoveAlert,
+                   presenting: viewModel.tagToRemove) { tag in
                 
                 Button("common.cancel", role: .cancel) {
-                    tagToRemove = nil
+                    viewModel.tagToRemove = nil
                 }
                 Button("common.delete", role: .destructive) {
                     Task {
@@ -82,7 +91,7 @@ struct TagListView: View {
     
     private func tagRow(_ tag: TagUI) -> some View {
         HStack {
-            TagView(name: tag.name, color: tag.color)
+            TagListRow(tag: tag)
             Spacer()
             let nPlaces = tag.placeCount
             Text("tag_list_view.num_places_\(nPlaces)")
@@ -104,18 +113,16 @@ struct TagListView: View {
     
     // MARK: - Actions
     private func deleteTagCallback(_ tag: TagUI) {
-        tagToRemove = tag
-        showingRemoveAlert = true
+        viewModel.tagToRemove = tag
+        viewModel.showingRemoveAlert = true
     }
     
     private func deleteTag(_ tagId: UUID) async {
-        guard let index = tags.firstIndex(where: { $0.id == tagId }) else {
+        guard let index = viewModel.tags.firstIndex(where: { $0.id == tagId }) else {
             fatalError("couldn't find any tag id '\(tagId)' in list")
         }
         do {
-            try await viewModel.deleteTag(tags[index])
-            tagToRemove = nil
-            tags = try await viewModel.loadTags()
+            try await viewModel.softDeleteTag(index)
         } catch {
             // TODO: handle error
             assertionFailure("couldn't delete tag")
@@ -123,10 +130,10 @@ struct TagListView: View {
     }
     
     private func createTagDetailsView(_ tagId: UUID) -> TagDetailsView {
-        guard let index = tags.firstIndex(where: { $0.id == tagId }) else {
+        guard let index = viewModel.tags.firstIndex(where: { $0.id == tagId }) else {
             fatalError("couldn't find any tag id '\(tagId)' in list")
         }
-        return viewModel.createTagDetailsView(tag: $tags[index])
+        return viewModel.createTagDetailsView(tag: viewModel.tags[index])
     }
     
     private func createTagMapView(_ tagId: UUID) -> TagMapView {

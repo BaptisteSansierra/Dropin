@@ -32,8 +32,7 @@ struct PlaceImageUI: Identifiable {
 }
 
 @MainActor
-@Observable class PlaceUI: Identifiable, @MainActor Equatable {
-
+@Observable class PlaceUI: Identifiable {
     let id: UUID
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
@@ -77,10 +76,6 @@ struct PlaceImageUI: Identifiable {
         hasher.combine(url.map(\.rawValue))
         hasher.combine(notes)
         return hasher.finalize()
-    }
-
-    static func == (lhs: PlaceUI, rhs: PlaceUI) -> Bool {
-        lhs.id == rhs.id
     }
     
     init(id: UUID,
@@ -170,8 +165,8 @@ struct PlaceImageUI: Identifiable {
         guard coordinates == other.coordinates else { return false }
         guard address == other.address else { return false }
         guard address2 == other.address2 else { return false }
-        guard tags == other.tags else { return false }
-        guard group == other.group else { return false }
+        guard tags.map({ $0.id }) == other.tags.map({ $0.id }) else { return false }
+        guard group.map({ $0.id }) == other.group.map({ $0.id }) else { return false }
         guard icon == other.icon else { return false }
         guard rating == other.rating else { return false }
         guard phone == other.phone else { return false }

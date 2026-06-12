@@ -20,6 +20,7 @@ final class MockContainer {
     let locationManager: LocationManager = LocationManager()
     let addressLookupService: AddressLookupService
     let reachabilityService: ReachabilityService = ReachabilityService()
+    let profileService: StubProfileService = StubProfileService()
 
     init() {
         addressLookupService = AddressLookupService(locationManager: locationManager)
@@ -38,12 +39,19 @@ final class MockContainer {
                                              appContext: AppContext(),
                                              locationManager: locationManager,
                                              addressLookupService: addressLookupService,
-                                             reachabilityService: reachabilityService)
+                                             reachabilityService: reachabilityService,
+                                             profileService: profileService)
             
             try AppContainer.insertMockData(modelContext: mockModelContext)
             
         } catch {
             fatalError("couldn't create mock data \(error)")
+        }
+    }
+    
+    func loadProfile() {
+        Task {
+            await profileService.load()
         }
     }
 

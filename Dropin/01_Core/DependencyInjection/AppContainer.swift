@@ -31,9 +31,15 @@ final class AppContainer {
     private let addressLookupService: AddressLookupService
     private let reachabilityService: ReachabilityService
     private let supabaseService: SupabaseService?
-    let authService: any AuthServiceProtocol
-    let profileService: any ProfileServiceProtocol
+    private let authService: any AuthServiceProtocol
+    private let authStatus: AuthStatus
+    private let profileService: any ProfileServiceProtocol
     private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
+
+    /// Narrow auth-state surface for routing (no full `AuthStatus` exposed).
+    /// Reading this from a view body registers observation on both
+    /// `isRestoring` and `authService.session` because both are `@Observable`.
+    var authState: AuthStatus.State { authStatus.state }
 
     init(modelContext: ModelContext,
          appContext: AppContext) {
@@ -51,6 +57,7 @@ final class AppContainer {
         let authService = AuthService(client: supabaseService.client)
         self.supabaseService = supabaseService
         self.authService = authService
+        self.authStatus = AuthStatus(authService: authService)
         // Local repos (raw — used by SyncService for push)
         let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext)
         let localGroupRepo = GroupRepositoryImpl(modelContext: modelContext)
@@ -92,7 +99,8 @@ final class AppContainer {
          appContext: AppContext,
          locationManager: LocationManager,
          addressLookupService: AddressLookupService,
-         reachabilityService: ReachabilityService) {
+         reachabilityService: ReachabilityService,
+         profileService: StubProfileService) {
         self.appContext = appContext
         // Coordinators
         mainCoordinator = MainCoordinator()
@@ -107,6 +115,7 @@ final class AppContainer {
         let authService = StubAuthService()
         let syncService = StubSyncService()
         self.authService = authService
+        self.authStatus = AuthStatus(authService: authService)
         self.syncService = syncService
         // Repos — no syncing wrapper needed (stub would no-op anyway)
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
@@ -115,7 +124,7 @@ final class AppContainer {
         imageRepository = ImageRepositoryImpl(modelContext: modelContext)
         profileRepository = ProfileRepositoryImpl(modelContext: modelContext)
         imageLoader = ImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
-        profileService = StubProfileService()
+        self.profileService = profileService
     }
     #endif
 
@@ -127,11 +136,87 @@ final class AppContainer {
         await syncService.syncAll()
     }
 
-    func restoreSession() async {
-        await authService.restoreSession()
+    func loadProfile() async {
+        await profileService.load()
     }
 
+    func restoreSession() async {
+        authStatus.isRestoring = true
+        await authService.restoreSession()
+        authStatus.isRestoring = false
+    }
+
+    // MARK: - sign-out
+
+    enum SignOutError: Error, Equatable {
+        case offlineWithPendingChanges(count: Int)
+        case syncFailedWithPendingChanges(count: Int)
+    }
+
+    /// Signs the user out and wipes local data.
+    /// - If `force == false` and there are pending changes:
+    ///   - online → attempts a sync first; if it leaves changes pending, throws
+    ///     `.syncFailedWithPendingChanges`.
+    ///   - offline → throws `.offlineWithPendingChanges`.
+    /// - If `force == true`, skips the sync check entirely. Use after the user
+    ///   has accepted that unsynced changes will be lost.
+    ///
+    /// Cleanup order (intentional): try sync → in-memory caches → local data
+    /// → session. The session flip is last so the UI only switches to AuthView
+    /// once everything else is clean.
+    func signOut(force: Bool = false) async throws {
+        if !force {
+            // User chose not to force, cancel the signout if there's some pending sync actions
+            let pending = syncService.pendingChangeCount
+            if pending > 0 {
+                guard reachabilityService.isConnected else {
+                    throw SignOutError.offlineWithPendingChanges(count: pending)
+                }
+                await syncService.syncAll()
+                let stillPending = syncService.pendingChangeCount
+                if stillPending > 0 {
+                    throw SignOutError.syncFailedWithPendingChanges(count: stillPending)
+                }
+            }
+        }
+        // ICI CHECK FORCE/NOT FORCE TODO
+        
+        // 1. In-memory caches
+        profileService.clear()
+        // 2. Navigation state (reset coordinators + side menu)
+        mainCoordinator.popToRoot()
+        tagCoordinator.path.removeAll()
+        groupCoordinator.path.removeAll()
+        appContext.currentSideMenuContext = .main
+        // 3. Local data
+        try await clearDatabase()
+        syncService.reset()
+        // 4. Session — last; AuthStatus flips → root switches to AuthView
+        try await authService.signOut()
+    }
+    
     // MARK: - create views
+    func createAuthView() -> AuthView {
+        let vm = AuthViewModel(authService: authService)
+        return AuthView(viewModel: vm)
+    }
+
+    func createProfileView() -> ProfileView {
+        let vm = ProfileViewModel(appContainer: self,
+                                  profileService: profileService)
+        return ProfileView(viewModel: vm)
+    }
+
+    func createSideMenuView(showingSideMenu: Binding<Bool>,
+                            currentSideMenuContext: Binding<SideMenuContext>,
+                            showingProfileSheet: Binding<Bool>) -> SideMenuView {
+        let vm = SideMenuViewModel(profileService: profileService,
+                                   showingProfileSheet: showingProfileSheet)
+        return SideMenuView(viewModel: vm,
+                            showingSideMenu: showingSideMenu,
+                            currentSideMenuContext: currentSideMenuContext)
+    }
+
     func createRootView() -> RootView {
 //        let currentSideMenuContextB = Binding<SideMenuContext> {
 //            let v = self.appContext.currentSideMenuContext
@@ -233,7 +318,7 @@ final class AppContainer {
         let vm = PlaceEditContentViewModel(self,
                                            coordinator: mainCoordinator,
                                            updatePlace: UpdatePlace(repository: placeRepository),
-                                           deletePlace: DeletePlace(repository: placeRepository),
+                                           //deletePlace: DeletePlace(repository: placeRepository),
                                            getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                            getPlaceImage: GetPlaceImage(loader: imageLoader),
                                            mode: mode)
@@ -274,20 +359,23 @@ final class AppContainer {
         let vm = TagListViewModel(self,
                                   coordinator: tagCoordinator,
                                   fetchTagsWithCount: FetchTagsWithCount(repository: tagRepository),
-                                  deleteTag: DeleteTag(repository: tagRepository),
+                                  updateTag: UpdateTag(repository: tagRepository),
+                                  //deleteTag: DeleteTag(repository: tagRepository),
                                   syncStatus: syncService.syncStatus)
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
-    func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
+    func createTagDetailsView(tag: TagUI) -> TagDetailsView {
         let vm = TagDetailsViewModel(self,
                                      locationManager: locationManager,
                                      coordinator: tagCoordinator,
+                                     tag: tag,
                                      updateTag: UpdateTag(repository: tagRepository),
-                                     deleteTag: DeleteTag(repository: tagRepository),
+                                     //deleteTag: DeleteTag(repository: tagRepository),
                                      fetchTagPlaces: FetchTagPlaces(repository: placeRepository),
                                      updatePlace: UpdatePlace(repository: placeRepository))
-        return TagDetailsView(viewModel: vm, tag: tag)
+        return TagDetailsView(viewModel: vm)
+        //return TagDetailsView(viewModel: vm, tag: tag)
     }
     
     func createTagMapView(tagId: UUID) -> TagMapView {
@@ -301,20 +389,21 @@ final class AppContainer {
         let vm = GroupListViewModel(self,
                                     coordinator: groupCoordinator,
                                     fetchGroupsWithCount: FetchGroupsWithCount(repository: groupRepository),
-                                    deleteGroup: DeleteGroup(repository: groupRepository),
+                                    updateGroup: UpdateGroup(repository: groupRepository),
+                                    //deleteGroup: DeleteGroup(repository: groupRepository),
                                     syncStatus: syncService.syncStatus)
         return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
-    func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
+    func createGroupDetailsView(group: GroupUI) -> GroupDetailsView {
         let vm = GroupDetailsViewModel(self,
                                        locationManager: locationManager,
                                        coordinator: groupCoordinator,
+                                       group: group,
                                        updateGroup: UpdateGroup(repository: groupRepository),
-                                       deleteGroup: DeleteGroup(repository: groupRepository),
                                        fetchGroupPlaces: FetchGroupPlaces(repository: placeRepository),
                                        updatePlace: UpdatePlace(repository: placeRepository))
-        return GroupDetailsView(viewModel: vm, group: group)
+        return GroupDetailsView(viewModel: vm)
     }
 
     func createGroupMapView(groupId: UUID) -> GroupMapView {
@@ -417,6 +506,17 @@ final class AppContainer {
                 assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
                 return mainCoordinator
         }
+    }
+    
+    private func clearDatabase() async throws {
+        // Places first: cascade-deletes their images, nullifies tag/group refs
+        try await placeRepository.clearTable()
+        try await tagRepository.clearTable()
+        try await groupRepository.clearTable()
+        // Should be empty already, just in case...
+        try await imageRepository.clearTable()
+        // Independant from others
+        try await profileRepository.clearTable()
     }
 }
 

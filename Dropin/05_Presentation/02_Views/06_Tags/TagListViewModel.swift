@@ -12,25 +12,37 @@ import SwiftUI
     
     var coordinator: TagCoordinator
     var syncStatus: SyncStatus
+    var tags: [TagUI] = []
+    var showingRemoveAlert: Bool = false
+    var tagToRemove: TagUI? = nil
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchTagsWithCount: FetchTagsWithCount
-    @ObservationIgnored private var deleteTag: DeleteTag
+    @ObservationIgnored private var updateTag: UpdateTag
 
     init(_ appContainer: AppContainer,
          coordinator: TagCoordinator,
          fetchTagsWithCount: FetchTagsWithCount,
-         deleteTag: DeleteTag,
+         updateTag: UpdateTag,
          syncStatus: SyncStatus) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.fetchTagsWithCount = fetchTagsWithCount
-        self.deleteTag = deleteTag
+        self.updateTag = updateTag
         self.syncStatus = syncStatus
     }
     
+    // MARK: Actions
+    func softDeleteTag(_ index: Int) async throws {
+        // TODO: DRO-24 implement delete stategy
+        tags[index].deletedAt = Date()
+        try await updateTag(tags[index])
+        tags.remove(at: index)
+        tagToRemove = nil
+    }
+    
     // MARK: UI Child
-    func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
+    func createTagDetailsView(tag: TagUI) -> TagDetailsView {
         return appContainer.createTagDetailsView(tag: tag)
     }
 
@@ -48,17 +60,15 @@ import SwiftUI
     }
 
     // MARK: use cases
-    func loadTags() async throws -> [TagUI] {
+    func loadTags() async throws {
         let result = try await fetchTagsWithCount()
-        let items = result.map { TagMapper.toUI($0, placeCount: $1) }
-        return items
+        let items = result
+            .map { TagMapper.toUI($0, placeCount: $1) }
+            .filter { $0.isActive }
+        tags = items
     }
     
-    func deleteTag(_ tag: TagUI) async throws {
-        try await deleteTag(TagMapper.toDomain(tag))
-        if tag.deletedAt == nil {
-            assertionFailure("Model should have been marked deleted already for SwiftUI safety")
-            tag.deletedAt = Date()
-        }
+    private func updateTag(_ tag: TagUI) async throws {
+        try await updateTag(TagMapper.toDomain(tag))
     }
 }

@@ -12,7 +12,7 @@ struct TagEntity: Hashable, Sendable {
     let name: String
     let color: String
     let createdAt: Date
-    let updatedAt: Date
+    var updatedAt: Date
     let deletedAt: Date?
     // Note: places are not stored here to avoid bidirectional relationships
     // PlaceEntity owns the relationship
@@ -40,6 +40,12 @@ struct TagEntity: Hashable, Sendable {
         self.createdAt = now
         self.updatedAt = now
         self.deletedAt = nil
+    }
+    
+    func updated() -> TagEntity {
+        var copy = self
+        copy.updatedAt = Date()
+        return copy
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {

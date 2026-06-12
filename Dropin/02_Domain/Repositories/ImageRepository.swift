@@ -40,4 +40,6 @@ protocol ImageRepository: Sendable {
     /// Inserts an empty stub for an image discovered on remote. Data is downloaded lazily on demand.
     func insertSynced(id: UUID, placeId: UUID) async throws
     func localImageIds(placeId: UUID) async throws -> Set<UUID>
+
+    func clearTable() async throws
 }

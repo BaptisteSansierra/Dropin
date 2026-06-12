@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-@Observable class TagUI: Identifiable, @MainActor Equatable {
+@Observable class TagUI: Identifiable {
 
     let id: UUID
     var name: String
@@ -25,10 +25,6 @@ import SwiftUI
         deletedAt == nil
     }
     
-    static func == (lhs: TagUI, rhs: TagUI) -> Bool {
-        lhs.id == rhs.id
-    }
-
     init(id: UUID,
          name: String,
          color: String,

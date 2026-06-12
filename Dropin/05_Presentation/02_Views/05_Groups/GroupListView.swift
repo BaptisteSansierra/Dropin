@@ -9,11 +9,16 @@ import SwiftUI
 
 struct GroupListView: View {
     
+    // Create a specific struct so Now each row's body is its own observation context.
+    private struct GroupListRow: View {
+        let group: GroupUI
+        var body: some View {
+            GroupView(group: group, size: .regular)
+        }
+    }
+
     // MARK: - State & Bindings
     @State private var viewModel: GroupListViewModel
-    @State private var groups: [GroupUI] = [GroupUI]()
-    @State private var showingRemoveAlert: Bool = false
-    @State private var groupToRemove: GroupUI? = nil    
     @Binding private var showingSideMenu: Bool
         
     // MARK: - init
@@ -26,14 +31,15 @@ struct GroupListView: View {
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
             List {
-                ForEach(groups) { group in
-                    if group.isActive {
+                ForEach(viewModel.groups) { group in
+                    //if group.isActive {
                         groupRow(group)
-                    }
+                    //}
                 }
             }
             .overlay {
-                if groups.filter(\.isActive).isEmpty {
+                //if groups.filter(\.isActive).isEmpty {
+                if viewModel.groups.isEmpty {
                     placeholderView
                 }
             }
@@ -45,7 +51,7 @@ struct GroupListView: View {
             .onAppear {
                 Task {
                     do {
-                        groups = try await viewModel.loadGroups()
+                        try await viewModel.loadGroups()
                     } catch {
                         // TODO: handle error
                     }
@@ -55,11 +61,11 @@ struct GroupListView: View {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
             }
             .alert("alert.remove_group_title",
-                   isPresented: $showingRemoveAlert,
-                   presenting: groupToRemove) { group in
+                   isPresented: $viewModel.showingRemoveAlert,
+                   presenting: viewModel.groupToRemove) { group in
                 
                 Button("common.cancel", role: .cancel) {
-                    groupToRemove = nil
+                    viewModel.groupToRemove = nil
                 }
                 Button("common.delete", role: .destructive) {
                     Task {
@@ -86,7 +92,7 @@ struct GroupListView: View {
 
     private func groupRow(_ group: GroupUI) -> some View {
         HStack {
-            GroupView(group: group, size: .regular)
+            GroupListRow(group: group)
             Spacer()
             let nPlaces = group.placeCount
             Text("group_list_view.num_places_\(nPlaces)")
@@ -108,18 +114,16 @@ struct GroupListView: View {
     
     // MARK: - Actions
     private func deleteGroupCallback(_ group: GroupUI) {
-        groupToRemove = group
-        showingRemoveAlert = true
+        viewModel.groupToRemove = group
+        viewModel.showingRemoveAlert = true
     }
     
     private func deleteGroup(_ groupId: UUID) async {
-        guard let index = groups.firstIndex(where: { $0.id == groupId }) else {
+        guard let index = viewModel.groups.firstIndex(where: { $0.id == groupId }) else {
             fatalError("couldn't find any group id '\(groupId)' in list")
         }
         do {
-            try await viewModel.deleteGroup(groups[index])
-            groupToRemove = nil
-            groups = try await viewModel.loadGroups()
+            try await viewModel.softDeleteGroup(index)
         } catch {
             // TODO: handle error
             assertionFailure("couldn't delete group")
@@ -127,10 +131,10 @@ struct GroupListView: View {
     }
     
     private func createGroupDetailsView(_ groupId: UUID) -> GroupDetailsView {
-        guard let index = groups.firstIndex(where: { $0.id == groupId }) else {
+        guard let index = viewModel.groups.firstIndex(where: { $0.id == groupId }) else {
             fatalError("couldn't find any group id '\(groupId)' in list")
         }
-        return viewModel.createGroupDetailsView(group: $groups[index])
+        return viewModel.createGroupDetailsView(group: viewModel.groups[index])
     }
 
     private func createGroupMapView(_ groupId: UUID) -> GroupMapView {

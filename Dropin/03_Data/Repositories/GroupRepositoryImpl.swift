@@ -43,7 +43,9 @@ public final class GroupRepositoryImpl: GroupRepository {
     func update(_ group: GroupEntity) async throws {
         let model = try await retrieveGroup(domainGroup: group)
         model.name = group.name
+        model.icon = group.icon
         model.color = group.color
+        model.deletedAt = group.deletedAt
         model.updatedAt = group.updatedAt
         try modelContext.save()
     }
@@ -87,6 +89,11 @@ public final class GroupRepositoryImpl: GroupRepository {
             let sdGroup = GroupMapper.toData(group)
             modelContext.insert(sdGroup)
         }
+        try modelContext.save()
+    }
+    
+    func clearTable() async throws {
+        try modelContext.delete(model: SDGroup.self)
         try modelContext.save()
     }
     

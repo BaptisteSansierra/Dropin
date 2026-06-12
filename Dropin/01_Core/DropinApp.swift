@@ -30,24 +30,10 @@ struct DropinApp: App {
     // MARK: - Body
     var body: some Scene {
         WindowGroup {
-            appContainer.createRootView()
+            rootContent
                 .task {
                     appContainer.startLocationManager()
                     await appContainer.restoreSession()
-                    
-                    // TEMP smoke test — remove once the auth UI exists.
-                    // Signs in the test user only if no session was restored.
-                    if appContainer.authService.session == nil {
-                        do {
-                            try await appContainer.authService.signIn(email: "test@dropin.local",
-                                                                      password: "test12345")
-                            Log.info("Smoke test: signed in as test@dropin.local")
-                        } catch {
-                            Log.error("Smoke test sign-in failed: \(error)")
-                        }
-                    }
-                    await appContainer.profileService.load()
-                    await appContainer.syncAll()
 
 #if false
                     // Enable to generate new AppIcons + logo assets
@@ -73,12 +59,29 @@ struct DropinApp: App {
                     //importCoordinator.handle(url)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    guard appContainer.authState == .signedIn else { return }
                     Task { await appContainer.syncAll() }
                 }
                 .environment(appSettings)
         }
     }
-        
+
+    @ViewBuilder
+    private var rootContent: some View {
+        switch appContainer.authState {
+            case .loading:
+                SplashView()
+            case .signedOut:
+                appContainer.createAuthView()
+            case .signedIn:
+                appContainer.createRootView()
+                    .task {
+                        await appContainer.loadProfile()
+                        await appContainer.syncAll()
+                    }
+        }
+    }
+
     // MARK: - init
     init() {
         do {
@@ -86,10 +89,10 @@ struct DropinApp: App {
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
-            if true {
+            if false {
                 do {
                     let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
-                    if places.count == 0 && false {
+                    if places.count == 0 {
                         Log.info("Empty database, mock populating")
                         try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
                     } else {

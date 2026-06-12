@@ -13,7 +13,7 @@ struct GroupEntity: Hashable, Sendable {
     let icon: Icon
     let color: String
     let createdAt: Date
-    let updatedAt: Date
+    var updatedAt: Date
     let deletedAt: Date?
     // Note: places are not strores here to avoid bidirectional relationships
     // PlaceEntity owns the relationship
@@ -46,6 +46,12 @@ struct GroupEntity: Hashable, Sendable {
         deletedAt = nil
     }
     
+    func updated() -> GroupEntity {
+        var copy = self
+        copy.updatedAt = Date()
+        return copy
+    }
+
     static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id
     }

@@ -96,6 +96,12 @@ struct PlaceEntity: Hashable, Sendable {
         self.deletedAt = nil
     }
     
+    func updated() -> PlaceEntity {
+        var copy = self
+        copy.updatedAt = Date()
+        return copy
+    }
+
     static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id
     }

@@ -52,8 +52,17 @@ struct RootView: View {
     var body: some View {
         ZStack {
             currentContentView
-            SideMenuView(showingSideMenu: $viewModel.showingSideMenu,
-                         currentSideMenuContext: $viewModel.appContext.currentSideMenuContext)
+            viewModel.createSideMenuView()
+        }
+        // Profile sheet is hosted by RootView (not SideMenuView) — keeps the
+        // sheet's presentation host above the side-menu overlay and avoids the
+        // "presentation in progress" warning of stacked transient hosts.
+        .sheet(isPresented: $viewModel.showingProfileSheet) {
+            viewModel.createProfileView()
+                .presentationDetents([.medium, .large])
+                .presentationCornerRadius(20)
+                .presentationBackground(.backgroundPrimary)
+                //.presentationBackground(.thinMaterial)
         }
         .task {
             // Make life fun, switch app icon
@@ -67,9 +76,6 @@ struct RootView: View {
 
     @ViewBuilder
     private var currentContentView: some View {
-        //let currentSideMenuContext = viewModel.currentSideMenuContext.wrappedValue
-        printInViewBuilder("🟡 createPlaceSheetView reads → \(viewModel.appContext.currentSideMenuContext)")
-        
         switch viewModel.appContext.currentSideMenuContext {
             case .main:
                 viewModel.createMainView()

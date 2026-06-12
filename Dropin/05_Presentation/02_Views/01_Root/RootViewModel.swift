@@ -25,22 +25,44 @@ enum SideMenuContext {
 
     /// show/hide the side menu
     var showingSideMenu: Bool = false
-    
+
+    /// Source of truth for the profile sheet. RootView attaches the actual
+    /// `.sheet(isPresented:)`; SideMenuView receives a Binding to flip it.
+    var showingProfileSheet: Bool = false
+
     var bindedShowingSideMenu: Binding<Bool> { Binding<Bool> {
         return self.showingSideMenu
     } set: { b in
         self.showingSideMenu = b
     }}
 
-    
+    var bindedShowingProfileSheet: Binding<Bool> { Binding<Bool> {
+        return self.showingProfileSheet
+    } set: { b in
+        self.showingProfileSheet = b
+    }}
+
+    var bindedSideMenuContext: Binding<SideMenuContext> { Binding<SideMenuContext> {
+        return self.appContext.currentSideMenuContext
+    } set: { v in
+        self.appContext.currentSideMenuContext = v
+    }}
 
     @ObservationIgnored private var appContainer: AppContainer
-    
+
     init(_ appContainer: AppContainer, appContext: AppContext) {
         self.appContainer = appContainer
         self.appContext = appContext
-        
-        //self.currentSideMenuContext.wrappedValue = .tags
+    }
+
+    func createSideMenuView() -> SideMenuView {
+        appContainer.createSideMenuView(showingSideMenu: bindedShowingSideMenu,
+                                        currentSideMenuContext: bindedSideMenuContext,
+                                        showingProfileSheet: bindedShowingProfileSheet)
+    }
+
+    func createProfileView() -> ProfileView {
+        appContainer.createProfileView()
     }
     
     func createMainView() -> MainView {

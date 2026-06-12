@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SideMenuView: View {
-    
+
     // MARK: - States & Bindings
+    @State private var viewModel: SideMenuViewModel
     @Binding private var showingSideMenu: Bool
     @Binding private var currentSideMenuContext: SideMenuContext
     @State private var logoVariant: DropinLogo.Variant = .logo
@@ -20,8 +21,10 @@ struct SideMenuView: View {
     private var edgeTransition: AnyTransition = .move(edge: .leading)
 
     // MARK: - init
-    init(showingSideMenu: Binding<Bool>,
+    init(viewModel: SideMenuViewModel,
+         showingSideMenu: Binding<Bool>,
          currentSideMenuContext: Binding<SideMenuContext>) {
+        self.viewModel = viewModel
         self._showingSideMenu = showingSideMenu
         self._currentSideMenuContext = currentSideMenuContext
         if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
@@ -60,41 +63,90 @@ struct SideMenuView: View {
         }
         .gesture(leftSwipeGesture)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .top)
         .animation(.easeInOut, value: showingSideMenu)
     }
     
     // MARK: - Subviews
     var content: some View {
         VStack(spacing: 0) {
-            header
-                .padding(0)
-//            Spacer()
-//                .frame(height: 80)
+            headerView
+           
+            sectionsView
             
+            Spacer()
+            
+            footerView
+        }
+    }
+        
+    private var headerView: some View {
+        ZStack {
+            Rectangle()
+                .foregroundStyle(.dropinPrimary)
+            VStack {
+                Spacer()
+                    .frame(height: 70)
+                HStack(alignment: .center, spacing: 16) {
+                                        
+                    ProfileBadgeView(initials: viewModel.avatarInitial,
+                                     style: .small,
+                                     bgColor: .dropinPrimary,
+                                     fgColor: .backgroundPrimary,
+                                     stroke: .white)
+
+                    .padding(.leading, 25)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: viewModel.headerTitle)
+                            .foregroundStyle(.backgroundPrimary)
+                            .font(.sidebarTitle)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                        Text(verbatim: viewModel.headerSubtitle)
+                            .foregroundStyle(.backgroundPrimary.opacity(0.75))
+                            .font(.sidebarSubtitle)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.openProfile()
+                }
+
+                Spacer()
+            }
+        }
+        .frame(height: 160)
+    }
+    
+    private var sectionsView: some View {
+        VStack(spacing: 0) {
             SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
+            .frame(height: 60)
+            .padding(.bottom, 0)
             
             SideMenuItemView(label: "common.groups",
                              systemImage: "folder",
                              context: .groups,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
-
+            .frame(height: 60)
+            .padding(.bottom, 0)
+            
             SideMenuItemView(label: "common.tags",
                              systemImage: "slider.horizontal.3",
                              context: .tags,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
+            .frame(height: 60)
+            .padding(.bottom, 0)
             
             Divider()
                 .padding(.vertical, 5)
@@ -104,16 +156,16 @@ struct SideMenuView: View {
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
+            .frame(height: 60)
+            .padding(.bottom, 0)
             SideMenuItemView(label: "common.recents",
                              systemImage: "clock",
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
-
+            .frame(height: 60)
+            .padding(.bottom, 0)
+            
             Divider()
                 .padding(.vertical, 5)
             
@@ -122,40 +174,71 @@ struct SideMenuView: View {
                              context: .settings,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
+            .frame(height: 60)
+            .padding(.bottom, 0)
             SideMenuItemView(label: "common.about",
                              systemImage: "info.circle",
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
+            .frame(height: 60)
+            .padding(.bottom, 0)
             SideMenuItemView(label: "common.reportproblem",
                              systemImage: "exclamationmark.triangle",
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-                .frame(height: 60)
-                .padding(.bottom, 0)
-
-            Spacer()
-            
-            Rectangle()
-                .foregroundStyle(.dropinPrimary)
-                .frame(height: 0.5)
-            
-            Text("developed_by \(DropinApp.strings.developer)")
-                .font(.captionRegular)
-                .padding(.top, 20)
-                .padding(.bottom, 10)
-
-            Text(verbatim: "v\(appVersion)(\(appBuild))")
-                .font(.caption2Light)
-                .padding(.bottom, 20)
+            .frame(height: 60)
+            .padding(.bottom, 0)
         }
     }
-        
+    
+    private var footerView: some View {
+        //ZStack {
+//            HStack {
+//                DropinLogo(variant: logoVariant,
+//                           lineWidthMuliplier: 1.5,
+//                           pinSizeMuliplier: 1.5)
+//                    .frame(width: 25, height: 25)
+//                    .padding(.leading, 30)
+//                Spacer()
+//            }
+//            .contentShape(Rectangle())
+//            .onTapGesture {
+//                logoVariant = DropinLogo.Variant.random(excluded: logoVariant)
+//            }
+            
+            VStack(spacing: 0) {
+                Rectangle()
+                    .foregroundStyle(.dropinPrimary)
+                    .frame(height: 0.5)
+                
+                DropinLogo(variant: logoVariant,
+                           lineWidthMuliplier: 1.5,
+                           pinSizeMuliplier: 1.5)
+                    .frame(width: 25, height: 25)
+                    .padding(.top, 10)
+                    .padding(.bottom, 0)
+                    .onTapGesture {
+                        logoVariant = DropinLogo.Variant.random(excluded: logoVariant)
+                    }
+                
+                Text("developed_by \(DropinApp.strings.developer)")
+                    .font(.captionRegular)
+                    .padding(.top, 10)
+                    .padding(.bottom, 10)
+                
+                Text(verbatim: "v\(appVersion)(\(appBuild))")
+                    .font(.caption2Light)
+                    .padding(.bottom, 20)
+            }
+        //}
+    }
+
+
+    // Legacy logo header — kept for reference; the profile-aware version above
+    // replaces it. Delete once we're sure we're not reverting.
+    /*
     var header: some View {
         ZStack {
             Rectangle()
@@ -191,6 +274,7 @@ struct SideMenuView: View {
         }
         .frame(height: 160)
     }
+    */
     
     // MARK: - Gestures
     private var leftSwipeGesture: some Gesture {
@@ -208,15 +292,40 @@ struct SideMenuView: View {
 struct MockSideMenuView: View {
     @State var showingSideMenu: Bool
     @State var sideMenuContext: SideMenuContext
-    
+    @State var showingProfileSheet: Bool = false
+    var mock: MockContainer
+
     var body: some View {
-        SideMenuView(showingSideMenu: $showingSideMenu,
-                     currentSideMenuContext: $sideMenuContext)
+        ZStack {
+            VStack {
+                Spacer()
+                Button {
+                    self.showingSideMenu.toggle()
+                } label: {
+                    Text("TOGGLE")
+                }
+                Spacer()
+            }
+            mock.appContainer.createSideMenuView(showingSideMenu: $showingSideMenu,
+                                                 currentSideMenuContext: $sideMenuContext,
+                                                 showingProfileSheet: $showingProfileSheet)
+        }
+        .task {
+            // Load john does' profile
+            self.mock.loadProfile()
+
+            // Show menu
+            self.showingSideMenu = true
+        }
+        .sheet(isPresented: $showingProfileSheet) {
+            Text("User profile")
+        }
     }
-    
+
     init() {
         self.showingSideMenu = false
         self.sideMenuContext = .main
+        self.mock = MockContainer()
     }
 }
 

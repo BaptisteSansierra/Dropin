@@ -7,12 +7,16 @@ import Foundation
 @MainActor
 protocol SyncServiceProtocol: AnyObject {
     var syncStatus: SyncStatus { get }
+    /// Total number of pending dirty entities (places + groups + tags + profile).
+    /// Used by sign-out to warn the user about unsynced data.
+    var pendingChangeCount: Int { get }
     func markPlaceDirty(_ id: UUID)
     func markGroupDirty(_ id: UUID)
     func markTagDirty(_ id: UUID)
     func markImagesChanged()
     func markProfileDirty()
     func syncAll() async
+    func reset()
 }
 
 /// Narrow surface for callers that only need to batch a series of mutations
@@ -59,6 +63,14 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     // sets but does NOT fire a push task. Set via `withPausedPushes`.
     private var pushesPaused: Bool = false
 
+    // MARK: - Pending change accounting
+    var pendingChangeCount: Int {
+        dirtyPlaceIds.count
+        + dirtyGroupIds.count
+        + dirtyTagIds.count
+        + (dirtyProfile ? 1 : 0)
+    }
+
     // MARK: - Dependencies
     private let localPlaceRepo: any PlaceRepository
     private let localGroupRepo: any GroupRepository
@@ -104,6 +116,17 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     }
 
     // MARK: - SyncServiceProtocol
+    func reset() {
+        // Reset last sync date
+        userDefaults.removeObject(forKey: DropinApp.userDefaultsKeys.lastSyncedAt)
+        // Reset sync status
+        syncStatus = SyncStatus()
+        // Reset pending operations
+        dirtyPlaceIds.removeAll()
+        dirtyGroupIds.removeAll()
+        dirtyTagIds.removeAll()
+        dirtyProfile = false
+    }
 
     func markPlaceDirty(_ id: UUID) {
         dirtyPlaceIds.insert(id)
@@ -160,10 +183,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     /// push task is fired — the flush happens when the pause is lifted.
     private func schedulePush() {
         guard !pushesPaused else { return }
-        if pushTask != nil {
-            pendingPush = true
-            return
-        }
+        guard pushTask == nil else { pendingPush = true; return }
         pushTask = Task {
             await self.runPushLoop()
         }

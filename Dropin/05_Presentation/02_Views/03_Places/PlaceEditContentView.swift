@@ -765,13 +765,18 @@ struct PlaceEditContentView: View {
 
         Task {
             do {
+                // Push the modification to DB
                 try await viewModel.updatePlace(place)
+
+                // Update main places list
+                // TODO: this PlaceUI is a class, thus reference, is it needed to reload main places ?
+                // or maybe only just reload annotations
                 actionBus.send(.reloadMainPlaces)
                 
-                // TODO: implement a database cleaner
-                // it should remove all items older than x
+                // TODO: DRO-24 implement delete stategy
+                // Some database cleaner should remove all items deleted older than x
 
-                try? await Task.sleep(for: .seconds(10))
+                //try? await Task.sleep(for: .seconds(10))
             }
         }
         

@@ -11,10 +11,6 @@ struct GroupDetailsView: View {
     
     // MARK: - State & Bindings
     @State private var viewModel: GroupDetailsViewModel
-    @Binding private var group: GroupUI
-    @State private var groupColor: Color
-    @State private var showingRemoveAlert: Bool = false
-    @State private var showingMarkerList: Bool = false
     
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
@@ -24,10 +20,8 @@ struct GroupDetailsView: View {
     }
     
     // MARK: - Init
-    init(viewModel: GroupDetailsViewModel, group: Binding<GroupUI>) {
+    init(viewModel: GroupDetailsViewModel) {
         self.viewModel = viewModel
-        self._group = group
-        self._groupColor = State(initialValue: group.wrappedValue.color)
     }
     
     // MARK: - Body
@@ -36,7 +30,7 @@ struct GroupDetailsView: View {
             VStack(alignment: .center) {
                 HStack {
                     Spacer()
-                    GroupView(group: group)
+                    GroupView(group: viewModel.group)
                     Spacer()
                 }
                 .padding(.top, 15)
@@ -56,7 +50,7 @@ struct GroupDetailsView: View {
         }
         .task {
             do {
-                try await viewModel.fetchPlace(group.id)
+                try await viewModel.fetchPlaces()
             } catch {
                 // TODO: error
             }
@@ -66,40 +60,40 @@ struct GroupDetailsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.pushGroupMapView(groupId: group.id)
+                    viewModel.pushGroupMapView()
                 } label: {
                     Image(systemName: "globe.europe.africa")
                 }
             }
         }
         .alert("alert.remove_group_title",
-               isPresented: $showingRemoveAlert) {
+               isPresented: $viewModel.showingRemoveAlert) {
             Button("common.cancel", role: .cancel) { }
             Button("common.delete", role: .destructive) {
                 Task {
                     do {
-                        try await viewModel.deleteGroup(group)
+                        try await viewModel.softDeleteGroup()
                         dismiss()
                     } catch {
-                        Log.error("Could not delete group \(group.name): \(error)")
+                        Log.error("Could not delete group \(viewModel.group.name): \(error)")
                     }
                 }
             }
         } message: {
             if viewModel.places.count > 0 {
-                Text("alert.remove_group_body_\(group.name)_\(viewModel.places.count)")
+                Text("alert.remove_group_body_\(viewModel.group.name)_\(viewModel.places.count)")
             } else {
-                Text("alert.remove_group_empty_body_\(group.name)")
+                Text("alert.remove_group_empty_body_\(viewModel.group.name)")
             }
         }
-        .fullScreenCover(isPresented: $showingMarkerList) {
+        .fullScreenCover(isPresented: $viewModel.showingMarkerList) {
             MarkerListView(selected: Binding<Icon>(
                 get: {
-                    return group.icon
+                    return viewModel.group.icon
                 }, set: { value in
-                    group.icon = value
+                    viewModel.group.icon = value
                     Task {
-                        try await viewModel.updateGroup(group)
+                        try await viewModel.updateGroup()
                     }
                 }))
         }
@@ -117,7 +111,7 @@ struct GroupDetailsView: View {
                     .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
-                TextField("common.group_name", text: $group.name)
+                TextField("common.group_name", text: $viewModel.group.name)
                     .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
@@ -147,16 +141,16 @@ struct GroupDetailsView: View {
                     RoundedRectangle(cornerSize: 8)
                         .frame(height: 25)
                         .frame(width: 100)
-                        .foregroundStyle(groupColor)
+                        .foregroundStyle(viewModel.groupColor)
                         .padding(.leading, 40)
                     //.padding(.trailing, 40)
                     Spacer()
-                    ColorPicker(String(""), selection: $groupColor, supportsOpacity: false)
+                    ColorPicker(String(""), selection: $viewModel.groupColor, supportsOpacity: false)
                         .labelsHidden()
                         .padding(.leading, 40)
                         .padding(.trailing, 40)
-                        .onChange(of: groupColor) { oldValue, newValue in
-                            group.color = groupColor
+                        .onChange(of: viewModel.groupColor) { oldValue, newValue in
+                            viewModel.group.color = viewModel.groupColor
                             updateGroup()
                         }
                 }
@@ -184,14 +178,14 @@ struct GroupDetailsView: View {
                             .frame(height: 25)
                             .frame(width: 100)
                             .foregroundStyle(.clear)
-                        IconView(icon: group.icon)
+                        IconView(icon: viewModel.group.icon)
                             .sizeCaption()
                     }
                     .padding(.leading, 40)
                     Spacer()
                     IcoButton(systemImage: "ellipsis",
                               icoSize: 14,
-                              action: { showingMarkerList.toggle() })
+                              action: { viewModel.showingMarkerList.toggle() })
                     .padding(0)
                     .padding(.trailing, 40)
                 }
@@ -277,7 +271,7 @@ struct GroupDetailsView: View {
                     .frame(height: blurEffectHeight)
                 
                 DestructiveButton(text: "common.delete_group") {
-                    showingRemoveAlert = true
+                    viewModel.showingRemoveAlert = true
                 }
                 .padding(.bottom, UIApplication.rootBottomSafeArea())
             }
@@ -288,7 +282,7 @@ struct GroupDetailsView: View {
     private func updateGroup() {
         Task {
             do {
-                try await viewModel.updateGroup(group)
+                try await viewModel.updateGroup()
             } catch {
                 // TODO: handle error
                 assertionFailure("Could not delete update group")
@@ -326,7 +320,7 @@ struct MockGroupDetailsView: View {
     @State private var group: GroupUI
 
     var body: some View {
-        mock.appContainer.createGroupDetailsView(group: $group)
+        mock.appContainer.createGroupDetailsView(group: group)
     }
     
     init() {

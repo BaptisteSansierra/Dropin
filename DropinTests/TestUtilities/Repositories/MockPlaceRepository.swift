@@ -10,7 +10,6 @@ import Foundation
 
 @MainActor
 final class MockPlaceRepository: PlaceRepository {
-
     private var places: [PlaceEntity]
 
     init(initialPlaces: [PlaceEntity] = []) {
@@ -77,5 +76,9 @@ final class MockPlaceRepository: PlaceRepository {
         } else {
             places.append(place)
         }
+    }
+    
+    func clearTable() async throws {
+        places.removeAll()
     }
 }

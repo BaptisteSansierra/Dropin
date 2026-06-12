@@ -1350,6 +1350,13 @@
         }
       }
     },
+    "common.profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Profile" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } }
+      }
+    },
     "common.open_settings" : {
       "localizations" : {
         "en" : {
@@ -2588,6 +2595,132 @@
             "value" : "Donner un nom au tag"
           }
         }
+      }
+    },
+    "profile.display_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom affiché" } }
+      }
+    },
+    "profile.email" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Email" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Email" } }
+      }
+    },
+    "profile.error.name_empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name can't be empty" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le nom affiché ne peut pas être vide" } }
+      }
+    },
+    "profile.error.name_too_long" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name is too long" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le nom affiché est trop long" } }
+      }
+    },
+    "profile.logout" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter" } }
+      }
+    },
+    "profile.logout.confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter" } }
+      }
+    },
+    "profile.logout.confirm_body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You'll need to sign in again to access your places." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous devrez vous reconnecter pour accéder à vos lieux." } }
+      }
+    },
+    "profile.logout.confirm_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter ?" } }
+      }
+    },
+    "profile.logout.force" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out and lose changes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter et perdre les modifications" } }
+      }
+    },
+    "profile.logout.offline_body_%lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "You're offline and have %lld unsynced change. Logging out will lose it." } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "You're offline and have %lld unsynced changes. Logging out will lose them." } }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Vous êtes hors-ligne avec %lld modification non synchronisée. Se déconnecter la perdra." } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Vous êtes hors-ligne avec %lld modifications non synchronisées. Se déconnecter les perdra." } }
+            }
+          }
+        }
+      }
+    },
+    "profile.logout.offline_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unsynced changes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Modifications non synchronisées" } }
+      }
+    },
+    "profile.logout.sync_failed_body_%lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Sync didn't complete. %lld change is still unsynced and will be lost on logout." } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Sync didn't complete. %lld changes are still unsynced and will be lost on logout." } }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "La synchronisation a échoué. %lld modification reste non synchronisée et sera perdue." } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "La synchronisation a échoué. %lld modifications restent non synchronisées et seront perdues." } }
+            }
+          }
+        }
+      }
+    },
+    "profile.logout.sync_failed_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sync incomplete" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Synchronisation incomplète" } }
+      }
+    },
+    "profile.plan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plan" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Formule" } }
       }
     },
     "settings.clustering" : {

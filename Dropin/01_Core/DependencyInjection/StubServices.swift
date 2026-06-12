@@ -38,22 +38,44 @@ final class StubRemoteImageRepository: RemoteImageRepository {
 @MainActor
 final class StubSyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     var syncStatus: SyncStatus = SyncStatus()
+    var pendingChangeCount: Int { 0 }
     func markPlaceDirty(_ id: UUID) {}
     func markGroupDirty(_ id: UUID) {}
     func markTagDirty(_ id: UUID) {}
     func markImagesChanged() {}
     func markProfileDirty() {}
     func syncAll() async {}
+    func reset() {}
     func withPausedPushes<T>(_ body: () async throws -> T) async rethrows -> T {
         try await body()
     }
 }
 
 @MainActor
+@Observable
 final class StubProfileService: ProfileServiceProtocol {
     var profile: ProfileEntity? = nil
-    func load() async {}
-    func setDisplayName(_ newValue: String?) async throws { /* no-op */ }
+    func load() async {
+        profile = ProfileEntity(id: UUID(),
+                                email: "john.doe@gmail.com",
+                                displayName: "John Doe",
+                                plan: .earlyStage,
+                                createdAt: .now,
+                                updatedAt: .now)
+    }
+    func setDisplayName(_ newValue: String?) async throws {
+        guard let profile = profile else {
+            assertionFailure("no profile")
+            return
+        }
+        self.profile = ProfileEntity(id: UUID(),
+                                     email: profile.email,
+                                     displayName: newValue,
+                                     plan: profile.plan,
+                                     createdAt: profile.createdAt,
+                                     updatedAt: .now)
+    }
+    
     func clear() { profile = nil }
 }
 

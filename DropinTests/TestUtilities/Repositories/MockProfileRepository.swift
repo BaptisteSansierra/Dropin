@@ -23,4 +23,8 @@ final class MockProfileRepository: ProfileRepository {
         stored = updated
         return updated
     }
+    
+    func clearTable() async throws {
+        stored = nil
+    }
 }

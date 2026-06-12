@@ -27,17 +27,6 @@ struct ProfileEntity: Hashable, Sendable {
         self.updatedAt = updatedAt
     }
 
-    /// Returns a copy with `displayName` replaced and `updatedAt` bumped to now.
-    /// Used by the update flow before persisting locally + queuing the push.
-    func withDisplayName(_ newDisplayName: String?) -> ProfileEntity {
-        ProfileEntity(id: id,
-                      email: email,
-                      displayName: newDisplayName,
-                      plan: plan,
-                      createdAt: createdAt,
-                      updatedAt: Date())
-    }
-
     static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }

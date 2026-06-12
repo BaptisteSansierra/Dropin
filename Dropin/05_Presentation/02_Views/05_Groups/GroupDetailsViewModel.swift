@@ -13,34 +13,47 @@ import SwiftUI
     var loadingPlaces = false
     var places: [PlaceUI] = []
     var selectedPlaceId: UUID? = nil
-    
+    var group: GroupUI
+    var groupColor: Color
+    var showingRemoveAlert: Bool = false
+    var showingMarkerList: Bool = false
+
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored var locationManager: LocationManager
     @ObservationIgnored private var coordinator: GroupCoordinator
     @ObservationIgnored private var updateGroup: UpdateGroup
-    @ObservationIgnored private var deleteGroup: DeleteGroup
+    //@ObservationIgnored private var deleteGroup: DeleteGroup
     @ObservationIgnored private var fetchGroupPlaces: FetchGroupPlaces
     @ObservationIgnored private var updatePlace: UpdatePlace
     
     init(_ appContainer: AppContainer,
          locationManager: LocationManager,
          coordinator: GroupCoordinator,
+         group: GroupUI,
          updateGroup: UpdateGroup,
-         deleteGroup: DeleteGroup,
+         //deleteGroup: DeleteGroup,
          fetchGroupPlaces: FetchGroupPlaces,  // TODO : useless ?
          updatePlace: UpdatePlace) {
         self.appContainer = appContainer
         self.locationManager = locationManager
         self.coordinator = coordinator
+        self.group = group
         self.updateGroup = updateGroup
-        self.deleteGroup = deleteGroup
+        //self.deleteGroup = deleteGroup
         self.fetchGroupPlaces = fetchGroupPlaces
         self.updatePlace = updatePlace
+        self.groupColor = group.color
     }
     
+    // MARK: Actions
+    func softDeleteGroup() async throws {
+        group.deletedAt = Date()
+        try await updateGroup(shouldUpdatePlaces: false)
+    }
+
     // MARK: Navigation
-    func pushGroupMapView(groupId: UUID) {
-        coordinator.pushGroupMapView(groupId: groupId)
+    func pushGroupMapView() {
+        coordinator.pushGroupMapView(groupId: group.id)
     }
     
     // MARK: UI Child
@@ -49,26 +62,28 @@ import SwiftUI
     }
     
     // MARK: use cases
-    func updateGroup(_ group: GroupUI) async throws {
+    func updateGroup(shouldUpdatePlaces: Bool = true) async throws {
         try await updateGroup(GroupMapper.toDomain(group))
-    }
-    
-    func deleteGroup(_ group: GroupUI) async throws {
-        try await deleteGroup(GroupMapper.toDomain(group))
-        if group.deletedAt == nil {
-            assertionFailure("Model should have been marked deleted already for SwiftUI safety")
-            group.deletedAt = Date()
+        if shouldUpdatePlaces {
+            updatePlaces()
         }
     }
-    
-    func fetchPlace(_ groupId: UUID) async throws {
+ 
+    func fetchPlaces() async throws {
         loadingPlaces = true
-        places = try await fetchGroupPlaces(groupId)
+        places = try await fetchGroupPlaces(group.id)
             .map({ PlaceMapper.toUI($0) })
         loadingPlaces = false
     }
     
     func updatePlace(_ place: PlaceUI) async throws {
         try await updatePlace(PlaceMapper.toDomain(place))
+    }
+    
+    // MARK: - private methods
+    private func updatePlaces() {
+        for idx in places.indices {
+            places[idx].group = group
+        }
     }
 }

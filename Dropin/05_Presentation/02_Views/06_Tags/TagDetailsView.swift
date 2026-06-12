@@ -11,9 +11,6 @@ struct TagDetailsView: View {
     
     // MARK: - State & Bindings
     @State private var viewModel: TagDetailsViewModel
-    @Binding private var tag: TagUI
-    @State private var tagColor: Color
-    @State private var showingRemoveAlert: Bool = false
     
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
@@ -23,10 +20,8 @@ struct TagDetailsView: View {
     }
     
     // MARK: - Init
-    init(viewModel: TagDetailsViewModel, tag: Binding<TagUI>) {
+    init(viewModel: TagDetailsViewModel) {
         self.viewModel = viewModel
-        self._tag = tag
-        self._tagColor = State(initialValue: tag.wrappedValue.color)
     }
     
     // MARK: - Body
@@ -35,7 +30,8 @@ struct TagDetailsView: View {
             VStack(alignment: .center) {
                 HStack {
                     Spacer()
-                    TagView(name: tag.name, color: tag.color)
+                    TagView(name: viewModel.tag.name,
+                            color: viewModel.tag.color)
                     Spacer()
                 }
                 .padding(.top, 15)
@@ -53,7 +49,7 @@ struct TagDetailsView: View {
         }
         .task {
             do {
-                try await viewModel.fetchPlace(tag.id)
+                try await viewModel.fetchPlace()
             } catch {
                 // TODO: error
             }
@@ -61,7 +57,7 @@ struct TagDetailsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.pushTagMapView(tagId: tag.id)
+                    viewModel.pushTagMapView(tagId: viewModel.tag.id)
                 } label: {
                     Image(systemName: "globe.europe.africa")
                 }
@@ -70,23 +66,23 @@ struct TagDetailsView: View {
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .alert("alert.remove_tag_title",
-               isPresented: $showingRemoveAlert) {
+               isPresented: $viewModel.showingRemoveAlert) {
             Button("common.cancel", role: .cancel) { }
             Button("common.delete", role: .destructive) {
                 Task {
                     do {
-                        try await viewModel.deleteTag(tag)
+                        try await viewModel.softDeleteTag()
                         dismiss()
                     } catch {
-                        Log.error("Could not delete tag \(tag.name): \(error)")
+                        Log.error("Could not delete tag \(viewModel.tag.name): \(error)")
                     }
                 }
             }
         } message: {
             if viewModel.places.count > 0 {
-                Text("alert.remove_tag_body_\(tag.name)_\(viewModel.places.count)")
+                Text("alert.remove_tag_body_\(viewModel.tag.name)_\(viewModel.places.count)")
             } else {
-                Text("alert.remove_tag_empty_body_\(tag.name)")
+                Text("alert.remove_tag_empty_body_\(viewModel.tag.name)")
             }
         }
     }
@@ -103,7 +99,7 @@ struct TagDetailsView: View {
                     .foregroundStyle(.backgroundPrimary)
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
-                TextField("common.tag_name", text: $tag.name)
+                TextField("common.tag_name", text: $viewModel.tag.name)
                     .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
@@ -133,16 +129,16 @@ struct TagDetailsView: View {
                     RoundedRectangle(cornerSize: 8)
                         .frame(height: 25)
                         .frame(width: 100)
-                        .foregroundStyle(tagColor)
+                        .foregroundStyle(viewModel.tagColor)
                         .padding(.leading, 40)
                     //.padding(.trailing, 40)
                     Spacer()
-                    ColorPicker(String(""), selection: $tagColor, supportsOpacity: false)
+                    ColorPicker(String(""), selection: $viewModel.tagColor, supportsOpacity: false)
                         .labelsHidden()
                         .padding(.leading, 40)
                         .padding(.trailing, 40)
-                        .onChange(of: tagColor) { oldValue, newValue in
-                            tag.color = tagColor
+                        .onChange(of: viewModel.tagColor) { oldValue, newValue in
+                            viewModel.tag.color = viewModel.tagColor
                             updateTag()
                         }
                 }
@@ -170,7 +166,7 @@ struct TagDetailsView: View {
                                 .swipeActions(allowsFullSwipe: false) {
                                     Button() {
                                         guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
-                                        guard let tagIdx = place.tags.firstIndex(where: { tag.id == $0.id }) else { return }
+                                        guard let tagIdx = place.tags.firstIndex(where: { viewModel.tag.id == $0.id }) else { return }
                                         // Remove the place from tag list so UI is updated
                                         viewModel.places.remove(at: idx)
                                         // Remove the tag in place list and update the database from it
@@ -230,7 +226,7 @@ struct TagDetailsView: View {
                     .frame(height: blurEffectHeight)
                 
                 DestructiveButton(text: "common.delete_tag") {
-                    showingRemoveAlert = true
+                    viewModel.showingRemoveAlert = true
                 }
                 .padding(.bottom, UIApplication.rootBottomSafeArea())
             }
@@ -241,7 +237,7 @@ struct TagDetailsView: View {
     private func updateTag() {
         Task {
             do {
-                try await viewModel.updateTag(tag)
+                try await viewModel.updateTag()
             } catch {
                 // TODO: handle error
                 assertionFailure("Could not update tag: \(error)")
@@ -279,7 +275,7 @@ struct MockTagDetailsView: View {
     @State private var tag: TagUI
 
     var body: some View {
-        mock.appContainer.createTagDetailsView(tag: $tag)
+        mock.appContainer.createTagDetailsView(tag: tag)
     }
     
     init() {

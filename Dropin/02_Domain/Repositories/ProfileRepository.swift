@@ -16,4 +16,5 @@ protocol ProfileRepository: Sendable {
     /// Bumps `updatedAt` on the local row, returning the updated entity so the
     /// caller (typically ProfileService) can republish it to the UI right away.
     func update(displayName: String?) async throws -> ProfileEntity
+    func clearTable() async throws
 }

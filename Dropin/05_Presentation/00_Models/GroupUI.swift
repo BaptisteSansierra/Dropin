@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-@Observable class GroupUI: Identifiable, @MainActor Equatable {
+@Observable class GroupUI: Identifiable {
 
     let id: UUID
     var name: String
@@ -24,10 +24,6 @@ import SwiftUI
 
     var isActive: Bool {
         deletedAt == nil
-    }
-    
-    static func == (lhs: GroupUI, rhs: GroupUI) -> Bool {
-        lhs.id == rhs.id
     }
 
     init(id: UUID,

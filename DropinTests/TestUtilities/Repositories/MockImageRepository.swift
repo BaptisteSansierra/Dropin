@@ -90,4 +90,8 @@ final class MockImageRepository: ImageRepository {
     func localImageIds(placeId: UUID) async throws -> Set<UUID> {
         Set(items.filter { $0.placeId == placeId }.map { $0.id })
     }
+    
+    func clearTable() async throws {
+        items.removeAll()
+    }
 }

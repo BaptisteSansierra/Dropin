@@ -81,6 +81,11 @@ final class ImageRepositoryImpl: ImageRepository {
         sd.full = data
         try modelContext.save()
     }
+    
+    func clearTable() async throws {
+        try modelContext.delete(model: SDImage.self)
+        try modelContext.save()
+    }
 
     // MARK: - Sync-facing
 

@@ -61,4 +61,8 @@ final class MockTagRepository: TagRepository {
             tags.append(tag)
         }
     }
+    
+    func clearTable() async throws {
+        tags.removeAll()
+    }
 }

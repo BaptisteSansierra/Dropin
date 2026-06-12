@@ -39,7 +39,7 @@ final class ProfileService: ProfileServiceProtocol {
         self.local = local
         self.remote = remote
     }
-
+    
     func load() async {
         do {
             if let cached = try await local.fetch() {

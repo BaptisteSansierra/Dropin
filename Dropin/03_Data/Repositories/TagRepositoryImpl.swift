@@ -44,6 +44,7 @@ public final class TagRepositoryImpl: TagRepository {
         let model = try await retrieveTag(domainTag: tag)
         model.name = tag.name
         model.color = tag.color
+        model.deletedAt = tag.deletedAt
         model.updatedAt = tag.updatedAt
         try modelContext.save()
     }
@@ -86,6 +87,11 @@ public final class TagRepositoryImpl: TagRepository {
             let sdTag = TagMapper.toData(tag)
             modelContext.insert(sdTag)
         }
+        try modelContext.save()
+    }
+    
+    func clearTable() async throws {
+        try modelContext.delete(model: SDTag.self)
         try modelContext.save()
     }
     

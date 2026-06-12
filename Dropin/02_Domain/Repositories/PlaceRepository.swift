@@ -19,4 +19,5 @@ protocol PlaceRepository: Sendable {
     func fetch() async throws -> [PlaceEntity]
     func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity]
     func upsert(_ place: PlaceEntity) async throws
+    func clearTable() async throws
 }
