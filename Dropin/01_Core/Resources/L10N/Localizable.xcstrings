@@ -488,6 +488,9 @@
         }
       }
     },
+    "Clearing session" : {
+
+    },
     "common.about" : {
       "comment" : "Sidebar ",
       "localizations" : {
@@ -1334,6 +1337,23 @@
         }
       }
     },
+    "common.offline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hors connexion"
+          }
+        }
+      }
+    },
     "common.ok" : {
       "localizations" : {
         "en" : {
@@ -1348,13 +1368,6 @@
             "value" : "Ok"
           }
         }
-      }
-    },
-    "common.profile" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Profile" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } }
       }
     },
     "common.open_settings" : {
@@ -1449,6 +1462,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux"
+          }
+        }
+      }
+    },
+    "common.profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
           }
         }
       }
@@ -2099,6 +2129,74 @@
         }
       }
     },
+    "map.mode.default" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par défaut"
+          }
+        }
+      }
+    },
+    "map.mode.satellite" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satellite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satellite"
+          }
+        }
+      }
+    },
+    "map.poi.hide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide points of interest"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masquer les points d'intérêt"
+          }
+        }
+      }
+    },
+    "map.poi.show" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show points of interest"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher les points d'intérêt"
+          }
+        }
+      }
+    },
     "markers.select" : {
       "localizations" : {
         "en" : {
@@ -2600,64 +2698,205 @@
     "profile.display_name" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom affiché" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom affiché"
+          }
+        }
       }
     },
     "profile.email" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Email" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Email" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        }
       }
     },
     "profile.error.name_empty" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name can't be empty" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le nom affiché ne peut pas être vide" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name can't be empty"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le nom affiché ne peut pas être vide"
+          }
+        }
       }
     },
     "profile.error.name_too_long" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Display name is too long" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Le nom affiché est trop long" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name is too long"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le nom affiché est trop long"
+          }
+        }
       }
     },
     "profile.logout" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log out"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se déconnecter"
+          }
+        }
       }
     },
     "profile.logout.confirm" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log out"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se déconnecter"
+          }
+        }
       }
     },
     "profile.logout.confirm_body" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "You'll need to sign in again to access your places." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous devrez vous reconnecter pour accéder à vos lieux." } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll need to sign in again to access your places."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous devrez vous reconnecter pour accéder à vos lieux."
+          }
+        }
       }
     },
     "profile.logout.confirm_title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out?" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter ?" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log out?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se déconnecter ?"
+          }
+        }
       }
     },
     "profile.logout.force" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log out and lose changes" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Se déconnecter et perdre les modifications" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log out and lose changes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se déconnecter et perdre les modifications"
+          }
+        }
+      }
+    },
+    "profile.logout.info_body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some places, groups, or tags may have been modified recently — or while your device was offline — and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certains lieux, groupes ou tags ont peut-être été modifiés récemment — ou pendant que votre appareil était hors-ligne — et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
+          }
+        }
+      }
+    },
+    "profile.logout.info_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About unsynced changes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos des modifications non synchronisées"
+          }
+        }
+      }
+    },
+    "profile.logout.more_info" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More info"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En savoir plus"
+          }
+        }
       }
     },
     "profile.logout.offline_body_%lld" : {
@@ -2666,16 +2905,36 @@
         "en" : {
           "variations" : {
             "plural" : {
-              "one" : { "stringUnit" : { "state" : "translated", "value" : "You're offline and have %lld unsynced change. Logging out will lose it." } },
-              "other" : { "stringUnit" : { "state" : "translated", "value" : "You're offline and have %lld unsynced changes. Logging out will lose them." } }
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You're offline and have %lld unsynced change. Logging out will lose it."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You're offline and have %lld unsynced changes. Logging out will lose them."
+                }
+              }
             }
           }
         },
         "fr" : {
           "variations" : {
             "plural" : {
-              "one" : { "stringUnit" : { "state" : "translated", "value" : "Vous êtes hors-ligne avec %lld modification non synchronisée. Se déconnecter la perdra." } },
-              "other" : { "stringUnit" : { "state" : "translated", "value" : "Vous êtes hors-ligne avec %lld modifications non synchronisées. Se déconnecter les perdra." } }
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vous êtes hors-ligne avec %lld modification non synchronisée. Se déconnecter la perdra."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vous êtes hors-ligne avec %lld modifications non synchronisées. Se déconnecter les perdra."
+                }
+              }
             }
           }
         }
@@ -2684,8 +2943,18 @@
     "profile.logout.offline_title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unsynced changes" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Modifications non synchronisées" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unsynced changes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifications non synchronisées"
+          }
+        }
       }
     },
     "profile.logout.sync_failed_body_%lld" : {
@@ -2694,16 +2963,36 @@
         "en" : {
           "variations" : {
             "plural" : {
-              "one" : { "stringUnit" : { "state" : "translated", "value" : "Sync didn't complete. %lld change is still unsynced and will be lost on logout." } },
-              "other" : { "stringUnit" : { "state" : "translated", "value" : "Sync didn't complete. %lld changes are still unsynced and will be lost on logout." } }
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld change couldn't be synced and will be lost on logout."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld changes couldn't be synced and will be lost on logout."
+                }
+              }
             }
           }
         },
         "fr" : {
           "variations" : {
             "plural" : {
-              "one" : { "stringUnit" : { "state" : "translated", "value" : "La synchronisation a échoué. %lld modification reste non synchronisée et sera perdue." } },
-              "other" : { "stringUnit" : { "state" : "translated", "value" : "La synchronisation a échoué. %lld modifications restent non synchronisées et seront perdues." } }
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld modification n'a pas pu être synchronisée et sera perdue à la déconnexion."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld modifications n'ont pas pu être synchronisées et seront perdues à la déconnexion."
+                }
+              }
             }
           }
         }
@@ -2712,15 +3001,35 @@
     "profile.logout.sync_failed_title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sync incomplete" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Synchronisation incomplète" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync incomplete"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchronisation incomplète"
+          }
+        }
       }
     },
     "profile.plan" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plan" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Formule" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formule"
+          }
+        }
       }
     },
     "settings.clustering" : {
@@ -2736,6 +3045,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Regroupement"
+          }
+        }
+      }
+    },
+    "settings.import.error_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import failed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec de l'import"
           }
         }
       }
@@ -2828,23 +3154,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import réussi"
-          }
-        }
-      }
-    },
-    "settings.import.error_title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import failed"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Échec de l'import"
           }
         }
       }

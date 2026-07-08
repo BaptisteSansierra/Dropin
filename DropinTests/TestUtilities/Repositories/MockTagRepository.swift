@@ -44,7 +44,7 @@ final class MockTagRepository: TagRepository {
     }
     
     func fetchWithPlaceCount() async throws -> [(TagEntity, Int)] {
-        return tags.map({ ($0, 0) }) // TODO if needed
+        return tags.map({ ($0, 0) }) // dummy impl
     }
     
     func fetch(_ id: UUID) async throws -> TagEntity {

@@ -59,8 +59,15 @@ struct DropinApp: App {
                     //importCoordinator.handle(url)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    guard appContainer.authState == .signedIn else { return }
-                    Task { await appContainer.syncAll() }
+                    // Update data when app awakes and user is signedIn
+                    switch appContainer.authState {
+                        case .signedIn(let signingOut):
+                            if signingOut == false {
+                                Task { await appContainer.syncAll() }
+                            }
+                        default:
+                            ()
+                    }
                 }
                 .environment(appSettings)
         }
@@ -73,12 +80,20 @@ struct DropinApp: App {
                 SplashView()
             case .signedOut:
                 appContainer.createAuthView()
-            case .signedIn:
-                appContainer.createRootView()
-                    .task {
-                        await appContainer.loadProfile()
-                        await appContainer.syncAll()
+            case .signedIn(let signingOut):
+                ZStack {
+                    appContainer.createRootView()
+                        .task {
+                            await appContainer.loadProfile()
+                            await appContainer.syncAll()
+                        }
+                    ZStack {
+                        Color.overlayAlphaLayer
+                        DropinLoader(style: .overlay, caption: "Clearing session")
                     }
+                    .ignoresSafeArea()
+                    .opacity(signingOut ? 1 : 0)
+                }
         }
     }
 

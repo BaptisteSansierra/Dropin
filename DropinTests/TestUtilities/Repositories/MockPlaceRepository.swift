@@ -35,11 +35,11 @@ final class MockPlaceRepository: PlaceRepository {
     }
 
     func fetch(groupId: UUID) async throws -> [PlaceEntity] {
-        return [] // TODO if needed
+        return [] // dummy impl
     }
     
     func fetch(tagId: UUID) async throws -> [PlaceEntity] {
-        return [] // TODO if needed
+        return [] // dummy impl
     }
 
     func fetch(_ filter: Dropin.PlaceFilter?) async throws -> [Dropin.PlaceEntity] {

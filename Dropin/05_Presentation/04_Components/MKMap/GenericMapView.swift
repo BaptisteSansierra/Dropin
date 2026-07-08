@@ -56,7 +56,7 @@ struct GenericMapView: View {
                        selectedPlaceId: $viewModel.selectedPlaceId,
                        onLongPress: nil,
                        onMapCameraUpdate: nil,
-                       isSelectionEnabled: { true })
+                       interactionStatus: { .all })
         .taskOnce {
             try? await viewModel.fetchPlace()
             try? await Task.sleep(for: .seconds(0.5))

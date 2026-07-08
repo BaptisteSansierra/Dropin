@@ -30,7 +30,6 @@ protocol ReachabilityServiceProtocol {
             Log.debug("   Uses interface type - cellular: \(path.usesInterfaceType(.cellular))", condition: self?.verbose ?? false)
             Log.debug("   Uses interface type - wifi: \(path.usesInterfaceType(.wifi))", condition: self?.verbose ?? false)
 
-            //Task { @MainActor in
             DispatchQueue.main.async { [weak self] in
                 Log.debug("🟡 Updating on main thread", condition: self?.verbose ?? false)
                 self?.isConnected = path.status == .satisfied

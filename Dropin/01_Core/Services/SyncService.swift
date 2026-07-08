@@ -69,6 +69,8 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         + dirtyGroupIds.count
         + dirtyTagIds.count
         + (dirtyProfile ? 1 : 0)
+        + (pendingPush ? 1 : 0)   // If pendingPush we do not want pendingChangeCount to bo 0
+                                  // *WARNING* FIXME: pendingChangeCount is not reflecting the quantity of items being pushed in this case
     }
 
     // MARK: - Dependencies
@@ -129,16 +131,19 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     }
 
     func markPlaceDirty(_ id: UUID) {
+        Log.debug("Mark place dirty \(id)")
         dirtyPlaceIds.insert(id)
         schedulePush()
     }
 
     func markGroupDirty(_ id: UUID) {
+        Log.debug("Mark group dirty \(id)")
         dirtyGroupIds.insert(id)
         schedulePush()
     }
 
     func markTagDirty(_ id: UUID) {
+        Log.debug("Mark tag dirty \(id)")
         dirtyTagIds.insert(id)
         schedulePush()
     }
@@ -149,6 +154,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     }
 
     func markProfileDirty() {
+        Log.debug("Mark profile dirty")
         dirtyProfile = true
         schedulePush()
     }

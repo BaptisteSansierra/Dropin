@@ -758,8 +758,6 @@ struct PlaceEditContentView: View {
         // Parent view needs to be able to 'resolveNavigationDestination' til child is not fully dismissed
         // soft deleted meanwhile
         place.deletedAt = Date()
-        // Update annotations
-        actionBus.send(.reloadMainPlaces)
         viewModel.popView()
 
 
@@ -769,37 +767,12 @@ struct PlaceEditContentView: View {
                 try await viewModel.updatePlace(place)
 
                 // Update main places list
-                // TODO: this PlaceUI is a class, thus reference, is it needed to reload main places ?
-                // or maybe only just reload annotations
                 actionBus.send(.reloadMainPlaces)
-                
-                // TODO: DRO-24 implement delete stategy
-                // Some database cleaner should remove all items deleted older than x
 
-                //try? await Task.sleep(for: .seconds(10))
+                // TODO: DRO-24 implement delete stategy
+                // Some database cleaner should remove all deleted items older than x
             }
         }
-        
-        /*
-        
-        Task {
-            do {
-                // Delay the hard deletion so the parentview navigation path does not contain a stale model
-                // Parent view needs to be able to 'resolveNavigationDestination' til child is not fully dismissed
-                // soft deleted meanwhile
-                place.deletedAt = Date()
-                try await viewModel.updatePlace(place)
-                viewModel.popView()
-                // TODO: implement a database cleaner
-                // it should remove all items older than x
-                try await Task.sleep(for: .seconds(1.5))
-                try await viewModel.deletePlace(place)
-            } catch {
-                assertionFailure("Failed to delete place '\(place.name)' error: \(error)")
-            }
-        }
-         */
-        
     }
 }
 

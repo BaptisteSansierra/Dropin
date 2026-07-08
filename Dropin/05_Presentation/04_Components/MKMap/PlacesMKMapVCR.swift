@@ -41,6 +41,13 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         static let browse = Configuration(positionAtLaunch: .none)  // group/tag map ??
     }
     
+    struct InteractionStatus {
+        let selectionEnabled: Bool
+        let longPressEnabled: Bool
+        static let none = InteractionStatus(selectionEnabled: false, longPressEnabled: false)
+        static let all = InteractionStatus(selectionEnabled: true, longPressEnabled: true)
+    }
+    
     @Environment(AppSettings.self) private var appSettings
 
     @Binding private var selectedPlaceId: UUID?
@@ -51,10 +58,9 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let pendingCoordinate: CLLocationCoordinate2D?
     private let bottomInset: CGFloat
     private let mapReloadGen: Int
-    //private let onPlaceSelected: ((UUID) -> Void)?
     private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
     private let onMapCameraUpdate: MapCameraUpdateHandler?
-    private let isSelectionEnabled: (() -> Bool)
+    private let interactionStatus: (() -> InteractionStatus)
     
     // MARK: Init
     init(config: Configuration,
@@ -62,10 +68,9 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
          places: [PlaceUI],
          pendingCoordinate: CLLocationCoordinate2D? = nil,
          selectedPlaceId: Binding<UUID?>,
-         //onPlaceSelected: ((UUID) -> Void)? = nil,
          onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
          onMapCameraUpdate: MapCameraUpdateHandler? = nil,
-         isSelectionEnabled: @escaping (() -> Bool),
+         interactionStatus: @escaping (() -> InteractionStatus),
          mapReloadGen: Int = 0,
          bottomInset: CGFloat = 0) {
         self.config = config
@@ -76,7 +81,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //self.onPlaceSelected = onPlaceSelected
         self.onLongPress = onLongPress
         self.onMapCameraUpdate = onMapCameraUpdate
-        self.isSelectionEnabled = isSelectionEnabled
+        self.interactionStatus = interactionStatus
         self.mapReloadGen = mapReloadGen
         self.bottomInset = bottomInset
     }
@@ -187,7 +192,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                     },
                     onLongPress: onLongPress,
                     onMapCameraUpdate: onMapCameraUpdate,
-                    isSelectionEnabled: isSelectionEnabled)
+                    interactionStatus: interactionStatus)
     }
     
     // MARK: private methods
@@ -296,7 +301,7 @@ extension PlacesMKMapVCR {
         private let onPlaceSelected: ((UUID) -> Void)
         private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
         private let onMapCameraUpdate: MapCameraUpdateHandler?
-        private let isSelectionEnabled: (() -> Bool)
+        private let interactionStatus: (() -> InteractionStatus)
         private(set) var pendingCoordinate: CLLocationCoordinate2D? = nil
         
         var lastReloadGen: Int = 0
@@ -313,14 +318,14 @@ extension PlacesMKMapVCR {
              onPlaceSelected: @escaping ((UUID) -> Void),
              onLongPress: ((CLLocationCoordinate2D) -> Void)?,
              onMapCameraUpdate: MapCameraUpdateHandler?,
-             isSelectionEnabled: @escaping (() -> Bool) ) {
+             interactionStatus: @escaping (() -> InteractionStatus) ) {
             self.config = config
             self.mapSettings = mapSettings
             self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings)
             self.onPlaceSelected = onPlaceSelected
             self.onLongPress = onLongPress
             self.onMapCameraUpdate = onMapCameraUpdate
-            self.isSelectionEnabled = isSelectionEnabled
+            self.interactionStatus = interactionStatus
         }
         
         func updateSettings(_ mapSettings: MapSettings) {
@@ -330,27 +335,8 @@ extension PlacesMKMapVCR {
         
         // MARK: - gestures
         @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-            /*
-             guard !viewModel.pickingAddress else { return }
-             guard !viewModel.pickingCoordinates else { return }
-             guard gesture.state == .began else { return }
-             
-             let mapView = gesture.view as! MKMapView
-             let point = gesture.location(in: mapView)
-             let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
-             
-             viewModel.preparePlaceFromCoords(coords: coordinates)
-             viewModel.mapActionBus.performAction(.updateData)
-             
-             // Show the creation sheet
-             viewModel.showQuickCreateSheet.toggle()
-             // Center map on new place
-             centerOn(mapView, coords: coordinates, animated: true, sheetHeight: 400)
-             */
-            
-            
+            guard interactionStatus().longPressEnabled else { return }
             guard let onLongPress = onLongPress else { return }
-            // TODO: guard picking
             guard gesture.state == .began else { return }
             
             let mapView = gesture.view as! MKMapView
@@ -433,77 +419,45 @@ extension PlacesMKMapVCR {
         }
     }
 }
-    // MARK: - MKMapViewDelegate
-    extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
-        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            annotationViewFactory.view(for: annotation, in: mapView)
-        }
-        
-        func mapView(_ mapView: MKMapView, shouldSelect view: MKAnnotationView) -> Bool {
-            isSelectionEnabled()
-        }
-        
-        func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-            guard isSelectionEnabled() else { return }
 
-            if let cluster = view.annotation as? MKClusterAnnotation {
-                // Zoom into cluster
-                mapView.showAnnotations(cluster.memberAnnotations, animated: true)
-            } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
-                /*
-                guard !viewModel.pickingAddress else { return }
-                guard !viewModel.pickingCoordinates else { return }
 
-                view.isSelected = true
-                
-                let defaultSheetDetent: CGFloat = 400 // FIXME: this value should be provided somehow
-                centerOn(mapView,
-                         coords: placeAnnotation.coordinate,
-                         animated: true,
-                         sheetHeight: defaultSheetDetent)
-                //viewModel.selectPlace(placeAnnotation.id)
-                selectedPlaceId(placeAnnotation.id)
-                 */
-                
-                //guard let onPlaceSelected = onPlaceSelected else { return }
-                // TODO: guard picking
-                view.isSelected = true
-                
-                centerOn(mapView,
-                         coords: placeAnnotation.coordinate,
-                         withSheetOffset: true,
-                         animated: true)
-
-                onPlaceSelected(placeAnnotation.id)
-            }
+// MARK: - MKMapViewDelegate
+extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        annotationViewFactory.view(for: annotation, in: mapView)
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        guard interactionStatus().selectionEnabled else {
+            // Cancel the apple cluster default animation asap (another way would be to replace by our own cluster view)
+            mapView.deselectAnnotation(view.annotation, animated: false)
+            return
         }
-        
-        func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-            guard let _ = view.annotation as? MKPlaceAnnotation else { return }
-            view.isSelected = false
-        }
-        
-        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-            guard let onMapCameraUpdate = onMapCameraUpdate else { return }
-            
-            /*
-            let project: (CGPoint) -> CLLocationCoordinate2D = { point in
-                mapView.convert(point, toCoordinateFrom: mapView)
-            }
-
-            let unproject: (CLLocationCoordinate2D) -> CGPoint = { coords in
-                mapView.convert(coords, toPointTo: mapView)
-            }
-             */
-            
-            onMapCameraUpdate(mapView.camera,
-                              mapView.region,
-                              mapView.visibleMapRect)
+        if let cluster = view.annotation as? MKClusterAnnotation {
+            // Zoom into cluster
+            mapView.showAnnotations(cluster.memberAnnotations, animated: true)
+        } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
+            view.isSelected = true
+            centerOn(mapView,
+                     coords: placeAnnotation.coordinate,
+                     withSheetOffset: true,
+                     animated: true)
+            onPlaceSelected(placeAnnotation.id)
         }
     }
-
-
-
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        guard let _ = view.annotation as? MKPlaceAnnotation else { return }
+        view.isSelected = false
+    }
+    
+    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+        guard let onMapCameraUpdate = onMapCameraUpdate else { return }
+        onMapCameraUpdate(mapView.camera,
+                          mapView.region,
+                          mapView.visibleMapRect)
+    }
+}
 
 
 // MARK: - MapViewController
@@ -564,13 +518,9 @@ class PlacesMKMapVC: UIViewController {
 }
 
 
-
-
-
 #if DEBUG
 
 struct MockPlacesMKMapVCR: View {
-    //var mock: MockContainer
     @State var places: [PlaceUI]
     @State var settings: AppSettings
     @State var clustering: Bool = true
@@ -579,9 +529,7 @@ struct MockPlacesMKMapVCR: View {
     var body: some View {
         
         TabView {
-
             VStack {
-                
                 Button {
                     if selectedPlaceId == nil {
                         selectedPlaceId = places.randomElement()!.id
@@ -595,7 +543,6 @@ struct MockPlacesMKMapVCR: View {
                         Text("UnSelect")
                     }
                 }
-
                 
                 // INTERACTIVE TAB
                 PlacesMKMapVCR(config: .interactive,
@@ -605,7 +552,7 @@ struct MockPlacesMKMapVCR: View {
                                //onPlaceSelected: { uuid in print("SELECTED PLACE \(uuid)") },
                                onLongPress: { coords in print("LONG PRESSED \(coords)") },
                                onMapCameraUpdate: onMapCameraUpdate,
-                               isSelectionEnabled: { return true },
+                               interactionStatus: { return .all },
                                mapReloadGen: 0,
                                bottomInset: 0)
             }
@@ -624,7 +571,7 @@ struct MockPlacesMKMapVCR: View {
                                places: places,
                                pendingCoordinate: .barcelona.offset(x: 0.02, y: -0.02),
                                selectedPlaceId: Binding<UUID?>.constant(nil),
-                               isSelectionEnabled: { return false },
+                               interactionStatus: { return .none },
                                mapReloadGen: 0,
                                bottomInset: 0)
                 Toggle(isOn: $settings.mapSettings.clustering) {

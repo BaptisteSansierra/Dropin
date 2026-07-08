@@ -22,7 +22,6 @@ import SwiftUI
     @ObservationIgnored var locationManager: LocationManager
     @ObservationIgnored private var coordinator: GroupCoordinator
     @ObservationIgnored private var updateGroup: UpdateGroup
-    //@ObservationIgnored private var deleteGroup: DeleteGroup
     @ObservationIgnored private var fetchGroupPlaces: FetchGroupPlaces
     @ObservationIgnored private var updatePlace: UpdatePlace
     
@@ -31,15 +30,13 @@ import SwiftUI
          coordinator: GroupCoordinator,
          group: GroupUI,
          updateGroup: UpdateGroup,
-         //deleteGroup: DeleteGroup,
-         fetchGroupPlaces: FetchGroupPlaces,  // TODO : useless ?
+         fetchGroupPlaces: FetchGroupPlaces,
          updatePlace: UpdatePlace) {
         self.appContainer = appContainer
         self.locationManager = locationManager
         self.coordinator = coordinator
         self.group = group
         self.updateGroup = updateGroup
-        //self.deleteGroup = deleteGroup
         self.fetchGroupPlaces = fetchGroupPlaces
         self.updatePlace = updatePlace
         self.groupColor = group.color

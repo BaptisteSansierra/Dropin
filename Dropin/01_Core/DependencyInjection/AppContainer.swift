@@ -164,23 +164,31 @@ final class AppContainer {
     /// Cleanup order (intentional): try sync → in-memory caches → local data
     /// → session. The session flip is last so the UI only switches to AuthView
     /// once everything else is clean.
-    func signOut(force: Bool = false) async throws {
+    func signOut(force: Bool = false, didStartClearingSession: (() -> Void)) async throws {
+        Log.debug("Signout (forced:\(force)")
         if !force {
             // User chose not to force, cancel the signout if there's some pending sync actions
             let pending = syncService.pendingChangeCount
             if pending > 0 {
+                Log.debug(" -> \(pending) pending syncs")
                 guard reachabilityService.isConnected else {
+                    Log.debug(" -> Throw error offline with pending changes")
                     throw SignOutError.offlineWithPendingChanges(count: pending)
                 }
                 await syncService.syncAll()
                 let stillPending = syncService.pendingChangeCount
                 if stillPending > 0 {
+                    Log.debug(" -> Throw error failed with pending changes")
                     throw SignOutError.syncFailedWithPendingChanges(count: stillPending)
                 }
+            } else {
+                Log.debug(" -> no pending sync")
             }
         }
-        // ICI CHECK FORCE/NOT FORCE TODO
-        
+        didStartClearingSession()
+        // Enable loader
+        authStatus.isSigningOut = true
+
         // 1. In-memory caches
         profileService.clear()
         // 2. Navigation state (reset coordinators + side menu)
@@ -193,6 +201,8 @@ final class AppContainer {
         syncService.reset()
         // 4. Session — last; AuthStatus flips → root switches to AuthView
         try await authService.signOut()
+        
+        authStatus.isSigningOut = false
     }
     
     // MARK: - create views
@@ -218,16 +228,6 @@ final class AppContainer {
     }
 
     func createRootView() -> RootView {
-//        let currentSideMenuContextB = Binding<SideMenuContext> {
-//            let v = self.appContext.currentSideMenuContext
-//            print("🟠 GET on \(ObjectIdentifier(self)) → \(v)")
-//            return v
-//        } set: { v in
-//            print("🟢 SET on \(ObjectIdentifier(self)) → \(v)")
-//            self.appContext.currentSideMenuContext = v
-//            print("🟢 AC stored value now → \(self.appContext.currentSideMenuContext)")
-//        }
-
         let vm = RootViewModel(self, appContext: appContext)
         return RootView(viewModel: vm)
     }
@@ -237,7 +237,8 @@ final class AppContainer {
                                coordinator: mainCoordinator,
                                locationManager: locationManager,
                                fetchPlaces: FetchPlaces(repository: placeRepository),
-                               syncStatus: syncService.syncStatus)
+                               syncStatus: syncService.syncStatus,
+                               reachabilityService: reachabilityService)
         return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
@@ -289,19 +290,6 @@ final class AppContainer {
     }
     
     func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
-        var relevantCoordinator: any PlaceNavigationCoordinator {
-            switch appContext.currentSideMenuContext {
-                case .main:
-                    return mainCoordinator
-                case .groups:
-                    return groupCoordinator
-                case .tags:
-                    return tagCoordinator
-                default:
-                    assertionFailure("This section doesn't support place edition")
-                    return mainCoordinator
-            }
-        }
         let vm = PlaceSheetViewModel(self,
                                      coordinator: currentPlaceCoordinator(),
                                      locationManager: locationManager,
@@ -318,7 +306,6 @@ final class AppContainer {
         let vm = PlaceEditContentViewModel(self,
                                            coordinator: mainCoordinator,
                                            updatePlace: UpdatePlace(repository: placeRepository),
-                                           //deletePlace: DeletePlace(repository: placeRepository),
                                            getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                            getPlaceImage: GetPlaceImage(loader: imageLoader),
                                            mode: mode)
@@ -360,7 +347,6 @@ final class AppContainer {
                                   coordinator: tagCoordinator,
                                   fetchTagsWithCount: FetchTagsWithCount(repository: tagRepository),
                                   updateTag: UpdateTag(repository: tagRepository),
-                                  //deleteTag: DeleteTag(repository: tagRepository),
                                   syncStatus: syncService.syncStatus)
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
@@ -371,11 +357,9 @@ final class AppContainer {
                                      coordinator: tagCoordinator,
                                      tag: tag,
                                      updateTag: UpdateTag(repository: tagRepository),
-                                     //deleteTag: DeleteTag(repository: tagRepository),
                                      fetchTagPlaces: FetchTagPlaces(repository: placeRepository),
                                      updatePlace: UpdatePlace(repository: placeRepository))
         return TagDetailsView(viewModel: vm)
-        //return TagDetailsView(viewModel: vm, tag: tag)
     }
     
     func createTagMapView(tagId: UUID) -> TagMapView {
@@ -390,7 +374,6 @@ final class AppContainer {
                                     coordinator: groupCoordinator,
                                     fetchGroupsWithCount: FetchGroupsWithCount(repository: groupRepository),
                                     updateGroup: UpdateGroup(repository: groupRepository),
-                                    //deleteGroup: DeleteGroup(repository: groupRepository),
                                     syncStatus: syncService.syncStatus)
         return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
@@ -442,16 +425,6 @@ final class AppContainer {
                                       lookupResolvedItem: lookupResolvedItem)
         return LookupPlaceView(viewModel: vm, place: place, status: status)
     }
-
-    #if false
-    func createDropAPinView() -> DropAPinView {
-        let vm = DropAPinViewModel(self,
-                                   coordinator: mainCoordinator,
-                                   locationManager: locationManager,
-                                   createPlace: CreatePlace(repository: placeRepository))
-        return DropAPinView(viewModel: vm)
-    }
-    #endif
     
     func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
         let vm = PlaceFilterViewModel(self,

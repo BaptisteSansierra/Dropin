@@ -21,6 +21,7 @@ struct RootView: View {
         // should we move it on MainView
         enum Action {
             case reloadMainPlaces
+            //case updateMapAnnotations
             case selectPlace(placeId: UUID)
             case showOnMap(placeId: UUID)
         }

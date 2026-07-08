@@ -44,8 +44,9 @@ struct MapSettingsOverlay: View {
 
     private var poiButton: some View {
         HStack(alignment: .center) {
-            // TODO: translate strings
-            let poiCaption = appSettings.mapSettings.hidePOI ? "Show points of interest" : "Hide points of interest"
+            let poiCaption = appSettings.mapSettings.hidePOI
+                ? String(localized: "map.poi.show")
+                : String(localized: "map.poi.hide")
             let sysImg = "mappin" // mapSettings.hidePointsOfInterest ? "mappin" : "mappin.slash"
             MapIcoButton(systemImage: sysImg,
                          imageFrame: CGSize(width: 15, height: 15),
@@ -65,8 +66,9 @@ struct MapSettingsOverlay: View {
     
     private var modeButton: some View {
         HStack(alignment: .center) {
-            // TODO: translate strings
-            let mapModeCaption = appSettings.mapSettings.satellite ? "Default" : "Satellite"
+            let mapModeCaption = appSettings.mapSettings.satellite
+                ? String(localized: "map.mode.default")
+                : String(localized: "map.mode.satellite")
             MapIcoButton(systemImage: "square.2.layers.3d",
                          imageFrame: CGSize(width: 15, height: 15),
                          rightCaption: mapModeCaption,

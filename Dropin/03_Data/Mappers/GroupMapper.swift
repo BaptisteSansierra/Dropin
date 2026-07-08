@@ -21,9 +21,15 @@ public enum GroupMapper {
     }
     
     static func toData(_ group: GroupEntity) -> SDGroup {
-        return SDGroup(identifier: group.id,
-                       name: group.name,
-                       color: group.color,
-                       icon: group.icon)
+        let sd = SDGroup(identifier: group.id,
+                         name: group.name,
+                         color: group.color,
+                         icon: group.icon)
+        // SDGroup.init hardcodes fresh dates; preserve domain timestamps so
+        // server-originated rows (incl. soft-deletes) survive a pull.
+        sd.createdAt = group.createdAt
+        sd.updatedAt = group.updatedAt
+        sd.deletedAt = group.deletedAt
+        return sd
     }
 }

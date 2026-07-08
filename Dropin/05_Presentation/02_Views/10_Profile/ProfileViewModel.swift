@@ -104,11 +104,13 @@ import Foundation
 
     /// First-pass sign-out. Throws if user confirmation is required (the view
     /// stages a second alert via `pendingForceSignOut` based on the error).
-    func signOut() async {
+    func signOut(didStartClearingSession: () -> Void) async {
         isSigningOut = true
         defer { isSigningOut = false }
         do {
-            try await appContainer.signOut()
+            try await appContainer.signOut {
+                didStartClearingSession()
+            }
         } catch let AppContainer.SignOutError.offlineWithPendingChanges(count) {
             pendingForceSignOut = .offline(pendingCount: count)
         } catch let AppContainer.SignOutError.syncFailedWithPendingChanges(count) {
@@ -119,12 +121,13 @@ import Foundation
     }
 
     /// Second-pass: user accepted that unsynced changes will be lost.
-    func forceSignOut() async {
+    func forceSignOut(didStartClearingSession: () -> Void) async {
         isSigningOut = true
         defer { isSigningOut = false }
         pendingForceSignOut = nil
         do {
-            try await appContainer.signOut(force: true)
+            try await appContainer.signOut(force: true,
+                                           didStartClearingSession: didStartClearingSession)
         } catch {
             Log.error("ProfileViewModel: forced signOut failed: \(error)")
         }

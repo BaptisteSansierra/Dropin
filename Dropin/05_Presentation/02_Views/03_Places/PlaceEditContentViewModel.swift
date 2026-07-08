@@ -23,21 +23,18 @@ import CoreLocation
     @ObservationIgnored private var coordinator: MainCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let updatePlace: UpdatePlace
-    //@ObservationIgnored private let deletePlace: DeletePlace
     @ObservationIgnored private let getPlaceThumbnails: GetPlaceThumbnails
     @ObservationIgnored private let getPlaceImage: GetPlaceImage
 
     init(_ appContainer: AppContainer,
          coordinator: MainCoordinator,
          updatePlace: UpdatePlace,
-         //deletePlace: DeletePlace,
          getPlaceThumbnails: GetPlaceThumbnails,
          getPlaceImage: GetPlaceImage,
          mode: Mode) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.updatePlace = updatePlace
-        //self.deletePlace = deletePlace
         self.getPlaceThumbnails = getPlaceThumbnails
         self.getPlaceImage = getPlaceImage
         self.mode = mode
@@ -66,15 +63,6 @@ import CoreLocation
         let placeEntity = PlaceMapper.toDomain(place)
         try await updatePlace(placeEntity)
     }
-
-    
-//    func deletePlace(_ place: PlaceUI) async throws {
-//        try await deletePlace(PlaceMapper.toDomain(place))
-//        if place.deletedAt == nil {
-//            assertionFailure("Model should have been marked deleted already for SwiftUI safety")
-//            place.deletedAt = Date()
-//        }
-//    }
 
     func loadThumbnails(for place: PlaceUI) {
         Task {

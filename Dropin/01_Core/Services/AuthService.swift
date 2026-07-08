@@ -5,6 +5,8 @@
 import Supabase
 import Foundation
 
+private struct SignOutTimeout: Error {}
+
 struct UserSession: Sendable, Equatable {
     let userId: UUID
     let email: String?
@@ -56,8 +58,28 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func signOut() async throws {
-        try await client.auth.signOut()
-        session = nil
+        defer {
+            // Success or not (maybe offline), we're clearing session locally
+            session = nil
+        }
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try await self.client.auth.signOut()
+                }
+                group.addTask {
+                    try await Task.sleep(for: .seconds(3))
+                    throw SignOutTimeout()
+                }
+                try await group.next() // first complete win
+                group.cancelAll()
+            }
+            Log.info("Remote signOut completed")
+        } catch is SignOutTimeout {
+            Log.warning("signOut is took more than 3 seconds, ignore it, wipe session")
+        } catch {
+            Log.warning("signOut failed (\(error)), wipe session anyway")
+        }
     }
 
     func restoreSession() async {

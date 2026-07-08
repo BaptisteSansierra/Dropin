@@ -16,13 +16,16 @@ final class AuthStatus {
 
     enum State {
         case loading
-        case signedIn
+        case signedIn(signingOut: Bool)
         case signedOut
     }
 
     /// True while initial `restoreSession()` is in flight. Flipped to false by
     /// the call site (`AppContainer.restoreSession()`) once the restore returns.
     var isRestoring: Bool = true
+
+    /// True while `signout()` is in flight. Flipped to false when done
+    var isSigningOut: Bool = false
 
     @ObservationIgnored private let authService: any AuthServiceProtocol
 
@@ -33,7 +36,12 @@ final class AuthStatus {
     /// Derived: the access to both `isRestoring` and `authService.session`
     /// registers observation, so consumers re-render on either change.
     var state: State {
-        if isRestoring { return .loading }
-        return authService.session != nil ? .signedIn : .signedOut
+        if isRestoring {
+            Log.debug("AuthStatus is loading")
+            return .loading
+        }
+        let s: State = authService.session != nil ? .signedIn(signingOut: isSigningOut) : .signedOut
+        Log.debug("AuthStatus is \(s)")
+        return s
     }
 }

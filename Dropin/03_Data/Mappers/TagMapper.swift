@@ -20,8 +20,14 @@ public enum TagMapper {
     }
     
     static func toData(_ tag: TagEntity) -> SDTag {
-        return SDTag(identifier: tag.id,
-                     name: tag.name,
-                     color: tag.color)
+        let sd = SDTag(identifier: tag.id,
+                       name: tag.name,
+                       color: tag.color)
+        // SDTag.init hardcodes fresh dates; preserve domain timestamps so
+        // server-originated rows (incl. soft-deletes) survive a pull.
+        sd.createdAt = tag.createdAt
+        sd.updatedAt = tag.updatedAt
+        sd.deletedAt = tag.deletedAt
+        return sd
     }
 }

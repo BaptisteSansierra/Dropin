@@ -88,7 +88,7 @@ struct MapSettingsPreviewView: View {
                        mapController: MapController(),
                        places: [place, clusterPlace1, clusterPlace2],
                        selectedPlaceId: .constant(nil),
-                       isSelectionEnabled: { false },
+                       interactionStatus: { .none },
                        mapReloadGen: mapReloadGen)
 
         /*

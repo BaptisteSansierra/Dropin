@@ -24,6 +24,11 @@ import SwiftUI
     @ObservationIgnored private var fetchTagPlaces: FetchTagPlaces
     @ObservationIgnored private var updatePlace: UpdatePlace
     
+    
+//    TODO
+//    * Try delete a tag/group : when the deleted_at is set ?
+//    * Try to logout with pending modifications
+    
     init(_ appContainer: AppContainer,
          locationManager: LocationManager,
          coordinator: TagCoordinator,

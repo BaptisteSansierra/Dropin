@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 // TODO: obsolete: to be removed
-
+#if false
 struct PlaceHeaderView: View {
     
     // MARK: - State & Bindings
@@ -115,7 +115,7 @@ struct PlaceHeaderView: View {
                     withAnimation {
                         showNotesField.toggle()
                         //scrollPosition.scrollTo(edge: .bottom)
-                        // TODO: add a onChange in upperView to scoll to notes
+                        // TODO: add a onChange in upperView to scroll to notes
                     }
                 })
                 .padding(.horizontal, 15)
@@ -162,5 +162,7 @@ struct MockPlaceHeaderView: View {
         MockPlaceHeaderView()
     }
 }
+
+#endif
 
 #endif

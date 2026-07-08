@@ -35,12 +35,15 @@ func assertNoBug(_ error: Error,
         assertionFailure("EncodingError: \(encoding)", file: file, line: line)
         return
     }
+    
+    // Neither of these is a bug — they're expected lifecycle / RLS states.
+    // Let callers handle them with `error.isAuthGone` and log accordingly.
     if case AuthError.notAuthenticated = error {
-        assertionFailure("AuthError.notAuthenticated — caller expected a signed-in session", file: file, line: line)
+        Log.warning("AuthError.notAuthenticated — caller expected a signed-in session file:\(file) line:\(line)")
         return
     }
     if let pg = error as? PostgrestError, pg.code == "42501" {
-        assertionFailure("PostgREST 42501 — missing GRANT / RLS rejection: \(pg.message)", file: file, line: line)
+        Log.warning("PostgREST 42501 — missing GRANT / RLS rejection: \(pg.message) file:\(file) line:\(line)")
         return
     }
     #endif

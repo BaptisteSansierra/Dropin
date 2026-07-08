@@ -11,6 +11,7 @@ struct ProfileView: View {
 
     @State private var viewModel: ProfileViewModel
     @State private var confirmLogout: Bool = false
+    @State private var showSyncInfo: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     init(viewModel: ProfileViewModel) {
@@ -78,7 +79,11 @@ struct ProfileView: View {
                             isPresented: $confirmLogout,
                             titleVisibility: .visible) {
             Button("profile.logout.confirm", role: .destructive) {
-                Task { await viewModel.signOut() }
+                Task {
+                    await viewModel.signOut {
+                        dismiss()
+                    }
+                }
             }
             Button("common.cancel", role: .cancel) { }
         } message: {
@@ -90,7 +95,20 @@ struct ProfileView: View {
                isPresented: forceSignOutBinding,
                presenting: viewModel.pendingForceSignOut) { _ in
             Button("profile.logout.force", role: .destructive) {
-                Task { await viewModel.forceSignOut() }
+                Task {
+                    await viewModel.forceSignOut {
+                        dismiss()
+                    }
+                }
+            }
+            Button("profile.logout.more_info") {
+                // Dismiss this alert, then defer the info alert so SwiftUI
+                // doesn't hit "presentation in progress" trying to chain.
+                viewModel.pendingForceSignOut = nil
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(350))
+                    showSyncInfo = true
+                }
             }
             Button("common.cancel", role: .cancel) {
                 viewModel.pendingForceSignOut = nil
@@ -102,6 +120,13 @@ struct ProfileView: View {
                 case .syncFailed(let count):
                     Text("profile.logout.sync_failed_body_\(count)")
             }
+        }
+        // Tertiary info: explains WHY there are unsynced changes and what to do.
+        .alert("profile.logout.info_title",
+               isPresented: $showSyncInfo) {
+            Button("common.ok", role: .cancel) { }
+        } message: {
+            Text("profile.logout.info_body")
         }
     }
 

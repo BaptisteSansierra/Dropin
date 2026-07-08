@@ -18,6 +18,7 @@ import CoreLocation
     /*private(set)*/ var mapReloadGen: Int = 0    // bumps after each significant reload
 
     var syncStatus: SyncStatus
+    var reachabilityService: ReachabilityService
 
     /// Places filtered with `currentFilter`
     var filteredPlaces: [PlaceUI] {
@@ -64,12 +65,19 @@ import CoreLocation
          coordinator: MainCoordinator,
          locationManager: LocationManager,
          fetchPlaces: FetchPlaces,
-         syncStatus: SyncStatus) {
+         syncStatus: SyncStatus,
+         reachabilityService: ReachabilityService) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
         self.fetchPlaces = fetchPlaces
         self.syncStatus = syncStatus
+        self.reachabilityService = reachabilityService
+    }
+
+    // MARK: actions
+    func updateMapAnnotations() {
+        mapReloadGen &+= 1   // force the MKMap annotations update
     }
 
     // MARK: UI Child
@@ -151,7 +159,7 @@ import CoreLocation
     func loadPlaces() async throws {
         let domainPlaces = try await fetchPlaces()
         places = domainPlaces.map { PlaceMapper.toUI($0) }
-        mapReloadGen &+= 1   // force the MKMap annotations update
+        updateMapAnnotations()
         return
     }
 }

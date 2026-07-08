@@ -50,7 +50,7 @@ final class MockGroupRepository: GroupRepository {
     
     func fetchWithPlaceCount() async throws -> [(Dropin.GroupEntity, Int)] {
         return groups
-            .map({ ($0, 0) }) // TODO if needed
+            .map({ ($0, 0) }) // dummy impl
     }
 
     func fetch(_ id: UUID) async throws -> GroupEntity {

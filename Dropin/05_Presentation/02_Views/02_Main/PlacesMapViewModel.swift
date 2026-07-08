@@ -113,8 +113,8 @@ import MapKit
         updatePlacePickerPositions(coords: cameraCenter)
     }
 
-    func isSelectionEnabled() -> Bool {
-        return !pickingAddress && !pickingCoordinates
+    func interactionStatus() -> PlacesMKMapVCR.InteractionStatus {
+        return (!pickingAddress && !pickingCoordinates) ? .all : .none
     }
     
     // MARK: - Actions

@@ -59,7 +59,7 @@ struct PlacesMapView: View {
                                selectedPlaceId: $selectedPlaceId,
                                onLongPress: viewModel.onLongPress,
                                onMapCameraUpdate: viewModel.onCameraUpdate,
-                               isSelectionEnabled: viewModel.isSelectionEnabled,
+                               interactionStatus: viewModel.interactionStatus,
                                mapReloadGen: mapReloadGen,
                                bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
                  
