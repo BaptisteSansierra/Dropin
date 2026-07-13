@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 @Observable class SettingsViewModel {
     
-    var coordinator: MainCoordinator
+    var coordinator: PlaceCoordinator
     
     var mapEditMode = MapEditSettingsMode.none
 
@@ -45,7 +45,7 @@ import SwiftUI
     @ObservationIgnored private var sync: any SyncServicePausableProtocol
 
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          fetchPlaces: FetchPlaces,
          fetchGroups: FetchGroups,
          fetchTags: FetchTags,

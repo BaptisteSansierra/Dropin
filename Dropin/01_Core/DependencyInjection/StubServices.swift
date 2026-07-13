@@ -17,6 +17,8 @@ final class StubAuthService: AuthServiceProtocol {
     func signUp(email: String, password: String) async throws {}
     func signIn(email: String, password: String) async throws {}
     func signInWithApple() async throws {}
+    func resetPassword(email: String) async throws {}
+    func resendVerificationEmail(email: String) async throws {}
     func signOut() async throws { session = nil }
     func restoreSession() async {}
 }

@@ -71,6 +71,7 @@ struct SideMenuView: View {
     var content: some View {
         VStack(spacing: 0) {
             headerView
+                .padding(.bottom, 15)
            
             sectionsView
             
@@ -99,13 +100,11 @@ struct SideMenuView: View {
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(verbatim: viewModel.headerTitle)
-                            .foregroundStyle(.backgroundPrimary)
-                            .font(.sidebarTitle)
+                            .textStyle(.sidebarTitle, color: .backgroundPrimary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                         Text(verbatim: viewModel.headerSubtitle)
-                            .foregroundStyle(.backgroundPrimary.opacity(0.75))
-                            .font(.sidebarSubtitle)
+                            .textStyle(.sidebarSubtitle, color: .backgroundPrimary.opacity(0.75))
                             .lineLimit(1)
                     }
 
@@ -124,12 +123,13 @@ struct SideMenuView: View {
     
     private var sectionsView: some View {
         VStack(spacing: 0) {
+            let rowHeight: CGFloat = 50
             SideMenuItemView(label: "common.places",
                              systemImage: "globe.europe.africa.fill",
                              context: .main,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             
             SideMenuItemView(label: "common.groups",
@@ -137,7 +137,7 @@ struct SideMenuView: View {
                              context: .groups,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             
             SideMenuItemView(label: "common.tags",
@@ -145,7 +145,7 @@ struct SideMenuView: View {
                              context: .tags,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             
             Divider()
@@ -156,14 +156,14 @@ struct SideMenuView: View {
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             SideMenuItemView(label: "common.recents",
                              systemImage: "clock",
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             
             Divider()
@@ -174,21 +174,21 @@ struct SideMenuView: View {
                              context: .settings,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             SideMenuItemView(label: "common.about",
                              systemImage: "info.circle",
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
             SideMenuItemView(label: "common.reportproblem",
                              systemImage: "exclamationmark.triangle",
                              context: .toBeImplemnented,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
-            .frame(height: 60)
+            .frame(height: rowHeight)
             .padding(.bottom, 0)
         }
     }

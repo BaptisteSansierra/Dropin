@@ -1,5 +1,5 @@
 //
-//  MainView.swift
+//  PlacesView.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 19/7/25.
@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-struct MainView: View {
+struct PlacesView: View {
         
     // MARK: - States & Bindings
-    @State private var viewModel: MainViewModel
+    @State private var viewModel: PlacesViewModel
     @Binding private var showingSideMenu: Bool
     @Environment(RootView.ActionBus.self) private var actionBus
 
     // MARK: - Init
-    init(viewModel: MainViewModel, showingSideMenu: Binding<Bool>) {
+    init(viewModel: PlacesViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
         self._showingSideMenu = showingSideMenu
     }
@@ -164,21 +164,22 @@ struct MainView: View {
                     .foregroundStyle(.ultraThinMaterial)
                     //.foregroundStyle(.white.opacity(0.35))
                 VStack {
+                    let unselectedColor = Color.shade5
+                    //let unselectedColor = Color(light: Color(rgba: "666666"),
+                    //                            dark: Color(rgba: "AAAAAA"))
+
                     HStack(alignment: .top) {
                         Button {
                             viewModel.selectedTab = 0
                         } label: {
+                            let color = viewModel.selectedTab == 0 ? .dropinPrimary : unselectedColor
                             Spacer()
                             Label {
                                 Text("common.map")
-                                    .foregroundStyle(viewModel.selectedTab == 0 ? .dropinSecondary :
-                                                        Color(light: Color(rgba: "666666"),
-                                                              dark: Color(rgba: "AAAAAA")) )
+                                    .textStyle(.tabBarTxt, color: color)
                             } icon: {
                                 Image(systemName: "map")
-                                    .foregroundStyle(viewModel.selectedTab == 0 ? .dropinSecondary :
-                                                        Color(light: Color(rgba: "666666"),
-                                                              dark: Color(rgba: "AAAAAA")) )
+                                    .textStyle(.tabBarImg, color: color)
                             }
                             .labelStyle(CenteredLabelStyle())
                             Spacer()
@@ -186,17 +187,14 @@ struct MainView: View {
                         Button {
                             viewModel.selectedTab = 1
                         } label: {
+                            let color = viewModel.selectedTab == 1 ? .dropinPrimary : unselectedColor
                             Spacer()
                             Label {
                                 Text("common.list")
-                                    .foregroundStyle(viewModel.selectedTab == 1 ? .dropinSecondary :
-                                                        Color(light: Color(rgba: "666666"),
-                                                              dark: Color(rgba: "AAAAAA")) )
+                                    .textStyle(.tabBarTxt, color: color)
                             } icon: {
                                 Image(systemName: "list.bullet")
-                                    .foregroundStyle(viewModel.selectedTab == 1 ? .dropinSecondary :
-                                                        Color(light: Color(rgba: "666666"),
-                                                              dark: Color(rgba: "AAAAAA")) )
+                                    .textStyle(.tabBarImg, color: color)
                             }
                             .labelStyle(CenteredLabelStyle())
                             Spacer()
@@ -300,7 +298,6 @@ struct MainView: View {
                 }
         }
     }
-
     
     private func onAppearCallback() {
         /*
@@ -346,7 +343,7 @@ struct MainView: View {
 }
 
 // Create Views
-extension MainView {
+extension PlacesView {
     
     private func createPlaceDetailsSheetView() -> PlaceSheetView {
         guard let selectedPlaceId = viewModel.selectedPlaceId else {
@@ -361,12 +358,12 @@ extension MainView {
 }
 
 #if DEBUG
-struct MockMainView: View {
+struct MockPlacesView: View {
     @State private var showingSideMenu: Bool = false
     var mock: MockContainer
 
     var body: some View {
-        mock.appContainer.createMainView(showingSideMenu: $showingSideMenu)
+        mock.appContainer.createPlacesView(showingSideMenu: $showingSideMenu)
     }
     
     init() {
@@ -376,7 +373,7 @@ struct MockMainView: View {
 }
 
 #Preview {
-    MockMainView()
+    MockPlacesView()
 }
 
 #endif

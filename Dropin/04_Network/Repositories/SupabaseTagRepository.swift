@@ -41,7 +41,7 @@ final class SupabaseTagRepository: RemoteTagRepository {
 
     @MainActor
     private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthError.notAuthenticated }
+        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
         return session.userId
     }
 }

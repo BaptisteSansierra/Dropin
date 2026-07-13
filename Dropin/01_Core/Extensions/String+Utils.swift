@@ -17,4 +17,16 @@ extension String {
         }
         .uppercased()
     }
+    
+    func isValidEmail() -> Bool {
+        guard let atIndex = self.firstIndex(of: "@") else { return false }
+        let localPart = self[self.startIndex..<atIndex]
+        let domainPart = self[self.index(after: atIndex)...]
+        return !localPart.isEmpty && domainPart.contains(".") && !domainPart.hasPrefix(".") && !domainPart.hasSuffix(".")
+    }
+    
+    func isValidPassword() -> Bool {
+        // TODO: improve password rules  
+        self.count >= DropinApp.defaults.minimumPasswordLength
+    }
 }

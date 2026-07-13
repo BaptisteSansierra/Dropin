@@ -79,7 +79,7 @@ struct DropinApp: App {
             case .loading:
                 SplashView()
             case .signedOut:
-                appContainer.createAuthView()
+                appContainer.createSignInView()
             case .signedIn(let signingOut):
                 ZStack {
                     appContainer.createRootView()
@@ -176,6 +176,8 @@ extension DropinApp {
         static let exportUTTypeId = "com.dropin.export"
     }
     struct defaults {
+        static let minimumPasswordLength: Int = 8
+        
         static let latitude: Double = 46.232193
         static let longitude: Double = 2.209667
         static let latitudeSpan: Double = 10

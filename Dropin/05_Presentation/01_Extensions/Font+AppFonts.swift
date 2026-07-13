@@ -7,11 +7,16 @@
 
 import SwiftUI
 
+/// Define app font primitives
 extension Font {
+
     // Large Title
     static let largeTitleSemibold = Font.system(size: 34, weight: .semibold)
     static let largeTitleRegular = Font.system(size: 34, weight: .regular)
-    
+
+    static let _32Semibold = Font.system(size: 32, weight: .semibold)
+    //static let largeTitleRegular = Font.system(size: 32, weight: .regular)
+
     // Title
     static let titleBold = Font.system(size: 28, weight: .bold)
     static let titleRegular = Font.system(size: 28, weight: .regular)
@@ -34,9 +39,11 @@ extension Font {
     
     // Callout
     static let calloutRegular = Font.system(size: 16, weight: .regular)
-    
+    static let calloutSemibold = Font.system(size: 16, weight: .semibold)
+
     // Subheadline
     static let subheadlineRegular = Font.system(size: 15, weight: .regular)
+    static let subheadlineSemibold = Font.system(size: 15, weight: .semibold)
     
     // Footnote
     static let footnoteBold = Font.system(size: 13, weight: .bold)
@@ -48,15 +55,6 @@ extension Font {
     
     // Caption2
     static let caption2Regular = Font.system(size: 11, weight: .regular)
+    static let caption2Semibold = Font.system(size: 11, weight: .semibold)
     static let caption2Light = Font.system(size: 11, weight: .light)
-    
-    
-    
-    static let avatarLarge: Font = .system(size: 32, weight: .semibold)
-    static let avatarSmall: Font = .system(size: 16, weight: .semibold)
-    static let profileName: Font = .title2.bold()
-    
-    static let sidebarTitle: Font = .title3Bold
-    static let sidebarSubtitle: Font = .bodyLight
-
 }

@@ -24,8 +24,10 @@ final class AppContainer {
     private let imageLoader: ImageLoader
     // Coordinators
     private let mainCoordinator: MainCoordinator
+    private let placeCoordinator: PlaceCoordinator
     private let tagCoordinator: TagCoordinator
     private let groupCoordinator: GroupCoordinator
+    private let authCoordinator: AuthCoordinator
     // Services
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
@@ -46,8 +48,10 @@ final class AppContainer {
         self.appContext = appContext
         // Coordinators
         mainCoordinator = MainCoordinator()
+        placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
+        authCoordinator = AuthCoordinator()
         // Services
         locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
@@ -104,8 +108,10 @@ final class AppContainer {
         self.appContext = appContext
         // Coordinators
         mainCoordinator = MainCoordinator()
+        placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
+        authCoordinator = AuthCoordinator()
         // Services
         self.locationManager = locationManager
         self.addressLookupService = addressLookupService
@@ -162,7 +168,7 @@ final class AppContainer {
     ///   has accepted that unsynced changes will be lost.
     ///
     /// Cleanup order (intentional): try sync → in-memory caches → local data
-    /// → session. The session flip is last so the UI only switches to AuthView
+    /// → session. The session flip is last so the UI only switches to the sign-in flow
     /// once everything else is clean.
     func signOut(force: Bool = false, didStartClearingSession: (() -> Void)) async throws {
         Log.debug("Signout (forced:\(force)")
@@ -192,23 +198,38 @@ final class AppContainer {
         // 1. In-memory caches
         profileService.clear()
         // 2. Navigation state (reset coordinators + side menu)
-        mainCoordinator.popToRoot()
+        placeCoordinator.popToRoot()
         tagCoordinator.path.removeAll()
         groupCoordinator.path.removeAll()
         appContext.currentSideMenuContext = .main
         // 3. Local data
         try await clearDatabase()
         syncService.reset()
-        // 4. Session — last; AuthStatus flips → root switches to AuthView
+        // 4. Session — last; AuthStatus flips → root switches to the sign-in flow
         try await authService.signOut()
         
         authStatus.isSigningOut = false
     }
     
     // MARK: - create views
-    func createAuthView() -> AuthView {
-        let vm = AuthViewModel(authService: authService)
-        return AuthView(viewModel: vm)
+    func createSignInView() -> SignInView {
+        let vm = SignInViewModel(appContainer: self, authService: authService, coordinator: authCoordinator)
+        return SignInView(viewModel: vm)
+    }
+
+    func createSignUpView() -> SignUpView {
+        let vm = SignUpViewModel(authService: authService, coordinator: authCoordinator)
+        return SignUpView(viewModel: vm)
+    }
+
+    func createResetPasswordView() -> ResetPasswordView {
+        let vm = ResetPasswordViewModel(authService: authService, coordinator: authCoordinator)
+        return ResetPasswordView(viewModel: vm)
+    }
+
+    func createVerifyEmailView(email: String, password: String) -> VerifyEmailView {
+        let vm = VerifyEmailViewModel(email: email, password: password, authService: authService, coordinator: authCoordinator)
+        return VerifyEmailView(viewModel: vm)
     }
 
     func createProfileView() -> ProfileView {
@@ -228,18 +249,20 @@ final class AppContainer {
     }
 
     func createRootView() -> RootView {
-        let vm = RootViewModel(self, appContext: appContext)
+        let vm = RootViewModel(self,
+                               appContext: appContext,
+                               coordinator: mainCoordinator)
         return RootView(viewModel: vm)
     }
     
-    func createMainView(showingSideMenu: Binding<Bool>) -> MainView {
-        let vm = MainViewModel(self,
-                               coordinator: mainCoordinator,
+    func createPlacesView(showingSideMenu: Binding<Bool>) -> PlacesView {
+        let vm = PlacesViewModel(self,
+                               coordinator: placeCoordinator,
                                locationManager: locationManager,
                                fetchPlaces: FetchPlaces(repository: placeRepository),
                                syncStatus: syncService.syncStatus,
                                reachabilityService: reachabilityService)
-        return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
+        return PlacesView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
     func createPlacesMapView(places: [PlaceUI],
@@ -249,7 +272,7 @@ final class AppContainer {
                              mapReloadGen: Int,
                              navBarHeight: CGFloat) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
-                                    coordinator: mainCoordinator,
+                                    coordinator: placeCoordinator,
                                     locationManager: locationManager)
         return PlacesMapView(viewModel: vm,
                              places: places,
@@ -263,14 +286,14 @@ final class AppContainer {
     func createPlacesListView(places: [PlaceUI],
                               selectedPlaceId: Binding<UUID?>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
-                                     coordinator: mainCoordinator,
+                                     coordinator: placeCoordinator,
                                      locationManager: locationManager)
         return PlacesListView(viewModel: vm, places: places, selectedPlaceId: selectedPlaceId)
     }
     
     func createPlaceCreateQuickView(place: PlaceUI) -> PlaceCreateQuickView {
         let vm = PlaceCreateQuickViewModel(self,
-                                           coordinator: mainCoordinator,
+                                           coordinator: placeCoordinator,
                                            createPlace: CreatePlace(repository: placeRepository))
         return PlaceCreateQuickView(viewModel: vm, place: place)
     }
@@ -304,7 +327,7 @@ final class AppContainer {
                                     mode: PlaceEditContentViewModel.Mode,
                                     showMissingName: Binding<Bool>) -> PlaceEditContentView {
         let vm = PlaceEditContentViewModel(self,
-                                           coordinator: mainCoordinator,
+                                           coordinator: placeCoordinator,
                                            updatePlace: UpdatePlace(repository: placeRepository),
                                            getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                            getPlaceImage: GetPlaceImage(loader: imageLoader),
@@ -328,7 +351,7 @@ final class AppContainer {
                                tags: [UUID],
                                group: UUID?) -> PlaceCreateView {
         let vm = PlaceCreateViewModel(self,
-                                      coordinator: mainCoordinator,
+                                      coordinator: placeCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
                                       getTag: FetchTag(repository: tagRepository),
                                       getGroup: FetchGroup(repository: groupRepository),
@@ -398,7 +421,7 @@ final class AppContainer {
 
     func createLookupPlacesView() -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
-                                       coordinator: mainCoordinator,
+                                       coordinator: placeCoordinator,
                                        addressLookupService: addressLookupService,
                                        locationManager: locationManager,
                                        reachabilityService: reachabilityService,
@@ -408,7 +431,7 @@ final class AppContainer {
 
     func createLookupPlacesView(place: Binding<PlaceUI>) -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
-                                       coordinator: mainCoordinator,
+                                       coordinator: placeCoordinator,
                                        addressLookupService: addressLookupService,
                                        locationManager: locationManager,
                                        reachabilityService: reachabilityService,
@@ -420,7 +443,7 @@ final class AppContainer {
                                place: Binding<PlaceUI?> = .constant(nil),
                                status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
         let vm = LookupPlaceViewModel(self,
-                                      coordinator: mainCoordinator,
+                                      coordinator: placeCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
                                       lookupResolvedItem: lookupResolvedItem)
         return LookupPlaceView(viewModel: vm, place: place, status: status)
@@ -438,7 +461,7 @@ final class AppContainer {
     // MARK: - settings views
     func createSettingsView(showingSideMenu: Binding<Bool>) -> SettingsView {
         let vm = SettingsViewModel(self,
-                                   coordinator: mainCoordinator,
+                                   coordinator: placeCoordinator,
                                    fetchPlaces: FetchPlaces(repository: placeRepository),
                                    fetchGroups: FetchGroups(repository: groupRepository),
                                    fetchTags: FetchTags(repository: tagRepository),
@@ -456,28 +479,28 @@ final class AppContainer {
     private func currentCoordinator() -> any NavigationCoordinator {
         switch appContext.currentSideMenuContext {
             case .main:
-                return mainCoordinator
+                return placeCoordinator
             case .groups:
                 return groupCoordinator
             case .tags:
                 return tagCoordinator
             default:
                 assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
-                return mainCoordinator
+                return placeCoordinator
         }
     }
     
     private func currentPlaceCoordinator() -> any PlaceNavigationCoordinator {
         switch appContext.currentSideMenuContext {
             case .main:
-                return mainCoordinator
+                return placeCoordinator
             case .groups:
                 return groupCoordinator
             case .tags:
                 return tagCoordinator
             default:
                 assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
-                return mainCoordinator
+                return placeCoordinator
         }
     }
     

@@ -23,6 +23,8 @@ enum SideMenuContext {
     //var currentSideMenuContext: Binding<SideMenuContext> //= .main
     var appContext: AppContext
 
+    var coordinator: MainCoordinator
+
     /// show/hide the side menu
     var showingSideMenu: Bool = false
 
@@ -50,9 +52,12 @@ enum SideMenuContext {
 
     @ObservationIgnored private var appContainer: AppContainer
 
-    init(_ appContainer: AppContainer, appContext: AppContext) {
+    init(_ appContainer: AppContainer,
+         appContext: AppContext,
+         coordinator: MainCoordinator) {
         self.appContainer = appContainer
         self.appContext = appContext
+        self.coordinator = coordinator
     }
 
     func createSideMenuView() -> SideMenuView {
@@ -65,8 +70,8 @@ enum SideMenuContext {
         appContainer.createProfileView()
     }
     
-    func createMainView() -> MainView {
-        return appContainer.createMainView(showingSideMenu: bindedShowingSideMenu)
+    func createPlacesView() -> PlacesView {
+        return appContainer.createPlacesView(showingSideMenu: bindedShowingSideMenu)
     }
 
     func createGroupListView() -> GroupListView {

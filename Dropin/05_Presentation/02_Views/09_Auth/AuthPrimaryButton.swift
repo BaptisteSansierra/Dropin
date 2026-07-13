@@ -1,0 +1,61 @@
+//
+//  AuthPrimaryButton.swift
+//  Dropin
+//
+//  Full-width primary CTA for the auth flow: 14pt radius, dropinPrimary fill,
+//  soft teal shadow. Deliberately not the shared `MainButton` (radius 8) —
+//  the auth redesign's radius is scoped to these 4 screens for now, not an
+//  app-wide button restyle.
+//
+
+import SwiftUI
+
+struct AuthPrimaryButton: View {
+
+    @Environment(\.isEnabled) private var isEnabled
+
+    private let text: LocalizedStringKey
+    private let isLoading: Bool
+    private let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Text(text)
+                    .textStyle(.mainButton)
+                    .opacity(isLoading ? 0 : 1)
+                if isLoading {
+                    ProgressView()
+                        .tint(.backgroundPrimary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(.dropinPrimary, in: RoundedRectangle(cornerRadius: 14))
+            .shadow(color: .dropinPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
+        }
+        .disabled(!isEnabled || isLoading)
+        .opacity(isEnabled ? 1 : 0.5)
+    }
+
+    init(text: LocalizedStringKey,
+         isLoading: Bool = false,
+         action: @escaping () -> Void) {
+        self.text = text
+        self.isLoading = isLoading
+        self.action = action
+    }
+}
+
+#Preview {
+    ZStack {
+        Color.backgroundPrimary.ignoresSafeArea()
+        VStack(spacing: 16) {
+            AuthPrimaryButton(text: "Sign in", action: {})
+            AuthPrimaryButton(text: "Sign in", isLoading: true, action: {})
+            AuthPrimaryButton(text: "Sign in", action: {})
+                .disabled(true)
+        }
+        .padding(32)
+    }
+}

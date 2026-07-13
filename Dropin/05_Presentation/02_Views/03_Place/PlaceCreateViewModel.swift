@@ -12,7 +12,7 @@ import CoreLocation
 @MainActor
 @Observable class PlaceCreateViewModel {
 
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: PlaceCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored private let getTag: FetchTag
@@ -20,7 +20,7 @@ import CoreLocation
     @ObservationIgnored private let addPlaceImage: AddPlaceImage
 
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          createPlace: CreatePlace,
          getTag: FetchTag,
          getGroup: FetchGroup,

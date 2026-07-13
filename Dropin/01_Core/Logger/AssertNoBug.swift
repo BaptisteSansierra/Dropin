@@ -18,7 +18,7 @@ import Supabase
 /// Asserts in DEBUG when `error` matches a class of failure that points to a
 /// programming/wiring bug rather than a recoverable runtime condition:
 ///   - `DecodingError` / `EncodingError` — DTO ↔ schema mismatch
-///   - `AuthError.notAuthenticated` — code path expected a signed-in user but didn't have one
+///   - `AuthServiceError.notAuthenticated` — code path expected a signed-in user but didn't have one
 ///   - PostgREST 42501 (insufficient privilege / RLS rejection) — missing grant or RLS misconfig
 ///
 /// Add categories here as more "should never happen in prod" errors surface.
@@ -38,8 +38,8 @@ func assertNoBug(_ error: Error,
     
     // Neither of these is a bug — they're expected lifecycle / RLS states.
     // Let callers handle them with `error.isAuthGone` and log accordingly.
-    if case AuthError.notAuthenticated = error {
-        Log.warning("AuthError.notAuthenticated — caller expected a signed-in session file:\(file) line:\(line)")
+    if case AuthServiceError.notAuthenticated = error {
+        Log.warning("AuthServiceError.notAuthenticated — caller expected a signed-in session file:\(file) line:\(line)")
         return
     }
     if let pg = error as? PostgrestError, pg.code == "42501" {

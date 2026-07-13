@@ -19,7 +19,7 @@ import MapKit
 @Observable class PlacesMapViewModel {
 
     // MARK: - Observed Properties
-    private(set) var coordinator: MainCoordinator
+    private(set) var coordinator: PlaceCoordinator
     // Used for creating a new place
     var tmpPlace: PlaceUI? = nil
     // Alerts toggles
@@ -62,7 +62,7 @@ import MapKit
 
     // MARK: init
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          locationManager: LocationManager) {
         self.appContainer = appContainer
         self.coordinator = coordinator

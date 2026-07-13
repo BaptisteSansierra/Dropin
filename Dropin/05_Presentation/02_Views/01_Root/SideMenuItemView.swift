@@ -35,34 +35,52 @@ struct SideMenuItemView: View {
     var body: some View {
         VStack {
             ZStack {
-                Rectangle()
-                    .foregroundStyle(Color.backgroundSecondary)
-                    .opacity(context == currentSideMenuContext ? 1 : 0)
-                    .padding(.horizontal, 0)
-                
-                HStack(alignment: .center, spacing: 0) {
-                    ZStack(alignment: .center) {
-                        Rectangle()
-                            .strokeBorder(.pink, style: StrokeStyle(lineWidth: 2))
-                            .frame(width: 100, height: 50)
-                            .opacity(0)
-                        Image(systemName: systemImage)
-                            .font(.bodyLight)
-                            .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : .textPrimary)
-                    }
-                    Text(label)
-                        .font(context == currentSideMenuContext ? .bodyMedium : .bodyThin)
-                        .foregroundStyle(.textPrimary)
-                    Spacer()
-                }
+                selectionOverlayView
+                rowContentView
             }
             .contentShape(Rectangle())
             .onTapGesture {
                 print("🔵 tap assigning → \(context)")
 
                 currentSideMenuContext = context
-                showingSideMenu = false
+                
+                if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+                    print("Keep menu visible in canvas")
+                } else {
+                    showingSideMenu = false
+                }
             }
+        }
+    }
+    
+    private var selectionOverlayView: some View {
+        Rectangle()
+            .foregroundStyle(Color.dropinPrimary)
+            .opacity(context == currentSideMenuContext ? 0.2 : 0)
+            .padding(.horizontal, 0)
+    }
+    
+    private var rowContentView: some View {
+        HStack(alignment: .center, spacing: 0) {
+            Rectangle()
+                .fill(.dropinPrimary)
+                .frame(width: 3)
+                .opacity(context == currentSideMenuContext ? 1 : 0)
+
+            ZStack(alignment: .center) {
+                Rectangle()
+                    .strokeBorder(.pink, style: StrokeStyle(lineWidth: 2))
+                    .frame(width: 90, height: 44)
+                    .opacity(0)
+                Image(systemName: systemImage)
+                    .font(.bodyLight)
+                    //.font(context == currentSideMenuContext ? .bodyMedium : .bodyLight)
+                    .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : .textPrimary)
+            }
+            Text(label)
+                .font(context == currentSideMenuContext ? .bodyMedium : .bodyLight)
+                .foregroundStyle(.textPrimary)
+            Spacer()
         }
     }
 }
@@ -103,25 +121,29 @@ struct MockSideMenuItemView: View {
     @Previewable @State var showingSideMenu: Bool = false
     @Previewable @State var currentSideMenuContext: SideMenuContext = .main
 
-    VStack {
-        MockSideMenuItemView(name: "Polenta",
-                             systemImage: "cursorarrow.rays",
-                             sideMenuContext: .main,
-                             showingSideMenu: $showingSideMenu,
-                             currentSideMenuContext: $currentSideMenuContext)
-        .frame(height: 60)
-        MockSideMenuItemView(name: "Pomelo",
-                             systemImage: "warninglight",
-                             sideMenuContext: .tags,
-                             showingSideMenu: $showingSideMenu,
-                             currentSideMenuContext: $currentSideMenuContext)
-        .frame(height: 60)
-        MockSideMenuItemView(name: "Porcherie",
-                             systemImage: "eraser",
-                             sideMenuContext: .groups,
-                             showingSideMenu: $showingSideMenu,
-                             currentSideMenuContext: $currentSideMenuContext)
-        .frame(height: 60)
+    ZStack {
+        Color.backgroundPrimary
+            .ignoresSafeArea()
+        VStack {
+            MockSideMenuItemView(name: "Polenta",
+                                 systemImage: "cursorarrow.rays",
+                                 sideMenuContext: .main,
+                                 showingSideMenu: $showingSideMenu,
+                                 currentSideMenuContext: $currentSideMenuContext)
+            .frame(height: 60)
+            MockSideMenuItemView(name: "Pomelo",
+                                 systemImage: "warninglight",
+                                 sideMenuContext: .tags,
+                                 showingSideMenu: $showingSideMenu,
+                                 currentSideMenuContext: $currentSideMenuContext)
+            .frame(height: 60)
+            MockSideMenuItemView(name: "Porcherie",
+                                 systemImage: "eraser",
+                                 sideMenuContext: .groups,
+                                 showingSideMenu: $showingSideMenu,
+                                 currentSideMenuContext: $currentSideMenuContext)
+            .frame(height: 60)
+        }
     }
 }
 #endif

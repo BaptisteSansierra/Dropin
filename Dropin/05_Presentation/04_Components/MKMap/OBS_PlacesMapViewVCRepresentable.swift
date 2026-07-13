@@ -429,7 +429,7 @@ struct MockPlacesMapViewVCRepresentable: View {
 
         
         self.vm = PlacesMapViewModel(mock.appContainer,
-                                     coordinator: MainCoordinator(),
+                                     coordinator: PlaceCoordinator(),
                                      locationManager: mock.locationManager)
     }
 }

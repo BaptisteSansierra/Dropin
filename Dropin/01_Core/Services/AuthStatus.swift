@@ -4,8 +4,8 @@
 //
 //  Observable wrapper exposing a tri-state derived from AuthService.session and
 //  an in-flight `restoreSession()` flag. Drives the root-level routing in
-//  DropinApp: splash while restoring → AuthView if no session → RootView if
-//  signed in.
+//  DropinApp: splash while restoring → SignInView (auth flow) if no session →
+//  RootView if signed in.
 //
 
 import Foundation

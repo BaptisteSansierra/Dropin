@@ -290,6 +290,510 @@
         }
       }
     },
+    "auth.already_have_account" : {
+      "comment" : "Sign up screen footer prefix",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Already have an account?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous avez déjà un compte ?"
+          }
+        }
+      }
+    },
+    "auth.create_account" : {
+      "comment" : "Sign up screen title, its submit button, and the sign-in screen's footer link",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create account"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer un compte"
+          }
+        }
+      }
+    },
+    "auth.error.invalid_email" : {
+      "comment" : "Inline validation error on the auth screens",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a valid email address."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez une adresse e-mail valide."
+          }
+        }
+      }
+    },
+    "auth.error.password_mismatch" : {
+      "comment" : "Sign up screen inline validation error",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passwords don't match."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les mots de passe ne correspondent pas."
+          }
+        }
+      }
+    },
+    "auth.field.confirm_password" : {
+      "comment" : "Sign up screen confirm-password field placeholder",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm password"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmer le mot de passe"
+          }
+        }
+      }
+    },
+    "auth.field.display_name" : {
+      "comment" : "Sign up screen display-name field placeholder",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom d'affichage"
+          }
+        }
+      }
+    },
+    "auth.forgot_password" : {
+      "comment" : "Sign in screen link",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgot password?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mot de passe oublié ?"
+          }
+        }
+      }
+    },
+    "auth.new_to_dropin" : {
+      "comment" : "Sign in screen footer prefix",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New to Dropin?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau sur Dropin ?"
+          }
+        }
+      }
+    },
+    "auth.password" : {
+      "comment" : "Password field placeholder on the auth screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mot de passe"
+          }
+        }
+      }
+    },
+    "auth.password_hint" : {
+      "comment" : "Sign up screen password field hint",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use at least 8 characters."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisez au moins 8 caractères."
+          }
+        }
+      }
+    },
+    "auth.remembered_it" : {
+      "comment" : "Reset password screen footer prefix",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remembered it?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous vous en souvenez ?"
+          }
+        }
+      }
+    },
+    "auth.reset.sent_body_%@" : {
+      "comment" : "Reset password screen, confirmation state body. %@ is the email address.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We sent a password reset link to\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous avons envoyé un lien de réinitialisation à\n%@"
+          }
+        }
+      }
+    },
+    "auth.reset.sent_title" : {
+      "comment" : "Reset password screen, confirmation state title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your email"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultez vos e-mails"
+          }
+        }
+      }
+    },
+    "auth.reset.submit" : {
+      "comment" : "Reset password screen submit button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send reset link"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer le lien"
+          }
+        }
+      }
+    },
+    "auth.reset.subtitle" : {
+      "comment" : "Reset password screen subtitle",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the email on your account and we'll send you a link to set a new password."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez l'e-mail associé à votre compte et nous vous enverrons un lien pour définir un nouveau mot de passe."
+          }
+        }
+      }
+    },
+    "auth.reset.title" : {
+      "comment" : "Reset password screen title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset password"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialiser le mot de passe"
+          }
+        }
+      }
+    },
+    "auth.signin" : {
+      "comment" : "Sign in button on the auth screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connexion"
+          }
+        }
+      }
+    },
+    "auth.signin.subtitle" : {
+      "comment" : "Sign in screen subtitle",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your places are waiting."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos lieux vous attendent."
+          }
+        }
+      }
+    },
+    "auth.signup.subtitle" : {
+      "comment" : "Sign up screen subtitle",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start your places collection."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencez votre collection de lieux."
+          }
+        }
+      }
+    },
+    "auth.verify.body_%@" : {
+      "comment" : "Verify email screen body. %@ is the email address.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We sent a verification link to\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous avons envoyé un lien de vérification à\n%@"
+          }
+        }
+      }
+    },
+    "auth.verify.change_email" : {
+      "comment" : "Verify email screen bottom link",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change email address"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changer d'adresse e-mail"
+          }
+        }
+      }
+    },
+    "auth.verify.check_confirmation" : {
+      "comment" : "Verify email screen primary button — checks confirmation status and signs in",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I've confirmed my email"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J'ai confirmé mon e-mail"
+          }
+        }
+      }
+    },
+    "auth.verify.didnt_get_it" : {
+      "comment" : "Verify email screen resend row prefix",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't get it?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous ne l'avez pas reçu ?"
+          }
+        }
+      }
+    },
+    "auth.verify.not_confirmed_yet" : {
+      "comment" : "Shown when checkConfirmationAndSignIn's sign-in attempt fails from the Verify Email screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not confirmed yet — check your inbox and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore confirmé — consultez votre boîte de réception et réessayez."
+          }
+        }
+      }
+    },
+    "auth.verify.resend" : {
+      "comment" : "Verify email screen resend link, once the countdown reaches zero",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resend"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renvoyer"
+          }
+        }
+      }
+    },
+    "auth.verify.resend_countdown_%@" : {
+      "comment" : "Verify email screen resend countdown. %@ is a formatted m:ss duration.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resend in %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renvoyer dans %@"
+          }
+        }
+      }
+    },
+    "auth.verify.title" : {
+      "comment" : "Verify email screen title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your inbox"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultez votre boîte de réception"
+          }
+        }
+      }
+    },
+    "auth.welcome_back" : {
+      "comment" : "Sign in screen title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome back"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content de vous revoir"
+          }
+        }
+      }
+    },
     "category.accommodation" : {
       "comment" : "Icon category name",
       "extractionState" : "manual",
@@ -655,6 +1159,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effacer la sélection"
+          }
+        }
+      }
+    },
+    "common.close" : {
+      "comment" : "Dismiss without confirming (e.g. hide keyboard) — distinct from common.done",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer"
           }
         }
       }

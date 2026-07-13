@@ -18,7 +18,7 @@ struct RootView: View {
     ///                     3 - Map zoom on place
     @Observable final class ActionBus {
         // TODO: at the moment action only concerns Main and it's child
-        // should we move it on MainView
+        // should we move it on PlacesView
         enum Action {
             case reloadMainPlaces
             //case updateMapAnnotations
@@ -51,9 +51,15 @@ struct RootView: View {
     
     // MARK: - body
     var body: some View {
-        ZStack {
-            currentContentView
-            viewModel.createSideMenuView()
+        NavigationStack(path: $viewModel.coordinator.path) {
+            ZStack {
+                currentContentView
+                viewModel.createSideMenuView()
+            }
+        }
+        .toolbarVisibility(.hidden, for: .navigationBar)
+        .navigationDestination(for: MainNavigationItem.self) { navigationItem in
+            resolveDestination(navigationItem: navigationItem)
         }
         // Profile sheet is hosted by RootView (not SideMenuView) — keeps the
         // sheet's presentation host above the side-menu overlay and avoids the
@@ -79,7 +85,7 @@ struct RootView: View {
     private var currentContentView: some View {
         switch viewModel.appContext.currentSideMenuContext {
             case .main:
-                viewModel.createMainView()
+                viewModel.createPlacesView()
             case .groups:
                 viewModel.createGroupListView()
             case .tags:
@@ -98,6 +104,21 @@ struct RootView: View {
                 }
         }
     }
+    
+    @ViewBuilder
+    private func resolveDestination(navigationItem: MainNavigationItem) -> some View {
+        switch navigationItem {
+            case .profile:
+                viewModel.createProfileView()
+            case .accountDeletion:
+                // TODO: push account deletion view here
+                EmptyView()
+            case .editName:
+                // TODO: push edit name here
+                EmptyView()
+        }
+    }
+
 }
 
 #if DEBUG

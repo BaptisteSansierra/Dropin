@@ -52,8 +52,8 @@ struct ProfileBadgeView: View {
                 Text(initials)
                     .lineLimit(1)
                     .minimumScaleFactor(0.3)
-                    .font(style == .small ? Font.avatarSmall : Font.avatarLarge)
-                    .foregroundStyle(fgColor)
+                    .textStyle(style == .small ? .avatarSmall : .avatarLarge,
+                               color: fgColor)
                     .padding(.horizontal, 3)
             }
             .frame(width: style == .small ? 53 : 90)

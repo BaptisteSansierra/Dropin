@@ -105,14 +105,14 @@ struct LookupResolvedItem: Identifiable {
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: PlaceCoordinator
     @ObservationIgnored private var addressLookupService: AddressLookupService
     @ObservationIgnored private var locationManager: LocationManager
     @ObservationIgnored private var updatePlace: UpdatePlace
 
     // MARK: - init
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          addressLookupService: AddressLookupService,
          locationManager: LocationManager,
          reachabilityService: ReachabilityService,

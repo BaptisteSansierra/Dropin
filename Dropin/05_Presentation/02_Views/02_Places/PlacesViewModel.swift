@@ -1,5 +1,5 @@
 //
-//  MainViewModel.swift
+//  PlacesViewModel.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 3/10/25.
@@ -10,10 +10,10 @@ import SwiftUI
 import CoreLocation
 
 @MainActor
-@Observable class MainViewModel {
+@Observable class PlacesViewModel {
     
     // MARK: - Observed properties
-    var coordinator: MainCoordinator
+    var coordinator: PlaceCoordinator
     var places: [PlaceUI] = [PlaceUI]()
     /*private(set)*/ var mapReloadGen: Int = 0    // bumps after each significant reload
 
@@ -62,7 +62,7 @@ import CoreLocation
 
     // MARK: init
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          locationManager: LocationManager,
          fetchPlaces: FetchPlaces,
          syncStatus: SyncStatus,

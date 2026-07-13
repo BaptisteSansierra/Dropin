@@ -7,25 +7,31 @@
 
 import SwiftUI
 
+///
+/// Define app font semantics
+///
 struct TextStyleModifier: ViewModifier {
     
     enum Style: String, CaseIterable {
         case title
         case title2
+        case authTitle
         case body
         case bodySemibold
         case bodyWarning
         case bodyError
+        case bodyInfo
         case caption
         case caption2
         case placeholder
+        case fieldPlaceholder
+        case link
         case mainButton
         case secondaryButton
         case stringFieldTitle
         case stringFieldContent
         case cellTitle
         case cellSubtitle
-        //case cellSubtitle2
         case cellDetail
         case tagSticker
         case groupSticker
@@ -33,107 +39,141 @@ struct TextStyleModifier: ViewModifier {
         case groupStickerBig
         case formSectionTitle
         case formSectionTitle2
+        case avatarLarge
+        case avatarSmall
+        case profileName
+        case sidebarTitle
+        case sidebarSubtitle
+        case tabBarTxt
+        case tabBarImg
+        case formFieldError
+        case keyboardToolbarAction
     }
     
     var style: Style
-    
+    var colorOverride: Color? = nil
+    var trackingOverride: CGFloat? = nil
+    var lineSpacingOverride: CGFloat? = nil
+
     func body(content: Content) -> some View {
         content
             .font(font)
-            .foregroundStyle(color)
+            .foregroundStyle((colorOverride ?? color) ?? Color.textPrimary)
+            .tracking((trackingOverride ?? tracking) ?? 0)
+            .lineSpacing((lineSpacingOverride ?? lineSpacing) ?? 0)
     }
     
     // MARK: - private
     private var font: Font {
-        switch style {
-            case .title:
-                .titleRegular
-            case .title2:
-                .title2Regular
-            case .body:
-                .bodyRegular
-            case .bodySemibold:
-                .bodySemibold
-            case .bodyWarning, .bodyError:
-                .bodyBold
-            case .caption:
-                .captionRegular
-            case .caption2:
-                .caption2Regular
-            case .placeholder:
-                .calloutRegular
-            case .mainButton:
-                .bodySemibold
-            case .secondaryButton:
-                .bodySemibold
-            case .stringFieldTitle:
-                .subheadlineRegular
-            case .stringFieldContent:
-                .bodyRegular
-            case .cellTitle:
-                .bodyMedium
-            case .cellSubtitle:
-                .captionRegular
-//            case .cellSubtitle2:
-//                .caption2Regular
-            case .cellDetail:
-                .captionRegular
-            case .tagSticker:
-                .footnoteBold
-            case .groupStickerBig:
-                .bodySemibold
-            case .groupSticker:
-                .bodyMedium
-            case .groupStickerSmall:
-                .captionMedium
-            case .formSectionTitle:
-                .bodySemibold
-            case .formSectionTitle2:
-                .captionMedium
-        }
+        return values.0
     }
     
-    private var color: Color {
+    private var color: Color? {
+        return values.1
+    }
+
+    private var tracking: CGFloat? {
+        return values.2
+    }
+    
+    private var lineSpacing: CGFloat? {
+        return values.3
+    }
+
+    private var values: (Font, Color?, CGFloat?, CGFloat?) {
         switch style {
-            case .title, .title2:
-                .textPrimary
-            case .body, .bodySemibold:
-                .textPrimary
+            case .title:
+                (Font.titleRegular, nil, nil, nil)
+            case .title2:
+                (Font.title2Regular, nil, nil, nil)
+            case .authTitle:
+                (Font.titleBold, nil, -0.4, nil)
+            case .body:
+                (Font.bodyRegular, nil, nil, nil)
+            case .bodySemibold:
+                (Font.bodySemibold, nil, nil, nil)
             case .bodyWarning:
-                .warning
+                (Font.bodyBold, Color.warning, nil, nil)
             case .bodyError:
-                .destructive
+                (Font.bodyBold, Color.destructive, nil, nil)
+            case .bodyInfo:
+                (Font.bodyBold, Color.info, nil, nil)
             case .caption:
-                .textPrimary
+                (Font.captionRegular, nil, nil, nil)
             case .caption2:
-                .textPrimary
+                (Font.caption2Regular, nil, nil, nil)
             case .placeholder:
-                .textSecondary
+                (Font.calloutRegular, Color.textSecondary, nil, nil)
+            case .fieldPlaceholder:
+                (Font.bodyRegular, Color.textTertiary, nil, nil)
+            case .link:
+                (Font.subheadlineSemibold, Color.dropinSecondary, nil, nil)
             case .mainButton:
-                .backgroundPrimary
+                (Font.bodySemibold, Color.backgroundPrimary, nil, nil)
             case .secondaryButton:
-                .dropinPrimary
+                (Font.bodySemibold, Color.dropinPrimary, nil, nil)
             case .stringFieldTitle:
-                .textSecondary
+                (Font.subheadlineRegular, Color.textSecondary, nil, nil)
             case .stringFieldContent:
-                .textPrimary
+                (Font.bodyRegular, nil, nil, nil)
             case .cellTitle:
-                .textPrimary
+                (Font.bodyMedium, nil, nil, nil)
             case .cellSubtitle:
-                .textSecondary
-//            case .cellSubtitle2:
-//                .gray
+                (Font.captionRegular, Color.textSecondary, nil, nil)
             case .cellDetail:
-                .textPrimary
+                (Font.captionRegular, nil, nil, nil)
             case .tagSticker:
-                .backgroundPrimary
-            case .groupSticker, .groupStickerBig, .groupStickerSmall:
-                .textPrimary
+                (Font.footnoteBold, Color.backgroundPrimary, nil, nil)
+            case .groupStickerBig:
+                (Font.bodySemibold, nil, nil, nil)
+            case .groupSticker:
+                (Font.bodyMedium, nil, nil, nil)
+            case .groupStickerSmall:
+                (Font.captionMedium, nil, nil, nil)
             case .formSectionTitle:
-                .textSecondary
+                (Font.bodySemibold, Color.textSecondary, nil, nil)
             case .formSectionTitle2:
-                .textSecondary
+                (Font.captionMedium, Color.textSecondary, nil, nil)
+            case .avatarLarge:
+                (Font._32Semibold, nil, nil, nil)
+            case .avatarSmall:
+                (Font.calloutSemibold, nil, nil, nil)
+            case .profileName:
+                (Font.title2Bold, nil, nil, nil)
+            case .sidebarTitle:
+                (Font.title3Bold, nil, nil, nil)
+            case .sidebarSubtitle:
+                (Font.bodyLight, nil, nil, nil)
+            case .tabBarTxt:
+                (Font.caption2Semibold, nil, nil, nil)
+            case .tabBarImg:
+                (Font.calloutSemibold, nil, nil, nil)
+            case .formFieldError:
+                (Font.caption, Color.destructive, nil, nil)
+            case .keyboardToolbarAction:
+                (Font.bodySemibold, Color.dropinPrimary, nil, nil)
         }
+    }
+}
+
+// MARK: - View helper
+//
+// NOTE: Replace your existing `extension View { func textStyle(...) }` with this
+// one. It adds an optional `color:` override so you can keep a semantic style's
+// font while swapping only its colour — no more dropping down to raw `.font(...)`:
+//
+//   Text(verbatim: viewModel.headerSubtitle)
+//       .textStyle(.cellSubtitle, color: .textSecondary.opacity(0.75))
+//
+extension View {
+    func textStyle(_ style: TextStyleModifier.Style,
+                   color: Color? = nil,
+                   tracking: CGFloat = 0,
+                   lineSpacing: CGFloat = 0) -> some View {
+        modifier(TextStyleModifier(style: style,
+                                   colorOverride: color,
+                                   trackingOverride: tracking,
+                                   lineSpacingOverride: lineSpacing))
     }
 }
 

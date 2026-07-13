@@ -21,10 +21,10 @@ import CoreLocation
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let createPlace: CreatePlace
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: PlaceCoordinator
 
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          createPlace: CreatePlace) {
         self.appContainer = appContainer
         self.coordinator = coordinator

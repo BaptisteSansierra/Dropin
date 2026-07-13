@@ -20,11 +20,11 @@ import MapKit
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var createPlace: CreatePlace
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: PlaceCoordinator
 
     // MARK: - init
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          createPlace: CreatePlace,
          lookupResolvedItem: LookupResolvedItem) {
         self.appContainer = appContainer

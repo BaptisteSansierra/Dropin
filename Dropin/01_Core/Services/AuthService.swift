@@ -12,9 +12,12 @@ struct UserSession: Sendable, Equatable {
     let email: String?
 }
 
-enum AuthError: Error, Equatable {
+enum AuthServiceError: Error, Equatable {
     case signInFailed
     case notAuthenticated
+    /// Sign-up succeeded but the Supabase project requires email confirmation,
+    /// so no session was returned — the user isn't authenticated yet.
+    case confirmationRequired
 }
 
 @MainActor
@@ -24,6 +27,8 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
     func signUp(email: String, password: String) async throws
     func signIn(email: String, password: String) async throws
     func signInWithApple() async throws   // TODO: implement when Apple Sign-In is added
+    func resetPassword(email: String) async throws
+    func resendVerificationEmail(email: String) async throws
     func signOut() async throws
     func restoreSession() async
 }
@@ -42,19 +47,43 @@ final class AuthService: AuthServiceProtocol {
 
     func signUp(email: String, password: String) async throws {
         let response = try await client.auth.signUp(email: email, password: password)
-        let user = response.user
-        session = UserSession(userId: user.id, email: user.email)
+        // When the Supabase project requires email confirmation, `session` is
+        // nil (only `user` is returned) — don't mark the user as
+        // authenticated until they've confirmed and actually signed in.
+        guard let supaSession = response.session else {
+            Log.info("Signed up as \(response.user.email ?? "N/A"), awaiting email confirmation")
+            throw AuthServiceError.confirmationRequired
+        }
+        session = UserSession(userId: supaSession.user.id, email: supaSession.user.email)
+        Log.info("Signed up as \(supaSession.user.email ?? "N/A")")
     }
 
     func signIn(email: String, password: String) async throws {
-        let supaSession = try await client.auth.signIn(email: email, password: password)
-        session = UserSession(userId: supaSession.user.id, email: supaSession.user.email)
-        
-        Log.info("Signed in as \(supaSession.user.email ?? "N/A")")
+        do {
+            let supaSession = try await client.auth.signIn(email: email, password: password)
+            session = UserSession(userId: supaSession.user.id, email: supaSession.user.email)
+            Log.info("Signed in as \(supaSession.user.email ?? "N/A")")
+        } catch let error as Supabase.AuthError {
+            if error.errorCode == .emailNotConfirmed {
+                throw AuthServiceError.confirmationRequired
+            } else {
+                throw error
+            }
+        }
     }
 
     func signInWithApple() async throws {
-        throw AuthError.signInFailed // TODO: Supabase Apple Sign-In
+        throw AuthServiceError.signInFailed // TODO: Supabase Apple Sign-In
+    }
+
+    func resetPassword(email: String) async throws {
+        try await client.auth.resetPasswordForEmail(email)
+        Log.info("Password reset link requested for \(email)")
+    }
+
+    func resendVerificationEmail(email: String) async throws {
+        try await client.auth.resend(email: email, type: .signup)
+        Log.info("Verification email resent to \(email)")
     }
 
     func signOut() async throws {

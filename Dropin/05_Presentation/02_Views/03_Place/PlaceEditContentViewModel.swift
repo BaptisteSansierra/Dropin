@@ -20,14 +20,14 @@ import CoreLocation
 
     @ObservationIgnored var mode: Mode
 
-    @ObservationIgnored private var coordinator: MainCoordinator
+    @ObservationIgnored private var coordinator: PlaceCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let updatePlace: UpdatePlace
     @ObservationIgnored private let getPlaceThumbnails: GetPlaceThumbnails
     @ObservationIgnored private let getPlaceImage: GetPlaceImage
 
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          updatePlace: UpdatePlace,
          getPlaceThumbnails: GetPlaceThumbnails,
          getPlaceImage: GetPlaceImage,

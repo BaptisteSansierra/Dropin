@@ -9,20 +9,13 @@ import SwiftUI
 
 extension ShapeStyle where Self == Color {
     
-    //    static var dropinPrimary: Color { return Color(rgba: "#62899e") }
-    //    static var dropinSecondary: Color { return Color(rgba: "#E1C16E") }
-    
-    //    static var dropinPrimary: Color { return Color(rgba: "#1E40AF") }
-    //    static var dropinSecondary: Color { return Color(rgba: "#F97316") }
-    //    static var dropinTertiary: Color { return Color(rgba: "#E5E7EB") }
-    
     // MARK: - App colors
     static var primaryLight: Color { return Color(rgba: "#588B8B") }
     static var primaryDark: Color { return Color(rgba: "#6FAFB0") }
     static var dropinPrimary: Color { return Color(light: primaryLight, dark: primaryDark) }
     
-    static var secondaryLight: Color { return Color(rgba: "#A01A58") }
-    static var secondaryDark: Color { return Color(rgba: "#C14C84") }
+    static var secondaryLight: Color { return Color(rgba: "#A8657E") }
+    static var secondaryDark: Color { return Color(rgba: "#C48CA6") }
     static var dropinSecondary: Color { return Color(light: secondaryLight, dark: secondaryDark) }
     
     static var destructiveLight: Color { Color(rgba: "#D32F2F") }
@@ -49,154 +42,54 @@ extension ShapeStyle where Self == Color {
         Color(light: infoLight, dark: infoDark)
     }
     
-    //    static var textPrimaryLight: Color { return Color(rgba: "#000000") }
-    //    static var textPrimaryDark: Color { return Color(rgba: "#FFFFFF") }
-    //    static var textPrimary: Color { return Color(light: textPrimaryLight, dark: textPrimaryDark) }
-    //
-    //    static var textSecondaryLight: Color { return Color(rgba: "#000000") }
-    //    static var textSecondaryDark: Color { return Color(rgba: "#FFFFFF") }
-    //    static var textSecondary: Color { return Color(light: textSecondaryLight, dark: textSecondaryDark) }
-    
     // MARK: - Texts
-    /*
-//    static var textPrimaryLight: Color { Color(rgba: "#111111") }
-//    static var textPrimaryDark: Color  { Color(rgba: "#F5F5F5") }
-    static var textPrimaryLight: Color { .dark1 }
-    static var textPrimaryDark: Color  { .light1 }
-    static var textPrimary: Color {
-        Color(light: textPrimaryLight, dark: textPrimaryDark)
-    }
-    
-//    static var textSecondaryLight: Color { Color(rgba: "#444444") }
-//    static var textSecondaryDark: Color  { Color(rgba: "#C7C7C7") }
-    static var textSecondaryLight: Color { .light5 }
-    static var textSecondaryDark: Color  { .dark4 }
-    static var textSecondary: Color {
-        Color(light: textSecondaryLight, dark: textSecondaryDark)
-    }
-    
-//    static var textTertiaryLight: Color { Color(rgba: "#7A7A7A") }
-//    static var textTertiaryDark: Color  { Color(rgba: "#8E8E8E") }
-    static var textTertiaryLight: Color { .light4 }
-    static var textTertiaryDark: Color  { .light5 }
-    static var textTertiary: Color {
-        Color(light: textTertiaryLight, dark: textTertiaryDark)
-    }
-    */
-    
-    //static var disabledLight: Color { Color(rgba: "#BDBDBD") }
-    //static var disabledDark: Color  { Color(rgba: "#5A5A5A") }
+    static var textPrimary: Color { Color(light: dark1, dark: light1) }
+    static var textSecondary: Color { Color(light: dark2, dark: light4) }
+    static var textTertiary: Color { Color(light: dark3, dark: light5) }
+
     static var disabled: Color {
         Color(light: light4, dark: dark2)
     }
     
-    static var overlayAlphaLayer: Color { textTertiary.opacity(0.25) }
-    
-    
-    /*
-     static var textPrimaryLight: Color { Color(rgba: "#0B1F1F") }      // near-black teal
-     static var textPrimaryDark: Color  { Color(rgba: "#E6F0F0") }      // near-white teal
-     static var textPrimary: Color {
-     Color(light: textPrimaryLight, dark: textPrimaryDark)
-     }
-     
-     static var textSecondaryLight: Color { Color(rgba: "#3F5F5F") }    // muted
-     static var textSecondaryDark: Color  { Color(rgba: "#A9C6C6") }
-     static var textSecondary: Color {
-     Color(light: textSecondaryLight, dark: textSecondaryDark)
-     }
-     
-     static var textTertiaryLight: Color { Color(rgba: "#7A9A9A") }     // hints / metadata
-     static var textTertiaryDark: Color  { Color(rgba: "#6F8F8F") }
-     static var textTertiary: Color {
-     Color(light: textTertiaryLight, dark: textTertiaryDark)
-     }
-     */
-    
     // MARK: - Background
-    /*
-    static var backgroundPrimaryLight: Color { .light1 /*Color(rgba: "#F5F5F5")*/ }
-    static var backgroundPrimaryDark: Color  { .dark1 /*Color(rgba: "#000000")*/ }
-    static var backgroundPrimary: Color {
-        Color(light: backgroundPrimaryLight, dark: backgroundPrimaryDark)
-    }
-    
-    static var backgroundSecondaryLight: Color { .light2 /*Color(rgba: "#F2F2F2")*/ }
-    static var backgroundSecondaryDark: Color  { .dark2 /*Color(rgba: "#1C1C1E")*/ }
-    //static var backgroundSecondaryDark: Color  { Color(rgba: "#1C1C1E") }
-    static var backgroundSecondary: Color {
-        Color(light: backgroundSecondaryLight, dark: backgroundSecondaryDark)
-    }
-    
-//    static var backgroundTertiaryLight: Color { Color(rgba: "#E5E5E5") }
-//    static var backgroundTertiaryDark: Color  { Color(rgba: "#2C2C2E") }
-    static var backgroundTertiaryLight: Color { .light3 }
-    static var backgroundTertiaryDark: Color  { .dark3 }
-    static var backgroundTertiary: Color {
-        Color(light: backgroundTertiaryLight, dark: backgroundTertiaryDark)
-    }
-     */
-    
-    /*
-     static var backgroundPrimaryLight: Color { Color(rgba: "#FFFFFF") }
-     static var backgroundPrimaryDark: Color  { Color(rgba: "#0F1C1C") }
-     static var backgroundPrimary: Color {
-     Color(light: backgroundPrimaryLight, dark: backgroundPrimaryDark)
-     }
-     
-     static var backgroundSecondaryLight: Color { Color(rgba: "#F3F7F7") } // cards / lists
-     static var backgroundSecondaryDark: Color  { Color(rgba: "#1E2F2F") }
-     static var backgroundSecondary: Color {
-     Color(light: backgroundSecondaryLight, dark: backgroundSecondaryDark)
-     }
-     
-     static var backgroundTertiaryLight: Color { Color(rgba: "#E4EEEE") }  // separators
-     static var backgroundTertiaryDark: Color  { Color(rgba: "#2A3F3F") }
-     static var backgroundTertiary: Color {
-     Color(light: backgroundTertiaryLight, dark: backgroundTertiaryDark)
-     }*/
-    
-//    static var textPrimary: Color { shade1 }
-//    static var textSecondary: Color { shade3 }
-//    static var textTertiary: Color { shade4 }
-//    
-//    static var backgroundPrimary: Color { Color(light: dark1, dark: light1) }
-//    static var backgroundSecondary: Color { Color(light: dark2, dark: light2) }
-//    static var backgroundTertiary: Color { Color(light: dark3, dark: light3) }
+    // screen base
+    static var backgroundPrimary: Color { Color(light: Color(rgba: "#F2EADA"),
+                                                dark: Color(rgba: "#1A1712")) }
+    // recessed wells / section fills
+    static var backgroundSecondary: Color { Color(light: Color(rgba: "#E6DCC8"),
+                                                  dark: Color(rgba: "#15110C")) }
+    // deepest recess / separators-as-fill
+    static var backgroundTertiary: Color { Color(light: Color(rgba: "#DCCFB8"),
+                                                 dark: Color(rgba: "#100D0A")) }
+    static var overlayAlphaLayer: Color { textTertiary.opacity(0.25) }
 
-    #if true
-    static var backgroundPrimary: Color { shade1 }
-    static var backgroundSecondary: Color { shade3 }
-    static var backgroundTertiary: Color { shade4 }
+    static var fieldBorder: Color { Color(light: Color(rgba: "#E6DCCB"),
+                                          dark: Color(rgba: "#38312A")) }
     
-    static var textPrimary: Color { Color(light: dark1, dark: light1) }
-    static var textSecondary: Color { Color(light: dark2, dark: light4) }
-    static var textTertiary: Color { Color(light: dark3, dark: light5) }
-    #else
-    static var backgroundPrimary: Color { Color(uiColor: UIColor.systemBackground) }
-    static var backgroundSecondary: Color { Color(uiColor: UIColor.secondarySystemBackground) }
-    static var backgroundTertiary: Color { Color(uiColor: UIColor.systemFill) }
+    // fields, cards, sheets — the top surface, almost white, it pops on paper
+    static var surface1: Color { Color(light: Color(rgba: "#FDFCF8"),
+                                       dark: Color(rgba: "#262019")) }
     
-    static var textPrimary: Color { Color(uiColor: UIColor.label) }
-    static var textSecondary: Color { Color(uiColor: UIColor.secondaryLabel) }
-    static var textTertiary: Color { Color(uiColor: UIColor.tertiaryLabel) }
-    #endif
-
+    // back-button/icon wells, chips nestled on paper
+    static var surface2: Color { Color(light: Color(rgba: "#FBF6EE"),
+                                       dark: Color(rgba: "#221E17")) }
+    
     // MARK: - Light shades
-    static var light1: Color { Color(rgba: "#FFFFFF") }
-    static var light2: Color { Color(rgba: "#F5F5F5") }
-    static var light3: Color { Color(rgba: "#E5E5E5") }
-    static var light4: Color { Color(rgba: "#C7C7C7") }
-    static var light5: Color { Color(rgba: "#7A7A7A") }
-    static var light6: Color { Color(rgba: "#444444") }
+    static var light1: Color { Color(rgba: "#FAF4EA") } // textPrimary
+    static var light2: Color { Color(rgba: "#F4EDDF") }
+    static var light3: Color { Color(rgba: "#ECE3D2") }
+    static var light4: Color { Color(rgba: "#E3D9C6") } // textSecondary
+    static var light5: Color { Color(rgba: "#8A8073") } // textTertiary
+    static var light6: Color { Color(rgba: "#4A443B") }
 
     // MARK: - Dark shades
-    static var dark1: Color { Color(rgba: "#111111") }
-    static var dark2: Color { Color(rgba: "#444444") }
-    static var dark3: Color { Color(rgba: "#7A7A7A") }
-    static var dark4: Color { Color(rgba: "#C7C7C7") }
-    static var dark5: Color { Color(rgba: "#E5E5E5") }
-    static var dark6: Color { Color(rgba: "#FFFFFF") }
+    static var dark1: Color { Color(rgba: "#1A1712") } // textPrimary
+    static var dark2: Color { Color(rgba: "#4A443B") } // textSecondary
+    static var dark3: Color { Color(rgba: "#857B6D") } // textTertiary
+    static var dark4: Color { Color(rgba: "#CFC3AD") }
+    static var dark5: Color { Color(rgba: "#E7DDCB") }
+    static var dark6: Color { Color(rgba: "#FAF4EA") }
+    
 
     // MARK: - Shade accessor
     static var shade1: Color { Color(light: light1, dark: dark1) }
@@ -210,6 +103,8 @@ extension ShapeStyle where Self == Color {
 #if DEBUG
 
 struct ColorsPreview: View {
+    
+    @State private var dummyTfV: String = ""
 
     var body: some View {
         HStack {
@@ -309,8 +204,10 @@ struct ColorsPreview: View {
                 Text(verbatim: "info")
                     .fontWeight(.bold)
                     .foregroundStyle(.infoLight)
-            }
 
+                TextField("empty", text: $dummyTfV)
+
+            }
         }
     }
 }

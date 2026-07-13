@@ -12,7 +12,7 @@ import SwiftUI
 @Observable class PlacesListViewModel {
     
     // MARK: Properties
-    private(set) var coordinator: MainCoordinator
+    private(set) var coordinator: PlaceCoordinator
     var searchText = ""
 
     // MARK: un-tracked properties
@@ -21,7 +21,7 @@ import SwiftUI
     
     // MARK: Init
     init(_ appContainer: AppContainer,
-         coordinator: MainCoordinator,
+         coordinator: PlaceCoordinator,
          locationManager: LocationManager) {
         self.appContainer = appContainer
         self.coordinator = coordinator
