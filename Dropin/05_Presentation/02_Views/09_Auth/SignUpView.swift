@@ -29,7 +29,7 @@ struct SignUpView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     HStack {
-                        AuthBackButton { viewModel.pop() }
+                        BackButton { viewModel.pop() }
                         Spacer()
                     }
 
@@ -52,9 +52,9 @@ struct SignUpView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 10)
 
-                    AuthPrimaryButton(text: "auth.create_account",
-                                      isLoading: viewModel.isSubmitting,
-                                      action: submitSignUp)
+                    MainButton(text: "auth.create_account",
+                               progress: viewModel.isSubmitting ? .run(color: .surface1, replaceContent: true) : .none,
+                               action: submitSignUp)
                     .disabled(!viewModel.isFormValid)
                     .padding(.top, 20)
 

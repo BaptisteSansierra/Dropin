@@ -19,8 +19,8 @@ import SwiftUI
         path.append(.resetPassword)
     }
 
-    func pushVerifyEmail(email: String, password: String) {
-        path.append(.verifyEmail(email: email, password: password))
+    func pushVerifyEmail(email: String, password: String, context: VerifyEmailContext) {
+        path.append(.verifyEmail(email: email, password: password, context: context))
     }
 
     func pop() {
@@ -35,5 +35,5 @@ import SwiftUI
 enum AuthNavigationItem: Hashable {
     case signUp
     case resetPassword
-    case verifyEmail(email: String, password: String)
+    case verifyEmail(email: String, password: String, context: VerifyEmailContext)
 }

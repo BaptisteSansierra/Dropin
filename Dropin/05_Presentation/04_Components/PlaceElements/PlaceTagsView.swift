@@ -83,6 +83,21 @@ struct PlaceTagsView: View {
                         TagView(name: tag.name, color: tag.color)
                     }
                 }
+            }
+        }
+        .frame(minHeight: 55)
+    }
+    
+    /*
+    private var formView: some View {
+        HStack(alignment: .center) {
+            if place.tags.count > 0 {
+                FlowLayout(alignment: .leading) {
+                    let sortedTags = place.tags.sorted(by: { $0.name < $1.name && $0.createdAt < $1.createdAt })
+                    ForEach(sortedTags) { tag in
+                        TagView(name: tag.name, color: tag.color)
+                    }
+                }
                 .padding()
             }
             Spacer()
@@ -94,6 +109,7 @@ struct PlaceTagsView: View {
         }
         .frame(minHeight: 55)
     }
+     */
 }
 
 #if DEBUG

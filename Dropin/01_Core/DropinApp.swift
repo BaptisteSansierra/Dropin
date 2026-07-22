@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import CoreLocation
+import ContactFieldKit
 
 // Note:
 // - 'Infer Sendable for Methods and Key Path Literals' set to Yes to avoid SortDescriptor warning (swift6 concurrency) cf. https://stackoverflow.com/questions/79000052/fetchdescriptor-including-sortdescriptor-returns-warning-in-xcode16
@@ -26,6 +27,66 @@ struct DropinApp: App {
     private var modelContainer: ModelContainer
     private var appSettings = AppSettings()
     private var appContext = AppContext()
+
+    // MARK: - init
+    init() {
+        // Create database, wire app
+        do {
+            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self, SDProfile.self)
+            modelContainer.mainContext.autosaveEnabled = false
+            #if DEBUG
+            // If empty database, populate with mock data
+            if false {
+                do {
+                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
+                    if places.count == 0 {
+                        Log.info("Empty database, mock populating")
+                        try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
+                    } else {
+                        Log.info("\(places.count) places found in database, no mock populate needed")
+                    }
+                } catch {
+                    Log.error("Couldn't populate database: \(error)")
+                }
+            }
+            // Create data from cata OpenData
+            if false {
+                Task {
+                    do {
+                        Log.info("Load Cat open data")
+                        let catOpenData = try CatOpenData(modelContext: modelContainer.mainContext)
+                        try await catOpenData.load()
+                    } catch {
+                        fatalError("Error while getting dummy openData: \(error)")
+                    }
+                }
+            }
+            #endif
+            
+            // Create app container
+            appContainer = AppContainer(modelContext: modelContainer.mainContext,
+                                        appContext: appContext)
+            self.modelContainer = modelContainer
+
+        } catch {
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+                let mock = MockContainer()
+                appContainer = mock.appContainer
+                modelContainer = mock.mockModelContainer
+                return
+            }
+            else if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                let mock = MockContainer()
+                appContainer = mock.appContainer
+                modelContainer = mock.mockModelContainer
+                return
+            }
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+
+        // Configure dependencies
+        configureContactFieldKit()
+    }
 
     // MARK: - Body
     var body: some Scene {
@@ -97,60 +158,22 @@ struct DropinApp: App {
         }
     }
 
-    // MARK: - init
-    init() {
-        do {
-            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self, SDProfile.self)
-            modelContainer.mainContext.autosaveEnabled = false
-            #if DEBUG
-            // If empty database, populate with mock data
-            if false {
-                do {
-                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
-                    if places.count == 0 {
-                        Log.info("Empty database, mock populating")
-                        try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
-                    } else {
-                        Log.info("\(places.count) places found in database, no mock populate needed")
-                    }
-                } catch {
-                    Log.error("Couldn't populate database: \(error)")
-                }
-            }
-            // Create data from cata OpenData
-            if false {
-                Task {
-                    do {
-                        Log.info("Load Cat open data")
-                        let catOpenData = try CatOpenData(modelContext: modelContainer.mainContext)
-                        try await catOpenData.load()
-                    } catch {
-                        fatalError("Error while getting dummy openData: \(error)")
-                    }
-                }
-            }
-            #endif
-            
-            // Create app container
-            appContainer = AppContainer(modelContext: modelContainer.mainContext,
-                                        appContext: appContext)
-            self.modelContainer = modelContainer
+    // MARK: private methods
+    private func configureContactFieldKit() {
+        ContactFieldUIConfig.backgroundPrimary = .surface1
+        ContactFieldUIConfig.backgroundSecondary = .surface2
+        ContactFieldUIConfig.backgroundTertiary = .backgroundPrimary
 
-        } catch {
-            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-                let mock = MockContainer()
-                appContainer = mock.appContainer
-                modelContainer = mock.mockModelContainer
-                return
-            }
-            else if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
-                let mock = MockContainer()
-                appContainer = mock.appContainer
-                modelContainer = mock.mockModelContainer
-                return
-            }
-            fatalError("Could not create ModelContainer: \(error)")
-        }
+        ContactFieldUIConfig.textPrimaryColor = .textTertiary
+
+        ContactFieldUIConfig.bodyTextFont = Font.bodyRegular
+        ContactFieldUIConfig.captionTextFont = Font.captionRegular
+
+        ContactFieldUIConfig.success = .dropinPrimary
+        ContactFieldUIConfig.destructive = .destructive
+        
+        ContactFieldUIConfig.topDivider = .clear
+        ContactFieldUIConfig.bottomDivider = .clear
     }
 }
 
@@ -186,8 +209,8 @@ extension DropinApp {
     struct ui {
         static let mainTabBarHeight: CGFloat = 80
         struct button {
-            static let height: Double = 40
-            static let width: Double = 200
+            static let height: Double = 52
+            //static let width: Double = 200
         }
         static let addressPickerSheetHeight: CGFloat = 225
         static let coordinatesPickerSheetHeight: CGFloat = 300

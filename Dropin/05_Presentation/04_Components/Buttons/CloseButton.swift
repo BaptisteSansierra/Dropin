@@ -1,14 +1,13 @@
 //
-//  AuthBackButton.swift
+//  CloseButton.swift
 //  Dropin
 //
-//  Circular back-chevron used atop the Sign up / Reset password screens,
-//  replacing the system back button per the auth design spec.
+//  Created by baptiste sansierra on 14/7/26.
 //
 
 import SwiftUI
 
-struct AuthBackButton: View {
+struct CloseButton: View {
 
     private let action: () -> Void
 
@@ -19,7 +18,7 @@ struct AuthBackButton: View {
             .stroke(.fieldBorder)
             .frame(width: 36, height: 36)
             .overlay {
-                Image(systemName: "chevron.left")
+                Image(systemName: "multiply")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(.textSecondary)
             }
@@ -34,8 +33,8 @@ struct AuthBackButton: View {
 #Preview {
     ZStack {
         Color.backgroundPrimary.ignoresSafeArea()
-        AuthBackButton(action: {
-            print("go back")
+        CloseButton(action: {
+            print("close")
         })
         .padding(32)
     }

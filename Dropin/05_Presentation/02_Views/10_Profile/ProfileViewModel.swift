@@ -8,10 +8,6 @@ import Foundation
 @MainActor
 @Observable class ProfileViewModel {
 
-    // MARK: - Edit state for display name (auto-save)
-    var draft: String = ""
-    private(set) var lastSaved: String = ""
-
     // MARK: - Sign-out flow state
     /// Set after first attempt that requires user confirmation (offline or
     /// post-sync still pending). Drives the second confirmation alert.
@@ -30,74 +26,48 @@ import Foundation
         }
     }
 
+    /// Not private/ObservationIgnored — the view binds `$viewModel.coordinator.path`
+    /// to its own NavigationStack (same pattern as SignInViewModel/AuthCoordinator).
+    var coordinator: ProfileCoordinator
+
     @ObservationIgnored private let appContainer: AppContainer
     @ObservationIgnored private let profileService: any ProfileServiceProtocol
-    @ObservationIgnored private var saveTask: Task<Void, Never>?
 
     init(appContainer: AppContainer,
-         profileService: any ProfileServiceProtocol) {
+         profileService: any ProfileServiceProtocol,
+         coordinator: ProfileCoordinator) {
         self.appContainer = appContainer
         self.profileService = profileService
-        let current = profileService.profile?.displayName ?? ""
-        self.draft = current
-        self.lastSaved = current
+        self.coordinator = coordinator
     }
 
     // MARK: - Read-only fields surfaced to the view
     var profile: ProfileEntity? { profileService.profile }
+    var displayName: String { profile?.displayName ?? "" }
     var email: String? { profile?.email }
     var plan: UserPlan? { profile?.plan }
-    
+
     var avatarInitial: String {
         let placeholder = "N/A"
-        let source = draft.isEmpty ? placeholder : draft.initials()
+        let source = displayName.isEmpty ? placeholder : displayName.initials()
         return source.uppercased()
     }
 
-    // MARK: - Validation
-    var trimmed: String { draft.trimmingCharacters(in: .whitespacesAndNewlines) }
-
-    /// Localized validation error, nil if valid.
-    var validationError: LocalizedStringResource? {
-        if trimmed.isEmpty { return LocalizedStringResource("profile.error.name_empty") }
-        if trimmed.count > 50 { return LocalizedStringResource("profile.error.name_too_long") }
-        return nil
+    // MARK: - Navigation
+    func pushEditDisplayName() {
+        coordinator.pushEditName()
     }
 
-    var isValid: Bool { validationError == nil }
-    var hasUnsavedChanges: Bool { trimmed != lastSaved }
-
-    // MARK: - Save (debounced)
-    func scheduleSave() {
-        saveTask?.cancel()
-        saveTask = Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(600))
-            guard let self else { return }
-            guard !Task.isCancelled else { return }
-            await self.commitIfValid()
-        }
+    func pushAccountDeletion() {
+        coordinator.pushAccountDeletion()
     }
 
-    func saveNow() async {
-        saveTask?.cancel()
-        await commitIfValid()
+    func createEditDisplayNameView() -> EditDisplayNameView {
+        appContainer.createEditDisplayNameView()
     }
 
-    private func commitIfValid() async {
-        guard isValid, hasUnsavedChanges else { return }
-        let toSave = trimmed
-        do {
-            try await profileService.setDisplayName(toSave)
-            lastSaved = toSave
-        } catch {
-            Log.error("ProfileViewModel: setDisplayName failed: \(error)")
-        }
-    }
-
-    /// Called from `.onDisappear`; if the draft is currently invalid, revert it
-    /// to the last-saved value so we don't keep stale bad state.
-    func discardInvalidDraftOnDismiss() {
-        if !isValid { draft = lastSaved }
+    func createDeleteAccountView() -> DeleteAccountView {
+        appContainer.createDeleteAccountView()
     }
 
     // MARK: - Sign out

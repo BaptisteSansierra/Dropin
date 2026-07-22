@@ -2,7 +2,11 @@
 //  ProfileView.swift
 //  Dropin
 //
-//  Hosted as a sheet from RootView when the side-menu header is tapped.
+//  Presented modally (its own NavigationStack) from RootView via the side-menu
+//  header — not pushed onto RootView's stack, since nesting a NavigationStack
+//  inside another's content causes toolbar/nav-bar cross-talk in SwiftUI.
+//  EditDisplayNameView/DeleteAccountView are pushed within *this* stack via
+//  ProfileCoordinator.
 //
 
 import SwiftUI
@@ -19,71 +23,48 @@ struct ProfileView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            
-            ScrollView {
-                
-                //ZStack {
-                    
-//                    VStack(spacing: 0) {
-//                        Divider()
-////                        Color.backgroundSecondary
-////                            .ignoresSafeArea()
-////                            .padding(.top, 0)
-//                    }
-                    
-                    VStack(spacing: 0) {
-                        avatarBlock
-                        //Divider()
-                        //    .padding(.top, 24)
-                        
-                        //VStack(spacing: 0) {
-                        displayNameField
-                            .padding(.top, 24)
-                            .padding(.horizontal)
-                        planRow
-                            .padding(.top, 24)
-                            .padding(.horizontal)
-                        emailRow
-                            .padding(.top, 20)
-                            .padding(.horizontal)
-                        Spacer().frame(height: 24)
-                        logoutButton
-                            .padding(.top, 40)
-                        //}
-                        //.frame(maxWidth: .infinity, maxHeight: .infinity)
-                        //.background(.backgroundSecondary)
+        NavigationStack(path: $viewModel.coordinator.path) {
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    CloseButton {
+                        dismiss()
                     }
-                    .padding(.horizontal, 0)
-                    .padding(.top, 30)
-                    .padding(.bottom, 40)
-                //}
-                
-                
-            }
-            //.background(.backgroundPrimary)
-            .navigationTitle("common.profile")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("common.done") {
-                        Task { await viewModel.saveNow(); dismiss() }
-                    }
-                    .disabled(!viewModel.isValid)
+                    .padding(.trailing, 20)
                 }
+                //ScrollView {
+                    VStack(spacing: 0) {
+                        identityBlock
+                            .padding(.top, 26)
+
+                        accountCard
+                            .padding(.top, 28)
+                            .padding(.horizontal, 20)
+
+                        Spacer(minLength: 60)
+
+                        logoutRow
+                            .padding(.horizontal, 20)
+
+                        deleteAccountRow
+                            .padding(.top, 14)
+                            //.padding(.bottom, 40)
+                    }
+                }
+            //}
+            .frame(maxHeight: .infinity)
+            .background(Color.backgroundPrimary.ignoresSafeArea())
+            .navigationBarBackButtonHidden(true)
+            .navigationDestination(for: ProfileNavigationItem.self) { item in
+                resolveDestination(item)
             }
         }
-        .onDisappear { viewModel.discardInvalidDraftOnDismiss() }
         // First confirmation: are you sure you want to log out?
         .confirmationDialog("profile.logout.confirm_title",
                             isPresented: $confirmLogout,
                             titleVisibility: .visible) {
             Button("profile.logout.confirm", role: .destructive) {
-                Task {
-                    await viewModel.signOut {
-                        dismiss()
-                    }
-                }
+                Task { await viewModel.signOut { } }
             }
             Button("common.cancel", role: .cancel) { }
         } message: {
@@ -95,11 +76,7 @@ struct ProfileView: View {
                isPresented: forceSignOutBinding,
                presenting: viewModel.pendingForceSignOut) { _ in
             Button("profile.logout.force", role: .destructive) {
-                Task {
-                    await viewModel.forceSignOut {
-                        dismiss()
-                    }
-                }
+                Task { await viewModel.forceSignOut { } }
             }
             Button("profile.logout.more_info") {
                 // Dismiss this alert, then defer the info alert so SwiftUI
@@ -130,98 +107,102 @@ struct ProfileView: View {
         }
     }
 
+    @ViewBuilder
+    private func resolveDestination(_ item: ProfileNavigationItem) -> some View {
+        switch item {
+            case .editName:
+                viewModel.createEditDisplayNameView()
+            case .accountDeletion:
+                viewModel.createDeleteAccountView()
+        }
+    }
+
     // MARK: - Subviews
-    private var avatarBlock: some View {
-        VStack(spacing: 8) {
+    private var identityBlock: some View {
+        VStack(spacing: 10) {
             ProfileBadgeView(initials: viewModel.avatarInitial,
                              style: .large,
                              bgColor: .dropinPrimary,
                              fgColor: .backgroundPrimary)
-        }
-    }
 
-    private var displayNameField: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("profile.display_name")
-                .textStyle(.formSectionTitle2)
+            Text(viewModel.displayName.isEmpty ? String(localized: "common.na") : viewModel.displayName)
+                .textStyle(.profileName)
 
-            TextField("profile.display_name", text: $viewModel.draft)
-                .textStyle(.body)
+            Text(verbatim: planLabel)
+                .textStyle(.bodySemibold, color: .dropinPrimary)
                 .padding(.horizontal, 12)
-                .padding(.vertical, 12)
-                .background(.backgroundPrimary, in: RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(viewModel.isValid ? .backgroundTertiary : .red, lineWidth: 1)
-                )
-                .autocorrectionDisabled()
-                .submitLabel(.done)
-                .onChange(of: viewModel.draft) { _, _ in viewModel.scheduleSave() }
-                .onSubmit { Task { await viewModel.saveNow() } }
-
-            if let error = viewModel.validationError {
-                Text(error)
-                    .textStyle(.caption)
-                    .foregroundStyle(.red)
-            }
+                .padding(.vertical, 4)
+                .background(.dropinPrimary.opacity(0.14), in: Capsule())
         }
     }
 
-    private var planRow: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("profile.plan")
-                .textStyle(.formSectionTitle2)
-            HStack {
-                Text(verbatim: planLabel)
-                    .textStyle(.bodySemibold)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(.dropinPrimary.opacity(0.15),
-                                in: Capsule())
-                    .foregroundStyle(.dropinPrimary)
-                Spacer()
+    private var accountCard: some View {
+        VStack(spacing: 0) {
+            accountRow(label: "profile.display_name",
+                       value: viewModel.displayName,
+                       showChevron: true) {
+                viewModel.pushEditDisplayName()
             }
+
+            Rectangle()
+                .fill(.fieldBorder)
+                .frame(height: 1)
+                .padding(.leading, 16)
+
+            accountRow(label: "profile.email",
+                       value: viewModel.email ?? "—",
+                       showChevron: false,
+                       action: nil)
+        }
+        .background(.surface1, in: RoundedRectangle(cornerRadius: 14))
+        .overlay {
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(.fieldBorder, lineWidth: 1)
         }
     }
 
-    private var emailRow: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("profile.email")
-                .textStyle(.formSectionTitle2)
+    @ViewBuilder
+    private func accountRow(label: LocalizedStringKey,
+                            value: String,
+                            showChevron: Bool,
+                            action: (() -> Void)?) -> some View {
+        Button {
+            action?()
+        } label: {
             HStack {
-                Text(viewModel.email ?? "—")
+                Text(label)
                     .textStyle(.body)
-                    .foregroundStyle(.secondary)
                 Spacer()
+                Text(value)
+                    .textStyle(.body, color: .textSecondary)
+                if showChevron {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.textTertiary)
+                }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .disabled(action == nil)
     }
 
-    private var logoutButton: some View {
-        VStack {
-            DestructiveButton(text: "profile.logout") {
-                confirmLogout = true
-            }
-            .disabled(viewModel.isSigningOut)
+    private var logoutRow: some View {
+        SecondaryButton(text: "profile.logout") {
+            confirmLogout = true
+        }
+        .disabled(viewModel.isSigningOut)
+    }
 
-            /*
-            Button(role: .destructive) {
-                confirmLogout = true
-            } label: {
-                HStack {
-                    if viewModel.isSigningOut {
-                        ProgressView()
-                    }
-                    Text("profile.logout")
-                        .textStyle(.mainButton)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: DropinApp.ui.button.height)
-                .background(.destructive, in: Capsule())
-                .foregroundStyle(.white)
-            }
-            .disabled(viewModel.isSigningOut)
-             */
+    private var deleteAccountRow: some View {
+        TextButton(text: "profile.delete_account",
+                   postSystemImage: "chevron.right",
+                   postSystemImageFont: .system(size: 12,
+                                                weight: .semibold),
+                   foreground: .destructive) {
+            viewModel.pushAccountDeletion()
         }
     }
 

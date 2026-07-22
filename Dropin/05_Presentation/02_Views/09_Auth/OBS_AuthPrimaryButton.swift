@@ -8,6 +8,8 @@
 //  app-wide button restyle.
 //
 
+#if false
+
 import SwiftUI
 
 struct AuthPrimaryButton: View {
@@ -19,23 +21,30 @@ struct AuthPrimaryButton: View {
     private let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            ZStack {
-                Text(text)
-                    .textStyle(.mainButton)
-                    .opacity(isLoading ? 0 : 1)
-                if isLoading {
-                    ProgressView()
-                        .tint(.backgroundPrimary)
+        VStack {
+            MainButton(text: text,
+                       progress: isLoading ? .run(color: .backgroundPrimary, replaceContent: true) : .none,
+                       action: action)
+            
+            Button(action: action) {
+                ZStack {
+                    Text(text)
+                        //.textStyle(.mainButton)
+                        .foregroundStyle(.white)
+                        .opacity(isLoading ? 0 : 1)
+                    if isLoading {
+                        ProgressView()
+                            .tint(.backgroundPrimary)
+                    }
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(.dropinPrimary, in: RoundedRectangle(cornerRadius: 14))
+                .shadow(color: .dropinPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(.dropinPrimary, in: RoundedRectangle(cornerRadius: 14))
-            .shadow(color: .dropinPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
+            .disabled(!isEnabled || isLoading)
+            .opacity(isEnabled ? 1 : 0.5)
         }
-        .disabled(!isEnabled || isLoading)
-        .opacity(isEnabled ? 1 : 0.5)
     }
 
     init(text: LocalizedStringKey,
@@ -52,10 +61,15 @@ struct AuthPrimaryButton: View {
         Color.backgroundPrimary.ignoresSafeArea()
         VStack(spacing: 16) {
             AuthPrimaryButton(text: "Sign in", action: {})
+                .padding(.bottom, 20)
             AuthPrimaryButton(text: "Sign in", isLoading: true, action: {})
+                .padding(.bottom, 20)
             AuthPrimaryButton(text: "Sign in", action: {})
                 .disabled(true)
+                .padding(.bottom, 20)
         }
         .padding(32)
     }
 }
+
+#endif

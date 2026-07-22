@@ -20,6 +20,7 @@ final class StubAuthService: AuthServiceProtocol {
     func resetPassword(email: String) async throws {}
     func resendVerificationEmail(email: String) async throws {}
     func signOut() async throws { session = nil }
+    func deleteAccount() async throws { session = nil }
     func restoreSession() async {}
 }
 

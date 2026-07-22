@@ -48,7 +48,7 @@ struct ResetPasswordView: View {
 
             VStack(spacing: 0) {
                 HStack {
-                    AuthBackButton {
+                    BackButton {
                         viewModel.pop()
                     }
                     Spacer()
@@ -101,10 +101,14 @@ struct ResetPasswordView: View {
                               onSubmit: { Task { await viewModel.sendResetLink() } })
             .padding(.top, 24)
 
-            AuthPrimaryButton(text: "auth.reset.submit",
-                              isLoading: viewModel.isSubmitting) {
+            MainButton(text: "auth.reset.submit",
+                       progress: viewModel.isSubmitting ? .run(color: .surface1, replaceContent: true) : .none) {
                 Task { await viewModel.sendResetLink() }
             }
+//            AuthPrimaryButton(text: "auth.reset.submit",
+//                              isLoading: viewModel.isSubmitting) {
+//                Task { await viewModel.sendResetLink() }
+//            }
             .disabled(!viewModel.isFormValid)
             .padding(.top, 22)
 
@@ -121,8 +125,8 @@ struct ResetPasswordView: View {
         VStack(spacing: 0) {
             Spacer(minLength: 40)
 
-            AuthIconBadge(systemImage: "envelope.badge")
-
+            badgeView
+            
             Text("auth.reset.sent_title")
                 .textStyle(.authTitle)
                 .lineLimit(nil)
@@ -137,6 +141,21 @@ struct ResetPasswordView: View {
 
             Spacer(minLength: 40)
         }
+    }
+    
+    private var badgeView: some View {
+        Circle()
+            .fill(.surface2)
+            .frame(width: 96, height: 96)
+            .overlay {
+                Image(systemName: "envelope.badge")
+                    .font(.system(size: 38, weight: .regular))
+                    .foregroundStyle(.dropinPrimary)
+            }
+            .shadow(color: .black.opacity(0.1),
+                    radius: 10,
+                    x: 0,
+                    y: 5)
     }
 
     private func iconWell(systemImage: String) -> some View {

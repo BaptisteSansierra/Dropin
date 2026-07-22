@@ -8,17 +8,17 @@ import SwiftUI
 @MainActor
 @Observable class SideMenuViewModel {
 
-    /// Binding to the parent's `showingProfileSheet` flag. The header's tap
+    /// Binding to the parent's `showingProfile` flag. The header's tap
     /// handler writes through this; RootView owns the source of truth and
-    /// attaches the actual `.sheet(isPresented:)` modifier.
-    @ObservationIgnored var showingProfileSheet: Binding<Bool>
+    /// attaches the actual `.fullScreenCover(isPresented:)` modifier.
+    @ObservationIgnored var showingProfile: Binding<Bool>
 
     @ObservationIgnored private let profileService: any ProfileServiceProtocol
 
     init(profileService: any ProfileServiceProtocol,
-         showingProfileSheet: Binding<Bool>) {
+         showingProfile: Binding<Bool>) {
         self.profileService = profileService
-        self.showingProfileSheet = showingProfileSheet
+        self.showingProfile = showingProfile
     }
 
     var profile: ProfileEntity? { profileService.profile }
@@ -43,6 +43,6 @@ import SwiftUI
     }
 
     func openProfile() {
-        showingProfileSheet.wrappedValue = true
+        showingProfile.wrappedValue = true
     }
 }

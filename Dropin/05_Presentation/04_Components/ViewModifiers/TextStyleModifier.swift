@@ -21,6 +21,7 @@ struct TextStyleModifier: ViewModifier {
         case bodyWarning
         case bodyError
         case bodyInfo
+        case subheadline
         case caption
         case caption2
         case placeholder
@@ -48,6 +49,9 @@ struct TextStyleModifier: ViewModifier {
         case tabBarImg
         case formFieldError
         case keyboardToolbarAction
+        case cardAction
+        case cardPlaceholder
+        case cardDescription
     }
     
     var style: Style
@@ -98,6 +102,8 @@ struct TextStyleModifier: ViewModifier {
                 (Font.bodyBold, Color.destructive, nil, nil)
             case .bodyInfo:
                 (Font.bodyBold, Color.info, nil, nil)
+            case .subheadline:
+                (Font.subheadlineRegular, nil, nil, nil)
             case .caption:
                 (Font.captionRegular, nil, nil, nil)
             case .caption2:
@@ -109,7 +115,7 @@ struct TextStyleModifier: ViewModifier {
             case .link:
                 (Font.subheadlineSemibold, Color.dropinSecondary, nil, nil)
             case .mainButton:
-                (Font.bodySemibold, Color.backgroundPrimary, nil, nil)
+                (Font.bodySemibold, Color.dropinPrimary, nil, nil)
             case .secondaryButton:
                 (Font.bodySemibold, Color.dropinPrimary, nil, nil)
             case .stringFieldTitle:
@@ -131,9 +137,9 @@ struct TextStyleModifier: ViewModifier {
             case .groupStickerSmall:
                 (Font.captionMedium, nil, nil, nil)
             case .formSectionTitle:
-                (Font.bodySemibold, Color.textSecondary, nil, nil)
+                (Font.bodySemibold, Color.textTertiary, nil, nil)
             case .formSectionTitle2:
-                (Font.captionMedium, Color.textSecondary, nil, nil)
+                (Font.captionMedium, Color.textTertiary, nil, nil)
             case .avatarLarge:
                 (Font._32Semibold, nil, nil, nil)
             case .avatarSmall:
@@ -149,9 +155,15 @@ struct TextStyleModifier: ViewModifier {
             case .tabBarImg:
                 (Font.calloutSemibold, nil, nil, nil)
             case .formFieldError:
-                (Font.caption, Color.destructive, nil, nil)
+                (Font.captionRegular, Color.destructive, nil, nil)
             case .keyboardToolbarAction:
                 (Font.bodySemibold, Color.dropinPrimary, nil, nil)
+            case .cardAction:
+                (Font.calloutSemibold, Color.dropinPrimary, nil, nil)
+            case .cardPlaceholder:
+                (Font.calloutRegular, Color.textTertiary, nil, nil)
+            case .cardDescription:
+                (Font.caption2Regular, Color.textTertiary, nil, nil)
         }
     }
 }

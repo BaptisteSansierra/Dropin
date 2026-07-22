@@ -4,6 +4,9 @@
     "" : {
 
     },
+    " " : {
+
+    },
     "-" : {
 
     },
@@ -669,7 +672,7 @@
       }
     },
     "auth.verify.check_confirmation" : {
-      "comment" : "Verify email screen primary button — checks confirmation status and signs in",
+      "comment" : "Verify email screen primary button - checks confirmation status and signs in",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -711,13 +714,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not confirmed yet — check your inbox and try again."
+            "value" : "Not confirmed yet - check your inbox and try again."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas encore confirmé — consultez votre boîte de réception et réessayez."
+            "value" : "Pas encore confirmé - consultez votre boîte de réception et réessayez."
           }
         }
       }
@@ -772,6 +775,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Consultez votre boîte de réception"
+          }
+        }
+      }
+    },
+    "auth.verify.unconfirmed_body" : {
+      "comment" : "Verify email screen body, unconfirmedLogin context (pushed from Sign in's email-not-confirmed error)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You should have received a confirmation email when you signed up."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous auriez dû recevoir un e-mail de confirmation lors de votre inscription."
+          }
+        }
+      }
+    },
+    "auth.verify.unconfirmed_title" : {
+      "comment" : "Verify email screen title, unconfirmedLogin context (pushed from Sign in's email-not-confirmed error)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account isn't confirmed yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre compte n'est pas encore confirmé"
           }
         }
       }
@@ -993,7 +1032,14 @@
       }
     },
     "Clearing session" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermeture de session"
+          }
+        }
+      }
     },
     "common.about" : {
       "comment" : "Sidebar ",
@@ -1012,23 +1058,8 @@
         }
       }
     },
-    "common.additional_icon" : {
-      "comment" : "Place specific icon",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Additional icon"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Icône supplémentaire"
-          }
-        }
-      }
+    "common.add" : {
+
     },
     "common.address" : {
       "extractionState" : "manual",
@@ -1061,6 +1092,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Complément d’adresse"
+          }
+        }
+      }
+    },
+    "common.annotation_icon" : {
+      "comment" : "Place specific icon",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annotation icon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icône d'annotation"
           }
         }
       }
@@ -1130,6 +1179,40 @@
         }
       }
     },
+    "common.change" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changer"
+          }
+        }
+      }
+    },
+    "common.choose" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir"
+          }
+        }
+      }
+    },
     "common.clear" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1164,7 +1247,7 @@
       }
     },
     "common.close" : {
-      "comment" : "Dismiss without confirming (e.g. hide keyboard) — distinct from common.done",
+      "comment" : "Dismiss without confirming (e.g. hide keyboard) - distinct from common.done",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1971,6 +2054,23 @@
         }
       }
     },
+    "common.place" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieu"
+          }
+        }
+      }
+    },
     "common.places" : {
       "localizations" : {
         "en" : {
@@ -1983,6 +2083,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux"
+          }
+        }
+      }
+    },
+    "common.plus.add" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+  Add"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+  Ajouter"
+          }
+        }
+      }
+    },
+    "common.plus.change" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+  Change"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+  Changer"
+          }
+        }
+      }
+    },
+    "common.plus.choose" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+  Choose"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+  Choisir"
           }
         }
       }
@@ -2397,6 +2548,240 @@
         }
       }
     },
+    "delete_account.body_details" : {
+      "comment" : "Delete account screen, second (regular-weight) sentence of the erasure warning, follows delete_account.body_emphasis",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This erases all your places, groups, tags, and photos from Dropin - on this device and from your account."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela efface tous vos lieux, groupes, tags et photos de Dropin - sur cet appareil et sur votre compte."
+          }
+        }
+      }
+    },
+    "delete_account.body_emphasis" : {
+      "comment" : "Delete account screen, first (bodySemibold) sentence of the erasure warning, precedes delete_account.body_details",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once you delete your account, there's no going back."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une fois votre compte supprimé, il n'y a pas de retour en arrière possible."
+          }
+        }
+      }
+    },
+    "delete_account.consequence.groups_tags" : {
+      "comment" : "Delete account screen, consequences card row label",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groups & tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groupes et tags"
+          }
+        }
+      }
+    },
+    "delete_account.consequence.photos" : {
+      "comment" : "Delete account screen, consequences card row label",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved photos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos enregistrées"
+          }
+        }
+      }
+    },
+    "delete_account.consequence.places" : {
+      "comment" : "Delete account screen, consequences card row label",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All your places"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous vos lieux"
+          }
+        }
+      }
+    },
+    "delete_account.error.generic" : {
+      "comment" : "Delete account screen, inline error shown in the confirmation sheet if deletion fails",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue. Veuillez réessayer."
+          }
+        }
+      }
+    },
+    "delete_account.export_button" : {
+      "comment" : "Delete account screen, secondary export action above the destructive button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export my places first"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exporter mes lieux d'abord"
+          }
+        }
+      }
+    },
+    "delete_account.eyebrow" : {
+      "comment" : "Delete account screen, small uppercase eyebrow above the warning body",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read before deleting your account"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À lire avant de supprimer votre compte"
+          }
+        }
+      }
+    },
+    "delete_account.footer_note" : {
+      "comment" : "Delete account screen, small note below the consequences card",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To return later, you'll need to create a new profile."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour revenir plus tard, vous devrez créer un nouveau profil."
+          }
+        }
+      }
+    },
+    "delete_account.gate.body" : {
+      "comment" : "I-AGREE confirmation sheet, body under the title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once you delete your account, there's no going back."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une fois votre compte supprimé, il n'y a pas de retour en arrière possible."
+          }
+        }
+      }
+    },
+    "delete_account.gate.confirm_button" : {
+      "comment" : "I-AGREE confirmation sheet, destructive submit button - disabled until the typed text matches delete_account.gate.token exactly",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete account permanently"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le compte définitivement"
+          }
+        }
+      }
+    },
+    "delete_account.gate.title_%@" : {
+      "comment" : "I-AGREE confirmation sheet title; %@ is delete_account.gate.token, shown quoted",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please type \"%@\" to confirm"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veuillez taper « %@ » pour confirmer"
+          }
+        }
+      }
+    },
+    "delete_account.gate.token" : {
+      "comment" : "EXACT, case-sensitive literal the user must type to confirm account deletion (compared programmatically, not just displayed) - keep short, unambiguous, and free of accented characters so it's easy to type correctly.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I AGREE"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JE CONFIRME"
+          }
+        }
+      }
+    },
     "developed_by %@" : {
       "localizations" : {
         "en" : {
@@ -2476,6 +2861,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Êtes-vous sûr de vouloir annuler les modifications ?"
+          }
+        }
+      }
+    },
+    "edit_display_name.helper" : {
+      "comment" : "Edit display name screen, helper text below the field",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is the name shown on your profile. 2–30 characters."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est le nom affiché sur votre profil. 2 à 30 caractères."
+          }
+        }
+      }
+    },
+    "edit_display_name.section_title" : {
+      "comment" : "Edit display name screen, uppercase section eyebrow above the field",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your name on Dropin"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre nom sur Dropin"
+          }
+        }
+      }
+    },
+    "edit_display_name.title" : {
+      "comment" : "Edit display name screen nav title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom affiché"
           }
         }
       }
@@ -2878,6 +3317,78 @@
         }
       }
     },
+    "place_edit.annotation_icon_desc" : {
+      "comment" : "Place edit screen, helper text under the annotation icon section",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown on the map pin's corner"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiché dans le coin du repère sur la carte"
+          }
+        }
+      }
+    },
+    "place_edit.images_placeholder1" : {
+      "comment" : "Place edit screen, images section placeholder, line 1",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add photos of this place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez des photos de ce lieu"
+          }
+        }
+      }
+    },
+    "place_edit.images_placeholder2" : {
+      "comment" : "Place edit screen, images section placeholder, line 2",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from your library or camera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "depuis votre photothèque ou l'appareil photo"
+          }
+        }
+      }
+    },
+    "place_edit.rate_desc" : {
+      "comment" : "Place edit screen, helper text under the rating section",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to rate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez pour noter"
+          }
+        }
+      }
+    },
     "place_filter_view.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3216,6 +3727,24 @@
         }
       }
     },
+    "profile.delete_account" : {
+      "comment" : "Profile screen's destructive row label, and Delete-account screen's nav title / primary button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete account"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le compte"
+          }
+        }
+      }
+    },
     "profile.display_name" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3375,13 +3904,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Some places, groups, or tags may have been modified recently — or while your device was offline — and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
+            "value" : "Some places, groups, or tags may have been modified recently - or while your device was offline - and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certains lieux, groupes ou tags ont peut-être été modifiés récemment — ou pendant que votre appareil était hors-ligne — et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
+            "value" : "Certains lieux, groupes ou tags ont peut-être été modifiés récemment - ou pendant que votre appareil était hors-ligne - et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
           }
         }
       }

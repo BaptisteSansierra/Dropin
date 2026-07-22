@@ -8,22 +8,56 @@
 import SwiftUI
 
 struct DestructiveButton: View {
+    
+    enum Style {
+        case filled
+        case bordered
+    }
+
     private var text: LocalizedStringKey
-    private var maxWidth: CGFloat?
+    private let style: Style
+    private var systemImage: String? = nil
+    private var progress: DropinButton.Progress
     private let action: () -> Void
 
-    var body: some View {
-        MainButton(text: text,
-                   maxWidth: maxWidth,
-                   background: .destructive,
-                   action: action)
-    }
-
     init(text: LocalizedStringKey,
-         maxWidth: CGFloat? = DropinApp.ui.button.width,
+         style: Style = .filled,
+         systemImage: String? = nil,
+         progress: DropinButton.Progress = .none,
          action: @escaping () -> Void) {
         self.text = text
-        self.maxWidth = maxWidth
+        self.style = style
+        self.systemImage = systemImage
+        self.progress = progress
         self.action = action
     }
+
+    var body: some View {
+        DropinButton(text: text,
+                     systemImage: systemImage,
+                     maxWidth: .infinity,
+                     background: style == .filled ? .destructive : .surface1,
+                     foreground: style == .filled ? .surface1 : .destructive,
+                     stroke: style == .filled ? .fieldBorder : .destructive.opacity(0.25),
+                     progress: progress,
+                     action: action)
+    }
+}
+
+#Preview {
+    VStack {
+        VStack {
+            DestructiveButton(text: "common.delete",
+                              style: .filled,
+                              systemImage: "trash",
+                              action: {})
+        }
+        VStack {
+            DestructiveButton(text: "common.delete",
+                              style: .bordered,
+                              systemImage: "trash",
+                              action: {})
+        }
+    }
+    .padding(.horizontal)
 }

@@ -22,21 +22,25 @@ struct VerifyEmailView: View {
                     Spacer(minLength: 60)
 
                     badgeView
-                    
-                    Text("auth.verify.title")
+
+                    Text(titleKey)
                         .textStyle(.authTitle)
                         .multilineTextAlignment(.center)
                         .padding(.top, 26)
 
-                    Text("auth.verify.body_\(viewModel.email)")
+                    bodyText
                         .textStyle(.body, color: .textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.top, 10)
 
-                    AuthPrimaryButton(text: "auth.verify.check_confirmation",
-                                      isLoading: viewModel.isCheckingConfirmation) {
+                    MainButton(text: "auth.verify.check_confirmation",
+                               progress: viewModel.isCheckingConfirmation ? .run(color: .surface1, replaceContent: true) : .none) {
                         Task { await viewModel.checkConfirmationAndSignIn() }
                     }
+//                    AuthPrimaryButton(text: "auth.verify.check_confirmation",
+//                                      isLoading: viewModel.isCheckingConfirmation) {
+//                        Task { await viewModel.checkConfirmationAndSignIn() }
+//                    }
                     .padding(.top, 30)
 
                     resendRow
@@ -64,6 +68,24 @@ struct VerifyEmailView: View {
                 .ignoresSafeArea(.keyboard, edges: .bottom)
         }
         .navigationBarBackButtonHidden(true)
+    }
+
+    // MARK: - context-dependent copy
+    private var titleKey: LocalizedStringKey {
+        switch viewModel.context {
+            case .justSignedUp: "auth.verify.title"
+            case .unconfirmedLogin: "auth.verify.unconfirmed_title"
+        }
+    }
+
+    @ViewBuilder
+    private var bodyText: some View {
+        switch viewModel.context {
+            case .justSignedUp:
+                Text("auth.verify.body_\(viewModel.email)")
+            case .unconfirmedLogin:
+                Text("auth.verify.unconfirmed_body")
+        }
     }
 
     // MARK: - subviews
@@ -111,7 +133,7 @@ struct VerifyEmailView: View {
 struct MockVerifyEmailView: View {
     var mock: MockContainer
     var body: some View {
-        mock.appContainer.createVerifyEmailView(email: "bat@o.surlo", password: "hunter2")
+        mock.appContainer.createVerifyEmailView(email: "bat@o.surlo", password: "hunter2", context: .justSignedUp)
     }
 
     init() { self.mock = MockContainer() }

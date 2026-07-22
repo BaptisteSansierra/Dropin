@@ -57,9 +57,12 @@ struct SignInView: View {
                         }
                         .padding(.top, 12)
 
-                        AuthPrimaryButton(text: "auth.signin",
-                                          isLoading: viewModel.isSubmitting,
-                                          action: submitSignIn)
+                        MainButton(text: "auth.signin",
+                                   progress: viewModel.isSubmitting ? .run(color: .backgroundPrimary, replaceContent: true) : .none,
+                                   action: submitSignIn)
+//                        AuthPrimaryButton(text: "auth.signin",
+//                                          isLoading: viewModel.isSubmitting,
+//                                          action: submitSignIn)
                         .disabled(!viewModel.isFormValid)
                         .padding(.top, 22)
 
@@ -152,8 +155,8 @@ struct SignInView: View {
                 viewModel.createSignUpView()
             case .resetPassword:
                 viewModel.createResetPasswordView()
-            case .verifyEmail(let email, let password):
-                viewModel.createVerifyEmailView(email: email, password: password)
+            case .verifyEmail(let email, let password, let context):
+                viewModel.createVerifyEmailView(email: email, password: password, context: context)
         }
     }
 

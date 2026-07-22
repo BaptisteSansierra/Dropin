@@ -119,12 +119,12 @@ struct MockPlacesListView: View {
                 .tabItem {
                     Label("common.map", systemImage: "map")
                 }
-            Text("EmptyTab")
+            Text(verbatim: "EmptyTab")
                 .tabItem {
-                    Label("Emptyti", systemImage: "cross")
+                    Label(String("Emptyti"), systemImage: "cross")
                 }
         }
-        .navigationTitle("Pipo")
+        .navigationTitle(String("Pipo"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

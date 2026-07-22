@@ -59,7 +59,7 @@ struct StarRatingView: View {
     private var placeholderView: some View {
         HStack(spacing: 0) {
             ForEach(0..<maxRating, id: \.self) { _ in
-                Image(systemName: "star.slash")
+                Image(systemName: "star")
                     .foregroundStyle(.gray.opacity(0.3))
             }
         }

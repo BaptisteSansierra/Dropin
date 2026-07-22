@@ -51,25 +51,12 @@ struct RootView: View {
     
     // MARK: - body
     var body: some View {
-        NavigationStack(path: $viewModel.coordinator.path) {
-            ZStack {
-                currentContentView
-                viewModel.createSideMenuView()
-            }
+        ZStack {
+            currentContentView
+            viewModel.createSideMenuView()
         }
-        .toolbarVisibility(.hidden, for: .navigationBar)
-        .navigationDestination(for: MainNavigationItem.self) { navigationItem in
-            resolveDestination(navigationItem: navigationItem)
-        }
-        // Profile sheet is hosted by RootView (not SideMenuView) — keeps the
-        // sheet's presentation host above the side-menu overlay and avoids the
-        // "presentation in progress" warning of stacked transient hosts.
-        .sheet(isPresented: $viewModel.showingProfileSheet) {
+        .fullScreenCover(isPresented: $viewModel.showingProfile) {
             viewModel.createProfileView()
-                .presentationDetents([.medium, .large])
-                .presentationCornerRadius(20)
-                .presentationBackground(.backgroundPrimary)
-                //.presentationBackground(.thinMaterial)
         }
         .task {
             // Make life fun, switch app icon
@@ -102,20 +89,6 @@ struct RootView: View {
                         DropinToolbar.Burger(showingSideMenu: $viewModel.showingSideMenu)
                     }
                 }
-        }
-    }
-    
-    @ViewBuilder
-    private func resolveDestination(navigationItem: MainNavigationItem) -> some View {
-        switch navigationItem {
-            case .profile:
-                viewModel.createProfileView()
-            case .accountDeletion:
-                // TODO: push account deletion view here
-                EmptyView()
-            case .editName:
-                // TODO: push edit name here
-                EmptyView()
         }
     }
 

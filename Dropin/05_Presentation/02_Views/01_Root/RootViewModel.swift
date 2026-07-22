@@ -23,14 +23,12 @@ enum SideMenuContext {
     //var currentSideMenuContext: Binding<SideMenuContext> //= .main
     var appContext: AppContext
 
-    var coordinator: MainCoordinator
-
     /// show/hide the side menu
     var showingSideMenu: Bool = false
 
-    /// Source of truth for the profile sheet. RootView attaches the actual
-    /// `.sheet(isPresented:)`; SideMenuView receives a Binding to flip it.
-    var showingProfileSheet: Bool = false
+    /// Source of truth for the Profile flow (its own NavigationStack,
+    /// presented modally so it doesn't nest inside this stack-less RootView).
+    var showingProfile: Bool = false
 
     var bindedShowingSideMenu: Binding<Bool> { Binding<Bool> {
         return self.showingSideMenu
@@ -38,10 +36,10 @@ enum SideMenuContext {
         self.showingSideMenu = b
     }}
 
-    var bindedShowingProfileSheet: Binding<Bool> { Binding<Bool> {
-        return self.showingProfileSheet
+    var bindedShowingProfile: Binding<Bool> { Binding<Bool> {
+        return self.showingProfile
     } set: { b in
-        self.showingProfileSheet = b
+        self.showingProfile = b
     }}
 
     var bindedSideMenuContext: Binding<SideMenuContext> { Binding<SideMenuContext> {
@@ -53,23 +51,21 @@ enum SideMenuContext {
     @ObservationIgnored private var appContainer: AppContainer
 
     init(_ appContainer: AppContainer,
-         appContext: AppContext,
-         coordinator: MainCoordinator) {
+         appContext: AppContext) {
         self.appContainer = appContainer
         self.appContext = appContext
-        self.coordinator = coordinator
     }
 
     func createSideMenuView() -> SideMenuView {
         appContainer.createSideMenuView(showingSideMenu: bindedShowingSideMenu,
                                         currentSideMenuContext: bindedSideMenuContext,
-                                        showingProfileSheet: bindedShowingProfileSheet)
+                                        showingProfile: bindedShowingProfile)
     }
 
     func createProfileView() -> ProfileView {
         appContainer.createProfileView()
     }
-    
+
     func createPlacesView() -> PlacesView {
         return appContainer.createPlacesView(showingSideMenu: bindedShowingSideMenu)
     }

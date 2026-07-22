@@ -5,17 +5,27 @@
 
 import Foundation
 
+/// `justSignedUp`: reached from Sign up — a verification link was already
+/// sent, so the resend cooldown starts immediately. `unconfirmedLogin`:
+/// reached from Sign in's email-not-confirmed error — nothing has been sent
+/// yet, so Resend is live immediately and the cooldown only starts on tap.
+enum VerifyEmailContext: Hashable {
+    case justSignedUp
+    case unconfirmedLogin
+}
+
 @MainActor
 @Observable class VerifyEmailViewModel {
 
     static let resendCooldown = 60
 
     let email: String
+    let context: VerifyEmailContext
     private let password: String
     var isResending: Bool = false
     var isCheckingConfirmation: Bool = false
     var lastError: String?
-    var remainingSeconds: Int = VerifyEmailViewModel.resendCooldown
+    var remainingSeconds: Int
 
     @ObservationIgnored private var authService: any AuthServiceProtocol
     @ObservationIgnored private var coordinator: AuthCoordinator
@@ -27,12 +37,23 @@ import Foundation
         String(format: "%01d:%02d", remainingSeconds / 60, remainingSeconds % 60)
     }
 
-    init(email: String, password: String, authService: any AuthServiceProtocol, coordinator: AuthCoordinator) {
+    init(email: String,
+         password: String,
+         context: VerifyEmailContext,
+         authService: any AuthServiceProtocol,
+         coordinator: AuthCoordinator) {
         self.email = email
         self.password = password
+        self.context = context
         self.authService = authService
         self.coordinator = coordinator
-        startCountdown()
+        switch context {
+            case .justSignedUp:
+                self.remainingSeconds = Self.resendCooldown
+                startCountdown()
+            case .unconfirmedLogin:
+                self.remainingSeconds = 0
+        }
     }
 
     deinit {
@@ -73,8 +94,17 @@ import Foundation
     }
 
     // MARK: - Navigation
+    /// `justSignedUp`: the account already exists, so returning to the
+    /// sign-up form is meaningless — pop all the way back to Sign in.
+    /// `unconfirmedLogin`: this was pushed from Sign in, so a plain pop is
+    /// enough to land back there.
     func changeEmailAddress() {
-        coordinator.pop()
+        switch context {
+            case .justSignedUp:
+                coordinator.popToRoot()
+            case .unconfirmedLogin:
+                coordinator.pop()
+        }
     }
 
     // MARK: - private

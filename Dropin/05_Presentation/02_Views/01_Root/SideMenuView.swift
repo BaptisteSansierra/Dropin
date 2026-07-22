@@ -101,17 +101,18 @@ struct SideMenuView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(verbatim: viewModel.headerTitle)
                             .textStyle(.sidebarTitle, color: .backgroundPrimary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.2)
                         Text(verbatim: viewModel.headerSubtitle)
                             .textStyle(.sidebarSubtitle, color: .backgroundPrimary.opacity(0.75))
                             .lineLimit(1)
+                            .minimumScaleFactor(0.2)
                     }
-
                     Spacer()
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
+                    showingSideMenu = false
                     viewModel.openProfile()
                 }
 
@@ -292,7 +293,7 @@ struct SideMenuView: View {
 struct MockSideMenuView: View {
     @State var showingSideMenu: Bool
     @State var sideMenuContext: SideMenuContext
-    @State var showingProfileSheet: Bool = false
+    @State var showingProfile: Bool = false
     var mock: MockContainer
 
     var body: some View {
@@ -308,7 +309,7 @@ struct MockSideMenuView: View {
             }
             mock.appContainer.createSideMenuView(showingSideMenu: $showingSideMenu,
                                                  currentSideMenuContext: $sideMenuContext,
-                                                 showingProfileSheet: $showingProfileSheet)
+                                                 showingProfile: $showingProfile)
         }
         .task {
             // Load john does' profile
@@ -317,7 +318,7 @@ struct MockSideMenuView: View {
             // Show menu
             self.showingSideMenu = true
         }
-        .sheet(isPresented: $showingProfileSheet) {
+        .fullScreenCover(isPresented: $showingProfile) {
             Text("User profile")
         }
     }

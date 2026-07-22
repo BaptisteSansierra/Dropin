@@ -151,7 +151,7 @@ struct PlaceFilterView: View {
                 clear()
             }
             .padding(.leading)
-            MainButton(text: "common.apply", maxWidth: .infinity) {
+            MainButton(text: "common.apply") {
                 apply()
             }
             .padding(.horizontal)

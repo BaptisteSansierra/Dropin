@@ -37,6 +37,12 @@ import Foundation
     init(authService: any AuthServiceProtocol, coordinator: AuthCoordinator) {
         self.authService = authService
         self.coordinator = coordinator
+        #if DEBUG
+        displayName = "batobat"
+        email = "baptiste.sansierra@gmail.com"
+        password = "Test-12345"
+        confirmPassword = "Test-12345"
+        #endif
     }
 
     func signUp() async {
@@ -50,7 +56,7 @@ import Foundation
             // directly; the global authStatus flips and DropinApp routes to
             // RootView on its own, nothing to do here.
         } catch AuthServiceError.confirmationRequired {
-            coordinator.pushVerifyEmail(email: email, password: password)
+            coordinator.pushVerifyEmail(email: email, password: password, context: .justSignedUp)
         } catch {
             Log.error("SignUpViewModel: sign-up failed: \(error)")
             lastError = error.localizedDescription

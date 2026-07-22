@@ -23,7 +23,7 @@ final class AppContainer {
     private let profileRepository: ProfileRepository
     private let imageLoader: ImageLoader
     // Coordinators
-    private let mainCoordinator: MainCoordinator
+    private let profileCoordinator: ProfileCoordinator
     private let placeCoordinator: PlaceCoordinator
     private let tagCoordinator: TagCoordinator
     private let groupCoordinator: GroupCoordinator
@@ -47,7 +47,7 @@ final class AppContainer {
          appContext: AppContext) {
         self.appContext = appContext
         // Coordinators
-        mainCoordinator = MainCoordinator()
+        profileCoordinator = ProfileCoordinator()
         placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
@@ -107,7 +107,7 @@ final class AppContainer {
          profileService: StubProfileService) {
         self.appContext = appContext
         // Coordinators
-        mainCoordinator = MainCoordinator()
+        profileCoordinator = ProfileCoordinator()
         placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
@@ -198,6 +198,7 @@ final class AppContainer {
         // 1. In-memory caches
         profileService.clear()
         // 2. Navigation state (reset coordinators + side menu)
+        profileCoordinator.popToRoot()
         placeCoordinator.popToRoot()
         tagCoordinator.path.removeAll()
         groupCoordinator.path.removeAll()
@@ -210,7 +211,29 @@ final class AppContainer {
         
         authStatus.isSigningOut = false
     }
-    
+
+    // MARK: - delete account
+
+    /// Deletes the remote account first; local cleanup (mirroring `signOut`)
+    /// only happens once that has actually succeeded, so a failure leaves the
+    /// user's local data untouched.
+    func deleteAccount() async throws {
+        Log.debug("Delete account requested")
+        try await authService.deleteAccount()
+
+        authStatus.isSigningOut = true
+        profileService.clear()
+        profileCoordinator.popToRoot()
+        placeCoordinator.popToRoot()
+        tagCoordinator.path.removeAll()
+        groupCoordinator.path.removeAll()
+        appContext.currentSideMenuContext = .main
+        try await clearDatabase()
+        syncService.reset()
+        try await authService.signOut()
+        authStatus.isSigningOut = false
+    }
+
     // MARK: - create views
     func createSignInView() -> SignInView {
         let vm = SignInViewModel(appContainer: self, authService: authService, coordinator: authCoordinator)
@@ -227,31 +250,45 @@ final class AppContainer {
         return ResetPasswordView(viewModel: vm)
     }
 
-    func createVerifyEmailView(email: String, password: String) -> VerifyEmailView {
-        let vm = VerifyEmailViewModel(email: email, password: password, authService: authService, coordinator: authCoordinator)
+    func createVerifyEmailView(email: String, password: String, context: VerifyEmailContext) -> VerifyEmailView {
+        let vm = VerifyEmailViewModel(email: email, password: password, context: context, authService: authService, coordinator: authCoordinator)
         return VerifyEmailView(viewModel: vm)
     }
 
     func createProfileView() -> ProfileView {
         let vm = ProfileViewModel(appContainer: self,
-                                  profileService: profileService)
+                                  profileService: profileService,
+                                  coordinator: profileCoordinator)
         return ProfileView(viewModel: vm)
+    }
+
+    func createEditDisplayNameView() -> EditDisplayNameView {
+        let vm = EditDisplayNameViewModel(profileService: profileService, coordinator: profileCoordinator)
+        return EditDisplayNameView(viewModel: vm)
+    }
+
+    func createDeleteAccountView() -> DeleteAccountView {
+        let vm = DeleteAccountViewModel(appContainer: self,
+                                        coordinator: profileCoordinator,
+                                        fetchPlaces: FetchPlaces(repository: placeRepository),
+                                        fetchGroups: FetchGroups(repository: groupRepository),
+                                        fetchTags: FetchTags(repository: tagRepository),
+                                        imageRepository: imageRepository)
+        return DeleteAccountView(viewModel: vm)
     }
 
     func createSideMenuView(showingSideMenu: Binding<Bool>,
                             currentSideMenuContext: Binding<SideMenuContext>,
-                            showingProfileSheet: Binding<Bool>) -> SideMenuView {
+                            showingProfile: Binding<Bool>) -> SideMenuView {
         let vm = SideMenuViewModel(profileService: profileService,
-                                   showingProfileSheet: showingProfileSheet)
+                                   showingProfile: showingProfile)
         return SideMenuView(viewModel: vm,
                             showingSideMenu: showingSideMenu,
                             currentSideMenuContext: currentSideMenuContext)
     }
 
     func createRootView() -> RootView {
-        let vm = RootViewModel(self,
-                               appContext: appContext,
-                               coordinator: mainCoordinator)
+        let vm = RootViewModel(self, appContext: appContext)
         return RootView(viewModel: vm)
     }
     

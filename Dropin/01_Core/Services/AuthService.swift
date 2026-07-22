@@ -30,6 +30,7 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
     func resetPassword(email: String) async throws
     func resendVerificationEmail(email: String) async throws
     func signOut() async throws
+    func deleteAccount() async throws
     func restoreSession() async
 }
 
@@ -109,6 +110,15 @@ final class AuthService: AuthServiceProtocol {
         } catch {
             Log.warning("signOut failed (\(error)), wipe session anyway")
         }
+    }
+
+    /// Deletes the current user's account. Server-side, this removes their
+    /// storage objects and deletes the auth user; app tables cascade from
+    /// there (see Dropin_backend's delete-account edge function). Does not
+    /// touch local session/data — the caller clears those on success.
+    func deleteAccount() async throws {
+        try await client.functions.invoke("delete-account")
+        Log.info("Account deleted")
     }
 
     func restoreSession() async {

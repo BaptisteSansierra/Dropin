@@ -9,7 +9,7 @@ import Foundation
 @Observable class SignInViewModel {
 
     #if DEBUG
-    #if false
+    #if true
     var email: String = "test@dropin.local"
     var password: String = "test12345"
     #else
@@ -50,7 +50,7 @@ import Foundation
         do {
             try await authService.signIn(email: email, password: password)
         } catch AuthServiceError.confirmationRequired {
-            coordinator.pushVerifyEmail(email: email, password: password)
+            coordinator.pushVerifyEmail(email: email, password: password, context: .unconfirmedLogin)
         } catch {
             Log.error("SignInViewModel: sign-in failed: \(error)")
             lastError = error.localizedDescription
@@ -75,7 +75,7 @@ import Foundation
         appContainer.createResetPasswordView()
     }
 
-    func createVerifyEmailView(email: String, password: String) -> VerifyEmailView {
-        appContainer.createVerifyEmailView(email: email, password: password)
+    func createVerifyEmailView(email: String, password: String, context: VerifyEmailContext) -> VerifyEmailView {
+        appContainer.createVerifyEmailView(email: email, password: password, context: context)
     }
 }
