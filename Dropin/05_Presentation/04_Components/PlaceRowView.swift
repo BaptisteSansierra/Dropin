@@ -26,52 +26,59 @@ struct PlaceRowView: View {
 
     // MARK: - Body
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            switch appSettings.mapSettings.pinStyle {
-                case .rect:
-                    PlaceRectAnnotationView(color: place.groupColor,
-                                            icon: place.group?.icon,
-                                            iconExtra: place.icon)
-                    .padding(.trailing)
-                    .padding(.top, place.icon == nil ? 0 : 10)
-                case .rounded:
-                    PlacePinAnnotationView(color: place.groupColor,
-                                           icon: place.group?.icon,
-                                           iconExtra: place.icon,
-                                           shadow: false)
-                    .padding(.trailing)
-                    .padding(.top, place.icon == nil ? 0 : 10)
-            }
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    Text(place.name)
-                        .textStyle(.cellTitle)
-                        .allowsHitTesting(true)
-                    Spacer()
-                    Text(locationManager.distanceStringTo(place.coordinates) ?? "5.5km")
-                        .textStyle(.cellDetail)
+        ZStack {
+            
+            RoundedRectangle(cornerRadius: 14)
+                .fill(.surface1)
+                .stroke(.fieldBorder)
+            
+            HStack(alignment: .top, spacing: 0) {
+                switch appSettings.mapSettings.pinStyle {
+                    case .rect:
+                        PlaceRectAnnotationView(color: place.groupColor,
+                                                icon: place.group?.icon,
+                                                iconExtra: place.icon)
                         .padding(.trailing)
+                        .padding(.top, place.icon == nil ? 0 : 10)
+                    case .rounded:
+                        PlacePinAnnotationView(color: place.groupColor,
+                                               icon: place.group?.icon,
+                                               iconExtra: place.icon,
+                                               shadow: false)
+                        .padding(.trailing)
+                        .padding(.top, place.icon == nil ? 0 : 10)
                 }
-                Text(place.address.isEmpty ? "" : place.address)
-                    .textStyle(.cellSubtitle)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 5)
-                if place.tags.count > 0 {
-                    ScrollView(.horizontal) {
-                        LazyHStack {
-                            let tags = place.tags.defaultSorted()
-                            ForEach(tags) { tag in
-                                TagView(name: tag.name, color: tag.color)
-                            }
-                        }
-                        .padding(.vertical, 2) // add space for borders
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Text(place.name)
+                            .textStyle(.cellTitle)
+                            .allowsHitTesting(true)
+                        Spacer()
+                        Text(locationManager.distanceStringTo(place.coordinates) ?? "5.5km")
+                            .textStyle(.cellDetail)
                     }
-                    .scrollIndicators(.hidden)
-                    .padding(.top, 10)
+                    Text(place.address.isEmpty ? "" : place.address)
+                        .textStyle(.cellSubtitle)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 5)
+                    if place.tags.count > 0 {
+                        ScrollView(.horizontal) {
+                            LazyHStack {
+                                let tags = place.tags.defaultSorted()
+                                ForEach(tags) { tag in
+                                    TagView(name: tag.name, color: tag.color)
+                                }
+                            }
+                            .padding(.vertical, 2) // add space for borders
+                        }
+                        .scrollIndicators(.hidden)
+                        .padding(.top, 10)
+                    }
                 }
             }
+            .padding(10)
         }
     }
 }
@@ -86,17 +93,24 @@ struct MockPlaceRowView: View {
     @State var place4: PlaceUI
 
     var body: some View {
-        List {
-            PlaceRowView(place: place1,
-                         locationManager: mock.locationManager)
-            PlaceRowView(place: place2,
-                         locationManager: mock.locationManager)
-            PlaceRowView(place: place3,
-                         locationManager: mock.locationManager)
-            PlaceRowView(place: place4,
-                         locationManager: mock.locationManager)
+        ZStack {
+            Color.backgroundPrimary
+                .ignoresSafeArea()
+            
+            //List {
+            LazyVStack(spacing: 15) {
+                PlaceRowView(place: place1,
+                             locationManager: mock.locationManager)
+                PlaceRowView(place: place2,
+                             locationManager: mock.locationManager)
+                PlaceRowView(place: place3,
+                             locationManager: mock.locationManager)
+                PlaceRowView(place: place4,
+                             locationManager: mock.locationManager)
+            }
+            .padding(.horizontal)
+            //.listStyle(.grouped)
         }
-        .listStyle(.grouped)
 
         
 //        VStack(spacing: 0) {
@@ -127,6 +141,8 @@ struct MockPlaceRowView: View {
     NavigationStack {
         MockPlaceRowView()
     }
+    .environment(AppSettings())
+    .environment(RootView.ActionBus())
 }
 
 #endif

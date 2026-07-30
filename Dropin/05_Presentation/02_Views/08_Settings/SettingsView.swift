@@ -14,6 +14,8 @@ struct SettingsView: View {
     @Binding private var showingSideMenu: Bool
     @Environment(AppSettings.self) private var appSettings
 
+    private var rowHeight: CGFloat = 55
+    
     // MARK: - init
     init(viewModel: SettingsViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
@@ -22,89 +24,225 @@ struct SettingsView: View {
     
     // MARK: - Body
     var body: some View {
-        ZStack {
-            NavigationStack(path: $viewModel.coordinator.path) {
-                List {
+        NavigationStack(path: $viewModel.coordinator.path) {
+            ZStack {
+                Color.backgroundPrimary
+                    .ignoresSafeArea()
+//                List {
+//                    mapConfigSection
+//                    dataSection
+//                }
+//                .listStyle(.insetGrouped)
+                
+                ScrollView {
                     mapConfigSection
+                        .padding(.top, 15)
+                        .padding(.bottom, 15)
                     dataSection
                 }
-                .listStyle(.insetGrouped)
-                .navigationTitle("common.settings")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
-                }
-                .sheet(isPresented: $viewModel.showMapstrConfig, content: mapstrConfigSheetContent)
-                .sheet(isPresented: $viewModel.pickFile, content: importSheetContent)
-                .sheet(item: $viewModel.exportedTemporaryFile, content: exportSheetContent)
-                .overlay(content: deleteDatabaseOverlay)
-                .alert(importAlertTitle,
-                       isPresented: importAlertBinding,
-                       presenting: viewModel.importResult) { _ in
-                    Button("common.ok", role: .cancel) {
-                        viewModel.importResult = nil
-                    }
-                } message: { result in
-                    switch result {
-                        case .success(let count):
-                            Text("settings.import.success_body_\(count)")
-                        case .failure(let message):
-                            Text(verbatim: message)
-                    }
+                .padding(.horizontal)
+                
+                if viewModel.importing {
+                    Color.overlayAlphaLayer
+                        .ignoresSafeArea()
+                    DropinLoader(caption: viewModel.importingCaption)
+                    // TODO: the label should update to reflect Places number once it's known
                 }
             }
             .disabled(viewModel.importing)
-            if viewModel.importing {
-                Color.overlayAlphaLayer
-                    .ignoresSafeArea()
-                DropinLoader(caption: viewModel.importingCaption)
-                // TODO: the label should update to reflect Places number once it's known
+            .navigationTitle("common.settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+            }
+            .sheet(isPresented: $viewModel.showMapstrConfig, content: mapstrConfigSheetContent)
+            .sheet(isPresented: $viewModel.pickFile, content: importSheetContent)
+            .sheet(item: $viewModel.exportedTemporaryFile, content: exportSheetContent)
+            .overlay(content: deleteDatabaseOverlay)
+            .alert(importAlertTitle,
+                   isPresented: importAlertBinding,
+                   presenting: viewModel.importResult) { _ in
+                Button("common.ok", role: .cancel) {
+                    viewModel.importResult = nil
+                }
+            } message: { result in
+                switch result {
+                    case .success(let count):
+                        Text("settings.import.success_body_\(count)")
+                    case .failure(let message):
+                        Text(verbatim: message)
+                }
             }
         }
     }
     
     // MARK: - subviews
     private var mapConfigSection: some View {
-        Section {
-            @Bindable var appSettings = appSettings
-            
-            // Map preview
-            MapSettingsPreviewView(mapEditMode: $viewModel.mapEditMode)
-                .frame(height: 280)
-                .listRowInsets(EdgeInsets())
-            
-            // Pin style row
-            settingsRow(icon: "mappin",
-                        iconColor: .accentColor,
-                        title: "settings.pin_style",
-                        value: appSettings.mapSettings.pinStyle.displayName,
-                        isActive: viewModel.mapEditMode == .style) {
-                viewModel.mapEditMode = viewModel.mapEditMode == .style ? .none : .style
-            }
-
-            // Pin size row
-            settingsRow(icon: "ruler",
-                        iconColor: .orange,
-                        title: "settings.pin_size",
-                        value: "\(Int(appSettings.mapSettings.pinSize)) pt",
-                        isActive: viewModel.mapEditMode == .size) {
-                viewModel.mapEditMode = viewModel.mapEditMode == .size ? .none : .size
-            }
-            
-            // Clustering
-            HStack(spacing: 12) {
-                iconBadge(systemName: "rectangle.3.group", color: .blue)
-                Text("settings.clustering")
-                    .foregroundStyle(.primary)
-                Spacer()
-                Toggle("", isOn: $appSettings.mapSettings.clustering)
-            }
-        } header: {
+        VStack(spacing: 0) {
             Text("settings.section.map_config")
+                .textStyle(.formSectionTitle)
+                .textCase(.uppercase)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 10)
+
+            VStack(spacing: 0) {
+                @Bindable var appSettings = appSettings
+
+                // Map preview
+                MapSettingsPreviewView(mapEditMode: $viewModel.mapEditMode)
+                    .frame(height: 280)
+                    .listRowInsets(EdgeInsets())
+                    .clipShape(UnevenRoundedRectangle(
+                        topLeadingRadius: 16,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 0,
+                        topTrailingRadius: 16
+                    ))
+                                
+                // Pin style row
+                settingsRow(icon: "mappin",
+                            iconColor: Color(rgba: "588B8B"),
+                            title: "settings.pin_style",
+                            value: appSettings.mapSettings.pinStyle.displayName,
+                            isActive: viewModel.mapEditMode == .style) {
+                    viewModel.mapEditMode = viewModel.mapEditMode == .style ? .none : .style
+                }
+                .frame(height: rowHeight)
+                .padding(.horizontal)
+                
+                rowSeparator
+
+
+                // Pin size row
+                settingsRow(icon: "ruler",
+                            iconColor: Color(rgba: "B08A4E"),
+                            title: "settings.pin_size",
+                            value: "\(Int(appSettings.mapSettings.pinSize)) pt",
+                            isActive: viewModel.mapEditMode == .size) {
+                    viewModel.mapEditMode = viewModel.mapEditMode == .size ? .none : .size
+                }
+                .frame(height: rowHeight)
+                .padding(.horizontal)
+                
+                rowSeparator
+
+                // Clustering
+                HStack(spacing: 12) {
+                    iconBadge(systemName: "rectangle.3.group",
+                              color: Color(rgba: "5B8B9E"))
+                    Text("settings.clustering")
+                        .textStyle(.settingTitle)
+                    Spacer()
+                    Toggle("", isOn: $appSettings.mapSettings.clustering)
+                }
+                .frame(height: rowHeight)
+                .padding(.horizontal)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
+            }
         }
     }
 
+    private var rowSeparator: some View {
+        Rectangle()
+            .fill(.fieldBorder)
+            .frame(height: 1)
+            .padding(.leading, 57)
+    }
+
     private var dataSection: some View {
+        
+        VStack(spacing: 0) {
+            Text("settings.section.data")
+                .textStyle(.formSectionTitle)
+                .textCase(.uppercase)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 10)
+            
+            VStack(spacing: 0) {
+                
+                // Export
+                Button {
+                    exportData()
+                } label: {
+                    HStack(spacing: 12) {
+                        iconBadge(systemName: "square.and.arrow.up",
+                                  color: .dropinPrimary.opacity(0.1),
+                                  badgeColor: .dropinPrimary)
+                        Text("common.export")
+                            .textStyle(.settingTitleAction)
+                        Spacer()
+                        if viewModel.isExporting {
+                            ProgressView().scaleEffect(0.8)
+                        }
+                    }
+                }
+                .disabled(viewModel.isExporting)
+                .frame(height: rowHeight)
+                .padding(.horizontal)
+
+                rowSeparator
+                
+                // Import
+                Menu {
+                    Button(DropinApp.strings.app, action: {
+                        viewModel.importSource = .dropin
+                        viewModel.pickFile = true
+                        viewModel.isImporting = true
+                    })
+                    Button(String(localized: "settings.import.mapstr"), action: {
+                        viewModel.showMapstrConfig = true
+                    })
+                    Button(String(localized: "settings.import.google"), action: {
+                        //viewModel.isImporting = true
+                    })
+                } label: {
+                    HStack(spacing: 12) {
+                        iconBadge(systemName: "square.and.arrow.down",
+                                  color: .dropinPrimary.opacity(0.1),
+                                  badgeColor: .dropinPrimary)
+                        Text("common.import")
+                            .textStyle(.settingTitleAction)
+                        Spacer()
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 12))
+                            .foregroundStyle(TextStyle.settingTitle.color)
+                    }
+                    .frame(height: rowHeight)
+                    .padding(.horizontal)
+                }
+
+                rowSeparator
+                
+                // Reset
+                Button(role: .destructive) {
+                    viewModel.showDeleteConfirmation = true
+                } label: {
+                    HStack(spacing: 12) {
+                        iconBadge(systemName: "trash",
+                                  color: .destructive.opacity(0.1),
+                                  badgeColor: .destructive)
+                        Text("settings.reset_db")
+                            .textStyle(.settingTitleAction, color: .destructive)
+                        Spacer()
+                    }
+                    .frame(height: rowHeight)
+                    .padding(.horizontal)
+                }
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
+            }
+
+        }
+        
+        /*
+        
         Section {
             // Export
             Button {
@@ -160,6 +298,7 @@ struct SettingsView: View {
         } header: {
             Text("settings.section.data")
         }
+         */
     }
 
     private func settingsRow(icon: String,
@@ -172,14 +311,14 @@ struct SettingsView: View {
             HStack(spacing: 12) {
                 iconBadge(systemName: icon, color: iconColor)
                 Text(title)
+                    .textStyle(.settingTitle)
                     .foregroundStyle(.primary)
                 Spacer()
+                let valueColor: Color = isActive ? .info : .textTertiary
                 Text(value)
-                    .font(.system(size: 14))
-                    .foregroundStyle(isActive ? Color.accentColor : .secondary)
+                    .textStyle(.settingValue, color: valueColor)
                 Image(systemName: isActive ? "chevron.up" : "chevron.down")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(isActive ? Color.accentColor : .secondary)
+                    .textStyle(.settingValue, color: valueColor)
             }
         }
         .listRowBackground(isActive ? Color.accentColor.opacity(0.06) : Color(.secondarySystemGroupedBackground))
@@ -187,14 +326,16 @@ struct SettingsView: View {
     }
     
     @ViewBuilder
-    private func iconBadge(systemName: String, color: Color) -> some View {
+    private func iconBadge(systemName: String,
+                           color: Color,
+                           badgeColor: Color = .white) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 7)
                 .fill(color)
                 .frame(width: 30, height: 30)
             Image(systemName: systemName)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(badgeColor)
         }
     }
     

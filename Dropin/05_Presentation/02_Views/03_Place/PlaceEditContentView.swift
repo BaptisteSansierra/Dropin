@@ -161,8 +161,8 @@ struct PlaceEditContentView: View {
     // MARK: - Subviews
     private var headerView: some View {
         ZStack {
-            let gradient = Gradient(colors: [.dropinPrimary.lighten(factor: 0.3),
-                                             .shade5])
+//            let gradient = Gradient(colors: [.dropinPrimary.lighten(factor: 0.3),
+//                                             .shade5])
 //            Rectangle()
 //                .fill(LinearGradient(gradient: gradient,
 //                                     startPoint: .top,
@@ -564,7 +564,7 @@ extension PlaceEditContentView {
         }
         .sheet(isPresented: $showingGroupSelector) {
             viewModel.createGroupSelectorView(place: $place)
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.backgroundPrimary)
         }

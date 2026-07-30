@@ -17,8 +17,36 @@ struct GroupMapView: View {
     
     var body: some View {
         viewModel.createGenericMapView()
+            .ignoresSafeArea()
     }
 }
+
+
+#if DEBUG
+
+struct MockGroupMapView: View {
+    var mock: MockContainer
+    @State private var group: GroupUI
+
+    var body: some View {
+        mock.appContainer.createGroupMapView(groupId: group.id)
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.group = mock.getGroupUI()
+    }
+}
+
+#Preview {
+    NavigationStack {
+        MockGroupMapView()
+    }
+    .environment(AppSettings())
+}
+
+#endif
 
 
 #if false

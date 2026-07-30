@@ -55,11 +55,13 @@ struct TagDetailsView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    viewModel.pushTagMapView(tagId: viewModel.tag.id)
-                } label: {
-                    Image(systemName: "globe.europe.africa")
+            if viewModel.places.count > 0 {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.pushTagMapView(tagId: viewModel.tag.id)
+                    } label: {
+                        Image(systemName: "globe.europe.africa")
+                    }
                 }
             }
         }
@@ -92,18 +94,19 @@ struct TagDetailsView: View {
         VStack(alignment: .leading) {
             Text("common.tag_name")
                 .textStyle(.formSectionTitle2)
-                .padding(.leading, 40)
+                .textCase(.uppercase)
+                .padding(.leading)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
                     .frame(height: 45)
-                    .foregroundStyle(.backgroundPrimary)
-                    .padding(.leading, 20)
-                    .padding(.trailing, 20)
+                    .padding(.horizontal)
                 TextField("common.tag_name", text: $viewModel.tag.name)
                     .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 30)
                     .autocorrectionDisabled()
                     .submitLabel(.done)
                     .onSubmit {
@@ -117,21 +120,21 @@ struct TagDetailsView: View {
         VStack(alignment: .leading) {
             Text("common.tag_color")
                 .textStyle(.formSectionTitle2)
-                .padding(.leading, 40)
+                .textCase(.uppercase)
+                .padding(.leading)
                 .padding(.top, 10)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
                     .frame(height: 45)
-                    .foregroundStyle(.backgroundPrimary)
-                    .padding(.leading, 20)
-                    .padding(.trailing, 20)
+                    .padding(.horizontal)
                 HStack() {
                     RoundedRectangle(cornerSize: 8)
+                        .fill(viewModel.tagColor)
                         .frame(height: 25)
                         .frame(width: 100)
-                        .foregroundStyle(viewModel.tagColor)
-                        .padding(.leading, 40)
-                    //.padding(.trailing, 40)
+                        .padding(.leading, 30)
                     Spacer()
                     ColorPicker(String(""), selection: $viewModel.tagColor, supportsOpacity: false)
                         .labelsHidden()
@@ -157,30 +160,20 @@ struct TagDetailsView: View {
                 if viewModel.places.count > 0 {
                     Text("common.related_places")
                         .textStyle(.formSectionTitle2)
-                        .padding(.leading, 40)
-                        .padding(.top, 30)
-                    Divider()
-                    List {
-                        ForEach(viewModel.places) { place in
-                            PlaceRowView(place: place, locationManager: viewModel.locationManager)
-                                .swipeActions(allowsFullSwipe: false) {
-                                    Button() {
-                                        guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
-                                        guard let tagIdx = place.tags.firstIndex(where: { viewModel.tag.id == $0.id }) else { return }
-                                        // Remove the place from tag list so UI is updated
-                                        viewModel.places.remove(at: idx)
-                                        // Remove the tag in place list and update the database from it
-                                        place.tags.remove(at: tagIdx)
-                                        updatePlace(place)
-                                    } label: {
-                                        Text("common.unlink")
-                                    }
-                                    .tint(.destructive)
-                                }
-                                .onTapGesture {
-                                    viewModel.selectedPlaceId = place.id
-                                }
+                        .textCase(.uppercase)
+                        .padding(.horizontal)
+                        .padding(.top)
+                    //Divider()
+                    
+                    ScrollView {
+                        LazyVStack(spacing: 15) {
+                            ForEach(viewModel.places) { place in
+                                placeRow(place)
+                            }
                         }
+                        .padding(.top, 5)
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
                     }
                     .scrollContentBackground(.hidden)
                     .safeAreaInset(edge: .bottom) {
@@ -206,9 +199,29 @@ struct TagDetailsView: View {
             }
         }
     }
-    
+
+    private func placeRow(_ place: PlaceUI) -> some View {
+        PlaceRowView(place: place, locationManager: viewModel.locationManager)
+            .swipeActions(allowsFullSwipe: false) {
+                Button() {
+                    guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
+                    guard let tagIdx = place.tags.firstIndex(where: { viewModel.tag.id == $0.id }) else { return }
+                    // Remove the place from tag list so UI is updated
+                    viewModel.places.remove(at: idx)
+                    // Remove the tag in place list and update the database from it
+                    place.tags.remove(at: tagIdx)
+                    updatePlace(place)
+                } label: {
+                    Text("common.unlink")
+                }
+                .tint(.destructive)
+            }
+            .onTapGesture {
+                viewModel.selectedPlaceId = place.id
+            }
+    }
+
     private var deleteButton: some View {
-        
         VStack(alignment: .center) {
             Spacer()
             ZStack(alignment: .bottom) {
@@ -225,9 +238,10 @@ struct TagDetailsView: View {
                                          endPoint: .bottom))
                     .frame(height: blurEffectHeight)
                 
-                DestructiveButton(text: "common.delete_tag") {
+                DestructiveButton(text: "common.delete_tag", style: .bordered) {
                     viewModel.showingRemoveAlert = true
                 }
+                .padding(.horizontal)
                 .padding(.bottom, UIApplication.rootBottomSafeArea())
             }
         }
@@ -289,6 +303,7 @@ struct MockTagDetailsView: View {
     NavigationStack {
         MockTagDetailsView()
     }
+    .environment(AppSettings())
 }
 
 #endif

@@ -150,7 +150,7 @@ struct DropinApp: App {
                         }
                     ZStack {
                         Color.overlayAlphaLayer
-                        DropinLoader(style: .overlay, caption: "Clearing session")
+                        DropinLoader(style: .overlay, caption: "auth.clearing")
                     }
                     .ignoresSafeArea()
                     .opacity(signingOut ? 1 : 0)

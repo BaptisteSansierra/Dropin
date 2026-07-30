@@ -201,7 +201,8 @@ struct ProfileView: View {
                    postSystemImage: "chevron.right",
                    postSystemImageFont: .system(size: 12,
                                                 weight: .semibold),
-                   foreground: .destructive) {
+                   foreground: .destructive,
+                   inStack: true) {
             viewModel.pushAccountDeletion()
         }
     }

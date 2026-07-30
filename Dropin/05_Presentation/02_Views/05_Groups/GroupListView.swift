@@ -13,7 +13,7 @@ struct GroupListView: View {
     private struct GroupListRow: View {
         let group: GroupUI
         var body: some View {
-            GroupView(group: group, size: .regular)
+            GroupView(group: group, style: .iconOnly)
         }
     }
 
@@ -30,15 +30,32 @@ struct GroupListView: View {
     // MARK: - Body
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
-            List {
-                ForEach(viewModel.groups) { group in
-                    //if group.isActive {
-                        groupRow(group)
-                    //}
+            ZStack {
+                Color.backgroundPrimary
+                    .ignoresSafeArea()
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(viewModel.groups.enumerated()), id: \.offset) { idx, group in
+                            groupRow(group)
+                                .frame(height: 65)
+                                .padding(.horizontal)
+                            Rectangle()
+                                .fill(.fieldBorder)
+                                .frame(height: 1)
+                                .opacity(idx == viewModel.groups.count - 1 ? 0 : 1)
+                                .padding(.leading)
+                        }
+                    }
+                    .background {
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(.surface1)
+                            .stroke(.fieldBorder)
+                    }
+                    .padding(.top, 20)
                 }
+                .padding(.horizontal)
             }
             .overlay {
-                //if groups.filter(\.isActive).isEmpty {
                 if viewModel.groups.isEmpty {
                     placeholderView
                 }
@@ -92,11 +109,15 @@ struct GroupListView: View {
 
     private func groupRow(_ group: GroupUI) -> some View {
         HStack {
-            GroupListRow(group: group)
-            Spacer()
             let nPlaces = group.placeCount
+            let txtColor: Color = nPlaces == 0 ? .textTertiary : .textPrimary
+            GroupListRow(group: group)
+            Text(verbatim: group.name)
+                .textStyle(.groupSticker,
+                           color: txtColor)
+            Spacer()
             Text("group_list_view.num_places_\(nPlaces)")
-                .textStyle(.placeholder)
+                .textStyle(.placeholder, color: txtColor)
         }
         .contentShape(Rectangle())
         .swipeActions {
@@ -195,6 +216,7 @@ struct MockGroupListView: View {
     NavigationStack {
         MockGroupListView()
     }
+    .environment(AppSettings())
 }
 
 #endif

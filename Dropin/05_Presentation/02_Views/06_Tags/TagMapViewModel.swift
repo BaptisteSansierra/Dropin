@@ -31,7 +31,7 @@ import SwiftUI
         return GenericMapView(viewModel: vm)
     }
 
-    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
-        return appContainer.createPlaceSheetView(place: place, detent: detent)
-    }
+//    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+//        return appContainer.createPlaceSheetView(place: place, detent: detent)
+//    }
 }

@@ -58,11 +58,13 @@ struct GroupDetailsView: View {
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    viewModel.pushGroupMapView()
-                } label: {
-                    Image(systemName: "globe.europe.africa")
+            if viewModel.places.count > 0 {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.pushGroupMapView()
+                    } label: {
+                        Image(systemName: "globe.europe.africa")
+                    }
                 }
             }
         }
@@ -104,18 +106,19 @@ struct GroupDetailsView: View {
         VStack(alignment: .leading) {
             Text("common.group_name")
                 .textStyle(.formSectionTitle2)
-                .padding(.leading, 40)
+                .textCase(.uppercase)
+                .padding(.leading)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
                     .frame(height: 45)
-                    .foregroundStyle(.backgroundPrimary)
-                    .padding(.leading, 20)
-                    .padding(.trailing, 20)
+                    .padding(.horizontal)
                 TextField("common.group_name", text: $viewModel.group.name)
                     .textStyle(.body)
                     .background(.clear)
                     .padding(.vertical, 0)
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 30)
                     .autocorrectionDisabled()
                     .submitLabel(.done)
                     .onSubmit {
@@ -129,26 +132,26 @@ struct GroupDetailsView: View {
         VStack(alignment: .leading) {
             Text("common.group_color")
                 .textStyle(.formSectionTitle2)
-                .padding(.leading, 40)
+                .textCase(.uppercase)
+                .padding(.leading)
                 .padding(.top, 10)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
                     .frame(height: 45)
-                    .foregroundStyle(.backgroundPrimary)
-                    .padding(.leading, 20)
-                    .padding(.trailing, 20)
+                    .padding(.horizontal)
                 HStack() {
                     RoundedRectangle(cornerSize: 8)
+                        .fill(viewModel.groupColor)
+                        .stroke(.fieldBorder)
                         .frame(height: 25)
                         .frame(width: 100)
-                        .foregroundStyle(viewModel.groupColor)
-                        .padding(.leading, 40)
-                    //.padding(.trailing, 40)
+                        .padding(.leading, 30)
                     Spacer()
                     ColorPicker(String(""), selection: $viewModel.groupColor, supportsOpacity: false)
                         .labelsHidden()
-                        .padding(.leading, 40)
-                        .padding(.trailing, 40)
+                        .padding(.horizontal, 30)
                         .onChange(of: viewModel.groupColor) { oldValue, newValue in
                             viewModel.group.color = viewModel.groupColor
                             updateGroup()
@@ -162,32 +165,33 @@ struct GroupDetailsView: View {
         VStack(alignment: .leading) {
             Text("common.group_symbol")
                 .textStyle(.formSectionTitle2)
-                .padding(.leading, 40)
+                .textCase(.uppercase)
+                .padding(.leading)
                 .padding(.top, 10)
             ZStack {
                 RoundedRectangle(cornerSize: 8)
+                    .fill(.surface1)
+                    .stroke(.fieldBorder)
                     .frame(height: 45)
-                    .foregroundStyle(.backgroundPrimary)
-                    .padding(.leading, 20)
-                    .padding(.trailing, 20)
+                    .padding(.horizontal)
                 
                 HStack {
                     ZStack(alignment: .center) {
                         RoundedRectangle(cornerSize: 8)
-                            .strokeBorder(.textPrimary, style: StrokeStyle(lineWidth: 1))
-                            .frame(height: 25)
-                            .frame(width: 100)
+                            .fill(viewModel.group.color.opacity(0.15))
+                            .strokeBorder(.fieldBorder)
+                            .frame(height: 30)
+                            .frame(width: 30)
                             .foregroundStyle(.clear)
                         IconView(icon: viewModel.group.icon)
                             .sizeCaption()
                     }
-                    .padding(.leading, 40)
+                    .padding(.leading, 30)
                     Spacer()
-                    IcoButton(systemImage: "ellipsis",
-                              icoSize: 14,
-                              action: { viewModel.showingMarkerList.toggle() })
-                    .padding(0)
-                    .padding(.trailing, 40)
+                    TextButton(text: "common.change", textStyle: .xSmallButton) {
+                        viewModel.showingMarkerList.toggle()
+                    }
+                    .padding(.trailing, 30)
                 }
             }
         }
@@ -204,29 +208,19 @@ struct GroupDetailsView: View {
                 if viewModel.places.count > 0 {
                     Text("common.related_places")
                         .textStyle(.formSectionTitle2)
-                        .padding(.leading, 40)
-                        .padding(.top, 30)
-                    Divider()
-                    List {
-                        ForEach(viewModel.places) { place in
-                            PlaceRowView(place: place, locationManager: viewModel.locationManager)
-                                .swipeActions(allowsFullSwipe: false) {
-                                    Button() {
-                                        guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
-                                        // Remove the place from group list so UI is updated
-                                        viewModel.places.remove(at: idx)
-                                        // Remove the group from place and update the database from it
-                                        place.group = nil
-                                        updatePlace(place)
-                                    } label: {
-                                        Text("common.unlink")
-                                    }
-                                    .tint(.destructive)
-                                }
-                                .onTapGesture {
-                                    viewModel.selectedPlaceId = place.id
-                                }
+                        .textCase(.uppercase)
+                        .padding(.leading)
+                        .padding(.top, 10)
+                    
+                    ScrollView {
+                        LazyVStack(spacing: 15) {
+                            ForEach(viewModel.places) { place in
+                                placeRow(place)
+                            }
                         }
+                        .padding(.top, 5)
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
                     }
                     .scrollContentBackground(.hidden)
                     .safeAreaInset(edge: .bottom) {
@@ -253,6 +247,26 @@ struct GroupDetailsView: View {
         }
     }
     
+    private func placeRow(_ place: PlaceUI) -> some View {
+        PlaceRowView(place: place, locationManager: viewModel.locationManager)
+            .swipeActions(allowsFullSwipe: false) {
+                Button() {
+                    guard let idx = viewModel.places.firstIndex(where: { place.id == $0.id }) else { return }
+                    // Remove the place from group list so UI is updated
+                    viewModel.places.remove(at: idx)
+                    // Remove the group from place and update the database from it
+                    place.group = nil
+                    updatePlace(place)
+                } label: {
+                    Text("common.unlink")
+                }
+                .tint(.destructive)
+            }
+            .onTapGesture {
+                viewModel.selectedPlaceId = place.id
+            }
+    }
+    
     private var deleteButton: some View {
         VStack(alignment: .center) {
             Spacer()
@@ -270,9 +284,10 @@ struct GroupDetailsView: View {
                                          endPoint: .bottom))
                     .frame(height: blurEffectHeight)
                 
-                DestructiveButton(text: "common.delete_group") {
+                DestructiveButton(text: "common.delete_group", style: .bordered) {
                     viewModel.showingRemoveAlert = true
                 }
+                .padding(.horizontal)
                 .padding(.bottom, UIApplication.rootBottomSafeArea())
             }
         }
@@ -334,6 +349,7 @@ struct MockGroupDetailsView: View {
     NavigationStack {
         MockGroupDetailsView()
     }
+    .environment(AppSettings())
 }
 
 #endif

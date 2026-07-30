@@ -16,10 +16,12 @@ struct GroupView: View {
         case none
     }
 
-    enum Size {
+    enum Style {
         case big
         case regular
         case small
+        case listItem
+        case iconOnly
     }
 
     // MARK: - private vars
@@ -32,34 +34,54 @@ struct GroupView: View {
     private var icon: Icon?
     private var action: (() -> Void)?
     private var actionType: ActionType
-    private var size: Size
+    private var style: Style
     
-    private var style: TextStyleModifier.Style {
-        switch size {
+    private var textStyle: TextStyle {
+        switch style {
             case .big: .groupStickerBig
             case .regular: .groupSticker
             case .small: .groupStickerSmall
+            case .listItem, .iconOnly: .groupSticker
+        }
+    }
+    private var iconSize: CGFloat {
+        switch style {
+            case .big: 15
+            case .regular: 15
+            case .small: 15
+            case .listItem, .iconOnly: 20
+        }
+    }
+    private var iconPadding: CGFloat {
+        switch style {
+            case .big: 4
+            case .regular: 4
+            case .small: 2
+            case .listItem, .iconOnly: 4
         }
     }
     private var textVerticalPadding: CGFloat {
-        switch size {
+        switch style {
             case .big: 10
             case .regular: 8.5
             case .small: 8
+            case .listItem, .iconOnly: 8.5
         }
     }
     private var textHorizontalPadding: CGFloat {
-        switch size {
+        switch style {
             case .big: 14
             case .regular: 11
             case .small: 8
+            case .listItem, .iconOnly: 11
         }
     }
     private var borderComponentWidth: CGFloat {
-        switch size {
+        switch style {
             case .big: 3
             case .regular: 2
             case .small: 1.5
+            case .listItem, .iconOnly: 2
         }
     }
 
@@ -69,13 +91,13 @@ struct GroupView: View {
          icon: Icon?,
          actionType: ActionType = .none,
          action: (() -> Void,)? = nil,
-         size: Size = .regular) {
+         style: Style = .regular) {
         self.name = name
         self.color = color
         self.icon = icon
         self.actionType = actionType
         self.action = action
-        self.size = size
+        self.style = style
         
         (self.c1, self.c2, self.c3, self.border) = GroupView.computeColors(color)
     }
@@ -83,13 +105,13 @@ struct GroupView: View {
     init(group: GroupUI,
          actionType: ActionType = .none,
          action: (() -> Void)? = nil,
-         size: Size = .regular) {
+         style: Style = .regular) {
         self.name = group.name
         self.color = group.color
         self.icon = group.icon
         self.actionType = actionType
         self.action = action
-        self.size = size
+        self.style = style
 
         (self.c1, self.c2, self.c3, self.border) = GroupView.computeColors(color)
     }
@@ -98,48 +120,58 @@ struct GroupView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             HStack(alignment: .center, spacing: 10) {
-                iconView
-                Text(name)
-                    .textStyle(style)
-            }
-            .padding(.vertical, textVerticalPadding)
-            .padding(.horizontal, textHorizontalPadding)
-            .background {
-                RoundedRectangle(cornerSize: 8)
-                    .fill(.clear)
-                    .stroke(border, style: .init(lineWidth: 3.5))
-            }
-            .overlay {
-                let lineW = borderComponentWidth
-                ZStack {
-                    GeometryReader { geom in
-                        RoundedRectangle(cornerSize: 8)
-                            .stroke(c1,
-                                    style: StrokeStyle(lineWidth: lineW,
-                                                       lineCap: .round,
-                                                       lineJoin: .round
-                                                      ))
-                            .frame(width: geom.size.width,
-                                   height: geom.size.height)
-                        RoundedRectangle(cornerSize: 8)
-                            .stroke(c2,
-                                    style: StrokeStyle(lineWidth: lineW,
-                                                       lineCap: .round,
-                                                       lineJoin: .round
-                                                      ))
-                            .offset(x: 1, y: 1)
-                            .frame(width: geom.size.width - 2,
-                                   height: geom.size.height - 2)
-                        RoundedRectangle(cornerSize: 8)
-                            .stroke(c3,
-                                    style: StrokeStyle(lineWidth: lineW,
-                                                       lineCap: .round,
-                                                       lineJoin: .round
-                                                      ))
-                            .offset(x: 2, y: 2)
-                            .frame(width: geom.size.width - 4,
-                                   height: geom.size.height - 4)
+                HStack(alignment: .center, spacing: 10) {
+                    iconView
+                        .frame(width: iconSize, height: iconSize)
+                        .padding(.horizontal, style != .listItem ? iconPadding : 0)
+                    if style != .listItem && style != .iconOnly {
+                        Text(name)
+                            .textStyle(textStyle)
                     }
+                }
+                .padding(.vertical, textVerticalPadding)
+                .padding(.horizontal, textHorizontalPadding)
+                .background {
+                    RoundedRectangle(cornerSize: 8)
+                        .fill(.clear)
+                        .stroke(border, style: .init(lineWidth: 3.5))
+                }
+                .overlay {
+                    let lineW = borderComponentWidth
+                    ZStack {
+                        GeometryReader { geom in
+                            RoundedRectangle(cornerSize: 8)
+                                .stroke(c1,
+                                        style: StrokeStyle(lineWidth: lineW,
+                                                           lineCap: .round,
+                                                           lineJoin: .round
+                                                          ))
+                                .frame(width: geom.size.width,
+                                       height: geom.size.height)
+                            RoundedRectangle(cornerSize: 8)
+                                .stroke(c2,
+                                        style: StrokeStyle(lineWidth: lineW,
+                                                           lineCap: .round,
+                                                           lineJoin: .round
+                                                          ))
+                                .offset(x: 1, y: 1)
+                                .frame(width: geom.size.width - 2,
+                                       height: geom.size.height - 2)
+                            RoundedRectangle(cornerSize: 8)
+                                .stroke(c3,
+                                        style: StrokeStyle(lineWidth: lineW,
+                                                           lineCap: .round,
+                                                           lineJoin: .round
+                                                          ))
+                                .offset(x: 2, y: 2)
+                                .frame(width: geom.size.width - 4,
+                                       height: geom.size.height - 4)
+                        }
+                    }
+                }
+                if style == .listItem {
+                    Text(name)
+                        .textStyle(textStyle)
                 }
             }
             actionButton
@@ -150,8 +182,8 @@ struct GroupView: View {
     @ViewBuilder
     private var iconView: some View {
         if let icon = icon {
-            switch size {
-                case .regular, .big:
+            switch style {
+                case .regular, .big, .listItem, .iconOnly:
                     IconView(icon: icon)
                         .sizeBody()
                         .fixedSize()
@@ -241,10 +273,29 @@ struct MockGroupView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            
             HStack {
-                GroupView(name: "BIG", color: .green, icon: .sf("tag"), size: .big)
-                GroupView(name: "RGL", color: .green, icon: .sf("tag"), size: .regular)
-                GroupView(name: "SML", color: .green, icon: .sf("tag"), size: .small)
+                VStack {
+                    GroupView(name: "ITEM 1", color: .red, icon: .sf("tag"), style: .listItem)
+                    GroupView(name: "ITEM 2", color: .green, icon: .sf("tag"), style: .listItem)
+                    GroupView(name: "ITEM 3", color: .blue, icon: .sf("tag"), style: .listItem)
+                }
+                .padding(.leading, 50)
+                Spacer()
+                VStack {
+                    GroupView(name: "ITEM 1", color: .red, icon: .sf("tag"), style: .iconOnly)
+                    GroupView(name: "ITEM 2", color: .green, icon: .sf("tag"), style: .iconOnly)
+                    GroupView(name: "ITEM 3", color: .blue, icon: .sf("tag"), style: .iconOnly)
+                }
+                .padding()
+                .border(.gray)
+                Spacer()
+                VStack {
+                    GroupView(name: "BIG", color: .green, icon: .sf("tag"), style: .big)
+                    GroupView(name: "RGL", color: .green, icon: .sf("tag"), style: .regular)
+                    GroupView(name: "SML", color: .green, icon: .sf("tag"), style: .small)
+                }
+                .padding(.trailing, 50)
             }
 
             Divider()
@@ -288,14 +339,14 @@ struct MockGroupView: View {
                       icon: nil,
                       actionType: .remove,
                       action: { Log.info("Do the work") },
-                      size: .small)
+                      style: .small)
 
             GroupView(name: "Mark",
                       color: .brown,
                       icon: .sf("carrot"),
                       actionType: .edit,
                       action: { Log.info("Eat a carrot") },
-                      size: .small)
+                      style: .small)
 
             PlaceRectAnnotationView(color: .brown, icon: .sf("tag"))
 

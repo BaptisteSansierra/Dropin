@@ -12,14 +12,14 @@ extension Color {
     init(light: Color, dark: Color) {
         self.init(UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return UIColor(dark)
-            default:
-                return UIColor(light)
+                case .dark:
+                    return UIColor(dark)
+                default:
+                    return UIColor(light)
             }
         })
     }
-
+    
     init(rgba: String) {
         var red: CGFloat = 0.0
         var green: CGFloat = 0.0
@@ -86,7 +86,7 @@ extension Color {
                      blue: Double(resolved.blue) + f * blueLightRange,
                      opacity: Double(resolved.opacity))
     }
-
+    
     func darken(factor: Double) -> Color {
         //@Environment(\.self) var env
         let resolved = self.resolve(in: EnvironmentValues())
@@ -96,7 +96,7 @@ extension Color {
                      blue: Double(resolved.blue) * (1 - f),
                      opacity: Double(resolved.opacity))
     }
-
+    
     func luminance() -> CGFloat {
         guard let uiColor = UIColor(self).cgColor.components else { return 0 }
         let r = uiColor[0]
@@ -105,8 +105,54 @@ extension Color {
         let luminance = 0.299 * r + 0.587 * g + 0.114 * b
         return luminance
     }
-
+    
     func isDark() -> Bool {
         return luminance() < 0.5
+    }
+    
+    static func lerp(from startColor: Color, to endColor: Color, _ t: CGFloat) -> Color {
+        let a = startColor.rgba
+        let b = endColor.rgba
+
+        let red   = a.r + (b.r - a.r) * t
+        let green = a.g + (b.g - a.g) * t
+        let blue  = a.b + (b.b - a.b) * t
+        let alpha = a.a + (b.a - a.a) * t
+
+        return Color(red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
+    }
+}
+    
+// MARK: - RGBA
+
+#if canImport(UIKit)
+import UIKit
+typealias PlatformColor = UIColor
+#endif
+
+#if canImport(AppKit)
+import AppKit
+typealias PlatformColor = NSColor
+#endif
+
+extension Color {
+    var rgba: (r: Double, g: Double, b: Double, a: Double) {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        var platformColor = PlatformColor(self)
+
+#if canImport(AppKit)
+        platformColor = platformColor.usingColorSpace(.deviceRGB) ?? PlatformColor(self)
+#endif
+        platformColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        return (Double(red), Double(green), Double(blue), Double(alpha))
+    }
+
+    var rgb: (r: Double, g: Double, a: Double) {
+        (rgba.r, rgba.g, rgba.b)
     }
 }

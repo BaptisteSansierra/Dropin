@@ -51,8 +51,9 @@ extension Font {
     
     // Caption
     static let captionMedium = Font.system(size: 12, weight: .medium)
+    static let captionSemibold = Font.system(size: 12, weight: .semibold)
     static let captionRegular = Font.system(size: 12, weight: .regular)
-    
+
     // Caption2
     static let caption2Regular = Font.system(size: 11, weight: .regular)
     static let caption2Semibold = Font.system(size: 11, weight: .semibold)

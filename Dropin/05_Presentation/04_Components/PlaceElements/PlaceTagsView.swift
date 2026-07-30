@@ -85,7 +85,7 @@ struct PlaceTagsView: View {
                 }
             }
         }
-        .frame(minHeight: 55)
+        //.frame(minHeight: 55)
     }
     
     /*
@@ -126,37 +126,65 @@ struct MockPlaceTagsView: View {
             Color.backgroundSecondary
                 .ignoresSafeArea()
             VStack {
+
+                Text("INLINE")
                 Divider()
                 PlaceTagsView(place: $place,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true)
+                Spacer()
+                    .frame(maxHeight: 50)
+
+                Text("FORM")
                 Divider()
-                Divider()
-                Divider()
+                    .padding(.bottom, 5)
+                
+                Text("2 tags")
+                    .font(.caption)
+                    .padding(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 PlaceTagsView(place: $place,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
                     .background(.backgroundPrimary)
+                    .padding(.bottom, 15)
 
                     
+                Text("13 tags")
+                    .font(.caption)
+                    .padding(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 PlaceTagsView(place: $place1,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
                     .background(.backgroundPrimary)
+                    .padding(.bottom, 15)
+
+                
+                Text("3 tags")
+                    .font(.caption)
+                    .padding(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 PlaceTagsView(place: $place2,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
                     .background(.backgroundPrimary)
+                    .padding(.bottom, 15)
+
+                Text("3 tags")
+                    .font(.caption)
+                    .padding(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 PlaceTagsView(place: $place3,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
                     .background(.backgroundPrimary)
-
                     .border(.red)
+                    .padding(.bottom, 15)
             }
         }
     }

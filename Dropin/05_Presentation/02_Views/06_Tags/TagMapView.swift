@@ -17,5 +17,32 @@ struct TagMapView: View {
     
     var body: some View {
         viewModel.createGenericMapView()
+            .ignoresSafeArea()
     }
 }
+
+#if DEBUG
+
+struct MockTagMapView: View {
+    var mock: MockContainer
+    @State private var tag: TagUI
+
+    var body: some View {
+        mock.appContainer.createTagMapView(tagId: tag.id)
+    }
+    
+    init() {
+        let mock = MockContainer()
+        self.mock = mock
+        self.tag = mock.getTagUI(1)
+    }
+}
+
+#Preview {
+    NavigationStack {
+        MockTagMapView()
+    }
+    .environment(AppSettings())
+}
+
+#endif

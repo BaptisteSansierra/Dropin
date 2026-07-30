@@ -58,6 +58,11 @@ struct AddPlaceToolbarView: View {
             Button(String(""), systemImage: "plus") {
                 showingCreatePlaceMenu.toggle()
             }
+//            Button {
+//                showingCreatePlaceMenu.toggle()
+//            } label: {
+//                Image(systemName: showingCreatePlaceMenu ? "plus.circle.fill" : "plus")
+//            }
             .tint(.dropinPrimary)
         }
     }
@@ -75,7 +80,18 @@ struct DropinToolbar {
     struct Logo: ToolbarContent {
         var body: some ToolbarContent {
             ToolbarItem(placement: .principal) {
-                LogoToolbarView()
+                if #available(iOS 26.0, *) {
+                    LogoToolbarView()
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .glassEffect(.regular, in: .capsule)
+                    //                    .background {
+                    //                        Capsule()
+                    //                            .fill(.ultraThinMaterial)
+                    //                    }
+                } else {
+                    LogoToolbarView()
+                }
             }
         }
     }

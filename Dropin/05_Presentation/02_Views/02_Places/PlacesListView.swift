@@ -38,17 +38,26 @@ struct PlacesListView: View {
     
     // MARK: - Subviews
     private var contentView: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(places) { place in
-                    if place.isActive {
-                        placeRowView(place)
+        VStack(spacing: 0) {
+//            Rectangle()
+//                .fill(.fieldBorder)
+//                .frame(height: 1)
+            ScrollView {
+                LazyVStack(spacing: 15) {
+                    ForEach(places) { place in
+                        if place.isActive {
+                            placeRowView(place)
+                        }
                     }
                 }
+                .padding(.top)
+                .padding(.horizontal)
+                .padding(.bottom, 20)
+
             }
+            //.scrollPosition($scrollPosition)
         }
-        //.scrollPosition($scrollPosition)
-        .background(.backgroundSecondary)
+        .background(.backgroundPrimary)
         .safeAreaPadding(.bottom, DropinApp.ui.mainTabBarHeight)
         .ignoresSafeArea(edges: .bottom)
     }
@@ -72,8 +81,8 @@ struct PlacesListView: View {
                     .frame(width: UIScreen.main.bounds.width)
                     .environment(appSettings)
             })
-            .background(.backgroundPrimary)
-            .padding(.bottom, 20)
+            //.background(.backgroundPrimary)
+            //.padding(.bottom, 20)
             .id(place.changeToken)  // Force the update after edit
             .onTapGesture {
                 selectedPlaceId = place.id
@@ -82,10 +91,10 @@ struct PlacesListView: View {
     
     private func placeRowContentView(_ place: PlaceUI) -> some View {
         PlaceRowView(place: place, locationManager: viewModel.locationManager)
-            .padding(EdgeInsets(top: 15,
-                                leading: 10,
-                                bottom: 15,
-                                trailing: 0))
+//            .padding(EdgeInsets(top: 15,
+//                                leading: 10,
+//                                bottom: 15,
+//                                trailing: 0))
             .contentShape(Rectangle()) // seems to fix the contextMenu not appearing on last item
     }
         
@@ -127,6 +136,8 @@ struct MockPlacesListView: View {
         .navigationTitle(String("Pipo"))
         .navigationBarTitleDisplayMode(.inline)
     }
+    .environment(RootView.ActionBus())
+    .environment(AppSettings())
 }
 
 #endif

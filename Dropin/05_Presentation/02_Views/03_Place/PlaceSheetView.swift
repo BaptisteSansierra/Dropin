@@ -360,6 +360,7 @@ struct PlaceSheetView: View {
             
             MainButton(text: "common.edit", action: edit)
         }
+        .padding(.horizontal)
     }
     
     private var picturePlaceholderView: some View {
@@ -369,6 +370,7 @@ struct PlaceSheetView: View {
                                    description: Text("placeholder.no_images.body"))
             MainButton(text: "common.edit", action: edit)
         }
+        .padding(.horizontal)
     }
 
     private var contactView: some View {

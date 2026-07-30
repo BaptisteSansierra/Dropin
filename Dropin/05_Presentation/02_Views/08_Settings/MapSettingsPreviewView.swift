@@ -73,7 +73,7 @@ struct MapSettingsPreviewView: View {
             overlayControls
                 .opacity(mapEditMode == .none ? 0 : 1)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        //.clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(Color(.systemGray5), lineWidth: 0.5)

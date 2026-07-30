@@ -145,7 +145,7 @@ struct DeleteAccountView: View {
                 viewModel.showConfirmationSheet = true
             }
             
-            TextButton(text: "common.cancel") {
+            TextButton(text: "common.cancel", inStack: true) {
                 viewModel.pop()
             }
         }

@@ -41,6 +41,7 @@ struct PlaceFilterView: View {
             Spacer()
             bottomView
         }
+        .presentationBackground(.backgroundPrimary)
         .task {
             Task {
                 try? await viewModel.loadData()
@@ -54,7 +55,7 @@ struct PlaceFilterView: View {
         VStack {
             HStack {
                 Text("place_filter_view.title")
-                    .textStyle(.formSectionTitle)
+                    .textStyle(.formSectionTitle, color: .textPrimary)
                     .padding(.leading)
                 Spacer()
                 Button {
@@ -62,7 +63,8 @@ struct PlaceFilterView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(.backgroundSecondary)
+                            .fill(.surface1)
+                            .stroke(.fieldBorder)
                             .frame(width: 35, height: 35)
                         Image(systemName: "multiply")
                             .textStyle(.body)
@@ -79,16 +81,20 @@ struct PlaceFilterView: View {
         VStack(spacing: 0) {
             HStack {
                 Text(String(localized: "common.groups").uppercased())
-                    .textStyle(.formSectionTitle2)
-                    .padding(.leading)
+                    .textStyle(.formSectionTitle2, color: .textSecondary)
                 Spacer()
+                TextButton(text: "common.clear", textStyle: .smallButton) {
+                    clearGroups()
+                }
             }
             .padding(.top, 10)
+            .padding(.horizontal)
+
             FlowLayout(alignment: .leading) {
                 GroupView(name: String(localized: "common.not_grouped"),
                           color: .gray,
                           icon: nil,
-                          size: .small)
+                          style: .small)
                     .if( !filter.includeUngrouped ) { view in
                         view.opacity(unselectOpacity)
                     }
@@ -97,7 +103,7 @@ struct PlaceFilterView: View {
                     }
 
                 ForEach(viewModel.groups) { group in
-                    GroupView(group: group, size: .small)
+                    GroupView(group: group, style: .small)
                         .if( !filter.groupIDs.contains(group.id) ) { view in
                             view.opacity(unselectOpacity)
                         }
@@ -116,13 +122,19 @@ struct PlaceFilterView: View {
         VStack(spacing: 0) {
             HStack {
                 Text(String(localized: "common.tags").uppercased())
-                    .textStyle(.formSectionTitle2)
-                    .padding(.leading)
+                    .textStyle(.formSectionTitle2, color: .textSecondary)
                 Spacer()
+                TextButton(text: "common.clear", textStyle: .smallButton) {
+                    clearTags()
+                }
             }
             .padding(.top, 10)
+            .padding(.horizontal)
+
             FlowLayout(alignment: .leading) {
-                TagView(name: String(localized: "placeholder.no_tags"), color: .backgroundPrimary)
+                TagView(name: String(localized: "placeholder.no_tags"),
+                        color: .backgroundPrimary,
+                        style: filter.includeUntagged ? .selected : .unselected)
                     .if( !filter.includeUntagged ) { view in
                         view.opacity(unselectOpacity)
                     }
@@ -131,7 +143,9 @@ struct PlaceFilterView: View {
                     }
                 
                 ForEach(viewModel.tags) { tag in
-                    TagView(name: tag.name, color: tag.color)
+                    TagView(name: tag.name,
+                            color: tag.color,
+                            style: filter.tagIDs.contains(tag.id) ? .selected : .unselected)
                         .if( !filter.tagIDs.contains(tag.id), action: { view in
                             view.opacity(unselectOpacity)
                         })
@@ -146,17 +160,16 @@ struct PlaceFilterView: View {
     }
     
     private var bottomView: some View {
-        HStack {
-            SecondaryButton(text: "common.clear") {
+        HStack(spacing: 0) {
+            SecondaryButton(text: "common.clear_all") {
                 clear()
             }
-            .padding(.leading)
+            .padding(.trailing)
             MainButton(text: "common.apply") {
                 apply()
             }
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
         }
+        .padding(.horizontal)
     }
     
     // MARK: private methods
@@ -175,7 +188,17 @@ struct PlaceFilterView: View {
             filter.tagIDs.insert(tag.id)
         }
     }
+
+    private func clearGroups() {
+        filter.groupIDs.removeAll()
+        filter.includeUngrouped = false
+    }
     
+    private func clearTags() {
+        filter.tagIDs.removeAll()
+        filter.includeUntagged = false
+    }
+
     private func clear() {
         filter = PlaceFilter()
         apply()

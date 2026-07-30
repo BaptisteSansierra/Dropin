@@ -10,82 +10,71 @@ import SwiftUI
 ///
 /// Define app font semantics
 ///
-struct TextStyleModifier: ViewModifier {
-    
-    enum Style: String, CaseIterable {
-        case title
-        case title2
-        case authTitle
-        case body
-        case bodySemibold
-        case bodyWarning
-        case bodyError
-        case bodyInfo
-        case subheadline
-        case caption
-        case caption2
-        case placeholder
-        case fieldPlaceholder
-        case link
-        case mainButton
-        case secondaryButton
-        case stringFieldTitle
-        case stringFieldContent
-        case cellTitle
-        case cellSubtitle
-        case cellDetail
-        case tagSticker
-        case groupSticker
-        case groupStickerSmall
-        case groupStickerBig
-        case formSectionTitle
-        case formSectionTitle2
-        case avatarLarge
-        case avatarSmall
-        case profileName
-        case sidebarTitle
-        case sidebarSubtitle
-        case tabBarTxt
-        case tabBarImg
-        case formFieldError
-        case keyboardToolbarAction
-        case cardAction
-        case cardPlaceholder
-        case cardDescription
-    }
-    
-    var style: Style
-    var colorOverride: Color? = nil
-    var trackingOverride: CGFloat? = nil
-    var lineSpacingOverride: CGFloat? = nil
 
-    func body(content: Content) -> some View {
-        content
-            .font(font)
-            .foregroundStyle((colorOverride ?? color) ?? Color.textPrimary)
-            .tracking((trackingOverride ?? tracking) ?? 0)
-            .lineSpacing((lineSpacingOverride ?? lineSpacing) ?? 0)
-    }
-    
-    // MARK: - private
-    private var font: Font {
+enum TextStyle: String, CaseIterable {
+    case title
+    case title2
+    case authTitle
+    case body
+    case bodySemibold
+    case bodyWarning
+    case bodyError
+    case bodyInfo
+    case subheadline
+    case caption
+    case caption2
+    case placeholder
+    case fieldPlaceholder
+    case link
+    case mainButton
+    case secondaryButton
+    case smallButton
+    case xSmallButton
+    case stringFieldTitle
+    case stringFieldContent
+    case cellTitle
+    case cellSubtitle
+    case cellDetail
+    case tagSticker
+    case groupSticker
+    case groupStickerSmall
+    case groupStickerBig
+    case formSectionTitle
+    case formSectionTitle2
+    case avatarLarge
+    case avatarSmall
+    case profileName
+    case sidebarTitle
+    case sidebarSubtitle
+    case tabBarTxt
+    case tabBarImg
+    case formFieldError
+    case keyboardToolbarAction
+    case cardAction
+    case cardPlaceholder
+    case cardDescription
+    case settingTitle
+    case settingTitleAction
+    case settingValue
+
+    var font: Font {
         return values.0
     }
     
-    private var color: Color? {
-        return values.1
+    var color: Color {
+        return values.1 ?? .textPrimary
     }
 
-    private var tracking: CGFloat? {
+    var tracking: CGFloat? {
         return values.2
     }
     
-    private var lineSpacing: CGFloat? {
+    var lineSpacing: CGFloat? {
         return values.3
     }
 
     private var values: (Font, Color?, CGFloat?, CGFloat?) {
-        switch style {
+        switch self {
             case .title:
                 (Font.titleRegular, nil, nil, nil)
             case .title2:
@@ -118,6 +107,10 @@ struct TextStyleModifier: ViewModifier {
                 (Font.bodySemibold, Color.dropinPrimary, nil, nil)
             case .secondaryButton:
                 (Font.bodySemibold, Color.dropinPrimary, nil, nil)
+            case .smallButton:
+                (Font.subheadlineSemibold, Color.dropinPrimary, nil, nil)
+            case .xSmallButton:
+                (Font.captionSemibold, Color.dropinPrimary, nil, nil)
             case .stringFieldTitle:
                 (Font.subheadlineRegular, Color.textSecondary, nil, nil)
             case .stringFieldContent:
@@ -164,10 +157,33 @@ struct TextStyleModifier: ViewModifier {
                 (Font.calloutRegular, Color.textTertiary, nil, nil)
             case .cardDescription:
                 (Font.caption2Regular, Color.textTertiary, nil, nil)
+            case .settingTitle:
+                (Font.subheadlineRegular, Color.textPrimary, nil, nil)
+            case .settingTitleAction:
+                (Font.subheadlineSemibold, Color.dropinPrimary, nil, nil)
+            case .settingValue:
+                (Font.footnoteRegular, Color.textTertiary, nil, nil)
         }
     }
 }
 
+struct TextStyleModifier: ViewModifier {
+    
+    var style: TextStyle
+    var colorOverride: Color? = nil
+    var trackingOverride: CGFloat? = nil
+    var lineSpacingOverride: CGFloat? = nil
+
+    func body(content: Content) -> some View {
+        content
+            .font(style.font)
+            .foregroundStyle(colorOverride ?? style.color)
+            .tracking((trackingOverride ?? style.tracking) ?? 0)
+            .lineSpacing((lineSpacingOverride ?? style.lineSpacing) ?? 0)
+    }
+}
+
+/*
 // MARK: - View helper
 //
 // NOTE: Replace your existing `extension View { func textStyle(...) }` with this
@@ -178,7 +194,7 @@ struct TextStyleModifier: ViewModifier {
 //       .textStyle(.cellSubtitle, color: .textSecondary.opacity(0.75))
 //
 extension View {
-    func textStyle(_ style: TextStyleModifier.Style,
+    func textStyle(_ style: TextStyle,
                    color: Color? = nil,
                    tracking: CGFloat = 0,
                    lineSpacing: CGFloat = 0) -> some View {
@@ -188,6 +204,7 @@ extension View {
                                    lineSpacingOverride: lineSpacing))
     }
 }
+ */
 
 #if DEBUG
 

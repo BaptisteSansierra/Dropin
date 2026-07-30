@@ -110,6 +110,7 @@ struct MockRootView: View {
 
 #Preview {
     MockRootView()
+        .environment(AppSettings())
 }
 
 #endif

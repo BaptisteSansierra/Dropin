@@ -311,6 +311,22 @@
         }
       }
     },
+    "auth.clearing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clearing session"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermeture de session"
+          }
+        }
+      }
+    },
     "auth.create_account" : {
       "comment" : "Sign up screen title, its submit button, and the sign-in screen's footer link",
       "extractionState" : "manual",
@@ -1031,16 +1047,6 @@
         }
       }
     },
-    "Clearing session" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fermeture de session"
-          }
-        }
-      }
-    },
     "common.about" : {
       "comment" : "Sidebar ",
       "localizations" : {
@@ -1059,7 +1065,20 @@
       }
     },
     "common.add" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter"
+          }
+        }
+      }
     },
     "common.address" : {
       "extractionState" : "manual",
@@ -1226,6 +1245,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effacer"
+          }
+        }
+      }
+    },
+    "common.clear_all" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear all"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout effacer"
           }
         }
       }
@@ -3007,6 +3042,42 @@
         }
       }
     },
+    "group_selector.header" : {
+      "comment" : "Group selector, new-UI centered nav-style title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groupe"
+          }
+        }
+      }
+    },
+    "group_selector.hint" : {
+      "comment" : "Group selector, new-UI caption under the title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A place belongs to one group."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un lieu appartient à un seul groupe."
+          }
+        }
+      }
+    },
     "group_selector.new" : {
       "localizations" : {
         "en" : {
@@ -3040,6 +3111,7 @@
       }
     },
     "group_selector.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4461,6 +4533,42 @@
         }
       }
     },
+    "tag_selector.all" : {
+      "comment" : "Tag selector, new-UI \"All tags\" section header",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les tags"
+          }
+        }
+      }
+    },
+    "tag_selector.header" : {
+      "comment" : "Tag selector, new-UI centered nav-style title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tags"
+          }
+        }
+      }
+    },
     "tag_selector.new" : {
       "localizations" : {
         "en" : {
@@ -4478,6 +4586,7 @@
       }
     },
     "tag_selector.selected" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4493,7 +4602,26 @@
         }
       }
     },
+    "tag_selector.selected_count_%lld" : {
+      "comment" : "Tag selector, new-UI \"Selected\" section header with count",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected · %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélectionnés · %lld"
+          }
+        }
+      }
+    },
     "tag_selector.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

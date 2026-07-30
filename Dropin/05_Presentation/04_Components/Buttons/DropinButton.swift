@@ -42,7 +42,7 @@ struct DropinButton: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Button(action: action, label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 14)
@@ -71,19 +71,18 @@ struct DropinButton: View {
     
     @ViewBuilder
     private var contentView: some View {
-        HStack {
-            var (replaceSI, progressColor) = resolve()
+        HStack(spacing: 0) {
+            let (replaceSI, progressColor) = resolve()
             if replaceSI {
                 ProgressView()
                     .tint(progressColor)
             } else if let systemImage = systemImage {
                 Image(systemName: systemImage)
                     .textStyle(.mainButton, color: foreground)
-                    .padding(.leading)
+                    .padding(10)
             }
             Text(text)
                 .textStyle(.mainButton, color: foreground)
-                .padding(.trailing)
         }
     }
     
@@ -120,8 +119,9 @@ struct DropinButton: View {
             TextButton(text: "profile.delete_account",
                        postSystemImage: "chevron.right",
                        foreground: .destructive,
+                       inStack: true,
                        action: {})
-            
+
             MainButton(text: "Thinking button 1",
                        progress: .run(color: .surface1, replaceContent: true),
                        action: {})

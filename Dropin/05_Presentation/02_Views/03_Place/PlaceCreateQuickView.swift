@@ -61,7 +61,7 @@ struct PlaceCreateQuickView: View {
         }
         .sheet(isPresented: $viewModel.showingGroupSelector) {
             viewModel.createGroupSelectorView(place: $place)
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $viewModel.showingMarkerList) {

@@ -19,9 +19,19 @@ extension View {
         modifier(TaskOnce(action: action))
     }
     
-    func textStyle(_ style: TextStyleModifier.Style) -> some View {
-        modifier(TextStyleModifier(style: style))
+    func textStyle(_ style: TextStyle,
+                   color: Color? = nil,
+                   tracking: CGFloat = 0,
+                   lineSpacing: CGFloat = 0) -> some View {
+        modifier(TextStyleModifier(style: style,
+                                   colorOverride: color,
+                                   trackingOverride: tracking,
+                                   lineSpacingOverride: lineSpacing))
     }
+
+//    func textStyle(_ style: TextStyle) -> some View {
+//        modifier(TextStyleModifier(style: style))
+//    }
 
     func outline(color: Color = .white, width: CGFloat = 0.5) -> some View {
         modifier(OutlineModifier(color: color, width: width))

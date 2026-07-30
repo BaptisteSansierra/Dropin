@@ -53,8 +53,11 @@ extension ShapeStyle where Self == Color {
     
     // MARK: - Background
     // screen base
-    static var backgroundPrimary: Color { Color(light: Color(rgba: "#F2EADA"),
-                                                dark: Color(rgba: "#1A1712")) }
+    static var backgroundPrimaryL: Color { Color(rgba: "#F2EADA") }
+    static var backgroundPrimaryD: Color { Color(rgba: "#1A1712") }
+
+    static var backgroundPrimary: Color { Color(light: backgroundPrimaryL,
+                                                dark: backgroundPrimaryD) }
     // recessed wells / section fills
     static var backgroundSecondary: Color { Color(light: Color(rgba: "#E6DCC8"),
                                                   dark: Color(rgba: "#15110C")) }
@@ -90,7 +93,6 @@ extension ShapeStyle where Self == Color {
     static var dark5: Color { Color(rgba: "#E7DDCB") }
     static var dark6: Color { Color(rgba: "#FAF4EA") }
     
-
     // MARK: - Shade accessor
     static var shade1: Color { Color(light: light1, dark: dark1) }
     static var shade2: Color { Color(light: light2, dark: dark2) }

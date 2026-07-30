@@ -102,7 +102,7 @@ struct PlaceEditView: View {
     private func applyEdits() {
         let frozenEdit = editedPlace.copy()
         // Ensure a name is given
-        let name = frozenEdit.name.trimmingCharacters(in: [" "])
+        let name = frozenEdit.name.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else {
             showMissingName = true
             return
@@ -176,6 +176,8 @@ struct MockPlaceEditView: View {
 #Preview {
     NavigationStack {
         MockPlaceEditView(5)
+            .environment(RootView.ActionBus())
+            .environment(AppSettings())
     }
 }
 

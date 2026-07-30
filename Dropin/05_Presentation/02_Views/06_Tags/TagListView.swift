@@ -14,9 +14,23 @@ struct TagListView: View {
     private struct TagListRow: View {
         let tag: TagUI       // TagUI is @Observable; tag is a reference
         var body: some View {
-            TagView(name: tag.name, color: tag.color)
+            //TagView(name: tag.name, color: tag.color)
             //            ^^^^^^^^         ^^^^^^^^^
             //       read happens inside TagListRow's body — observation is per-row
+
+            HStack(spacing: 0) {
+                let nPlaces = tag.placeCount
+                let textColor: Color = nPlaces == 0 ? .textTertiary : .textPrimary
+                Circle()
+                    .fill(tag.color)
+                    .frame(width: 8)
+                    .padding(.trailing)
+                Text(verbatim: tag.name)
+                    .textStyle(.groupSticker, color: textColor)
+                Spacer()
+                Text("tag_list_view.num_places_\(nPlaces)")
+                    .textStyle(.placeholder, color: textColor)
+            }
         }
     }
 
@@ -33,12 +47,31 @@ struct TagListView: View {
     // MARK: - Body
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
-            List {
-                ForEach(viewModel.tags) { tag in
-                    //if tag.isActive {
-                        tagRow(tag)
-                    //}
+
+            ZStack {
+                Color.backgroundPrimary
+                    .ignoresSafeArea()
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(viewModel.tags.enumerated()), id: \.offset) { idx, tag in
+                            tagRow(tag)
+                                .frame(height: 55)
+                                .padding(.horizontal)
+                            Rectangle()
+                                .fill(.fieldBorder)
+                                .frame(height: 1)
+                                .opacity(idx == viewModel.tags.count - 1 ? 0 : 1)
+                                .padding(.leading)
+                        }
+                    }
+                    .background {
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(.surface1)
+                            .stroke(.fieldBorder)
+                    }
+                    .padding(.top, 20)
                 }
+                .padding(.horizontal)
             }
             .overlay {
                 //if viewModel.tags.filter(\.isActive).isEmpty {
@@ -90,25 +123,19 @@ struct TagListView: View {
     }
     
     private func tagRow(_ tag: TagUI) -> some View {
-        HStack {
-            TagListRow(tag: tag)
-            Spacer()
-            let nPlaces = tag.placeCount
-            Text("tag_list_view.num_places_\(nPlaces)")
-                .textStyle(.placeholder)
-        }
-        .contentShape(Rectangle())
-        .swipeActions {
-            Button() {
-                deleteTagCallback(tag)
-            } label: {
-                Label("common.delete", systemImage: "trash")
+        TagListRow(tag: tag)
+            .contentShape(Rectangle())
+            .swipeActions {
+                Button() {
+                    deleteTagCallback(tag)
+                } label: {
+                    Label("common.delete", systemImage: "trash")
+                }
+                .tint(.destructive)
             }
-            .tint(.destructive)
-        }
-        .onTapGesture {
-            viewModel.pushTagDetailsView(tagId: tag.id)
-        }
+            .onTapGesture {
+                viewModel.pushTagDetailsView(tagId: tag.id)
+            }
     }
     
     // MARK: - Actions

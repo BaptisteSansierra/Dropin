@@ -36,22 +36,37 @@ struct MarkerListView: View {
 
     // MARK: - Body
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                headerView
-                scrollView
-                    .safeAreaInset(edge: .bottom) {
-                        Color.clear
-                            .frame(height: viewModel.nullable ? 60 : 0)
-                    }
+        NavigationStack {
+            ZStack {
+                Color.backgroundPrimary
+                    .ignoresSafeArea()
+                VStack(spacing: 0) {
+                    scrollView
+                        .safeAreaInset(edge: .bottom) {
+                            Color.clear
+                                .frame(height: viewModel.nullable ? 60 : 0)
+                        }
+                }
+                if viewModel.nullable && selected != nil {
+                    footerView
+                }
             }
-            if viewModel.nullable && selected != nil {
-                footerView
+            .navigationTitle("markers.select")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(String(""), systemImage: "xmark") {
+                        dismiss()
+                    }
+                    //.padding()
+                    .tint(.dropinPrimary)
+                }
             }
         }
     }
     
     // MARK: - Subviews
+    /*
     private var headerView: some View {
         ZStack {
             Text("markers.select")
@@ -66,7 +81,7 @@ struct MarkerListView: View {
                 .tint(.dropinPrimary)
             }
         }
-    }
+    } */
     
     private var scrollView: some View {
         ScrollView {
@@ -74,34 +89,17 @@ struct MarkerListView: View {
                 LazyVStack() {
                     ForEach(IconLibrary.categories, id: \.self.nameKey) { categoryItem in
                         Section {
-                            LazyVGrid(columns: columns, spacing: 20) {
-                                ForEach(categoryItem.icons, id: \.self) { icon in
-                                    let isSelected = icon == selected
-                                    ZStack {
-                                        Circle()
-                                            .stroke(.dropinPrimary, style: StrokeStyle(lineWidth: 3))
-                                            .frame(width: 38, height: 38)
-                                            .opacity(isSelected ? 0.5 : 0)
-                                        Circle()
-                                            .foregroundStyle(.dropinPrimary)
-                                            .frame(width: 33, height: 33)
-                                            .opacity(isSelected ? 1 : 0)
-                                        IconView(icon: icon)
-                                            .sizeCaption()
-                                            .foregroundStyle(isSelected ? .backgroundPrimary : .textTertiary)
-                                            .onTapGesture {
-                                                selected = icon
-                                                dismiss()
-                                            }
-                                            .id(icon.id)
-                                    }
-                                    .frame(minHeight: 30)
+                            sectionContent(categoryItem)
+                                .padding(.vertical, 10)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .fill(.surface1)
+                                        .stroke(.fieldBorder)
+
+                                    
                                 }
-                            }
-                            .padding(.vertical, 10)
-                            .background(.backgroundPrimary)
-                            .cornerRadius(15)
-                            .padding(.horizontal, 20)
+                                .padding(.horizontal, 20)
+
                         } header: {
                             Text(LocalizedStringKey(categoryItem.nameKey))
                                 .textStyle(.formSectionTitle)
@@ -119,9 +117,35 @@ struct MarkerListView: View {
                 }
             }
         }
-        .background(.backgroundSecondary)
     }
-    
+
+    private func sectionContent(_ categoryItem: (nameKey: String, icons: [Icon])) -> some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(categoryItem.icons, id: \.self) { icon in
+                let isSelected = icon == selected
+                ZStack {
+                    Circle()
+                        .stroke(.dropinPrimary, style: StrokeStyle(lineWidth: 3))
+                        .frame(width: 38, height: 38)
+                        .opacity(isSelected ? 0.5 : 0)
+                    Circle()
+                        .foregroundStyle(.dropinPrimary)
+                        .frame(width: 33, height: 33)
+                        .opacity(isSelected ? 1 : 0)
+                    IconView(icon: icon)
+                        .sizeCaption()
+                        .foregroundStyle(isSelected ? .backgroundPrimary : .textTertiary)
+                        .onTapGesture {
+                            selected = icon
+                            dismiss()
+                        }
+                        .id(icon.id)
+                }
+                .frame(minHeight: 30)
+            }
+        }
+    }
+
     private var footerView: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -129,12 +153,20 @@ struct MarkerListView: View {
                 Rectangle()
                     .ignoresSafeArea()
                     .foregroundStyle(.clear)
-                    .background(.ultraThinMaterial)
+                    .background(.surface2)
                     .frame(height: 60)
-                Button("common.clear_selection") {
-                    selected = nil
-                    dismiss()
+                VStack(spacing: 0) {
+                    Rectangle()
+                        .fill(.fieldBorder)
+                        .frame(height: 1)
+                    Spacer()
+                    TextButton(text: "common.clear_selection") {
+                        selected = nil
+                        dismiss()
+                    }
+                    Spacer()
                 }
+                .frame(height: 60)
             }
         }
     }
@@ -193,9 +225,9 @@ struct MockNullableMarkerListView: View {
 struct MockMarkerListView: View {
     @State var icon: Icon = .sf("figure.socialdance")
     var body: some View {
-        MockMarkerListSelectionView(icon: $icon)
-            .background(.purple.opacity(0.2))
-        Divider()
+        //MockMarkerListSelectionView(icon: $icon)
+        //    .background(.purple.opacity(0.2))
+        //Divider()
         MarkerListView(selected: $icon)
     }
 }

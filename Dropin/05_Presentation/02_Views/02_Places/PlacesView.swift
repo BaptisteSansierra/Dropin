@@ -37,7 +37,8 @@ struct PlacesView: View {
                     // Navigation bar background
                     VStack {
                         Rectangle()
-                            .fill(.ultraThinMaterial)
+                            //.fill(.ultraThinMaterial)
+                            .fill(viewModel.selectedTab == 0 ? .backgroundPrimary.opacity(0.25) : .clear )
                             .frame(height: viewModel.navBarHeight)
                             .onChange(of: proxy.frame(in: .global)) { oldValue, newValue in
                                 viewModel.navBarHeight = proxy.safeAreaInsets.top
@@ -45,10 +46,11 @@ struct PlacesView: View {
                             .onAppear {
                                 viewModel.navBarHeight = proxy.safeAreaInsets.top
                             }
-                            .background(.thinMaterial)
+                            //.background(.thinMaterial)
                         Spacer()
                     }
                     .ignoresSafeArea(edges: .top)
+                     
                 }
                 .overlay(alignment: .top) {
                     syncingView
@@ -61,7 +63,9 @@ struct PlacesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+                
                 DropinToolbar.Logo()
+
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     trailingToolbarContent
                         .tint(.dropinPrimary)
@@ -113,43 +117,34 @@ struct PlacesView: View {
     // MARK: subviews
     @ViewBuilder
     private var trailingToolbarContent: some View {
-        if viewModel.selectedTab == 0 {
-            
-            /*
-            Button(String("TEST"),
-                   systemImage: "arrow.clockwise.circle") {
-                viewModel.mapReloadGen += 1
-            }
-            .accentColor(.red)
-            */
-            
+        HStack(spacing: 0) {
             Button("common.organize_by_group",
                    systemImage: viewModel.currentFilter == nil ?
-                     "line.3.horizontal.decrease.circle" :
+                     "line.3.horizontal.decrease" :
                      "line.3.horizontal.decrease.circle.fill") {
                 viewModel.showingFilter.toggle()
             }
-            AddPlaceToolbarView(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
-        } else {
-            Button("common.organize_by_group",
-                   systemImage: viewModel.currentFilter == nil ?
-                     "line.3.horizontal.decrease.circle" :
-                     "line.3.horizontal.decrease.circle.fill") {
-                viewModel.showingFilter.toggle()
-            }
-            Menu("common.sort", systemImage: "arrow.up.arrow.down") {
-                Picker("common.sort", selection: $viewModel.sortPolicy) {
-                    Text("common.sort.by_distance")
-                        .textStyle(.body)
-                        .tag(PlaceSortPolicy.distance)
-                    Text("common.sort.by_name")
-                        .textStyle(.body)
-                        .tag(PlaceSortPolicy.alphabetically)
-                    Text("common.sort.by_creation_date")
-                        .textStyle(.body)
-                        .tag(PlaceSortPolicy.createdAt)
+            .frame(width: 44)
+
+            if viewModel.selectedTab == 0 {
+                AddPlaceToolbarView(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
+                    .frame(width: 44)
+            } else {
+                Menu("common.sort", systemImage: "arrow.up.arrow.down") {
+                    Picker("common.sort", selection: $viewModel.sortPolicy) {
+                        Text("common.sort.by_distance")
+                            .textStyle(.body)
+                            .tag(PlaceSortPolicy.distance)
+                        Text("common.sort.by_name")
+                            .textStyle(.body)
+                            .tag(PlaceSortPolicy.alphabetically)
+                        Text("common.sort.by_creation_date")
+                            .textStyle(.body)
+                            .tag(PlaceSortPolicy.createdAt)
+                    }
+                    .pickerStyle(.inline)
+                    .frame(width: 44)
                 }
-                .pickerStyle(.inline)
             }
         }
     }
@@ -161,10 +156,12 @@ struct PlacesView: View {
             ZStack {
                 Rectangle()
                     .frame(height: DropinApp.ui.mainTabBarHeight)
+                    .foregroundStyle(.backgroundPrimary.opacity(0.5))
+                Rectangle()
+                    .frame(height: DropinApp.ui.mainTabBarHeight)
                     .foregroundStyle(.ultraThinMaterial)
-                    //.foregroundStyle(.white.opacity(0.35))
                 VStack {
-                    let unselectedColor = Color.shade5
+                    let unselectedColor = Color.textTertiary
                     //let unselectedColor = Color(light: Color(rgba: "666666"),
                     //                            dark: Color(rgba: "AAAAAA"))
 
@@ -374,6 +371,8 @@ struct MockPlacesView: View {
 
 #Preview {
     MockPlacesView()
+        .environment(RootView.ActionBus())
+        .environment(AppSettings())
 }
 
 #endif
