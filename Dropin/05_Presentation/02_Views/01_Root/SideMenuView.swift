@@ -179,7 +179,7 @@ struct SideMenuView: View {
             .padding(.bottom, 0)
             SideMenuItemView(label: "common.about",
                              systemImage: "info.circle",
-                             context: .toBeImplemnented,
+                             context: .about,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)

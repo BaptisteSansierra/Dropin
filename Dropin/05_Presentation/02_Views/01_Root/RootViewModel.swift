@@ -12,6 +12,7 @@ enum SideMenuContext {
     case groups
     case tags
     case settings
+    case about
     case toBeImplemnented
 }
 
@@ -80,6 +81,10 @@ enum SideMenuContext {
 
     func createSettingsView() -> SettingsView {
         return appContainer.createSettingsView(showingSideMenu: bindedShowingSideMenu)
+    }
+
+    func createAboutView() -> AboutView {
+        return appContainer.createAboutView(showingSideMenu: bindedShowingSideMenu)
     }
 
     func switchAppIcon() {

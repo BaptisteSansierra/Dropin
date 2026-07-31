@@ -28,6 +28,7 @@ final class AppContainer {
     private let tagCoordinator: TagCoordinator
     private let groupCoordinator: GroupCoordinator
     private let authCoordinator: AuthCoordinator
+    private let aboutCoordinator: AboutCoordinator
     // Services
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
@@ -52,6 +53,7 @@ final class AppContainer {
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
         authCoordinator = AuthCoordinator()
+        aboutCoordinator = AboutCoordinator()
         // Services
         locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
@@ -112,6 +114,7 @@ final class AppContainer {
         tagCoordinator = TagCoordinator()
         groupCoordinator = GroupCoordinator()
         authCoordinator = AuthCoordinator()
+        aboutCoordinator = AboutCoordinator()
         // Services
         self.locationManager = locationManager
         self.addressLookupService = addressLookupService
@@ -510,6 +513,12 @@ final class AppContainer {
                                                                 tagRepository: tagRepository),
                                    sync: syncService)
         return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
+    }
+
+    // MARK: - about views
+    func createAboutView(showingSideMenu: Binding<Bool>) -> AboutView {
+        let vm = AboutViewModel(coordinator: aboutCoordinator)
+        return AboutView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
     // MARK: - private methods

@@ -194,6 +194,7 @@ extension UIApplication {
 extension DropinApp {
     struct strings {
         static let app = "Dropin"
+        static let contact = "contact@dropin.lat"
         static let developer = "Baptiste Sansierra"
         static let exportExtension = "dropin"
         static let exportUTTypeId = "com.dropin.export"

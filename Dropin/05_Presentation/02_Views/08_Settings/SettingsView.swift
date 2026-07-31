@@ -28,12 +28,6 @@ struct SettingsView: View {
             ZStack {
                 Color.backgroundPrimary
                     .ignoresSafeArea()
-//                List {
-//                    mapConfigSection
-//                    dataSection
-//                }
-//                .listStyle(.insetGrouped)
-                
                 ScrollView {
                     mapConfigSection
                         .padding(.top, 15)

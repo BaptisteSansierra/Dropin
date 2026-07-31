@@ -14,6 +14,7 @@ import SwiftUI
 enum TextStyle: String, CaseIterable {
     case title
     case title2
+    case title2Semibold
     case authTitle
     case body
     case bodySemibold
@@ -21,6 +22,7 @@ enum TextStyle: String, CaseIterable {
     case bodyError
     case bodyInfo
     case subheadline
+    case subheadlineSemibold
     case caption
     case caption2
     case placeholder
@@ -53,6 +55,7 @@ enum TextStyle: String, CaseIterable {
     case cardAction
     case cardPlaceholder
     case cardDescription
+    case cardFooter  // Small description below the card
     case settingTitle
     case settingTitleAction
     case settingValue
@@ -79,6 +82,8 @@ enum TextStyle: String, CaseIterable {
                 (Font.titleRegular, nil, nil, nil)
             case .title2:
                 (Font.title2Regular, nil, nil, nil)
+            case .title2Semibold:
+                (Font.title2Semibold, nil, nil, nil)
             case .authTitle:
                 (Font.titleBold, nil, -0.4, nil)
             case .body:
@@ -93,6 +98,8 @@ enum TextStyle: String, CaseIterable {
                 (Font.bodyBold, Color.info, nil, nil)
             case .subheadline:
                 (Font.subheadlineRegular, nil, nil, nil)
+            case .subheadlineSemibold:
+                (Font.subheadlineSemibold, nil, nil, nil)
             case .caption:
                 (Font.captionRegular, nil, nil, nil)
             case .caption2:
@@ -130,7 +137,7 @@ enum TextStyle: String, CaseIterable {
             case .groupStickerSmall:
                 (Font.captionMedium, nil, nil, nil)
             case .formSectionTitle:
-                (Font.bodySemibold, Color.textTertiary, nil, nil)
+                (Font.subheadlineSemibold, Color.textTertiary, nil, nil)
             case .formSectionTitle2:
                 (Font.captionMedium, Color.textTertiary, nil, nil)
             case .avatarLarge:
@@ -157,6 +164,8 @@ enum TextStyle: String, CaseIterable {
                 (Font.calloutRegular, Color.textTertiary, nil, nil)
             case .cardDescription:
                 (Font.caption2Regular, Color.textTertiary, nil, nil)
+            case .cardFooter:
+                (Font.footnoteRegular, Color.textTertiary, nil, nil)
             case .settingTitle:
                 (Font.subheadlineRegular, Color.textPrimary, nil, nil)
             case .settingTitleAction:
