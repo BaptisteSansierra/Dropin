@@ -35,18 +35,21 @@ struct LogoToolbarView: View {
 }
 
 struct BurgerToolbarView: View {
-    
+
     @Binding private var showingSideMenu: Bool
+    private var disabled: Bool
 
     var body: some View {
         Button(String(""), systemImage: "line.3.horizontal") {
             showingSideMenu.toggle()
         }
         .tint(.dropinPrimary)
+        .disabled(disabled)
     }
-    
-    init(showingSideMenu: Binding<Bool>) {
+
+    init(showingSideMenu: Binding<Bool>, disabled: Bool = false) {
         self._showingSideMenu = showingSideMenu
+        self.disabled = disabled
     }
 }
 
@@ -99,15 +102,17 @@ struct DropinToolbar {
     /// Left burger button, toggling sidebar
     struct Burger: ToolbarContent {
         @Binding private var showingSideMenu: Bool
+        private var disabled: Bool
 
         var body: some ToolbarContent {
             ToolbarItem(placement: .topBarLeading) {
-                BurgerToolbarView(showingSideMenu: $showingSideMenu)
+                BurgerToolbarView(showingSideMenu: $showingSideMenu, disabled: disabled)
             }
         }
-        
-        init(showingSideMenu: Binding<Bool>) {
+
+        init(showingSideMenu: Binding<Bool>, disabled: Bool = false) {
             self._showingSideMenu = showingSideMenu
+            self.disabled = disabled
         }
     }
     

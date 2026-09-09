@@ -5,6 +5,7 @@
     " ": {},
     "%@": {},
     "%lld": {},
+    "%lld%%": {},
     "-": {},
     "about.data_yours.body": {
       "localizations": {
@@ -3453,6 +3454,246 @@
         }
       }
     },
+    "import.complete.count": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places imported"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lieux importés"
+          }
+        }
+      }
+    },
+    "import.complete.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import complete"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import terminé"
+          }
+        }
+      }
+    },
+    "import.error.canceled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import canceled."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import annulé."
+          }
+        }
+      }
+    },
+    "import.error.corrupted_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This file couldn't be read (%@)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier n'a pas pu être lu (%@)."
+          }
+        }
+      }
+    },
+    "import.error.empty_file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This file doesn't contain any places to import."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier ne contient aucun lieu à importer."
+          }
+        }
+      }
+    },
+    "import.error.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import failed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de l'import"
+          }
+        }
+      }
+    },
+    "import.error.unexpected_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An unexpected error occurred: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une erreur inattendue est survenue : %@"
+          }
+        }
+      }
+    },
+    "import.error.unrecognized_format_%@_%@_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ import expects a \".%@\" file — this one is \".%@\"."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'import %@ attend un fichier « .%@ » — celui-ci est « .%@ »."
+          }
+        }
+      }
+    },
+    "import.error.unsupported_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This import source isn't supported (%@)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette source d'import n'est pas prise en charge (%@)."
+          }
+        }
+      }
+    },
+    "import.error.version_too_new_%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This file was exported from a newer version of the app (format v%lld)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier a été exporté depuis une version plus récente de l'application (format v%lld)."
+          }
+        }
+      }
+    },
+    "import.preparing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing..."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Préparation..."
+          }
+        }
+      }
+    },
+    "import.progression_%lld_%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld places"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sur %lld lieux"
+          }
+        }
+      }
+    },
+    "import.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importing places"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importation des lieux"
+          }
+        }
+      }
+    },
+    "import.title.dropin_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dropin import · %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import Dropin · %@"
+          }
+        }
+      }
+    },
+    "import.title.mapstr_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapstr export · %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export Mapstr · %@"
+          }
+        }
+      }
+    },
     "lookup.searching": {
       "extractionState": "manual",
       "localizations": {
@@ -3973,6 +4214,38 @@
         }
       }
     },
+    "placeholder.no_notes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No notes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune note"
+          }
+        }
+      }
+    },
+    "placeholder.no_notes_plus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jot something down anytime"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notez quelque chose quand vous voulez"
+          }
+        }
+      }
+    },
     "placeholder.no_places.body": {
       "extractionState": "manual",
       "localizations": {
@@ -4073,6 +4346,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun tag"
+          }
+        }
+      }
+    },
+    "placeholder.no_tags_plus": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add some when you edit this place"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez-en en modifiant ce lieu"
           }
         }
       }
@@ -4206,6 +4495,7 @@
       }
     },
     "privacy.body.intro": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -4721,23 +5011,6 @@
         }
       }
     },
-    "settings.import.error_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import failed"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Échec de l'import"
-          }
-        }
-      }
-    },
     "settings.import.google": {
       "extractionState": "manual",
       "localizations": {
@@ -4768,64 +5041,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mapstr (GeoJSON)"
-          }
-        }
-      }
-    },
-    "settings.import.success_body_%lld": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld place imported successfully"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld places imported successfully"
-                }
-              }
-            }
-          }
-        },
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld lieu importé avec succès"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld lieux importés avec succès"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "settings.import.success_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import successful"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import réussi"
           }
         }
       }
@@ -5186,7 +5401,8 @@
           }
         }
       }
-    }
+    },
+    "unknown": {}
   },
   "version": "1.0"
 }

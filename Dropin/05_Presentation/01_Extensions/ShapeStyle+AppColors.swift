@@ -44,7 +44,7 @@ extension ShapeStyle where Self == Color {
     
     // MARK: - Texts
     static var textPrimary: Color { Color(light: dark1, dark: light1) }
-    static var textSecondary: Color { Color(light: dark2, dark: light4) }
+    static var textSecondary: Color { Color(light: dark2, dark: Color(rgba: "#C7BCA5")) }
     static var textTertiary: Color { Color(light: dark3, dark: light5) }
 
     static var disabled: Color {
@@ -60,10 +60,10 @@ extension ShapeStyle where Self == Color {
                                                 dark: backgroundPrimaryD) }
     // recessed wells / section fills
     static var backgroundSecondary: Color { Color(light: Color(rgba: "#E6DCC8"),
-                                                  dark: Color(rgba: "#15110C")) }
+                                                  dark: Color(rgba: "#302A22")) }
     // deepest recess / separators-as-fill
     static var backgroundTertiary: Color { Color(light: Color(rgba: "#DCCFB8"),
-                                                 dark: Color(rgba: "#100D0A")) }
+                                                 dark: Color(rgba: "#453D30")) }
     static var overlayAlphaLayer: Color { textTertiary.opacity(0.25) }
 
     static var fieldBorder: Color { Color(light: Color(rgba: "#E6DCCB"),
@@ -206,9 +206,6 @@ struct ColorsPreview: View {
                 Text(verbatim: "info")
                     .fontWeight(.bold)
                     .foregroundStyle(.infoLight)
-
-                TextField("empty", text: $dummyTfV)
-
             }
         }
     }

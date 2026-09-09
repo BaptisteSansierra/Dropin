@@ -175,7 +175,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         let tagDescriptor = FetchDescriptor<SDTag>(predicate: tagPredicate)
         let sdTags = try modelContext.fetch(tagDescriptor)
         if sdTags.count < tagIdentifiers.count {
-            throw DataError.notFound(msg: "some tags from list \(tagIdentifiers) couldn't be found")
+            throw DataError.notFound(msg: "some tags from list \(tagIdentifiers) couldn't be found while linking place \(sdPlace.name) id:\(sdPlace.id)")
         }
         if sdTags.count > tagIdentifiers.count {
             throw DataError.duplicate(msg: "found \(sdTags.count) SDTags when looking for \(tagIdentifiers.count) ids : \(tagIdentifiers)")

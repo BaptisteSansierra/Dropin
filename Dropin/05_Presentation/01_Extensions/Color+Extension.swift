@@ -62,9 +62,9 @@ extension Color {
         //@Environment(\.self) var env
         //let resolved = self.resolve(in: env)
         let resolved = self.resolve(in: EnvironmentValues())
-        var red = Int(resolved.red * 255)
-        var green = Int(resolved.green * 255)
-        var blue = Int(resolved.blue * 255)
+        var red = Int((resolved.red * 255).rounded())
+        var green = Int((resolved.green * 255).rounded())
+        var blue = Int((resolved.blue * 255).rounded())
         // Note: called with color from color picker, may give values out of [0, 1]
         // clamp them temporarilly, to be investigated
         red = red < 0 ? 0 : (red > 255 ? 255 : red)

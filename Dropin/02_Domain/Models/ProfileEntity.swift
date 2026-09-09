@@ -29,4 +29,13 @@ struct ProfileEntity: Hashable, Sendable {
 
     static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    
+    func withDisplayName(_ displayName: String?) -> ProfileEntity {
+        ProfileEntity(id: id,
+                      email: email,
+                      displayName: displayName,
+                      plan: plan,
+                      createdAt: createdAt,
+                      updatedAt: Date.now)
+    }
 }

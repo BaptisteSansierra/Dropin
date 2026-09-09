@@ -26,6 +26,9 @@ struct PlaceSheetView: View {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
         self._currentDetent = detent
+        
+        // local ContactFieldKit config override
+        ContactFieldUIConfig.backgroundPrimary = .backgroundPrimary
     }
 
     // MARK: - Body
@@ -35,7 +38,7 @@ struct PlaceSheetView: View {
                 groupLayerView(group)
             }
             ZStack {
-                Color.backgroundPrimary
+                Color.surface1
                 placeContentView
             }
             .if( place.group != nil , action: { view in
@@ -309,9 +312,16 @@ struct PlaceSheetView: View {
                 }
         }
     }
+
+    private var overviewView: some View {
+        VStack(spacing: 0) {
+            overviewTagsView
+            overviewNotesView
+        }
+    }
     
     @ViewBuilder
-    private var overviewView: some View {
+    private var overviewTagsView: some View {
         if place.tags.count > 0 {
             FlowLayout(alignment: .leading) {
                 let sortedTags = place.tags.sorted(by: { $0.name < $1.name && $0.createdAt < $1.createdAt })
@@ -322,33 +332,63 @@ struct PlaceSheetView: View {
             .padding(.horizontal, 15)
             .padding(.bottom, 15)
         } else {
-            ZStack {
-                VStack(spacing: 0) {
-                    HStack(spacing: 0) {
-                        Image(systemName: "tag")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.backgroundTertiary)
-                            .padding(.horizontal)
-                        Text("placeholder.no_tags")
-                            .font(.body)
-                            .foregroundStyle(.backgroundTertiary)
-                        Spacer()
-                        
-                        Button(action: edit) {
-                            ZStack {
-                                Circle()
-                                    .fill(.dropinPrimary)
-                                    .frame(width: 35, height: 35)
-                                Image(systemName: "pencil")
-                                    .font(.bodyRegular)
-                                    .foregroundStyle(.backgroundPrimary)
-                            }
-                            .padding(.trailing)
-                        }
+            HStack(spacing: 0) {
+                Image(systemName: "tag")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.textTertiary)
+                    .frame(width: 25, height: 25)
+                    .background {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(.backgroundTertiary.opacity(0.4))
                     }
-                }
+                (Text("placeholder.no_tags") +
+                Text(verbatim: " - ") +
+                Text("placeholder.no_tags_plus"))
+                    .font(.caption)
+                    .foregroundStyle(.textTertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 10)
             }
+            .padding(.horizontal)
+            .padding(.bottom)
+        }
+    }
+    
+    @ViewBuilder
+    private var overviewNotesView: some View {
+        if let notes = place.notes {
+            Text(notes)
+                .textStyle(.cardPlaceholder)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(.backgroundPrimary)
+                        .stroke(.backgroundTertiary)
+                }
+                .padding(.horizontal)
+
+        } else {
+            HStack(spacing: 0) {
+                Image(systemName: "text.page")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.textTertiary)
+                    .frame(width: 25, height: 25)
+                    .background {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(.backgroundTertiary.opacity(0.4))
+                    }
+                (Text("placeholder.no_notes") +
+                Text(verbatim: " - ") +
+                Text("placeholder.no_notes_plus"))
+                    .font(.caption)
+                    .foregroundStyle(.textTertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 10)
+            }
+            .padding(.horizontal)
         }
     }
     
@@ -357,8 +397,8 @@ struct PlaceSheetView: View {
             ContentUnavailableView("placeholder.no_contact.title",
                                    systemImage: "iphone.gen2.slash",
                                    description: Text("placeholder.no_contact.body"))
-            
-            MainButton(text: "common.edit", action: edit)
+            .opacity(0.5)
+            //MainButton(text: "common.edit", action: edit)
         }
         .padding(.horizontal)
     }
@@ -368,7 +408,8 @@ struct PlaceSheetView: View {
             ContentUnavailableView("placeholder.no_images.title",
                                    systemImage: "photo.on.rectangle",
                                    description: Text("placeholder.no_images.body"))
-            MainButton(text: "common.edit", action: edit)
+            .opacity(0.5)
+            //MainButton(text: "common.edit", style: .bordered, action: edit)
         }
         .padding(.horizontal)
     }

@@ -7,8 +7,7 @@
 
 import Foundation
 
-@MainActor
-struct ImportDropinService: ImportServiceProtocol {
+actor ImportDropinService: ImportServiceProtocol {
     
     private let upsertPlace: UpsertPlace
     private let upsertGroup: UpsertGroup
@@ -21,21 +20,35 @@ struct ImportDropinService: ImportServiceProtocol {
     }
 
     func execute(_ url: URL,
-                 onPlacesCountResolved: ((Int) -> Void),
-                 completion: ((Int) -> Void)) async throws {
+                 onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
+                 progress: @MainActor @Sendable (Int) -> Void,
+                 canceled: @MainActor @Sendable () -> Void,
+                 completion: @MainActor @Sendable (Int) -> Void) async throws {
         // Handle the security scoping since the file lives outside sandbox
         let accessed = url.startAccessingSecurityScopedResource()
         defer {
             if accessed { url.stopAccessingSecurityScopedResource() }
         }
 
+        // Read file
         let data = try Data(contentsOf: url)
+        guard !Task.isCancelled else { await cancel(canceled); return }
+        
+        // Decode data
         let export = try decode(data)
         Log.info("Found \(export.places.count) places, \(export.tags.count) tags, \(export.groups.count) groups")
-        onPlacesCountResolved(export.places.count)
-        try await persist(export)
+        guard !Task.isCancelled else { await cancel(canceled); return }
+        await onPlacesCountResolved(export.places.count)
+        
+        // Create items
+        do {
+            try await persist(export, progress: progress)
+        } catch is CancellationError {
+            await cancel(canceled);
+        }
+        guard !Task.isCancelled else { return }
         Log.info(" -> persisted")
-        completion(export.places.count)
+        await completion(export.places.count)
     }
 
     // MARK: - Private
@@ -53,17 +66,29 @@ struct ImportDropinService: ImportServiceProtocol {
         }
     }
 
-    private func persist(_ export: DropinInOut) async throws {
+    private func persist(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
         // Upsert groups and tags first (places depend on them)
         for group in export.groups {
+            try Task.checkCancellation()
             try await upsertGroup(group)
         }
         for tag in export.tags {
+            try Task.checkCancellation()
             try await upsertTag(tag)
         }
         // Upsert places
+        var upsertCount = 0
         for place in export.places {
+            try Task.checkCancellation()
             try await upsertPlace(place)
+            upsertCount += 1
+            await progress(upsertCount)
         }
+    }
+    
+    private func cancel(_ canceled: @MainActor @Sendable () -> Void) async {
+        Log.info("DROPIN import canceled")
+        
+        await canceled()
     }
 }

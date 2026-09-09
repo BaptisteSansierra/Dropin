@@ -7,9 +7,10 @@
 
 import Foundation
 
-@MainActor
-protocol ImportServiceProtocol {
+protocol ImportServiceProtocol: Sendable {
     func execute(_ url: URL,
-                 onPlacesCountResolved: ((Int) -> Void),
-                 completion: ((Int) -> Void)) async throws
+                 onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
+                 progress: @MainActor @Sendable (Int) -> Void,
+                 canceled: @MainActor @Sendable () -> Void,
+                 completion: @MainActor @Sendable (Int) -> Void) async throws
 }

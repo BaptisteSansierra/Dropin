@@ -13,7 +13,8 @@ struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
     @Binding private var showingSideMenu: Bool
     @Environment(AppSettings.self) private var appSettings
-
+    
+    // MARK: - private properties
     private var rowHeight: CGFloat = 55
     
     // MARK: - init
@@ -36,38 +37,30 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal)
                 
-                if viewModel.importing {
-                    Color.overlayAlphaLayer
-                        .ignoresSafeArea()
-                    DropinLoader(caption: viewModel.importingCaption)
-                    // TODO: the label should update to reflect Places number once it's known
-                }
+                ImportStatusView(importStatus: $viewModel.importStatus,
+                                 cancelCb: viewModel.cancelImport,
+                                 closeCb: viewModel.closeImport)
             }
             .disabled(viewModel.importing)
             .navigationTitle("common.settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+                DropinToolbar.Burger(showingSideMenu: $showingSideMenu,
+                                     disabled: viewModel.importStatus != nil)
             }
             .sheet(isPresented: $viewModel.showMapstrConfig, content: mapstrConfigSheetContent)
             .sheet(isPresented: $viewModel.pickFile, content: importSheetContent)
             .sheet(item: $viewModel.exportedTemporaryFile, content: exportSheetContent)
             .overlay(content: deleteDatabaseOverlay)
-            .alert(importAlertTitle,
-                   isPresented: importAlertBinding,
-                   presenting: viewModel.importResult) { _ in
-                Button("common.ok", role: .cancel) {
-                    viewModel.importResult = nil
-                }
-            } message: { result in
-                switch result {
-                    case .success(let count):
-                        Text("settings.import.success_body_\(count)")
-                    case .failure(let message):
-                        Text(verbatim: message)
-                }
-            }
         }
+        /*
+        .onAppear {
+            // DEBUGLY display ImportStatusView
+            viewModel.importStatus = ImportStatus(filename: "pipo.jhy",
+                                                  source: .dropin)
+            viewModel.importStatus?.setCount(100)
+        }
+         */
     }
     
     // MARK: - subviews
@@ -78,10 +71,10 @@ struct SettingsView: View {
                 .textCase(.uppercase)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 10)
-
+            
             VStack(spacing: 0) {
                 @Bindable var appSettings = appSettings
-
+                
                 // Map preview
                 MapSettingsPreviewView(mapEditMode: $viewModel.mapEditMode)
                     .frame(height: 280)
@@ -92,7 +85,7 @@ struct SettingsView: View {
                         bottomTrailingRadius: 0,
                         topTrailingRadius: 16
                     ))
-                                
+                
                 // Pin style row
                 settingsRow(icon: "mappin",
                             iconColor: Color(rgba: "588B8B"),
@@ -101,12 +94,12 @@ struct SettingsView: View {
                             isActive: viewModel.mapEditMode == .style) {
                     viewModel.mapEditMode = viewModel.mapEditMode == .style ? .none : .style
                 }
-                .frame(height: rowHeight)
-                .padding(.horizontal)
+                            .frame(height: rowHeight)
+                            .padding(.horizontal)
                 
                 rowSeparator
-
-
+                
+                
                 // Pin size row
                 settingsRow(icon: "ruler",
                             iconColor: Color(rgba: "B08A4E"),
@@ -115,11 +108,11 @@ struct SettingsView: View {
                             isActive: viewModel.mapEditMode == .size) {
                     viewModel.mapEditMode = viewModel.mapEditMode == .size ? .none : .size
                 }
-                .frame(height: rowHeight)
-                .padding(.horizontal)
+                            .frame(height: rowHeight)
+                            .padding(.horizontal)
                 
                 rowSeparator
-
+                
                 // Clustering
                 HStack(spacing: 12) {
                     iconBadge(systemName: "rectangle.3.group",
@@ -139,14 +132,14 @@ struct SettingsView: View {
             }
         }
     }
-
+    
     private var rowSeparator: some View {
         Rectangle()
             .fill(.fieldBorder)
             .frame(height: 1)
             .padding(.leading, 57)
     }
-
+    
     private var dataSection: some View {
         
         VStack(spacing: 0) {
@@ -177,7 +170,7 @@ struct SettingsView: View {
                 .disabled(viewModel.isExporting)
                 .frame(height: rowHeight)
                 .padding(.horizontal)
-
+                
                 rowSeparator
                 
                 // Import
@@ -208,7 +201,7 @@ struct SettingsView: View {
                     .frame(height: rowHeight)
                     .padding(.horizontal)
                 }
-
+                
                 rowSeparator
                 
                 // Reset
@@ -232,69 +225,10 @@ struct SettingsView: View {
                     .fill(.surface1)
                     .stroke(.fieldBorder)
             }
-
+            
         }
-        
-        /*
-        
-        Section {
-            // Export
-            Button {
-                exportData()
-            } label: {
-                HStack(spacing: 12) {
-                    iconBadge(systemName: "square.and.arrow.up", color: .blue)
-                    Text("common.export")
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    if viewModel.isExporting {
-                        ProgressView().scaleEffect(0.8)
-                    }
-                }
-            }
-            .disabled(viewModel.isExporting)
-
-            // Import
-            Menu {
-                Button(DropinApp.strings.app, action: {
-                    viewModel.importSource = .dropin
-                    viewModel.pickFile = true
-                    viewModel.isImporting = true
-                })
-                Button(String(localized: "settings.import.mapstr"), action: {
-                    viewModel.showMapstrConfig = true
-                })
-                Button(String(localized: "settings.import.google"), action: {
-                    //viewModel.isImporting = true
-                })
-            } label: {
-                HStack(spacing: 12) {
-                    iconBadge(systemName: "square.and.arrow.down", color: .green)
-                    Text("common.import")
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            // Reset
-            Button(role: .destructive) {
-                viewModel.showDeleteConfirmation = true
-            } label: {
-                HStack(spacing: 12) {
-                    iconBadge(systemName: "trash", color: .red)
-                    Text("settings.reset_db")
-                }
-            }
-
-        } header: {
-            Text("settings.section.data")
-        }
-         */
     }
-
+    
     private func settingsRow(icon: String,
                              iconColor: Color,
                              title: LocalizedStringKey,
@@ -340,11 +274,11 @@ struct SettingsView: View {
         }
         .presentationDetents([.medium])
     }
-
+    
     private func importSheetContent() -> some View {
-        ImportPicker(source: viewModel.importSource, onPick: onPickedFile)
+        ImportPicker(source: viewModel.importSource, onPick: importData)
     }
-
+    
     @ViewBuilder
     private func exportSheetContent(url: IdentifiableURL) -> some View {
         ShareSheet(url: url.url) { complete in
@@ -364,34 +298,18 @@ struct SettingsView: View {
             .animation(.spring(response: 0.3), value: viewModel.showDeleteConfirmation)
         }
     }
-
-    // MARK: - alert helpers
-    private var importAlertTitle: LocalizedStringKey {
-        switch viewModel.importResult {
-            case .success: return "settings.import.success_title"
-            case .failure: return "settings.import.error_title"
-            case .none:    return ""
-        }
-    }
-
-    private var importAlertBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.importResult != nil },
-            set: { if !$0 { viewModel.importResult = nil } }
-        )
-    }
-
+    
     // MARK: - private methods
-    private func onPickedFile(_ url: URL) {
+    private func importData(_ url: URL) {
         Task {
             switch viewModel.importSource {
-                case .dropin: await viewModel.importDropin(url)
-                case .mapstr: await viewModel.importMapstr(url)
+                case .dropin: viewModel.importDropin(url)
+                case .mapstr: viewModel.importMapstr(url)
                 default: break
             }
         }
     }
-
+    
     private func exportData() {
         viewModel.isExporting = true
         Task {

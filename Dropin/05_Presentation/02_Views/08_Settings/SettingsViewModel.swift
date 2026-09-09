@@ -26,14 +26,9 @@ import SwiftUI
     var showDeleteConfirmation: Bool = false
     
     var importing: Bool = false
-    var importingCaption: LocalizedStringKey = ""
+    var importStatus: ImportStatus?
 
-    enum ImportResult: Equatable {
-        case success(count: Int)
-        case failure(message: String)
-    }
-    var importResult: ImportResult?
-
+    @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchPlaces: FetchPlaces
     @ObservationIgnored private var fetchGroups: FetchGroups
@@ -79,21 +74,28 @@ import SwiftUI
         }
     }
 
-    func importMapstr(_ url: URL) async {
-        await runImport(source: .mapstr, url: url)
+    func importMapstr(_ url: URL) {
+        importTask = Task { await runImport(source: .mapstr, url: url) }
     }
 
-    func importDropin(_ url: URL) async {
-        await runImport(source: .dropin, url: url)
+    func importDropin(_ url: URL) {
+        importTask = Task { await runImport(source: .dropin, url: url) }
     }
 
+    func cancelImport() {
+        importTask?.cancel()
+    }
+    
+    func closeImport() {
+        importStatus = nil
+    }
+    
     private func runImport(source: ImportSource, url: URL) async {
-        importing = true
-        importingCaption = "settings.importing"
-        defer {
-            importing = false
-            importingCaption = ""
-        }
+        
+        // Creating the importStatus triggers showing the ImportStatusView
+        importStatus = ImportStatus(filename: url.lastPathComponent,
+                                    source: source)
+        // Perform the import
         do {
             let impCoord = try ImportCoordinator(source: source,
                                                  url: url,
@@ -103,13 +105,25 @@ import SwiftUI
                                                  sync: sync,
                                                  markerTagName: source == .mapstr ? mapstrMarkerTagName : nil)
             try await impCoord.process { count in
-                self.importingCaption = "settings.importing_count_\(count)"
+                importStatus?.setCount(count)
+            } progress: { count in
+                guard count > 0 else {
+                    importStatus?.setError(.emptyFile)
+                    return
+                }
+                importStatus?.updateProgress(count)
+            } canceled: {
+                importStatus?.setError(.canceled)
             } completion: { count in
-                self.importResult = .success(count: count)
+                importStatus?.complete()
             }
+        } catch let error as ImportError {
+            Log.error("Import failed (source: \(source), url: \(url.lastPathComponent)): \(error)")
+            importStatus?.setError(error)
         } catch {
             Log.error("Import failed (source: \(source), url: \(url.lastPathComponent)): \(error)")
-            importResult = .failure(message: error.localizedDescription)
+            assertionFailure("unexpected import error \(error)")
+            importStatus?.setError(ImportError.unexpectedError(error))
         }
     }
 }

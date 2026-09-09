@@ -84,6 +84,9 @@ struct PlaceEditContentView: View {
         
         let urls = place.wrappedValue.url.map { ContactItemUI(contactItem: $0) }
         self._urls = State(initialValue: urls)
+        
+        // local ContactFieldKit config override
+        ContactFieldUIConfig.backgroundPrimary = .surface1
     }
     
     // MARK: - Body

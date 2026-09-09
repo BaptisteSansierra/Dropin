@@ -93,6 +93,11 @@ struct DeleteConfirmationAlert: View {
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .padding(.horizontal, 32)
         }
+        .onAppear {
+            #if DEBUG
+            typed = "DELETE"
+            #endif
+        }
     }
 }
 

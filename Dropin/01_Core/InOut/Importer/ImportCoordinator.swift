@@ -38,19 +38,23 @@ final class ImportCoordinator {
                                                     markerTagName: markerTagName ?? "Mapstr")
             default:
                 Log.error("unrecognized file to be imported \(url.pathExtension)")
-                throw ImportError.unrecognizedFormat(url.pathExtension)
+                throw ImportError.unsupported(url.pathExtension)
         }
         try checkFile()
     }
     
-    func process(onPlacesCountResolved: ((Int) -> Void),
-                 completion: ((Int) -> Void)) async throws {
+    func process(onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
+                 progress: @MainActor @Sendable (Int) -> Void,
+                 canceled: @MainActor @Sendable () -> Void,
+                 completion: @MainActor @Sendable (Int) -> Void) async throws {
         // Pause remote pushes for the duration of the import so each upserted
         // tag/group/place doesn't trigger its own push. A single push runs at
         // the end with the full dirty set.
         try await sync.withPausedPushes {
             try await importService.execute(url,
                                             onPlacesCountResolved: onPlacesCountResolved,
+                                            progress: progress,
+                                            canceled: canceled,
                                             completion: completion)
         }
     }
@@ -61,11 +65,11 @@ final class ImportCoordinator {
         switch source {
             case .dropin:
                 guard ext == DropinApp.strings.exportExtension else {
-                    throw ImportError.unrecognizedFormat(ext)
+                    throw ImportError.unrecognizedFormat(.dropin, DropinApp.strings.exportExtension, ext)
                 }
             case .mapstr, .google:
                 guard ext == "geojson" else {
-                    throw ImportError.unrecognizedFormat(ext)
+                    throw ImportError.unrecognizedFormat(.mapstr, "geojson", ext)
                 }
             default:
                 ()
