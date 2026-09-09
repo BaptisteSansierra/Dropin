@@ -15,10 +15,10 @@ struct UpsertPlace {
         self.repository = repository
     }
     
-    func callAsFunction(_ place: PlaceEntity) async throws {
+    func callAsFunction(_ place: PlaceEntity, shouldSave: Bool = true) async throws {
         guard !place.name.isEmpty else {
             throw DomainError.Place.missingName
         }
-        try await repository.upsert(place)
+        try await repository.upsert(place, shouldSave: shouldSave)
     }
 }

@@ -88,6 +88,64 @@ struct ImportStatusView: View {
         }
         .padding(.horizontal, 20)
     }
+
+    private var resultDetailsSpacerView: some View {
+        Rectangle()
+            .fill(.fieldBorder)
+            .frame(height: 1)
+            .padding(.horizontal, -20)
+            .padding(.leading, 10)
+    }
+
+    private func resultDetailsView(_ importStatus: ImportStatus) -> some View {
+        VStack {
+            HStack {
+                Text("import.complete.count")
+                    .textStyle(.subheadline, color: .textSecondary)
+                Spacer()
+                Text("\(importStatus.count)")
+                    .textStyle(.subheadlineSemibold)
+            }
+            
+            resultDetailsSpacerView
+            
+            HStack {
+                Text("import.complete.duplicatesCount")
+                    .textStyle(.subheadline, color: .textSecondary)
+                Spacer()
+                Text("\(importStatus.duplicateCount)")
+                    .textStyle(.subheadline, color: .textSecondary)
+            }
+
+            resultDetailsSpacerView
+
+            HStack {
+                Text("import.complete.count.group")
+                    .textStyle(.subheadline, color: .textSecondary)
+                Spacer()
+                Text("\(importStatus.groupCount)")
+                    .textStyle(.subheadline, color: .textSecondary)
+            }
+
+            resultDetailsSpacerView
+            
+            HStack {
+                Text("import.complete.count.tag")
+                    .textStyle(.subheadline, color: .textSecondary)
+                Spacer()
+                Text("\(importStatus.tagCount)")
+                    .textStyle(.subheadline, color: .textSecondary)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.clear)
+                .stroke(.fieldBorder)
+        }
+        .padding(.top, 10)
+    }
     
     private func resultView(_ importStatus: ImportStatus) -> some View {
         VStack(alignment: .center, spacing: 10) {
@@ -102,21 +160,7 @@ struct ImportStatusView: View {
             Text("import.complete.title")
                 .textStyle(.bodySemibold)
             
-            HStack {
-                Text("import.complete.count")
-                    .textStyle(.subheadline)
-                Spacer()
-                Text("\(importStatus.count)")
-                    .textStyle(.subheadlineSemibold)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-            .background {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(.clear)
-                    .stroke(.textPrimary)
-            }
-            .padding(.top, 10)
+            resultDetailsView(importStatus)
             
             MainButton(text: "common.done", action: close)
                 .padding(.top, 10)

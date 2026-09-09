@@ -18,6 +18,6 @@ protocol PlaceRepository: Sendable {
     func fetch(tagId: UUID) async throws -> [PlaceEntity]
     func fetch() async throws -> [PlaceEntity]
     func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity]
-    func upsert(_ place: PlaceEntity) async throws
+    func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws
     func clearTable() async throws
 }

@@ -70,14 +70,18 @@ final class MockPlaceRepository: PlaceRepository {
         places[index] = place
     }
 
-    func upsert(_ place: PlaceEntity) async throws {
+    func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws {
         if let index = places.firstIndex(where: { $0.id == place.id }) {
             places[index] = place
         } else {
             places.append(place)
         }
     }
-    
+
+    func save() async throws {
+        // no-op: mock repository has no deferred persistence to flush
+    }
+
     func clearTable() async throws {
         places.removeAll()
     }

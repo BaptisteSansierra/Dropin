@@ -30,6 +30,8 @@ import SwiftUI
 
     @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var appContainer: AppContainer
+    @ObservationIgnored private var saveContext: SaveContext
+    @ObservationIgnored private var rollbackContext: RollbackContext
     @ObservationIgnored private var fetchPlaces: FetchPlaces
     @ObservationIgnored private var fetchGroups: FetchGroups
     @ObservationIgnored private var fetchTags: FetchTags
@@ -41,6 +43,8 @@ import SwiftUI
 
     init(_ appContainer: AppContainer,
          coordinator: PlaceCoordinator,
+         saveContext: SaveContext,
+         rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
          fetchGroups: FetchGroups,
          fetchTags: FetchTags,
@@ -51,6 +55,8 @@ import SwiftUI
          sync: any SyncServicePausableProtocol) {
         self.appContainer = appContainer
         self.coordinator = coordinator
+        self.saveContext = saveContext
+        self.rollbackContext = rollbackContext
         self.fetchPlaces = fetchPlaces
         self.fetchGroups = fetchGroups
         self.fetchTags = fetchTags
@@ -99,6 +105,8 @@ import SwiftUI
         do {
             let impCoord = try ImportCoordinator(source: source,
                                                  url: url,
+                                                 saveContext: saveContext,
+                                                 rollbackContext: rollbackContext,
                                                  upsertPlace: upsertPlace,
                                                  upsertGroup: upsertGroup,
                                                  upsertTag: upsertTag,
@@ -114,7 +122,10 @@ import SwiftUI
                 importStatus?.updateProgress(count)
             } canceled: {
                 importStatus?.setError(.canceled)
-            } completion: { count in
+            } completion: { placeCount, duplicatedCount, groupCount, tagCount in
+                importStatus?.setDuplicateCount(duplicatedCount)
+                importStatus?.setGroupCount(groupCount)
+                importStatus?.setTagCount(tagCount)
                 importStatus?.complete()
             }
         } catch let error as ImportError {

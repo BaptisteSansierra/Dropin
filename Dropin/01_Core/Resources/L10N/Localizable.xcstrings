@@ -3470,6 +3470,54 @@
         }
       }
     },
+    "import.complete.count.group": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groups imported"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groupes importés"
+          }
+        }
+      }
+    },
+    "import.complete.count.tag": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags imported"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags importés"
+          }
+        }
+      }
+    },
+    "import.complete.duplicatesCount": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped duplicates"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doublons ignorés"
+          }
+        }
+      }
+    },
     "import.complete.title": {
       "localizations": {
         "en": {

@@ -246,6 +246,10 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
                 let place = try await localPlaceRepo.fetch(id)
                 try await remotePlaceRepo.upsert(place)
                 Log.debug("Remote upsert PLACE \(place.name)")
+            } catch DataError.notFound(_) {
+                // No longer exists locally (e.g. rolled back) — nothing to
+                // push, and retrying would never succeed. Drop it.
+                Log.debug("SyncService: dropping dirty place \(id) — no longer exists locally")
             } catch {
                 dirtyPlaceIds.insert(id)
                 assertNoBug(error)
@@ -262,6 +266,8 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
                 let group = try await localGroupRepo.fetch(id)
                 try await remoteGroupRepo.upsert(group)
                 Log.debug("Remote upsert GROUP \(group.name)")
+            } catch DataError.notFound(_) {
+                Log.debug("SyncService: dropping dirty group \(id) — no longer exists locally")
             } catch {
                 dirtyGroupIds.insert(id)
                 assertNoBug(error)
@@ -278,6 +284,8 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
                 let tag = try await localTagRepo.fetch(id)
                 try await remoteTagRepo.upsert(tag)
                 Log.debug("Remote upsert TAG \(tag.name)")
+            } catch DataError.notFound(_) {
+                Log.debug("SyncService: dropping dirty tag \(id) — no longer exists locally")
             } catch {
                 dirtyTagIds.insert(id)
                 assertNoBug(error)
@@ -342,9 +350,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
             //   - SDImage.place is a SwiftData relationship → places must exist locally before
             //     images are inserted.
             if let profile { try await localProfileRepo.upsert(profile) }
-            for tag   in tags   { try await localTagRepo.upsert(tag) }
-            for group in groups { try await localGroupRepo.upsert(group) }
-            for place in places { try await localPlaceRepo.upsert(place) }
+            for tag   in tags   { try await localTagRepo.upsert(tag, shouldSave: true) }
+            for group in groups { try await localGroupRepo.upsert(group, shouldSave: true) }
+            for place in places { try await localPlaceRepo.upsert(place, shouldSave: true) }
 
             // lazy ImageLoader: this doesn't download bytes anymore, only inserts metadata stubs.
             await pullImages(since: since)

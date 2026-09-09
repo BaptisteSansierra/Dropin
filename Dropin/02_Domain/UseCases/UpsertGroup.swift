@@ -15,10 +15,10 @@ struct UpsertGroup {
         self.repository = repository
     }
     
-    func callAsFunction(_ group: GroupEntity) async throws {
+    func callAsFunction(_ group: GroupEntity, shouldSave: Bool = true) async throws {
         guard !group.name.isEmpty else {
             throw DomainError.Group.missingName
         }
-        try await repository.upsert(group)
+        try await repository.upsert(group, shouldSave: shouldSave)
     }
 }

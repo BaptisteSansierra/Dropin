@@ -21,6 +21,7 @@ final class AppContainer {
     private let groupRepository: GroupRepository
     private let imageRepository: ImageRepository
     private let profileRepository: ProfileRepository
+    private let generalRepository: GeneralRepository
     private let imageLoader: ImageLoader
     // Coordinators
     private let profileCoordinator: ProfileCoordinator
@@ -97,6 +98,9 @@ final class AppContainer {
         profileRepository = SyncingProfileRepository(wrapped: localProfileRepo, sync: syncService)
         imageLoader = ImageLoader(local: imageRepository, remote: remoteImageRepo)
         profileService = ProfileService(local: profileRepository, remote: remoteProfileRepo)
+        // Not entity-specific, not wrapped: save()/rollback() act on the whole
+        // shared modelContext, so there's nothing for a Syncing decorator to do.
+        generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
     }
 
     #if DEBUG
@@ -134,6 +138,7 @@ final class AppContainer {
         profileRepository = ProfileRepositoryImpl(modelContext: modelContext)
         imageLoader = ImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
         self.profileService = profileService
+        generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
     }
     #endif
 
@@ -502,6 +507,8 @@ final class AppContainer {
     func createSettingsView(showingSideMenu: Binding<Bool>) -> SettingsView {
         let vm = SettingsViewModel(self,
                                    coordinator: placeCoordinator,
+                                   saveContext: SaveContext(repository: generalRepository),
+                                   rollbackContext: RollbackContext(repository: generalRepository),
                                    fetchPlaces: FetchPlaces(repository: placeRepository),
                                    fetchGroups: FetchGroups(repository: groupRepository),
                                    fetchTags: FetchTags(repository: tagRepository),

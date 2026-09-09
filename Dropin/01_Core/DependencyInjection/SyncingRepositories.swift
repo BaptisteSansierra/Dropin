@@ -42,12 +42,12 @@ final class SyncingPlaceRepository: PlaceRepository {
         sync.markPlaceDirty(place.id)
     }
 
-    func upsert(_ place: PlaceEntity) async throws {
+    func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws {
         let stamped = place.updated()
-        try await wrapped.upsert(stamped)
+        try await wrapped.upsert(stamped, shouldSave: shouldSave)
         sync.markPlaceDirty(stamped.id)
     }
-    
+
     func clearTable() async throws {
         try await wrapped.clearTable()
         // local-only: intentionally NOT calling sync.markDirty
@@ -85,9 +85,9 @@ final class SyncingGroupRepository: GroupRepository {
         sync.markGroupDirty(group.id)
     }
     
-    func upsert(_ group: GroupEntity) async throws {
+    func upsert(_ group: GroupEntity, shouldSave: Bool) async throws {
         let stamped = group.updated()
-        try await wrapped.upsert(stamped)
+        try await wrapped.upsert(stamped, shouldSave: shouldSave)
         sync.markGroupDirty(stamped.id)
     }
     
@@ -214,9 +214,9 @@ final class SyncingTagRepository: TagRepository {
         sync.markTagDirty(tag.id)
     }
     
-    func upsert(_ tag: TagEntity) async throws {
+    func upsert(_ tag: TagEntity, shouldSave: Bool) async throws {
         let stamped = tag.updated()
-        try await wrapped.upsert(stamped)
+        try await wrapped.upsert(stamped, shouldSave: shouldSave)
         sync.markTagDirty(stamped.id)
     }
     

@@ -16,6 +16,6 @@ protocol GroupRepository {
     func fetch() async throws -> [GroupEntity]
     func fetchWithPlaceCount() async throws -> [(GroupEntity, Int)]
     func fetch(_ id: UUID) async throws -> GroupEntity
-    func upsert(_ group: GroupEntity) async throws
+    func upsert(_ group: GroupEntity, shouldSave: Bool) async throws
     func clearTable() async throws
 }

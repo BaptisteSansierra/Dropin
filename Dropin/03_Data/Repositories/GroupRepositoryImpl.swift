@@ -75,7 +75,7 @@ public final class GroupRepositoryImpl: GroupRepository {
         return GroupMapper.toDomain(sdGroup)
     }
     
-    func upsert(_ group: GroupEntity) async throws {
+    func upsert(_ group: GroupEntity, shouldSave: Bool) async throws {
         let descriptor = FetchDescriptor<SDGroup>(predicate: #Predicate { $0.identifier == group.id })
         if let existing = try modelContext.fetch(descriptor).first {
             // Update
@@ -89,7 +89,9 @@ public final class GroupRepositoryImpl: GroupRepository {
             let sdGroup = GroupMapper.toData(group)
             modelContext.insert(sdGroup)
         }
-        try modelContext.save()
+        if shouldSave {
+            try modelContext.save()
+        }
     }
     
     func clearTable() async throws {

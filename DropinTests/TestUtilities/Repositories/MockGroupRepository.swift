@@ -60,7 +60,7 @@ final class MockGroupRepository: GroupRepository {
         return g
     }
     
-    func upsert(_ group: GroupEntity) async throws {
+    func upsert(_ group: GroupEntity, shouldSave: Bool) async throws {
         if let index = groups.firstIndex(where: { $0.id == group.id }) {
             groups[index] = group
         } else {

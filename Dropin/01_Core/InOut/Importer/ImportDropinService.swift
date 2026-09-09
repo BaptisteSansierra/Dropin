@@ -9,11 +9,23 @@ import Foundation
 
 actor ImportDropinService: ImportServiceProtocol {
     
+    private let saveContext: SaveContext
+    private let rollbackContext: RollbackContext
     private let upsertPlace: UpsertPlace
     private let upsertGroup: UpsertGroup
     private let upsertTag: UpsertTag
     
-    init(upsertPlace: UpsertPlace, upsertGroup: UpsertGroup, upsertTag: UpsertTag) {
+    private var duplicatePlacesCount: Int = 0
+    private var createdTagsCount: Int = 0
+    private var createdGroupsCount: Int = 0
+    
+    init(saveContext: SaveContext,
+         rollbackContext: RollbackContext,
+         upsertPlace: UpsertPlace,
+         upsertGroup: UpsertGroup,
+         upsertTag: UpsertTag) {
+        self.saveContext = saveContext
+        self.rollbackContext = rollbackContext
         self.upsertPlace = upsertPlace
         self.upsertGroup = upsertGroup
         self.upsertTag = upsertTag
@@ -23,7 +35,7 @@ actor ImportDropinService: ImportServiceProtocol {
                  onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
                  progress: @MainActor @Sendable (Int) -> Void,
                  canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int) -> Void) async throws {
+                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
         // Handle the security scoping since the file lives outside sandbox
         let accessed = url.startAccessingSecurityScopedResource()
         defer {
@@ -42,13 +54,16 @@ actor ImportDropinService: ImportServiceProtocol {
         
         // Create items
         do {
-            try await persist(export, progress: progress)
+            try await createLocalItems(export, progress: progress)
         } catch is CancellationError {
             await cancel(canceled);
         }
+        
+        // Persist items and complete
         guard !Task.isCancelled else { return }
+        try await saveContext()
         Log.info(" -> persisted")
-        await completion(export.places.count)
+        await completion(export.places.count, duplicatePlacesCount, createdGroupsCount, createdTagsCount)
     }
 
     // MARK: - Private
@@ -66,21 +81,23 @@ actor ImportDropinService: ImportServiceProtocol {
         }
     }
 
-    private func persist(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
+    private func createLocalItems(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
         // Upsert groups and tags first (places depend on them)
         for group in export.groups {
             try Task.checkCancellation()
-            try await upsertGroup(group)
+            try await upsertGroup(group, shouldSave: false)
         }
         for tag in export.tags {
             try Task.checkCancellation()
-            try await upsertTag(tag)
+            try await upsertTag(tag, shouldSave: false)
         }
+        createdGroupsCount = export.groups.count
+        createdTagsCount = export.tags.count
         // Upsert places
         var upsertCount = 0
         for place in export.places {
             try Task.checkCancellation()
-            try await upsertPlace(place)
+            try await upsertPlace(place, shouldSave: false)
             upsertCount += 1
             await progress(upsertCount)
         }
@@ -88,7 +105,7 @@ actor ImportDropinService: ImportServiceProtocol {
     
     private func cancel(_ canceled: @MainActor @Sendable () -> Void) async {
         Log.info("DROPIN import canceled")
-        
+        await rollbackContext()
         await canceled()
     }
 }

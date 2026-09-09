@@ -107,7 +107,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         try modelContext.save()
     }
 
-    func upsert(_ place: PlaceEntity) async throws {
+    func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws {
         let placeId = place.id
         let predicate = #Predicate<SDPlace> { $0.identifier == placeId }
         let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
@@ -135,7 +135,9 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             try await linkGroup(sdPlace: sdPlace, domainPlace: place)
             modelContext.insert(sdPlace)
         }
-        try modelContext.save()
+        if shouldSave {
+            try modelContext.save()
+        }
     }
 
     func clearTable() async throws {
@@ -170,10 +172,11 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             sdPlace.tags = []
             return
         }
-        let tagIdentifiers = domainPlace.tags.map { $0.id }
+        let tagIdentifiers = Set(domainPlace.tags.map { $0.id }) // Ensure no duplicates
         let tagPredicate = #Predicate<SDTag> { tagIdentifiers.contains($0.identifier) }
         let tagDescriptor = FetchDescriptor<SDTag>(predicate: tagPredicate)
         let sdTags = try modelContext.fetch(tagDescriptor)
+        
         if sdTags.count < tagIdentifiers.count {
             throw DataError.notFound(msg: "some tags from list \(tagIdentifiers) couldn't be found while linking place \(sdPlace.name) id:\(sdPlace.id)")
         }

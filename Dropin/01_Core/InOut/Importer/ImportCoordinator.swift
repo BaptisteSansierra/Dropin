@@ -17,6 +17,8 @@ final class ImportCoordinator {
 
     init(source: ImportSource,
          url: URL,
+         saveContext: SaveContext,
+         rollbackContext: RollbackContext,
          upsertPlace: UpsertPlace,
          upsertGroup: UpsertGroup,
          upsertTag: UpsertTag,
@@ -28,12 +30,16 @@ final class ImportCoordinator {
         switch source {
             case .dropin:
                 Log.info("Dropin import service created")
-                importService = ImportDropinService(upsertPlace: upsertPlace,
+                importService = ImportDropinService(saveContext: saveContext,
+                                                    rollbackContext: rollbackContext,
+                                                    upsertPlace: upsertPlace,
                                                     upsertGroup: upsertGroup,
                                                     upsertTag: upsertTag)
             case .mapstr:
                 Log.info("Mapstr import service created")
-                importService = ImportMapstrService(upsertPlace: upsertPlace,
+                importService = ImportMapstrService(saveContext: saveContext,
+                                                    rollbackContext: rollbackContext,
+                                                    upsertPlace: upsertPlace,
                                                     upsertTag: upsertTag,
                                                     markerTagName: markerTagName ?? "Mapstr")
             default:
@@ -46,7 +52,7 @@ final class ImportCoordinator {
     func process(onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
                  progress: @MainActor @Sendable (Int) -> Void,
                  canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int) -> Void) async throws {
+                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
         // Pause remote pushes for the duration of the import so each upserted
         // tag/group/place doesn't trigger its own push. A single push runs at
         // the end with the full dirty set.

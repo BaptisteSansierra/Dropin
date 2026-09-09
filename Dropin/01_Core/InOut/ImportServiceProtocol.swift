@@ -12,5 +12,5 @@ protocol ImportServiceProtocol: Sendable {
                  onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
                  progress: @MainActor @Sendable (Int) -> Void,
                  canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int) -> Void) async throws
+                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws
 }
