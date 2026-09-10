@@ -86,10 +86,13 @@ public final class GroupRepositoryImpl: GroupRepository {
             existing.icon      = group.icon
             existing.updatedAt = group.updatedAt
             existing.deletedAt = group.deletedAt
-        } else {
+        } else if group.deletedAt == nil {
             // Insert
             let sdGroup = GroupMapper.toData(group)
             modelContext.insert(sdGroup)
+        } else {
+            // Tombstone for a group we never had locally — nothing to do.
+            return
         }
         if shouldSave {
             try modelContext.save()

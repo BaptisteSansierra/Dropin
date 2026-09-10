@@ -44,7 +44,7 @@ struct TagEntity: Hashable, Sendable {
     
     func deleted(deletedAt: Date) -> TagEntity {
         var copy = self
-        copy.deletedAt = nil
+        copy.deletedAt = deletedAt
         return copy
     }
 

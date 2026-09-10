@@ -48,7 +48,7 @@ struct GroupEntity: Hashable, Sendable {
     
     func deleted(deletedAt: Date) -> GroupEntity {
         var copy = self
-        copy.deletedAt = nil
+        copy.deletedAt = deletedAt
         return copy
     }
 

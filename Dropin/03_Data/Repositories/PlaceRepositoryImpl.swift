@@ -130,12 +130,15 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             try await linkTags(sdPlace: existing, domainPlace: place)
             try await linkGroup(sdPlace: existing, domainPlace: place)
             existing.deletedAt = place.deletedAt
-        } else {
+        } else if place.deletedAt == nil {
             // Insert
             let sdPlace = PlaceMapper.toData(place)
             try await linkTags(sdPlace: sdPlace, domainPlace: place)
             try await linkGroup(sdPlace: sdPlace, domainPlace: place)
             modelContext.insert(sdPlace)
+        } else {
+            // Tombstone for a place we never had locally — nothing to do.
+            return
         }
         if shouldSave {
             try modelContext.save()

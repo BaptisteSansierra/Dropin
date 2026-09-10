@@ -84,10 +84,13 @@ public final class TagRepositoryImpl: TagRepository {
             existing.color     = tag.color
             existing.updatedAt = tag.updatedAt
             existing.deletedAt = tag.deletedAt
-        } else {
+        } else if tag.deletedAt == nil {
             // Insert
             let sdTag = TagMapper.toData(tag)
             modelContext.insert(sdTag)
+        } else {
+            // Tombstone for a tag we never had locally — nothing to do.
+            return
         }
         if shouldSave {
             try modelContext.save()
