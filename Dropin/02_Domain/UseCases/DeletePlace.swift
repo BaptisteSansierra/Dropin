@@ -7,6 +7,8 @@
 
 import Foundation
 
+// Hard delete not currently used
+/*
 @MainActor
 struct DeletePlace {
     private let repository: PlaceRepository
@@ -22,3 +24,4 @@ struct DeletePlace {
         return try await repository.delete(place)
     }
 }
+*/

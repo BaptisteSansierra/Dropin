@@ -19,6 +19,9 @@ final class ImportCoordinator {
          url: URL,
          saveContext: SaveContext,
          rollbackContext: RollbackContext,
+         fetchPlaces: FetchPlaces,
+         fetchGroups: FetchGroups,
+         fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
          upsertGroup: UpsertGroup,
          upsertTag: UpsertTag,
@@ -32,6 +35,9 @@ final class ImportCoordinator {
                 Log.info("Dropin import service created")
                 importService = ImportDropinService(saveContext: saveContext,
                                                     rollbackContext: rollbackContext,
+                                                    fetchPlaces: fetchPlaces,
+                                                    fetchGroups: fetchGroups,
+                                                    fetchTags: fetchTags,
                                                     upsertPlace: upsertPlace,
                                                     upsertGroup: upsertGroup,
                                                     upsertTag: upsertTag)
@@ -39,6 +45,8 @@ final class ImportCoordinator {
                 Log.info("Mapstr import service created")
                 importService = ImportMapstrService(saveContext: saveContext,
                                                     rollbackContext: rollbackContext,
+                                                    fetchPlaces: fetchPlaces,
+                                                    fetchTags: fetchTags,
                                                     upsertPlace: upsertPlace,
                                                     upsertTag: upsertTag,
                                                     markerTagName: markerTagName ?? "Mapstr")

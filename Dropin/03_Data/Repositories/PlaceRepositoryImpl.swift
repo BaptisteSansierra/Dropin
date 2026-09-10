@@ -35,11 +35,13 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         try modelContext.save()
     }
     
+    /* hard delete not used
     func delete(_ place: PlaceEntity) async throws {
         let model = try await retrievePlace(domainPlace: place)
         modelContext.delete(model)
         try modelContext.save()
     }
+     */
 
     func fetch(_ id: UUID) async throws -> PlaceEntity {
         let sdPlace = try await retrievePlace(uuid: id)

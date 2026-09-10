@@ -34,11 +34,13 @@ public final class TagRepositoryImpl: TagRepository {
         try modelContext.save()
     }
     
+    /* hard delete not used
     func delete(_ tag: TagEntity) async throws {
         let model = try await retrieveTag(domainTag: tag)
         modelContext.delete(model)
         try modelContext.save()
     }
+     */
     
     func update(_ tag: TagEntity) async throws {
         let model = try await retrieveTag(domainTag: tag)

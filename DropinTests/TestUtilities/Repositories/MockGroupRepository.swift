@@ -33,6 +33,7 @@ final class MockGroupRepository: GroupRepository {
         groups.append(group)
     }
     
+    /*
     func delete(_ group: GroupEntity) async throws {
         guard let index = groups.firstIndex(where: { $0.id == group.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
@@ -40,6 +41,7 @@ final class MockGroupRepository: GroupRepository {
         Log.info("Remove group at index \(index)")
         groups.remove(at: index)
     }
+     */
     
     func update(_ group: GroupEntity) async throws {
     }

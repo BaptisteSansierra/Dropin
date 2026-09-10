@@ -37,10 +37,12 @@ final class SyncingPlaceRepository: PlaceRepository {
         sync.markPlaceDirty(stamped.id)
     }
 
+    /*
     func delete(_ place: PlaceEntity) async throws {
         try await wrapped.delete(place)
         sync.markPlaceDirty(place.id)
     }
+     */
 
     func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws {
         let stamped = place.updated()
@@ -80,10 +82,12 @@ final class SyncingGroupRepository: GroupRepository {
         sync.markGroupDirty(stamped.id)
     }
     
+    /*
     func delete(_ group: GroupEntity) async throws {
         try await wrapped.delete(group)
         sync.markGroupDirty(group.id)
     }
+     */
     
     func upsert(_ group: GroupEntity, shouldSave: Bool) async throws {
         let stamped = group.updated()
@@ -209,10 +213,12 @@ final class SyncingTagRepository: TagRepository {
         sync.markTagDirty(stamped.id)
     }
     
+    /*
     func delete(_ tag: TagEntity) async throws {
         try await wrapped.delete(tag)
         sync.markTagDirty(tag.id)
     }
+     */
     
     func upsert(_ tag: TagEntity, shouldSave: Bool) async throws {
         let stamped = tag.updated()

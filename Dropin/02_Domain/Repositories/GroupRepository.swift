@@ -11,7 +11,7 @@ import Foundation
 protocol GroupRepository {
     func exists(_ group: GroupEntity) async throws -> Bool
     func create(_ group: GroupEntity) async throws
-    func delete(_ group: GroupEntity) async throws
+    //func delete(_ group: GroupEntity) async throws
     func update(_ group: GroupEntity) async throws
     func fetch() async throws -> [GroupEntity]
     func fetchWithPlaceCount() async throws -> [(GroupEntity, Int)]

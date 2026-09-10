@@ -38,22 +38,26 @@ struct TagListView: View {
     @State private var viewModel: TagListViewModel
     @Binding private var showingSideMenu: Bool
         
+    // MARK: - private properties
+    private var activeTags: [TagUI] {
+        viewModel.tags.filter { $0.isActive }
+    }
+
     // MARK: - init
     init(viewModel: TagListViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
         self._showingSideMenu = showingSideMenu
     }
-    
+        
     // MARK: - Body
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
-
             ZStack {
                 Color.backgroundPrimary
                     .ignoresSafeArea()
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(Array(viewModel.tags.enumerated()), id: \.offset) { idx, tag in
+                        ForEach(Array(activeTags.enumerated()), id: \.offset) { idx, tag in
                             tagRow(tag)
                                 .frame(height: 55)
                                 .padding(.horizontal)
@@ -72,6 +76,7 @@ struct TagListView: View {
                     .padding(.top, 20)
                 }
                 .padding(.horizontal)
+                .scrollIndicators(.hidden)
             }
             .overlay {
                 //if viewModel.tags.filter(\.isActive).isEmpty {

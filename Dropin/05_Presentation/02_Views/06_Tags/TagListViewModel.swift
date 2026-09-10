@@ -34,10 +34,9 @@ import SwiftUI
     
     // MARK: Actions
     func softDeleteTag(_ index: Int) async throws {
-        // TODO: DRO-24 implement delete stategy
+        // Soft delete tag
         tags[index].deletedAt = Date()
         try await updateTag(tags[index])
-        tags.remove(at: index)
         tagToRemove = nil
     }
     
@@ -64,7 +63,6 @@ import SwiftUI
         let result = try await fetchTagsWithCount()
         let items = result
             .map { TagMapper.toUI($0, placeCount: $1) }
-            .filter { $0.isActive }
         tags = items
     }
     

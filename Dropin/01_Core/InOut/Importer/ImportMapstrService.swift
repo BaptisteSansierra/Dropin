@@ -12,20 +12,29 @@ actor ImportMapstrService: ImportServiceProtocol {
 
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
+    private let fetchPlaces: FetchPlaces
+    private let fetchTags: FetchTags
     private let upsertPlace: UpsertPlace
     private let upsertTag: UpsertTag
     private let markerTagName: String
     
+    private var existingPlaces: [PlaceEntity] = []
+    private var existingTags: [TagEntity] = []
     private var duplicatePlacesCount: Int = 0
+    private var createdPlacesCount: Int = 0
     private var createdTagsCount: Int = 0
 
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
+         fetchPlaces: FetchPlaces,
+         fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
          upsertTag: UpsertTag,
          markerTagName: String) {
         self.saveContext = saveContext
         self.rollbackContext = rollbackContext
+        self.fetchPlaces = fetchPlaces
+        self.fetchTags = fetchTags
         self.upsertPlace = upsertPlace
         self.upsertTag = upsertTag
         self.markerTagName = markerTagName
@@ -39,6 +48,10 @@ actor ImportMapstrService: ImportServiceProtocol {
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
 
+        // Fetch existing
+        existingPlaces = try await fetchPlaces()
+        existingTags = try await fetchTags()
+        
         // Read file
         let data = try Data(contentsOf: url)
         guard !Task.isCancelled else { await cancel(canceled); return }
@@ -61,7 +74,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         try await saveContext()
         
         Log.info(" -> persisted")
-        await completion(collection.features.count, duplicatePlacesCount, 0, createdTagsCount)
+        await completion(createdPlacesCount, duplicatePlacesCount, 0, createdTagsCount)
     }
 
     // MARK: - GeoJSON decoding
@@ -113,51 +126,91 @@ actor ImportMapstrService: ImportServiceProtocol {
         try await upsertTag(markerTag, shouldSave: false)
 
         // Create all tags found in mapstr file
-        var tagsByName: [String: TagEntity] = [:]
+        var tagsByName: [String: (tag: TagEntity, exists: Bool)] = [:]
         for feature in collection.features {
             for mapstrTag in feature.properties.tags ?? [] {
                 try Task.checkCancellation()
+                
                 if tagsByName[mapstrTag.name] == nil {
-                    tagsByName[mapstrTag.name] = TagEntity(name: mapstrTag.name, color: mapstrTag.color)
+                    if let existingTag = existingTags.first(where: { item in item.name == mapstrTag.name }) {
+                        // Avoid creating duplicated tags
+                        tagsByName[mapstrTag.name] = (tag: existingTag,
+                                                      exists: true)
+                        
+                        if existingTag.deletedAt != nil {
+                            // In case tags exists dut sof deleted, we needa reactivate it
+                            try await upsertTag(existingTag.undeleted(), shouldSave: false)
+                            // Increment created tag counter
+                            createdTagsCount += 1
+                        }
+                    } else {
+                        let newTag = TagEntity(name: mapstrTag.name, color: mapstrTag.color)
+                        tagsByName[mapstrTag.name] = (tag: newTag,
+                                                      exists: false)
+                        existingTags.append(newTag)
+                        // Increment created tag counter
+                        createdTagsCount += 1
+                    }
                 }
             }
         }
-        for tag in tagsByName.values {
+        for item in tagsByName.values {
             try Task.checkCancellation()
-            try await upsertTag(tag, shouldSave: false)
+            if !item.exists {
+                try await upsertTag(item.tag, shouldSave: false)
+            }
         }
-        createdTagsCount = tagsByName.values.count
-
-//    TODO:
-//        ignore existing tags (do not count them)
-//        ignore existing places
-        
         
         // Create all places
         var upsertCount = 0
         for feature in collection.features {
             try Task.checkCancellation()
-            guard feature.geometry.coordinates.count >= 2 else { continue }
-            let placeTags = (feature.properties.tags ?? []).compactMap { tagsByName[$0.name] }
-            
-            //if feature.properties.name != "Porte Dauphine" {
-            //    Log.debug("SKIP Place \(feature.properties.name)")
-            //    continue
-            //}
-            
-            let place = PlaceEntity(id: UUID(),
-                                    name: feature.properties.name,
-                                    coordinates: CLLocationCoordinate2D(
-                                        latitude: feature.geometry.coordinates[1],
-                                        longitude: feature.geometry.coordinates[0]
-                                    ),
-                                    address: feature.properties.address ?? "",
-                                    tags: [markerTag] + placeTags,
-                                    icon: Self.mapIcon(feature.properties.icon))
-            try await upsertPlace(place, shouldSave: false)
+            // process place
+            try await processFeature(feature, markerTag: markerTag, tagsByName: tagsByName, progress: progress)
+            // and increment
             upsertCount += 1
             await progress(upsertCount)
         }
+    }
+    
+    private func processFeature(_ feature: Feature,
+                                markerTag: TagEntity,
+                                tagsByName: [String: (tag: TagEntity, exists: Bool)],
+                                progress: @MainActor @Sendable (Int) -> Void) async throws {
+        guard feature.geometry.coordinates.count >= 2 else { return }
+        let coords = CLLocationCoordinate2D(latitude: feature.geometry.coordinates[1],
+                                            longitude: feature.geometry.coordinates[0])
+        
+        // Avoid creating duplicates
+        guard !checkPlaceDuplicate(name: feature.properties.name, coordinates: coords) else {
+            duplicatePlacesCount += 1
+            return
+        }
+        
+        let placeTags = (feature.properties.tags ?? []).compactMap { tagsByName[$0.name]?.tag }
+        
+        //if feature.properties.name != "Porte Dauphine" {
+        //    Log.debug("SKIP Place \(feature.properties.name)")
+        //    continue
+        //}
+        
+        let place = PlaceEntity(id: UUID(),
+                                name: feature.properties.name,
+                                coordinates: coords,
+                                address: feature.properties.address ?? "",
+                                tags: [markerTag] + placeTags,
+                                icon: Self.mapIcon(feature.properties.icon))
+        try await upsertPlace(place, shouldSave: false)
+        createdPlacesCount += 1
+    }
+    
+    private func checkPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Bool {
+        // Check by names
+        // Check by coords epsilon
+        // ! Check the existing is not soft deleted if found
+        
+        
+        return true
     }
 
     // MARK: - Icon mapping

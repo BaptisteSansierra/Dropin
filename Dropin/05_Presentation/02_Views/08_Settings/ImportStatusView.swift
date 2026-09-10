@@ -103,7 +103,7 @@ struct ImportStatusView: View {
                 Text("import.complete.count")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.count)")
+                Text("\(importStatus.createdPlaceCount)")
                     .textStyle(.subheadlineSemibold)
             }
             
@@ -123,7 +123,7 @@ struct ImportStatusView: View {
                 Text("import.complete.count.group")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.groupCount)")
+                Text("\(importStatus.createdGroupCount)")
                     .textStyle(.subheadline, color: .textSecondary)
             }
 
@@ -133,7 +133,7 @@ struct ImportStatusView: View {
                 Text("import.complete.count.tag")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.tagCount)")
+                Text("\(importStatus.createdTagCount)")
                     .textStyle(.subheadline, color: .textSecondary)
             }
         }

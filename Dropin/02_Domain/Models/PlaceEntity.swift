@@ -96,6 +96,12 @@ struct PlaceEntity: Hashable, Sendable {
         self.deletedAt = nil
     }
     
+    func deleted(deletedAt: Date) -> PlaceEntity {
+        var copy = self
+        copy.deletedAt = nil
+        return copy
+    }
+
     func updated() -> PlaceEntity {
         var copy = self
         copy.updatedAt = Date()

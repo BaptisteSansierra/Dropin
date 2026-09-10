@@ -107,6 +107,9 @@ import SwiftUI
                                                  url: url,
                                                  saveContext: saveContext,
                                                  rollbackContext: rollbackContext,
+                                                 fetchPlaces: fetchPlaces,
+                                                 fetchGroups: fetchGroups,
+                                                 fetchTags: fetchTags,
                                                  upsertPlace: upsertPlace,
                                                  upsertGroup: upsertGroup,
                                                  upsertTag: upsertTag,
@@ -124,8 +127,9 @@ import SwiftUI
                 importStatus?.setError(.canceled)
             } completion: { placeCount, duplicatedCount, groupCount, tagCount in
                 importStatus?.setDuplicateCount(duplicatedCount)
-                importStatus?.setGroupCount(groupCount)
-                importStatus?.setTagCount(tagCount)
+                importStatus?.setCreatedPlaceCount(placeCount)
+                importStatus?.setCreatedGroupCount(groupCount)
+                importStatus?.setCreatedTagCount(tagCount)
                 importStatus?.complete()
             }
         } catch let error as ImportError {
@@ -138,3 +142,4 @@ import SwiftUI
         }
     }
 }
+

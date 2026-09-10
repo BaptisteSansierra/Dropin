@@ -20,7 +20,12 @@ struct GroupListView: View {
     // MARK: - State & Bindings
     @State private var viewModel: GroupListViewModel
     @Binding private var showingSideMenu: Bool
-        
+    
+    // MARK: - private properties
+    private var activeGroups: [GroupUI] {
+        viewModel.groups.filter { $0.isActive }
+    }
+
     // MARK: - init
     init(viewModel: GroupListViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
@@ -35,7 +40,7 @@ struct GroupListView: View {
                     .ignoresSafeArea()
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(Array(viewModel.groups.enumerated()), id: \.offset) { idx, group in
+                        ForEach(Array(activeGroups.enumerated()), id: \.offset) { idx, group in
                             groupRow(group)
                                 .frame(height: 65)
                                 .padding(.horizontal)
@@ -54,6 +59,7 @@ struct GroupListView: View {
                     .padding(.top, 20)
                 }
                 .padding(.horizontal)
+                .scrollIndicators(.hidden)
             }
             .overlay {
                 if viewModel.groups.isEmpty {

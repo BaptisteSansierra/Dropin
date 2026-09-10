@@ -11,6 +11,9 @@ actor ImportDropinService: ImportServiceProtocol {
     
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
+    private let fetchPlaces: FetchPlaces
+    private let fetchGroups: FetchGroups
+    private let fetchTags: FetchTags
     private let upsertPlace: UpsertPlace
     private let upsertGroup: UpsertGroup
     private let upsertTag: UpsertTag
@@ -21,11 +24,17 @@ actor ImportDropinService: ImportServiceProtocol {
     
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
+         fetchPlaces: FetchPlaces,
+         fetchGroups: FetchGroups,
+         fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
          upsertGroup: UpsertGroup,
          upsertTag: UpsertTag) {
         self.saveContext = saveContext
         self.rollbackContext = rollbackContext
+        self.fetchPlaces = fetchPlaces
+        self.fetchGroups = fetchGroups
+        self.fetchTags = fetchTags
         self.upsertPlace = upsertPlace
         self.upsertGroup = upsertGroup
         self.upsertTag = upsertTag

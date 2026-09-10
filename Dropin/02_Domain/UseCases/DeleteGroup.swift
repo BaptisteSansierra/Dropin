@@ -7,6 +7,9 @@
 
 import Foundation
 
+// Hard delete not currently used
+
+/*
 @MainActor
 struct DeleteGroup {
     private let repository: GroupRepository
@@ -22,3 +25,4 @@ struct DeleteGroup {
         return try await repository.delete(group)
     }
 }
+*/

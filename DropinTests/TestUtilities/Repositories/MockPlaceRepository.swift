@@ -54,6 +54,7 @@ final class MockPlaceRepository: PlaceRepository {
         places.append(place)
     }
     
+    /*
     func delete(_ place: PlaceEntity) async throws {
         guard let index = places.firstIndex(where: { $0.id == place.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
@@ -62,6 +63,7 @@ final class MockPlaceRepository: PlaceRepository {
         places.remove(at: index)
         //places.removeAll { $0.id == place.id }
     }
+     */
     
     func update(_ place: PlaceEntity) async throws {
         guard let index = places.firstIndex(where: { $0.id == place.id }) else {

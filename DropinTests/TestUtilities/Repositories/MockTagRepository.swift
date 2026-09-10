@@ -28,6 +28,7 @@ final class MockTagRepository: TagRepository {
         tags.append(tag)
     }
     
+    /*
     func delete(_ tag: TagEntity) async throws {
         guard let index = tags.firstIndex(where: { $0.id == tag.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
@@ -35,6 +36,7 @@ final class MockTagRepository: TagRepository {
         Log.info("Remove tag at index \(index)")
         tags.remove(at: index)
     }
+     */
     
     func update(_ tag: TagEntity) async throws {
     }

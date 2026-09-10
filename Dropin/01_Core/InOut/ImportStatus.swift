@@ -25,24 +25,19 @@ import Foundation
     }
     
     let filename: String
-    let source: ImportSource              // dropin / mapstr / ...
-    private(set) var count: Int           // places count
-    private(set) var duplicateCount: Int  // duplicated places count
-    private(set) var groupCount: Int      // groups count
-    private(set) var tagCount: Int        // tags count
-    private(set) var progress: Int
-    private(set) var status: Status
+    let source: ImportSource                      // dropin / mapstr / ...
+    private(set) var count: Int = 0               // places count
+    private(set) var duplicateCount: Int = 0      // duplicated places count
+    private(set) var createdPlaceCount: Int = 0   // created places count: may differ than count at the end: malformed / duplicate / ...
+    private(set) var createdGroupCount: Int = 0   // groups count
+    private(set) var createdTagCount: Int = 0     // tags count
+    private(set) var progress: Int = 0
+    private(set) var status: Status = .importing
 
     init(filename: String,
          source: ImportSource) {
         self.filename = filename
         self.source = source
-        count = 0
-        duplicateCount = 0
-        groupCount = 0
-        tagCount = 0
-        progress = 0
-        status = .importing
     }
     
     func setCount(_ count: Int) {
@@ -53,12 +48,16 @@ import Foundation
         self.duplicateCount = count
     }
 
-    func setGroupCount(_ count: Int) {
-        self.groupCount = count
+    func setCreatedPlaceCount(_ count: Int) {
+        self.createdPlaceCount = count
+    }
+
+    func setCreatedGroupCount(_ count: Int) {
+        self.createdGroupCount = count
     }
     
-    func setTagCount(_ count: Int) {
-        self.tagCount = count
+    func setCreatedTagCount(_ count: Int) {
+        self.createdTagCount = count
     }
     
     func updateProgress(_ count: Int) {

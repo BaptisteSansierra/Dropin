@@ -515,7 +515,8 @@ final class AppContainer {
                                    upsertPlace: UpsertPlace(repository: placeRepository),
                                    upsertGroup: UpsertGroup(repository: groupRepository),
                                    upsertTag: UpsertTag(repository: tagRepository),
-                                   deleteLibrary: DeleteLibrary(placeRepository: placeRepository,
+                                   deleteLibrary: DeleteLibrary(generalRepository: generalRepository,
+                                                                placeRepository: placeRepository,
                                                                 groupRepository: groupRepository,
                                                                 tagRepository: tagRepository),
                                    sync: syncService)

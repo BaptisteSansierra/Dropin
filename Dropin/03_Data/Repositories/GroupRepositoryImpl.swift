@@ -34,11 +34,13 @@ public final class GroupRepositoryImpl: GroupRepository {
         try modelContext.save()
     }
     
+    /* hard delete not used
     func delete(_ group: GroupEntity) async throws {
         let model = try await retrieveGroup(domainGroup: group)
         modelContext.delete(model)
         try modelContext.save()
     }
+     */
     
     func update(_ group: GroupEntity) async throws {
         let model = try await retrieveGroup(domainGroup: group)
