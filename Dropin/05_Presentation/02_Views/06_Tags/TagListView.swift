@@ -64,7 +64,7 @@ struct TagListView: View {
                             Rectangle()
                                 .fill(.fieldBorder)
                                 .frame(height: 1)
-                                .opacity(idx == viewModel.tags.count - 1 ? 0 : 1)
+                                .opacity(idx == activeTags.count - 1 ? 0 : 1)
                                 .padding(.leading)
                         }
                     }
@@ -79,8 +79,7 @@ struct TagListView: View {
                 .scrollIndicators(.hidden)
             }
             .overlay {
-                //if viewModel.tags.filter(\.isActive).isEmpty {
-                if viewModel.tags.isEmpty {
+                if activeTags.isEmpty {
                     placeholderView
                 }
             }

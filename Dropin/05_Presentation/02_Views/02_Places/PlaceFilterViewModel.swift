@@ -29,9 +29,11 @@ import SwiftUI
     }
     
     func loadData() async throws {
-        groups = try await fetchGroups()
+        groups = try await fetchGroups() 
+            .filter { $0.deletedAt == nil }
             .map { GroupMapper.toUI($0) }
         tags = try await fetchTags()
+            .filter { $0.deletedAt == nil }
             .map { TagMapper.toUI($0) }
     }
 }

@@ -17,6 +17,9 @@ struct PlacesListView: View {
 
     // MARK: - Properties
     private var places: [PlaceUI]
+    private var activePlaces: [PlaceUI] {
+        places.filter { $0.isActive }
+    }
 
     // MARK: - Init
     init(viewModel: PlacesListViewModel,
@@ -29,7 +32,7 @@ struct PlacesListView: View {
     
     // MARK: - Body
     var body: some View {
-        if places.isEmpty {
+        if activePlaces.isEmpty {
             placeholderView
         } else {
             contentView
@@ -44,10 +47,8 @@ struct PlacesListView: View {
 //                .frame(height: 1)
             ScrollView {
                 LazyVStack(spacing: 15) {
-                    ForEach(places) { place in
-                        if place.isActive {
-                            placeRowView(place)
-                        }
+                    ForEach(activePlaces) { place in
+                        placeRowView(place)
                     }
                 }
                 .padding(.top)

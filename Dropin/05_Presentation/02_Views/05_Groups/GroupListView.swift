@@ -47,7 +47,7 @@ struct GroupListView: View {
                             Rectangle()
                                 .fill(.fieldBorder)
                                 .frame(height: 1)
-                                .opacity(idx == viewModel.groups.count - 1 ? 0 : 1)
+                                .opacity(idx == activeGroups.count - 1 ? 0 : 1)
                                 .padding(.leading)
                         }
                     }
@@ -62,7 +62,7 @@ struct GroupListView: View {
                 .scrollIndicators(.hidden)
             }
             .overlay {
-                if viewModel.groups.isEmpty {
+                if activeGroups.isEmpty {
                     placeholderView
                 }
             }
