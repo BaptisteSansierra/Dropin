@@ -5,6 +5,10 @@
 //  Created by baptiste sansierra on 16/10/25.
 //
 
+// LEGACY
+
+#if false
+
 import Foundation
 @testable import Dropin
 
@@ -51,3 +55,6 @@ class MockDataProvider {
         return mockPlaces
     }
 }
+
+#endif
+
