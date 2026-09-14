@@ -26,7 +26,7 @@ final class ImportCoordinator {
          upsertGroup: UpsertGroup,
          upsertTag: UpsertTag,
          sync: any SyncServicePausableProtocol,
-         markerTagName: String? = nil) throws {
+         marker: ImportMarker? = nil) throws {
         self.source = source
         self.url = url
         self.sync = sync
@@ -43,13 +43,21 @@ final class ImportCoordinator {
                                                     upsertTag: upsertTag)
             case .mapstr:
                 Log.info("Mapstr import service created")
+                let markerGroupName: String
+                guard case .group(let name) = marker  else {
+                    // TODO: IMPROVEMENT - User may prefer to tag its import instead of grouping, this should be handled here
+                    fatalError("Not implemented")
+                }
+                markerGroupName = name
                 importService = ImportMapstrService(saveContext: saveContext,
                                                     rollbackContext: rollbackContext,
                                                     fetchPlaces: fetchPlaces,
+                                                    fetchGroups: fetchGroups,
                                                     fetchTags: fetchTags,
                                                     upsertPlace: upsertPlace,
+                                                    upsertGroup: upsertGroup,
                                                     upsertTag: upsertTag,
-                                                    markerTagName: markerTagName ?? "Mapstr")
+                                                    markerGroupName: markerGroupName)
             default:
                 Log.error("unrecognized file to be imported \(url.pathExtension)")
                 throw ImportError.unsupported(url.pathExtension)

@@ -15,8 +15,8 @@ struct PlaceEntity: Hashable, Sendable {
     let coordinates: CLLocationCoordinate2D
     let address: String
     let address2: String
-    let tags: [TagEntity]
-    let group: GroupEntity?
+    var tags: [TagEntity]
+    var group: GroupEntity?
     let images: [UUID]
     let icon: Icon?
     let rating: Float?
@@ -73,7 +73,8 @@ struct PlaceEntity: Hashable, Sendable {
          address: String,
          tags: [TagEntity],
          group: GroupEntity? = nil,
-         icon: Icon? = nil) {
+         icon: Icon? = nil,
+         notes: String? = nil) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -87,7 +88,7 @@ struct PlaceEntity: Hashable, Sendable {
         self.phone = []
         self.email = []
         self.url = []
-        self.notes = nil
+        self.notes = notes
         self.images = []
         
         let now = Date()
@@ -102,9 +103,22 @@ struct PlaceEntity: Hashable, Sendable {
         return copy
     }
 
+//    func undeleted() -> PlaceEntity {
+//        var copy = self
+//        copy.deletedAt = nil
+//        return copy
+//    }
+
     func updated() -> PlaceEntity {
         var copy = self
         copy.updatedAt = Date()
+        return copy
+    }
+
+    func replacedGroupAndTags(group: GroupEntity?, tags: [TagEntity]) -> PlaceEntity {
+        var copy = self
+        copy.group = group
+        copy.tags = tags
         return copy
     }
 
@@ -114,5 +128,14 @@ struct PlaceEntity: Hashable, Sendable {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+extension PlaceEntity {
+    func isIdentical(name: String, coords: CLLocationCoordinate2D) -> Bool {
+        // Let's not be too strict with place's case, the coords check is strong enough
+        let compareName = self.name.lowercased() == name.lowercased()
+        let compareCoords = self.coordinates.isIdentical(to: coords)
+        return compareName && compareCoords
     }
 }

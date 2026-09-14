@@ -25,6 +25,9 @@ struct DropinInOut: Codable {
         case places
     }
     
+    #if DEBUG
+    #endif
+    
     init(exportedAt: Date,
          places: [PlaceEntity],
          groups: [GroupEntity],
@@ -60,7 +63,7 @@ struct DropinInOut: Codable {
         if version == 1 {
             try loadV1(container)
         } else {
-            fatalError("This version '\(version)' is not handled")
+            // let the caller (likely ImportDropinService.decode) decide what an unrecognized version means
         }
     }
     

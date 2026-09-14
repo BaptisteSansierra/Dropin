@@ -20,7 +20,7 @@ struct ExportService {
         self.fetchTags = fetchTags
     }
     
-    private let encoder: JSONEncoder = {
+    static let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted]
         encoder.dateEncodingStrategy = .iso8601
@@ -35,9 +35,9 @@ struct ExportService {
         let (places, groups, tags) = try await (placesTask, groupsTask, tagsTask)
 
         let dropinExport = DropinInOut(exportedAt: Date(),
-                                        places: places,
-                                        groups: groups,
-                                        tags: tags)
+                                       places: places,
+                                       groups: groups,
+                                       tags: tags)
         let data = try encode(dropinExport)
         let url = exportURL(for: dropinExport)
         try data.write(to: url)
@@ -46,7 +46,7 @@ struct ExportService {
     }
     
     private func encode(_ export: DropinInOut) throws -> Data {
-        try encoder.encode(export)
+        try Self.encoder.encode(export)
     }
     
     private func exportURL(for export: DropinInOut) -> URL {

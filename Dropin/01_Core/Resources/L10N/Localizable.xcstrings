@@ -3582,6 +3582,22 @@
         }
       }
     },
+    "import.error.mapstr_marker_exists_%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The group %@ already exists, please select a new group name for your Mapstr import"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le groupe %@ existe déjà, veuillez choisir un nouveau nom de groupe pour votre import Mapstr"
+          }
+        }
+      }
+    },
     "import.error.title": {
       "localizations": {
         "en": {
@@ -5147,6 +5163,86 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.group_footer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All imported places will be grouped under it so you can find them easily"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous les lieux importés seront regroupés sous celui-ci pour les retrouver facilement"
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.group_placeholder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group name"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du groupe"
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.group_section": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import group"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groupe d'import"
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.name_updated_body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A group with that name already exists, so we adjusted it to keep group names unique. Feel free to edit it before continuing."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un groupe portant ce nom existe déjà, nous l'avons donc ajusté pour garder des noms uniques. N'hésitez pas à le modifier avant de continuer."
+          }
+        }
+      }
+    },
+    "settings.mapstr_import.name_updated_title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name updated"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom mis à jour"
           }
         }
       }

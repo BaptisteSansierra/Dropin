@@ -30,4 +30,9 @@ extension CLLocationCoordinate2D {
         let l2 = CLLocation(latitude: other.latitude, longitude: other.longitude)
         return l1.distance(from: l2)
     }
+    
+    // Check the coords are the same given an epsilon range (20 meters by default)
+    func isIdentical(to other: CLLocationCoordinate2D, epsilon: Double = 20) -> Bool {
+        distance(to: other) < epsilon
+    }
 }

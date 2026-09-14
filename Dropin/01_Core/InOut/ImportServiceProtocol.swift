@@ -13,4 +13,10 @@ protocol ImportServiceProtocol: Sendable {
                  progress: @MainActor @Sendable (Int) -> Void,
                  canceled: @MainActor @Sendable () -> Void,
                  completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws
+    
+    func execute(_ data: Data,
+                 onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
+                 progress: @MainActor @Sendable (Int) -> Void,
+                 canceled: @MainActor @Sendable () -> Void,
+                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws
 }

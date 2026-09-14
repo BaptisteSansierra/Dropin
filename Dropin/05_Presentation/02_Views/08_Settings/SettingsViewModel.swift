@@ -18,7 +18,7 @@ import SwiftUI
     var pickFile = false
     var isImporting = false
     var showMapstrConfig = false
-    var mapstrMarkerTagName: String = "Mapstr"
+    var mapstrMarkerGroupName: String = "Mapstr"
 
     var exportedTemporaryFile: IdentifiableURL?
     var isExporting = false
@@ -88,6 +88,10 @@ import SwiftUI
         importTask = Task { await runImport(source: .dropin, url: url) }
     }
 
+    func createMapstrImportConfigViewModel() -> MapstrImportConfigViewModel {
+        appContainer.createMapstrImportConfigViewModel(baseName: mapstrMarkerGroupName)
+    }
+
     func cancelImport() {
         importTask?.cancel()
     }
@@ -114,7 +118,7 @@ import SwiftUI
                                                  upsertGroup: upsertGroup,
                                                  upsertTag: upsertTag,
                                                  sync: sync,
-                                                 markerTagName: source == .mapstr ? mapstrMarkerTagName : nil)
+                                                 marker: source == .mapstr ? .group(mapstrMarkerGroupName) : nil)
             try await impCoord.process { count in
                 importStatus?.setCount(count)
             } progress: { count in

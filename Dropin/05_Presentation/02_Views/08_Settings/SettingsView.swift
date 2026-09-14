@@ -268,7 +268,8 @@ struct SettingsView: View {
     }
     
     private func mapstrConfigSheetContent() -> some View {
-        MapstrImportConfigView(tagName: $viewModel.mapstrMarkerTagName) {
+        MapstrImportConfigView(viewModel: viewModel.createMapstrImportConfigViewModel()) { finalName in
+            viewModel.mapstrMarkerGroupName = finalName
             viewModel.importSource = .mapstr
             viewModel.pickFile = true
         }

@@ -127,7 +127,7 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? HostingAnnotationView
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        view.showLabel = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
+        //view.showLabel = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
         view.configure(mapSettings: mapSettings)
         if mapSettings.clustering {
             view.clusteringIdentifier = "PlaceCluster"

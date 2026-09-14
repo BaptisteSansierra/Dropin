@@ -13,13 +13,16 @@ actor ImportMapstrService: ImportServiceProtocol {
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
     private let fetchPlaces: FetchPlaces
+    private let fetchGroups: FetchGroups
     private let fetchTags: FetchTags
     private let upsertPlace: UpsertPlace
+    private let upsertGroup: UpsertGroup
     private let upsertTag: UpsertTag
-    private let markerTagName: String
-    
-    private var existingPlaces: [PlaceEntity] = []
-    private var existingTags: [TagEntity] = []
+    private let markerGroupName: String
+
+    private var existingHardPlaces: [PlaceEntity] = []  // contains all the non-deleted existing places on disk
+    private var existingGroups: [GroupEntity] = []      // contains all the existsing groups on disk
+    private var existingTags: [TagEntity] = []          // contains all the existsing tags on disk
     private var duplicatePlacesCount: Int = 0
     private var createdPlacesCount: Int = 0
     private var createdTagsCount: Int = 0
@@ -27,17 +30,21 @@ actor ImportMapstrService: ImportServiceProtocol {
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
+         fetchGroups: FetchGroups,
          fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
+         upsertGroup: UpsertGroup,
          upsertTag: UpsertTag,
-         markerTagName: String) {
+         markerGroupName: String) {
         self.saveContext = saveContext
         self.rollbackContext = rollbackContext
         self.fetchPlaces = fetchPlaces
+        self.fetchGroups = fetchGroups
         self.fetchTags = fetchTags
         self.upsertPlace = upsertPlace
+        self.upsertGroup = upsertGroup
         self.upsertTag = upsertTag
-        self.markerTagName = markerTagName
+        self.markerGroupName = markerGroupName
     }
 
     func execute(_ url: URL,
@@ -45,19 +52,39 @@ actor ImportMapstrService: ImportServiceProtocol {
                  progress: @MainActor @Sendable (Int) -> Void,
                  canceled: @MainActor @Sendable () -> Void,
                  completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
+        // Handle the security scoping since the file lives outside sandbox
         let accessed = url.startAccessingSecurityScopedResource()
-        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
-
-        // Fetch existing
-        existingPlaces = try await fetchPlaces()
-        existingTags = try await fetchTags()
-        
+        defer {
+            if accessed { url.stopAccessingSecurityScopedResource() }
+        }
         // Read file
         let data = try Data(contentsOf: url)
+        try await execute(data,
+                          onPlacesCountResolved: onPlacesCountResolved,
+                          progress: progress,
+                          canceled: canceled,
+                          completion: completion)
+    }
+    
+    func execute(_ data: Data,
+                 onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
+                 progress: @MainActor @Sendable (Int) -> Void,
+                 canceled: @MainActor @Sendable () -> Void,
+                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
+
+        // Fetch existing
+        existingHardPlaces = try await fetchPlaces()
+            .filter { $0.deletedAt == nil }
+        existingTags = try await fetchTags()
+        existingGroups = try await fetchGroups()
+
         guard !Task.isCancelled else { await cancel(canceled); return }
 
         // Decode data
         let collection = try decode(data)
+        guard collection.features.count > 0 else {
+            throw ImportError.emptyFile
+        }
         guard !Task.isCancelled else { await cancel(canceled); return }
         Log.info("Found \(collection.features.count) Mapstr places")
         await onPlacesCountResolved(collection.features.count)
@@ -96,6 +123,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         let name: String
         let address: String?
         let icon: String?
+        let userComment: String?
         let tags: [MapstrTag]?
     }
 
@@ -120,10 +148,15 @@ actor ImportMapstrService: ImportServiceProtocol {
     }
 
     private func createLocalItems(_ collection: FeatureCollection, progress: @MainActor @Sendable (Int) -> Void) async throws {
-        
-        // All mapstr places are tagged with a specific mapstr tag, create this tag
-        let markerTag = TagEntity(name: markerTagName, color: "#FF9500")
-        try await upsertTag(markerTag, shouldSave: false)
+        // Create marker Group:
+        //   all mapstr places are grouped under a specific mapstr group, it must not exists already
+        if let existing = existingGroups.first(where: { $0.name == markerGroupName }), existing.deletedAt == nil {
+            throw ImportError.markerExists(markerGroupName)
+        }
+        let markerGroup = GroupEntity(name: markerGroupName,
+                                      color: String.randomColor(),
+                                      icon: .sf("square.and.arrow.down"))
+        try await upsertGroup(markerGroup, shouldSave: false)
 
         // Create all tags found in mapstr file
         var tagsByName: [String: (tag: TagEntity, exists: Bool)] = [:]
@@ -132,17 +165,18 @@ actor ImportMapstrService: ImportServiceProtocol {
                 try Task.checkCancellation()
                 
                 if tagsByName[mapstrTag.name] == nil {
-                    if let existingTag = existingTags.first(where: { item in item.name == mapstrTag.name }) {
-                        // Avoid creating duplicated tags
+                    if let existingTag = existingTags.first(where: { item in item.name == mapstrTag.name }),
+                       existingTag.deletedAt == nil {
+                        // Avoid creating duplicated tags appart if it was deleted
                         tagsByName[mapstrTag.name] = (tag: existingTag,
                                                       exists: true)
                         
-                        if existingTag.deletedAt != nil {
-                            // In case tags exists dut sof deleted, we needa reactivate it
-                            try await upsertTag(existingTag.undeleted(), shouldSave: false)
-                            // Increment created tag counter
-                            createdTagsCount += 1
-                        }
+                        //if existingTag.deletedAt != nil {
+                        //    // In case tags exists dut sof deleted, we needa reactivate it
+                        //    try await upsertTag(existingTag.undeleted(), shouldSave: false)
+                        //    // Increment created tag counter
+                        //    createdTagsCount += 1
+                        //}
                     } else {
                         let newTag = TagEntity(name: mapstrTag.name, color: mapstrTag.color)
                         tagsByName[mapstrTag.name] = (tag: newTag,
@@ -166,7 +200,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         for feature in collection.features {
             try Task.checkCancellation()
             // process place
-            try await processFeature(feature, markerTag: markerTag, tagsByName: tagsByName, progress: progress)
+            try await processFeature(feature, markerGroup: markerGroup, tagsByName: tagsByName)
             // and increment
             upsertCount += 1
             await progress(upsertCount)
@@ -174,16 +208,17 @@ actor ImportMapstrService: ImportServiceProtocol {
     }
     
     private func processFeature(_ feature: Feature,
-                                markerTag: TagEntity,
-                                tagsByName: [String: (tag: TagEntity, exists: Bool)],
-                                progress: @MainActor @Sendable (Int) -> Void) async throws {
+                                markerGroup: GroupEntity,
+                                tagsByName: [String: (tag: TagEntity, exists: Bool)]) async throws {
         guard feature.geometry.coordinates.count >= 2 else { return }
         let coords = CLLocationCoordinate2D(latitude: feature.geometry.coordinates[1],
                                             longitude: feature.geometry.coordinates[0])
         
         // Avoid creating duplicates
-        guard !checkPlaceDuplicate(name: feature.properties.name, coordinates: coords) else {
+        guard firstPlaceDuplicate(name: feature.properties.name, coordinates: coords) == nil else {
             duplicatePlacesCount += 1
+            // NOTE: the place from import is ignored as an existing place was found
+            //       The existing place is NOT updated with the imported place attributed
             return
         }
         
@@ -198,19 +233,27 @@ actor ImportMapstrService: ImportServiceProtocol {
                                 name: feature.properties.name,
                                 coordinates: coords,
                                 address: feature.properties.address ?? "",
-                                tags: [markerTag] + placeTags,
-                                icon: Self.mapIcon(feature.properties.icon))
+                                tags: placeTags,
+                                group: markerGroup,
+                                icon: Self.mapIcon(feature.properties.icon),
+                                notes: feature.properties.userComment)
+        
+        // Created place is added to existing places array so we ensure there's nu duplicates in the file
+        existingHardPlaces.append(place)
+        
+        // Add to database
         try await upsertPlace(place, shouldSave: false)
         createdPlacesCount += 1
     }
     
-    private func checkPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Bool {
-        // Check by names
-        // Check by coords epsilon
-        // ! Check the existing is not soft deleted if found
-        
-        
-        return true
+    private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> PlaceEntity? {
+        for place in existingHardPlaces {
+            if place.isIdentical(name: name, coords: coordinates) && place.deletedAt == nil {
+                Log.warning("duplicate found: \(name) > \(place.name) id:\(place.id)")
+                return place
+            }
+        }
+        return nil
     }
 
     // MARK: - Icon mapping

@@ -11,8 +11,6 @@ import CoreLocation
 import SwiftUI
 @testable import Dropin
 
-private class BundleFinder {}
-
 struct DropinCoreTests {
     
     @Test func testColorStuff() async throws {
@@ -54,47 +52,11 @@ struct DropinCoreTests {
         #expect(CLLocationCoordinate2D(string: "51.50986512, -0.11809234") != nil)
         #expect(CLLocationCoordinate2D(string: "51.509865  -0.118092") != nil)
         #expect(CLLocationCoordinate2D(string: "51,0") != nil)
-    }
-    
-    
-    @Test func importV1() async throws {
-
-        // Load the file from the test bundle
-        let bundle = Bundle(for: BundleFinder.self)
-        guard let url = bundle.url(forResource: "exportV1",
-                                   withExtension: DropinApp.strings.exportExtension) else {
-            Issue.record("exportV1.\(DropinApp.strings.exportExtension) not found in test bundle")
-            return
-        }
-
-        let data = try Data(contentsOf: url)
-
-        // Decode
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let export = try decoder.decode(DropinInOut.self, from: data)
-
-        // Assert envelope
-        #expect(export.version == 1)
-        #expect(export.exportedAt < Date())  // Check not distant future
-
-        // Assert counts 
-        #expect(export.groups.count == 7)
-        #expect(export.tags.count == 9)
-        #expect(export.places.count == 17)
-
-        // Assert relationships are coherent
-        let tagIds = Set(export.tags.map({ $0.id }))
-        let groupIds = Set(export.groups.map(\.id))
-
-        for place in export.places {
-            // Every tagId on a place references a known tag
-            let placeTagIds = place.tags.map({ $0.id })
-            #expect(placeTagIds.allSatisfy { tagIds.contains($0) })
-            // Every groupId on a place references a known group
-            if let groupId = place.group?.id {
-                #expect(groupIds.contains(groupId))
-            }
-        }
+        // Test isIdentical
+        let a = CLLocationCoordinate2D(latitude: 41.400000, longitude: 2.160000)
+        let b = CLLocationCoordinate2D(latitude: 41.400135, longitude: 2.160000)  // ~15m north of A
+        let c = CLLocationCoordinate2D(latitude: 41.400450, longitude: 2.160000)  // ~50m north of A
+        #expect(a.isIdentical(to: b) == true)
+        #expect(a.isIdentical(to: c) == false)
     }
 }

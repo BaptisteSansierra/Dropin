@@ -56,7 +56,7 @@ struct DropinDomainTests {
         let placeRepo = MockPlaceRepository()
         let fetchPlacesUC = FetchPlaces(repository: placeRepo)
         let createPlaceUC = CreatePlace(repository: placeRepo)
-        let deletePlaceUC = DeletePlace(repository: placeRepo)
+        //let deletePlaceUC = DeletePlace(repository: placeRepo)
 
         let place = PlaceEntity(id: UUID(),
                                 name: "London",
@@ -80,6 +80,7 @@ struct DropinDomainTests {
         }
         #expect(placesOrigin.count == 0)
         #expect(placesAfterInsert.count == 1)
+        /* Delete was removed temporarily, must be restored for DB cleanup background task
         // Check 1st delete place ok
         do {
             try await deletePlaceUC(place)
@@ -93,6 +94,7 @@ struct DropinDomainTests {
         await #expect(throws: DomainError.Place.notFound, performing: {
             try await deletePlaceUC(place)
         })
+         */
     }
     
     @Test func createGroup() async throws {

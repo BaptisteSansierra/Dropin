@@ -523,6 +523,10 @@ final class AppContainer {
         return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
+    func createMapstrImportConfigViewModel(baseName: String) -> MapstrImportConfigViewModel {
+        MapstrImportConfigViewModel(baseName: baseName, fetchGroups: FetchGroups(repository: groupRepository))
+    }
+
     // MARK: - about views
     func createAboutView(showingSideMenu: Binding<Bool>) -> AboutView {
         let vm = AboutViewModel(coordinator: aboutCoordinator)
