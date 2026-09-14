@@ -58,31 +58,32 @@ struct MapSettings: Equatable {
 
     init() {
         let store = UserDefaults.standard
-        let pinStyleKey = DropinApp.userDefaultsKeys.pinStyle
-        let pinSizeKey = DropinApp.userDefaultsKeys.pinSize
-        let hidePOIKey = DropinApp.userDefaultsKeys.hidePOI
-        let satelliteKey = DropinApp.userDefaultsKeys.satellite
-        let clusteringKey = DropinApp.userDefaultsKeys.clustering
-        mapSettings = MapSettings(pinStyle: .rounded,
-                                  pinSize: 36,
-                                  hidePOI: true,
-                                  satellite: false,
-                                  clustering: true)
-        if let _ = store.object(forKey: pinStyleKey) {
-            mapSettings.pinStyle = PinStyle(rawValue: store.integer(forKey: pinStyleKey)) ?? .rounded
+        let keys = DropinApp.userDefaultsKeys.self
+
+        var pinStyle: PinStyle = .rounded
+        if store.object(forKey: keys.pinStyle) != nil {
+            pinStyle = PinStyle(rawValue: store.integer(forKey: keys.pinStyle)) ?? .rounded
         }
-        if let _ = store.object(forKey: pinSizeKey) {
-            mapSettings.pinSize = store.double(forKey: pinSizeKey).clamped(to: MapSettings.pinSizeRange)
+        var pinSize: Double = 36
+        if store.object(forKey: keys.pinSize) != nil {
+            pinSize = store.double(forKey: keys.pinSize).clamped(to: MapSettings.pinSizeRange)
         }
-        if let _ = store.object(forKey: hidePOIKey) {
-            mapSettings.hidePOI = store.bool(forKey: hidePOIKey)
+        var hidePOI = true
+        if store.object(forKey: keys.hidePOI) != nil {
+            hidePOI = store.bool(forKey: keys.hidePOI)
         }
-        if let _ = store.object(forKey: satelliteKey) {
-            mapSettings.satellite = store.bool(forKey: satelliteKey)
+        var satellite = false
+        if store.object(forKey: keys.satellite) != nil {
+            satellite = store.bool(forKey: keys.satellite)
         }
-        if let _ = store.object(forKey: clusteringKey) {
-            mapSettings.clustering = store.bool(forKey: clusteringKey)
+        var clustering = true
+        if store.object(forKey: keys.clustering) != nil {
+            clustering = store.bool(forKey: keys.clustering)
         }
+
+        mapSettings = MapSettings(pinStyle: pinStyle, pinSize: pinSize,
+                                  hidePOI: hidePOI, satellite: satellite,
+                                  clustering: clustering)
     }
     
     func equals(_ other: AppSettings) -> Bool {
