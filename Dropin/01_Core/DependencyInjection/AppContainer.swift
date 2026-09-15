@@ -321,7 +321,8 @@ final class AppContainer {
                              isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>,
                              mapReloadGen: Int,
-                             navBarHeight: CGFloat) -> PlacesMapView {
+                             navBarHeight: CGFloat,
+                             isActiveTab: Bool = true) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: placeCoordinator,
                                     locationManager: locationManager)
@@ -331,7 +332,8 @@ final class AppContainer {
                              isParentPresenting: isParentPresenting,
                              showingCreatePlaceMenu: showingCreatePlaceMenu,
                              mapReloadGen: mapReloadGen,
-                             navBarHeight: navBarHeight)
+                             navBarHeight: navBarHeight,
+                             isActiveTab: isActiveTab)
     }
     
     func createPlacesListView(places: [PlaceUI],

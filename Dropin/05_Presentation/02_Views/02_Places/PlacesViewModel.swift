@@ -104,7 +104,8 @@ import CoreLocation
                                                 isParentPresenting: bindingIsPresenting,
                                                 showingCreatePlaceMenu: bindingShowingCreatePlaceMenu,
                                                 mapReloadGen: mapReloadGen,
-                                                navBarHeight: navBarHeight)
+                                                navBarHeight: navBarHeight,
+                                                isActiveTab: selectedTab == 0)
     }
     
     func createPlacesListView() -> PlacesListView {

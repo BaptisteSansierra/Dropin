@@ -69,7 +69,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
     private let onMapCameraUpdate: MapCameraUpdateHandler?
     private let interactionStatus: (() -> InteractionStatus)
-    
+    private let isActiveTab: Bool
+
     // MARK: Init
     init(config: Configuration,
          mapController: MapController,
@@ -80,7 +81,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
          onMapCameraUpdate: MapCameraUpdateHandler? = nil,
          interactionStatus: @escaping (() -> InteractionStatus),
          mapReloadGen: Int = 0,
-         bottomInset: CGFloat = 0) {
+         bottomInset: CGFloat = 0,
+         isActiveTab: Bool = true) {
         self.config = config
         self.mapController = mapController
         self.places = places
@@ -92,6 +94,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         self.interactionStatus = interactionStatus
         self.mapReloadGen = mapReloadGen
         self.bottomInset = bottomInset
+        self.isActiveTab = isActiveTab
     }
     
     func makeUIViewController(context: Context) -> PlacesMKMapVC {
@@ -178,8 +181,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //
         // Update selection
         //
-        if mapView.selectedAnnotations.count == 0 && selectedPlaceId != nil  {
-            // Select
+        if isActiveTab, mapView.selectedAnnotations.count == 0, selectedPlaceId != nil {
+            // Select (triggers didSelect → zoom+center) — only while this map is the visible tab.
             let match = mapView.annotations
                 .compactMap({ $0 as? MKPlaceAnnotation })
                 .filter({ $0.id == selectedPlaceId! })
@@ -187,7 +190,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                 mapView.selectAnnotation(match[0], animated: true)
             }
         } else if mapView.selectedAnnotations.count > 0 && selectedPlaceId == nil {
-            // Deselect
+            // Deselect — harmless regardless of tab, no camera movement.
             mapView.deselectAnnotation(mapView.selectedAnnotations[0], animated: true)
         }
     }

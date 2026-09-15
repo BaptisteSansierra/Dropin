@@ -26,6 +26,7 @@ struct PlacesMapView: View {
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
     private var navBarHeight: CGFloat
     private var mapReloadGen: Int
+    private var isActiveTab: Bool
 
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
@@ -34,7 +35,8 @@ struct PlacesMapView: View {
          isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>,
          mapReloadGen: Int,
-         navBarHeight: CGFloat) {
+         navBarHeight: CGFloat,
+         isActiveTab: Bool = true) {
         self.viewModel = viewModel
         self.places = places
         self._selectedPlaceId = selectedPlaceId
@@ -42,6 +44,7 @@ struct PlacesMapView: View {
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
         self.mapReloadGen = mapReloadGen
         self.navBarHeight = navBarHeight
+        self.isActiveTab = isActiveTab
     }
     
     // MARK: - Body
@@ -61,7 +64,8 @@ struct PlacesMapView: View {
                                onMapCameraUpdate: viewModel.onCameraUpdate,
                                interactionStatus: viewModel.interactionStatus,
                                mapReloadGen: mapReloadGen,
-                               bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea())
+                               bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea(),
+                               isActiveTab: isActiveTab)
                  
                 if viewModel.pickingAddress || viewModel.pickingCoordinates {
                     pickingMarkerView
