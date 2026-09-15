@@ -127,14 +127,44 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? HostingAnnotationView
             ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        //view.showLabel = mapView.camera.altitude < DropinApp.ui.mapLabelHideAltitude
+        let (showLabel, priority) = declutterState(for: mapView)
+        view.showLabel = showLabel
         view.configure(mapSettings: mapSettings)
         if mapSettings.clustering {
             view.clusteringIdentifier = "PlaceCluster"
         }
         view.canShowCallout = false
-        view.displayPriority = .required // .defaultHigh
+        view.displayPriority = priority
         view.collisionMode = .circle
         return view
+    }
+
+    // MARK: - Declutter
+
+    /// Single source of truth for how zoomed-out the map currently is. Used
+    /// both at annotation-view creation time and when refreshing already-
+    /// created views on camera settle.
+    private func declutterState(for mapView: MKMapView) -> (showLabel: Bool, priority: MKFeatureDisplayPriority) {
+        let altitude = mapView.camera.altitude
+        let showLabel = altitude < DropinApp.map.mapLabelHideAltitude
+        guard !mapSettings.clustering else {
+            return (showLabel, .required)   // clustering already owns density; never drop glyphs ourselves
+        }
+        let priority: MKFeatureDisplayPriority = altitude > DropinApp.map.mapPinDropAltitude ? .defaultLow : .required
+        return (showLabel, priority)
+    }
+
+    /// Called on camera-settle (not mid-gesture) to refresh already-created
+    /// annotation views — `createPlaceView` only runs once per dequeue, so
+    /// without this, showLabel/displayPriority get stuck at whatever altitude
+    /// was current the last time MapKit dequeued that specific view.
+    func refreshDeclutterState(on mapView: MKMapView) {
+        let (showLabel, priority) = declutterState(for: mapView)
+        for annotation in mapView.annotations {
+            guard annotation is MKPlaceAnnotation,
+                  let view = mapView.view(for: annotation) as? HostingAnnotationView else { continue }
+            view.showLabel = showLabel
+            view.displayPriority = priority
+        }
     }
 }

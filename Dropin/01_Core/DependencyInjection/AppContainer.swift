@@ -39,7 +39,9 @@ final class AppContainer {
     private let authStatus: AuthStatus
     private let profileService: any ProfileServiceProtocol
     private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
-
+    // Map memory
+    private(set) var lastMapRegion: MKCoordinateRegion?
+    
     /// Narrow auth-state surface for routing (no full `AuthStatus` exposed).
     /// Reading this from a view body registers observation on both
     /// `isRestoring` and `authService.session` because both are `@Observable`.
@@ -158,6 +160,10 @@ final class AppContainer {
         authStatus.isRestoring = true
         await authService.restoreSession()
         authStatus.isRestoring = false
+    }
+
+    func rememberMapRegion(_ region: MKCoordinateRegion?) {
+        lastMapRegion = region
     }
 
     // MARK: - sign-out

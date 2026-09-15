@@ -52,7 +52,7 @@ struct PlacesMapView: View {
                 creationDialogPlaceholderView
                 
                 // Map with bottom inset for card
-                PlacesMKMapVCR(config: .interactive,
+                PlacesMKMapVCR(config: viewModel.launchConfig,
                                mapController: viewModel.mapController,
                                places: places,
                                pendingCoordinate: viewModel.tmpPlace?.coordinates,

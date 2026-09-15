@@ -17,8 +17,16 @@ typealias MapCameraUpdateHandler = (MKMapCamera,
 struct PlacesMKMapVCR: UIViewControllerRepresentable {
 
     struct Configuration {
-        enum LaunchPosition {
-            case follow
+        enum LaunchPosition: Equatable {
+            static func == (lhs: LaunchPosition, rhs: LaunchPosition) -> Bool {
+                switch (lhs, rhs) {
+                    case (.user, .user): return true
+                    case (.region, .region): return true
+                    case (.none, .none): return true
+                    default: return false
+                }
+            }
+            case user
             case region(region: MKCoordinateRegion)
             case none
         }
@@ -29,7 +37,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //var clustering = true
         var showsUserLocation = true
         //var tracksUserAtLaunch = true
-        var positionAtLaunch: LaunchPosition = .follow
+        var positionAtLaunch: LaunchPosition = .user
         //var hidesLabelsWhenZoomedOut = true
 
         static let interactive = Configuration()                 // main map
@@ -303,10 +311,12 @@ extension PlacesMKMapVCR {
         private let onMapCameraUpdate: MapCameraUpdateHandler?
         private let interactionStatus: (() -> InteractionStatus)
         private(set) var pendingCoordinate: CLLocationCoordinate2D? = nil
-        
+
+        private var hasSnappedToUser = false
+
         var lastReloadGen: Int = 0
         weak var mapView: MKMapView?
-        
+
         // Annotation update guard
         var lastActiveIds: Set<UUID> = []
         // Label visibility state
@@ -451,11 +461,33 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
         view.isSelected = false
     }
     
+    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+        guard !hasSnappedToUser else {
+            return
+        }
+        guard config.positionAtLaunch == .user else {
+            return
+        }
+        guard let coordinate = userLocation.location?.coordinate else {
+            return
+        }
+        hasSnappedToUser = true
+        centerOn(coords: coordinate, withSheetOffset: false)
+        //mapView.setCenter(coordinate, animated: true)
+    }
+    
     func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
         guard let onMapCameraUpdate = onMapCameraUpdate else { return }
         onMapCameraUpdate(mapView.camera,
                           mapView.region,
                           mapView.visibleMapRect)
+    }
+
+    // Settle-only (not continuous like mapViewDidChangeVisibleRegion, which
+    // fires mid-gesture and previously caused annotation positions to
+    // decorrelate from the map when used to refresh view state).
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        annotationViewFactory.refreshDeclutterState(on: mapView)
     }
 }
 
@@ -493,14 +525,14 @@ class PlacesMKMapVC: UIViewController {
         mapView.isZoomEnabled = coordinator.config.zoomEnabled
         mapView.isRotateEnabled = coordinator.config.rotateEnabled
         mapView.isPitchEnabled = false
+        mapView.userTrackingMode = .none
         switch coordinator.config.positionAtLaunch {
-            case .follow:
-                mapView.userTrackingMode = .follow
+            case .user:
+                ()
             case .region(let region):
-                mapView.userTrackingMode = .none
                 mapView.setRegion(region, animated: false)
             case .none:
-                mapView.userTrackingMode = .none
+                ()
         }
 
         coordinator.annotationViewFactory.registerViews(for: mapView)

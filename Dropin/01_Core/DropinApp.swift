@@ -201,11 +201,10 @@ extension DropinApp {
     }
     struct defaults {
         static let minimumPasswordLength: Int = 8
-        
-        static let latitude: Double = 46.232193
-        static let longitude: Double = 2.209667
-        static let latitudeSpan: Double = 10
-        static let longitudeSpan: Double = 5
+    }
+    struct map {
+        static let mapLabelHideAltitude: Double = 10_000 // meters — labels hidden above this camera altitude
+        static let mapPinDropAltitude: Double = 40_000   // meters — non-required pins may be dropped by collision above this altitude
     }
     struct ui {
         static let mainTabBarHeight: CGFloat = 80
@@ -216,7 +215,6 @@ extension DropinApp {
         static let addressPickerSheetHeight: CGFloat = 225
         static let coordinatesPickerSheetHeight: CGFloat = 300
         //static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
-        static let mapLabelHideAltitude: Double = 10_000 // meters — labels hidden above this camera altitude
     }
     struct storage {
         static let thumbnailSize: CGFloat = 400

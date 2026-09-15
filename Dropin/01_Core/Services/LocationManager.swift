@@ -14,6 +14,7 @@ enum LocationManagerError: Error {
 
 /// `LocationManager` owns the current location and CoreLocation authorization status
 /// It also handles location utilities such as address from coordinates and so onj
+@MainActor
 @Observable class LocationManager: NSObject {
     
     // MARK: - observed vars
@@ -40,9 +41,8 @@ enum LocationManagerError: Error {
         manager.delegate = self
         lastKnownLocation = manager.location?.coordinate
         checkAuthorizationStatus()
-        guard let _ = authorized else { return }
-        //manager.requestLocation()
-        manager.startMonitoringSignificantLocationChanges()
+        guard authorized == true else { return }
+        manager.startUpdatingLocation()
     }
     
     private func checkAuthorizationStatus() {

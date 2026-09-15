@@ -53,6 +53,16 @@ import MapKit
     }
     var coordinatesPickerCoords: CLLocationCoordinate2D = .zero
     var coordinatesPickerViewCoords: CGPoint = .zero
+    
+    // Map configuration
+    var launchConfig: PlacesMKMapVCR.Configuration {
+        guard let lastRegion = appContainer.lastMapRegion else {
+            return .interactive
+        }
+        var config = PlacesMKMapVCR.Configuration.interactive
+        config.positionAtLaunch = .region(region: lastRegion)
+        return config
+    }
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
@@ -71,7 +81,7 @@ import MapKit
         //self.mapActionBus = MapActionBus(locationManager: locationManager)
         self.mapController = MapController()
     }
-    
+
     // MARK: Navigation
     func pushLookupPlacesView() {
         coordinator.pushLookupPlacesView()
@@ -106,6 +116,7 @@ import MapKit
         mapConfig.currentCamera = camera
         mapConfig.currentRegion = region
         mapConfig.currentRect = rect
+        appContainer.rememberMapRegion(region)
 
         // Update picker position if needed
         guard pickingAddress || pickingCoordinates else { return }
@@ -168,7 +179,7 @@ import MapKit
         }
          */
     }
-
+    
     // MARK: - private
     private func reset() {
         tmpPlace = nil
