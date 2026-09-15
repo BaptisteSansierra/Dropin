@@ -73,13 +73,6 @@ struct PlacesMapView: View {
                 }
             }
         }
-        /*  Legacy ?
-        .onChange(of: selectedPlaceId, { oldValue, newValue in
-            if newValue == nil {
-                viewModel.clearSelection()
-            }
-        })
-         */
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .onChange(of: isParentPresenting, { oldValue, newValue in
             guard isParentPresenting else { return }
@@ -212,7 +205,6 @@ struct PlacesMapView: View {
                                      offset: CGPoint(x: -1, y: 1),
                                      imageFrame: CGSize(width: 15, height: 15)) {
                             viewModel.centerOnUser()
-                            //viewModel.mapSettings.position = .camera(MapCamera(centerCoordinate: userLoc, distance: 5000))
                         }
                         .padding(EdgeInsets(top: 15,
                                             leading: 10,

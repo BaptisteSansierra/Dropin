@@ -26,6 +26,11 @@ struct AnnotationViewFactory {
     
     private var mapSettings: MapSettings
 
+    // Last state applied by `refreshDeclutterState`, so unchanged settles
+    // (the common case) skip the pin walk entirely instead of re-touching
+    // every on-screen view for no reason.
+    private var lastDeclutterState: (showLabel: Bool, priority: MKFeatureDisplayPriority)?
+
     init(mapSettings: MapSettings) {
         self.mapSettings = mapSettings
     }
@@ -154,15 +159,26 @@ struct AnnotationViewFactory {
         return (showLabel, priority)
     }
 
-    /// Called on camera-settle (not mid-gesture) to refresh already-created
-    /// annotation views — `createPlaceView` only runs once per dequeue, so
+    /// Called on camera-settle (not mid-gesture) to refresh already-created annotation views
+    /// `createPlaceView` only runs once per dequeue, so
     /// without this, showLabel/displayPriority get stuck at whatever altitude
     /// was current the last time MapKit dequeued that specific view.
-    func refreshDeclutterState(on mapView: MKMapView) {
+    mutating func refreshDeclutterState(on mapView: MKMapView) {
         let (showLabel, priority) = declutterState(for: mapView)
-        for annotation in mapView.annotations {
-            guard annotation is MKPlaceAnnotation,
-                  let view = mapView.view(for: annotation) as? HostingAnnotationView else { continue }
+
+        // Skip the walk entirely if the altitude bucket didn't actually change
+        // At high pin density, reconfiguring every view on every settle (even a no-op one) is too expensive
+        if let last = lastDeclutterState, last.showLabel == showLabel, last.priority == priority {
+            return
+        }
+        lastDeclutterState = (showLabel, priority)
+
+        // Only touch pins actually on screen, not every places
+        // Bounds the cost to what's visible regardless of how many places exist total.
+        let visiblePlaces = mapView.annotations(in: mapView.visibleMapRect)
+            .compactMap { $0 as? MKPlaceAnnotation }
+        for placeAnnotation in visiblePlaces {
+            guard let view = mapView.view(for: placeAnnotation) as? HostingAnnotationView else { continue }
             view.showLabel = showLabel
             view.displayPriority = priority
         }
