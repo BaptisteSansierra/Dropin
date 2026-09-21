@@ -4612,13 +4612,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Places, groups, tags, and photos you add are stored on your device and in our Supabase database. This data is never shared, sold, or used for advertising."
+            "value": "Places, groups, tags, and photos you add are stored on your device and on secure third-party cloud servers, which may be located outside your country. This data is never shared, sold, or used for advertising."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les lieux, groupes, tags et photos que vous ajoutez sont stockés sur votre appareil et dans notre base de données Supabase. Ces données ne sont jamais partagées, vendues, ni utilisées à des fins publicitaires."
+            "value": "Les lieux, groupes, tags et photos que vous ajoutez sont stockés sur votre appareil et sur des serveurs cloud tiers sécurisés, pouvant être situés hors de votre pays. Ces données ne sont jamais partagées, vendues, ni utilisées à des fins publicitaires."
           }
         }
       }

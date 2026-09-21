@@ -13,8 +13,8 @@ struct PrivacyPolicyView: View {
     private static let lastUpdated: Date = {
         var components = DateComponents()
         components.year = 2026
-        components.month = 7
-        components.day = 30
+        components.month = 9
+        components.day = 21
         return Calendar.current.date(from: components) ?? Date()
     }()
 
