@@ -1,43 +1,34 @@
 //
-//  MKPlaceAnnotation.swift
+//  MKPlacePromotedAnnotation.swift
 //  Dropin
-//
-//  Created by baptiste sansierra on 19/3/26.
 //
 
 import MapKit
 
+/// Used for a promoted place, rendered as a full pin
 @MainActor
-class MKPlaceAnnotation: NSObject, MKAnnotation {
-    
+class MKPlacePromotedAnnotation: NSObject, MKPlaceAnnotationRepresentable {
+
     let id: UUID
     let coordinate: CLLocationCoordinate2D
     let title: String?
     let subtitle: String?
-    let color: UIColor
-    let icon: UIImage?
     let place: PlaceUI
-    
+
     init(place: PlaceUI) {
         self.id = place.id
         self.coordinate = place.coordinates
         self.title = place.name
         self.subtitle = ""
-        self.color = UIColor(place.group?.color ?? .gray)
-        if let group = place.group {
-            self.icon = UIImage(icon: group.icon)
-        } else {
-            self.icon = nil
-        }
         self.place = place
         super.init()
     }
-    
+
     override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? MKPlaceAnnotation else { return false }
+        guard let other = object as? MKPlacePromotedAnnotation else { return false }
         return id == other.id
     }
-    
+
     override var hash: Int {
         id.hashValue
     }

@@ -7,7 +7,57 @@
 
 import SwiftUI
 
+/// Hosts `PlacePinAnnotationLayerView` (UIKit) — the production pin style now
+/// renders via the UIKit port. `LEGACY_PlacePinAnnotationView` below is the
+/// original SwiftUI implementation, kept (unused in production) for
+/// side-by-side comparison in `MockPlacePinAnnotationView`'s preview.
 struct PlacePinAnnotationView: View {
+
+    private var color: Color
+    private var icon: Icon?
+    private var iconExtra: Icon?
+    private var size: CGFloat
+    private var shadow: Bool
+
+    init(color: Color = .dropinPrimary,
+         icon: Icon? = nil,
+         iconExtra: Icon? = nil,
+         size: CGFloat = 36,
+         shadow: Bool = true) {
+        self.color = color
+        self.icon = icon
+        self.iconExtra = iconExtra
+        self.size = size
+        self.shadow = shadow
+    }
+
+    var body: some View {
+        PlacePinAnnotationLayerViewRepresentable(color: UIColor(color),
+                                                  icon: icon,
+                                                  iconExtra: iconExtra,
+                                                  shadow: shadow)
+            .frame(width: size, height: size)
+    }
+}
+
+private struct PlacePinAnnotationLayerViewRepresentable: UIViewRepresentable {
+    var color: UIColor
+    var icon: Icon?
+    var iconExtra: Icon?
+    var shadow: Bool
+
+    func makeUIView(context: Context) -> PlacePinAnnotationLayerView {
+        PlacePinAnnotationLayerView()
+    }
+
+    func updateUIView(_ uiView: PlacePinAnnotationLayerView, context: Context) {
+        uiView.configure(color: color, icon: icon, iconExtra: iconExtra, shadow: shadow)
+    }
+}
+
+/// Original SwiftUI implementation — not used in production anymore, kept for
+/// comparison against the UIKit-hosted `PlacePinAnnotationView` above.
+struct LEGACY_PlacePinAnnotationView: View {
 
     // MARK: - private vars
     private var color: Color
@@ -60,6 +110,7 @@ struct MockPlacePinAnnotationView: View {
     @State var place3: PlaceUI
     @State var place4: PlaceUI
     @State var place5: PlaceUI
+    @State var place6: PlaceUI
 
     var body: some View {
         VStack {
@@ -70,24 +121,51 @@ struct MockPlacePinAnnotationView: View {
             .padding(.bottom, 50)
             Divider()
                 .padding(.bottom, 50)
-            HStack {
-                PlacePinAnnotationView(color: place5.groupColor,
-                                       icon: place5.group?.icon,
-                                       iconExtra: place5.icon,
-                                       size: size)
+
+            // UIKit vs Legacy SwiftUI side by side, at the
+            // slider-controlled size, for direct comparison.
+            HStack(spacing: 30) {
+                VStack {
+                    Text("New").font(.caption)
+                    PlacePinAnnotationView(color: place5.groupColor,
+                                           icon: place5.group?.icon,
+                                           iconExtra: place5.icon,
+                                           size: size)
+                }
+                VStack {
+                    Text("Legacy").font(.caption)
+                    LEGACY_PlacePinAnnotationView(color: place5.groupColor,
+                                                  icon: place5.group?.icon,
+                                                  iconExtra: place5.icon,
+                                                  size: size)
+                }
             }
-            .frame(height: 200)
-            
+            HStack(spacing: 30) {
+                VStack {
+                    PlacePinAnnotationView(color: place6.groupColor,
+                                           icon: place6.group?.icon,
+                                           iconExtra: place6.icon,
+                                           size: size)
+                }
+                VStack {
+                    LEGACY_PlacePinAnnotationView(color: place6.groupColor,
+                                                  icon: place6.group?.icon,
+                                                  iconExtra: place6.icon,
+                                                  size: size)
+                }
+            }
+//            .frame(height: 220)
+
             Slider(value: $size, in: 10...200)
                 .padding(.horizontal, 30)
-            
+
             Divider()
         }
         .onChange(of: size) { oldValue, newValue in
             print("newValue:\(newValue)")
         }
     }
-    
+
     var contentView: some View {
         VStack(spacing: 30) {
             HStack(spacing: 10) {
@@ -113,7 +191,7 @@ struct MockPlacePinAnnotationView: View {
             }
         }
     }
-    
+
     init() {
         let mock = MockContainer()
         self.mock = mock
@@ -128,17 +206,20 @@ struct MockPlacePinAnnotationView: View {
         self.place3 = place.copy()
         self.place4 = place.copy()
         self.place5 = place.copy()
+        self.place6 = place.copy()
 
         self.place1.group = nil
         self.place2.group = group1
         self.place3.group = group2
         self.place4.group = nil
         self.place5.group = group2
+        self.place6.group = group1
 
         self.place2.icon = .sf("duffle.bag")
         self.place3.icon = nil
         self.place4.icon = .sf("figure.seated.side.left.airbag.on")
         self.place5.icon = .sf("ivfluid.bag")
+        self.place6.icon = .fa("paw")
     }
 }
 
@@ -146,4 +227,3 @@ struct MockPlacePinAnnotationView: View {
     MockPlacePinAnnotationView()
 }
 #endif
-

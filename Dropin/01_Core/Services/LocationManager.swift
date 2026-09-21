@@ -60,7 +60,7 @@ enum LocationManagerError: Error {
 }
 
 // MARK: - Conform CLLocationManagerDelegate
-extension LocationManager: CLLocationManagerDelegate {
+extension LocationManager: @MainActor CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let firstLoc = locations.first else { return }

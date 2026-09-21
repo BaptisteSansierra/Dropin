@@ -16,12 +16,12 @@ struct BellCurveShape: Shape {
 
         // Create arrow
         var arrowPath = Path()
-        let arrowLen = rect.height
+        //let arrowLen = rect.height
         let steps: Int = 60
-        var cxStep = rect.width / CGFloat(steps)
+        let cxStep = rect.width / CGFloat(steps)
         for i in 0..<steps {
             let t = CGFloat(i) / CGFloat(steps - 1)
-            var cx = cxStep * CGFloat(i)
+            let cx = cxStep * CGFloat(i)
             var cy = CGFloat.zero
 
             // t in [0, 1] move in [-3, 3]

@@ -36,18 +36,12 @@ struct PlaceAnnotation: MapContent {
                         PlaceRectAnnotationView(color: place.groupColor,
                                                 icon: place.group?.icon,
                                                 iconExtra: place.icon)
-                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.mapSettings.pinSize)
-                        let arrrowHeight = appSettings.mapSettings.pinSize - rectHeight
-                        BellCurveShape()
-                            .fill(place.groupColor)
-                            .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
                     case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
                                                icon: place.group?.icon,
                                                iconExtra: place.icon)
                 }
             }
-            //.offset(y: -DropinApp.ui.pinHeight * 0.5)
             .onTapGesture {
                 selectedPlaceId = place.id
             }

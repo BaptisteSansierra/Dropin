@@ -158,9 +158,18 @@ import CoreLocation
 
     // MARK: Use cases
     func loadPlaces() async throws {
-        let domainPlaces = try await fetchPlaces()
-        places = domainPlaces.map { PlaceMapper.toUI($0) }
-        updateMapAnnotations()
-        return
+        let newPlaces = try await fetchPlaces().map { PlaceMapper.toUI($0) }
+
+        // loadPlaces() gets called from several independent triggers (view appear,
+        // sync completion, place edit/create) that can fire in a tight cluster —
+        // unconditionally bumping mapReloadGen on every call forced a full
+        // annotation wipe-and-recreate each time, even when nothing had changed.
+        let oldSignature = Set(places.map { "\($0.id)-\($0.updatedAt)" })
+        let newSignature = Set(newPlaces.map { "\($0.id)-\($0.updatedAt)" })
+
+        places = newPlaces
+        if oldSignature != newSignature {
+            updateMapAnnotations()
+        }
     }
 }

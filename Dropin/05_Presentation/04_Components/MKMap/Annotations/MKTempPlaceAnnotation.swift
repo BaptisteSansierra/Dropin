@@ -8,6 +8,7 @@
 import UIKit
 import MapKit
 
+/// Used for a temporary being created (no place existing still)
 @MainActor
 class MKTempPlaceAnnotation: NSObject, MKAnnotation {
     

@@ -1,0 +1,17 @@
+//
+//  MKPlaceAnnotationRepresentable.swift
+//  Dropin
+//
+
+import MapKit
+
+/// Shared identity for the two place-annotation kinds: `MKPlaceDotAnnotation` (always present for every active place) and `MKPlacePromotedAnnotation`
+protocol MKPlaceAnnotationRepresentable: MKAnnotation {
+    var id: UUID { get }
+    var place: PlaceUI { get }
+}
+
+@MainActor
+extension MKPlaceAnnotationRepresentable {
+    var color: UIColor { UIColor(place.group?.color ?? .gray) }
+}

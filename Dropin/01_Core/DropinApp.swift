@@ -204,7 +204,9 @@ extension DropinApp {
     }
     struct map {
         static let mapLabelHideAltitude: Double = 10_000 // meters — labels hidden above this camera altitude
-        static let mapPinDropAltitude: Double = 40_000   // meters — non-required pins may be dropped by collision above this altitude
+        // static let mapPinDropAltitude: Double = 40_000 // legacy: altitude-based collision drop, superseded by maxDisplayPin
+        static let maxDisplayPin: Int = 30 // max number of full (SwiftUI) pins shown at once; remaining visible places render as dots
+        static let declutterRefreshDebounce: Double = 0.2 // seconds of no camera movement before pin/dot + label state is refreshed
     }
     struct ui {
         static let mainTabBarHeight: CGFloat = 80

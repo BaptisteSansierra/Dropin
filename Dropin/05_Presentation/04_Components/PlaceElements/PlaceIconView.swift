@@ -34,6 +34,7 @@ struct PlaceIconView: View {
                 .frame(width: size - 2, height: size - 2)
             IconView(icon: icon)
                 .size(size * 10 / 20)
+
         }
     }
 }

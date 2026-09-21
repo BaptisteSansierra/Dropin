@@ -165,29 +165,51 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
 //        }
 
         // Reload annotations (places were reloaded from )
-        if context.coordinator.lastReloadGen != mapReloadGen ||
-            shouldUpdateAnnotation {
+        if context.coordinator.lastReloadGen != mapReloadGen || shouldUpdateAnnotation {
             context.coordinator.lastReloadGen = mapReloadGen
-            reloadAnnotations(mapView)
+            reloadDotAnnotations(mapView)
+            // Full wipe just tore down any promoted annotations too — reset the
+            // bookkeeping so refreshPinSelection treats everyone as needing to be
+            // re-added rather than skipping because the id set happens to match.
+            context.coordinator.resetPromotedTracking()
+            // Deferred a run-loop turn: mapView.annotations(in:) isn't guaranteed to
+            // reflect annotations added earlier in this same call stack, so calling
+            // refreshPinSelection synchronously here can race and see an empty
+            // visible set — silently promoting nothing.
+            DispatchQueue.main.async { [weak mapView] in
+                guard let mapView else { return }
+                context.coordinator.refreshPinSelection(mapView)
+            }
         }
-        
+
         // Update annotations — only rebuild when the active place set actually changed
         let activeIds = Set(places.lazy.filter { $0.isActive }.map { $0.id })
         if activeIds != context.coordinator.lastActiveIds {
             context.coordinator.lastActiveIds = activeIds
-            updateAnnotations(mapView)
+            updateDotAnnotations(mapView)
+            // Same deferral as above — avoids racing mapView.annotations(in:).
+            DispatchQueue.main.async { [weak mapView] in
+                guard let mapView else { return }
+                context.coordinator.refreshPinSelection(mapView)
+            }
         }
-        
+
         //
         // Update selection
         //
-        if isActiveTab, mapView.selectedAnnotations.count == 0, selectedPlaceId != nil {
+        if isActiveTab, mapView.selectedAnnotations.count == 0, let selectedPlaceId {
             // Select (triggers didSelect → zoom+center) — only while this map is the visible tab.
-            let match = mapView.annotations
-                .compactMap({ $0 as? MKPlaceAnnotation })
-                .filter({ $0.id == selectedPlaceId! })
-            if match.count == 1 {
-                mapView.selectAnnotation(match[0], animated: true)
+            // Prefer the promoted (full pin) annotation if one exists; fall back to
+            // the dot otherwise (e.g. clustering mode, or a place not currently
+            // promoted) — both conform to MKPlaceAnnotationRepresentable.
+            let match: MKAnnotation? = mapView.annotations
+                .compactMap({ $0 as? MKPlacePromotedAnnotation })
+                .first(where: { $0.id == selectedPlaceId })
+                ?? mapView.annotations
+                .compactMap({ $0 as? MKPlaceDotAnnotation })
+                .first(where: { $0.id == selectedPlaceId })
+            if let match {
+                mapView.selectAnnotation(match, animated: true)
             }
         } else if mapView.selectedAnnotations.count > 0 && selectedPlaceId == nil {
             // Deselect — harmless regardless of tab, no camera movement.
@@ -222,57 +244,30 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         mapView.showsTraffic = false
     }
     
-    private func reloadAnnotations(_ mapView: MKMapView) {
-        
-        /*
-        let placeAnnotations = mapView.annotations.compactMap { $0 as? MKPlaceAnnotation }
-        for placeAnnotation in placeAnnotations {
-            if let newest
-            placeAnnotation.place.changeToken
-        }
-         */
-        
+    private func reloadDotAnnotations(_ mapView: MKMapView) {
         let latestAnnotations = places
             .filter { $0.isActive }
-            .map { MKPlaceAnnotation(place: $0) }
+            .map { MKPlaceDotAnnotation(place: $0) }
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(latestAnnotations)
-        
-        
-        
-        
-        
-        
-        // Add pending place
-//        if let pendingCoordinate = pendingCoordinate {
-//            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: pendingCoordinate))
-//        }
     }
     
-    private func updateAnnotations(_ mapView: MKMapView) {
+    private func updateDotAnnotations(_ mapView: MKMapView) {
         let activePlaces = places.filter { $0.isActive }
-        let current = mapView.annotations.compactMap { $0 as? MKPlaceAnnotation }
-        
+        let current = mapView.annotations.compactMap { $0 as? MKPlaceDotAnnotation }
+
         let newIds = Set(activePlaces.map { $0.id })
         let currentIds = Set(current.map { $0.id })
-        
+
         // Remove legacy annotations
         let toRemove = current.filter { !newIds.contains($0.id) }
         mapView.removeAnnotations(toRemove)
-        
+
         // Add new annotations
         let toAdd = activePlaces
             .filter { !currentIds.contains($0.id) }
-            .map { MKPlaceAnnotation(place: $0) }
+            .map { MKPlaceDotAnnotation(place: $0) }
         mapView.addAnnotations(toAdd)
-        
-        // Pending place
-//        if let pendingAnnotation = pendingAnnotation(mapView) {
-//            mapView.removeAnnotation(pendingAnnotation)
-//        }
-//        if let pendingCoordinate = pendingCoordinate {
-//            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: pendingCoordinate))
-//        }
     }
     
     private func updatePendingAnnotations(_ mapView: MKMapView) {
@@ -324,6 +319,10 @@ extension PlacesMKMapVCR {
         var lastActiveIds: Set<UUID> = []
         // Label visibility state
         private var labelsVisible: Bool = true
+        // IDs currently backed by a live MKPlacePromotedAnnotation.
+        private var promotedIds: Set<UUID> = []
+        // Debounced declutter/pin-selection refresh — see scheduleDeclutterRefresh
+        private var pendingDeclutterRefresh: DispatchWorkItem?
         
         // MARK: init
         init(config: Configuration,
@@ -361,7 +360,9 @@ extension PlacesMKMapVCR {
         
         func fitAll(animated: Bool) {
             guard let mapView else { return }
-            let placeAnnotations = mapView.annotations.compactMap { $0 as? MKPlaceAnnotation }
+            // Dots are the canonical one-entry-per-place set (always present),
+            // unlike promoted annotations which are only a subset.
+            let placeAnnotations = mapView.annotations.compactMap { $0 as? MKPlaceDotAnnotation }
             guard !placeAnnotations.isEmpty else { return }
             mapView.showAnnotations(placeAnnotations, animated: animated)
         }
@@ -387,7 +388,108 @@ extension PlacesMKMapVCR {
         func resetPendingCoordinate() {
             pendingCoordinate = nil
         }
-        
+
+        // MARK: - debounced declutter/pin refresh
+
+        /// `regionDidChangeAnimated` is not reliably "gesture ended" — Apple's docs
+        /// note it can fire multiple times while a scrolling animation is still in
+        /// progress. Running the declutter/pin-swap work directly off it caused both
+        /// mid-gesture position decorrelation and dot/pin pop-in flicker. Debouncing
+        /// off the continuous `mapViewDidChangeVisibleRegion` instead guarantees the
+        /// work only runs once the map has genuinely stopped moving.
+        func scheduleDeclutterRefresh(_ mapView: MKMapView) {
+            pendingDeclutterRefresh?.cancel()
+            let workItem = DispatchWorkItem { [weak self, weak mapView] in
+                guard let self, let mapView else { return }
+                self.annotationViewFactory.refreshDeclutterState(on: mapView)
+                self.refreshPinSelection(mapView)
+            }
+            pendingDeclutterRefresh = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + DropinApp.map.declutterRefreshDebounce, execute: workItem)
+        }
+
+        // MARK: - pin/dot selection
+
+        /// No-cluster-mode only. When clustering is on, MapKit handles density  natively and every place is a plain full pin
+        /// so there's nothing to promote/demote here.
+        func resetPromotedTracking() {
+            promotedIds = []
+        }
+
+        /// Picks which places get a promoted (full pin) overlay on top of their permanent dot, capped at `DropinApp.map.maxDisplayPin`.
+        /// Once promoted, a place stays promoted even after scrolling off-screen
+        /// Demotion only happens if the combined candidate set (still-promoted + newly-visible)
+        /// exceeds the cap, in which case the least-recently-updated ones are bumped.
+        /// Selection policy: most-recently-updated first, id string as a stable tiebreak.
+        // TODO: DRO-31
+        // TODO: Improve the way the places are selected for promotion:
+        //  grid-bucket the visible places by absolute map-point coordinates (not relative to the current viewport), pick the best candidate per occupied cell, then rank cells (not places) to fill the cap.
+        //   - Spread: one winner per cell means Paris can't eat every slot, each geographic cell gets a fair shot regardless of local density.
+        //   - Predictability: cell boundaries come from floor(mapPoint / cellSize) with a fixed cellSize, a place always lands in the same cell no matter where the viewport happens to sit, so a slightly-shifted rect naturally produces nearly the same promoted set instead of reshuffling.
+        // TODO: or just rely on MAPKit collision test and create a pin for everyone
+        func refreshPinSelection(_ mapView: MKMapView) {
+            guard !mapSettings.clustering else {
+                resetPromotedTracking()
+                return
+            }
+
+            // Get the list of visible places in this rect
+            let visible = mapView.annotations(in: mapView.visibleMapRect)
+                .compactMap { $0 as? MKPlaceDotAnnotation }
+            var candidates: [UUID: PlaceUI] = [:]
+            for dot in visible { candidates[dot.id] = dot.place }
+
+            // Sort the list so that higher position = higher chance to get promoted
+            let sorted = candidates.sorted {
+                if $0.value.updatedAt != $1.value.updatedAt {
+                    return $0.value.updatedAt > $1.value.updatedAt
+                }
+                return $0.key.uuidString < $1.key.uuidString
+            }
+
+            // Created the set of promoted places (limited by `maxDisplayPin`)
+            let newPromotedIds = Set(sorted.prefix(DropinApp.map.maxDisplayPin).map { $0.key })
+
+            // Remove IDs that are already promoted
+            let realPromotedIds = newPromotedIds.filter({ !promotedIds.contains($0) })
+
+            // Create a list of annotations to be added
+            let realPromotedCandidates = candidates
+                .filter { realPromotedIds.contains($0.key) }
+            let toAdd = realPromotedCandidates
+                .map { MKPlacePromotedAnnotation(place: $0.value) }
+
+            // Check the future list of visible annotations
+            var toDemoteIds: [UUID] = []
+            let nextVisiblePromotedIds = promotedIds
+                .filter({ candidates[$0] != nil })
+            let prospectiveCount = nextVisiblePromotedIds.count + realPromotedIds.count
+            if prospectiveCount > DropinApp.map.maxDisplayPin {
+                // We'll be exceeding the promoted annotations limit, we need to demote some
+                let qtyToRemove = prospectiveCount - DropinApp.map.maxDisplayPin
+
+                toDemoteIds = Array(nextVisiblePromotedIds
+                    .filter({ !realPromotedIds.contains($0) })
+                    .prefix(qtyToRemove))
+            }
+            // Add
+            if !toAdd.isEmpty {
+                mapView.addAnnotations(toAdd)
+            }
+
+            // Remove
+            if !toDemoteIds.isEmpty {
+                mapView.removeAnnotations(mapView.annotations
+                    .compactMap({ $0 as? MKPlacePromotedAnnotation })
+                    .filter({ toDemoteIds.contains($0.id) })
+                )
+            }
+            
+            // Update the cache
+            promotedIds.subtract(toDemoteIds)
+            promotedIds.formUnion(realPromotedIds)
+        }
+
         // MARK: - private methods
         private func centerOn(_ mapView: MKMapView,
                               coords: CLLocationCoordinate2D,
@@ -449,7 +551,7 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
         if let cluster = view.annotation as? MKClusterAnnotation {
             // Zoom into cluster
             mapView.showAnnotations(cluster.memberAnnotations, animated: true)
-        } else if let placeAnnotation = view.annotation as? MKPlaceAnnotation {
+        } else if let placeAnnotation = view.annotation as? MKPlaceAnnotationRepresentable {
             view.isSelected = true
             centerOn(mapView,
                      coords: placeAnnotation.coordinate,
@@ -458,9 +560,9 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
             onPlaceSelected(placeAnnotation.id)
         }
     }
-    
+
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        guard let _ = view.annotation as? MKPlaceAnnotation else { return }
+        guard view.annotation is MKPlaceAnnotationRepresentable else { return }
         view.isSelected = false
     }
     
@@ -480,17 +582,60 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
     }
     
     func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-        guard let onMapCameraUpdate = onMapCameraUpdate else { return }
-        onMapCameraUpdate(mapView.camera,
-                          mapView.region,
-                          mapView.visibleMapRect)
+        if let onMapCameraUpdate = onMapCameraUpdate {
+            onMapCameraUpdate(mapView.camera,
+                              mapView.region,
+                              mapView.visibleMapRect)
+        }
+        scheduleDeclutterRefresh(mapView)
+        
+        // TODO: REMOVE
+        // checkLiveDecorrelation(mapView)
     }
 
-    // Settle-only (not continuous like mapViewDidChangeVisibleRegion, which
-    // fires mid-gesture and previously caused annotation positions to
-    // decorrelate from the map when used to refresh view state).
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        annotationViewFactory.refreshDeclutterState(on: mapView)
+    /// Fires on every continuous camera-change callback (i.e. mid-gesture, not
+    /// debounced) — logs only when a visible annotation view's actual center
+    /// diverges from where its coordinate + centerOffset says it should be
+    /// *right now*, to catch a transient glitch during a live drag/pinch that a
+    /// delayed, post-settle sample would never see.
+    private func checkLiveDecorrelation(_ mapView: MKMapView) {
+        for raw in mapView.annotations(in: mapView.visibleMapRect) {
+            guard let annotation = raw as? MKAnnotation,
+                  let view = mapView.view(for: annotation),
+                  !view.isHidden else { continue }
+            let projected = mapView.convert(annotation.coordinate, toPointTo: mapView)
+            let expectedCenter = CGPoint(x: projected.x + view.centerOffset.x,
+                                         y: projected.y + view.centerOffset.y)
+            let dx = view.center.x - expectedCenter.x
+            let dy = view.center.y - expectedCenter.y
+            let distance = (dx * dx + dy * dy).squareRoot()
+
+            // `view.center`/`.layer.position` is the CALayer *model* value — it updates
+            // synchronously the instant MapKit sets it, regardless of what's actually
+            // composited on screen. `layer.presentation()` is the value Core Animation
+            // is currently rendering mid-animation. If MapKit smooths annotation-view
+            // movement with an implicit/explicit position animation during a gesture,
+            // the two diverge — and every prior check here, reading only the model
+            // value, would be structurally blind to that gap.
+            let presentationPosition = view.layer.presentation()?.position
+            let presentationDistance = presentationPosition.map { p -> CGFloat in
+                let pdx = p.x - view.layer.position.x
+                let pdy = p.y - view.layer.position.y
+                return (pdx * pdx + pdy * pdy).squareRoot()
+            }
+
+            guard distance > 2 || (presentationDistance ?? 0) > 2 else { continue }
+
+            let name: String
+            if let dot = annotation as? MKPlaceDotAnnotation {
+                name = "DOT:'\(dot.place.name)'"
+            } else if let pin = annotation as? MKPlacePromotedAnnotation {
+                name = "PIN:'\(pin.place.name)'"
+            } else {
+                continue
+            }
+            Log.debug("[live] MISMATCH \(name) actual=\(view.center) expected=\(expectedCenter) diff=\(distance) presentation=\(String(describing: presentationPosition)) modelVsPresentationDiff=\(String(describing: presentationDistance))")
+        }
     }
 }
 

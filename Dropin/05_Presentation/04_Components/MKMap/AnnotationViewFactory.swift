@@ -6,6 +6,7 @@
 //
 
 import MapKit
+import SwiftUI
 
 @MainActor
 struct AnnotationViewFactory {
@@ -19,33 +20,31 @@ struct AnnotationViewFactory {
 
     private enum Identifiers {
         static let applePlace = "ApplePlacePin"
-        static let place = "PlacePin"
+        static let dot = "PlaceDot"
         static let tempPlace = "TmpPlacePin"
         static let cluster = "ClusterPin"
+        static let promotedPlace = "PromotedPlace"
     }
-    
-    private var mapSettings: MapSettings
 
-    // Last state applied by `refreshDeclutterState`, so unchanged settles
-    // (the common case) skip the pin walk entirely instead of re-touching
-    // every on-screen view for no reason.
-    private var lastDeclutterState: (showLabel: Bool, priority: MKFeatureDisplayPriority)?
+    private var mapSettings: MapSettings
 
     init(mapSettings: MapSettings) {
         self.mapSettings = mapSettings
     }
 
     func registerViews(for mapView: MKMapView) {
-        mapView.register(HostingAnnotationView.self,
+        mapView.register(PlaceAnnotationView.self,
                          forAnnotationViewWithReuseIdentifier: Identifiers.tempPlace)
         if mapPinMode == .apple {
             mapView.register(MKMarkerAnnotationView.self,
                              forAnnotationViewWithReuseIdentifier: Identifiers.applePlace)
         } else {
-            mapView.register(HostingAnnotationView.self,
-                             forAnnotationViewWithReuseIdentifier: Identifiers.place)
+            mapView.register(DotAnnotationView.self,
+                             forAnnotationViewWithReuseIdentifier: Identifiers.dot)
+            mapView.register(PlaceAnnotationView.self,
+                             forAnnotationViewWithReuseIdentifier: Identifiers.promotedPlace)
         }
-        
+
         mapView.register(MKMarkerAnnotationView.self,
                          forAnnotationViewWithReuseIdentifier: Identifiers.cluster)
     }
@@ -56,7 +55,7 @@ struct AnnotationViewFactory {
         if annotation is MKUserLocation {
             return nil
         }
-        
+
         // Cluster
         if let cluster = annotation as? MKClusterAnnotation {
             return createClusterView(for: cluster, on: mapView)
@@ -67,18 +66,28 @@ struct AnnotationViewFactory {
             return createTmpPlaceView(for: tmp, on: mapView)
         }
 
-        // Individual place
-        guard let placeAnnotation = annotation as? MKPlaceAnnotation else {
+        if mapPinMode == .apple {
+            guard let placeAnnotation = annotation as? MKPlaceAnnotationRepresentable else { return nil }
+            return createPlaceAppleMarkerView(for: placeAnnotation, on: mapView)
+        }
+
+        // Promoted overlay: always a full pin.
+        if let promoted = annotation as? MKPlacePromotedAnnotation {
+            return createPlaceView(for: promoted, on: mapView)
+        }
+
+        // Base place annotation: a full pin when clustering owns density,
+        // otherwise a dot (the promoted overlay handles full-detail display).
+        guard let dotAnnotation = annotation as? MKPlaceDotAnnotation else {
             return nil
         }
-        
-        if mapPinMode == .apple {
-            return createPlaceMarkerView(for: placeAnnotation, on: mapView)
+        guard !mapSettings.clustering else {
+            return createPlaceView(for: dotAnnotation, on: mapView)
         }
-        return createPlaceView(for: placeAnnotation, on: mapView)
+        return createDotView(for: dotAnnotation, on: mapView)
     }
 
-    
+
     private func createClusterView(for cluster: MKClusterAnnotation,
                                           on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.cluster
@@ -90,24 +99,34 @@ struct AnnotationViewFactory {
         view.displayPriority = .required
         return view
     }
-    
+
     private func createTmpPlaceView(for placeAnnotation: MKTempPlaceAnnotation,
                                            on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.tempPlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
-                                                         for: placeAnnotation) as? HostingAnnotationView
-            ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+                                                         for: placeAnnotation) as? PlaceAnnotationView
+            ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        view.configure(mapSettings: mapSettings)
         view.temporary = true
         view.isEnabled = false
         view.canShowCallout = false
+        // No place identity yet — same neutral color for both pin styles
+        // (the old SwiftUI path used two different defaults, `.dropinPrimary`
+        // for `.rect` and `.gray` for `.rounded`, an inconsistency not worth
+        // preserving).
+        view.configure(color: UIColor(Color.dropinPrimary),
+                       icon: nil,
+                       iconExtra: nil,
+                       pinStyle: mapSettings.pinStyle,
+                       size: mapSettings.pinSize,
+                       title: nil,
+                       showLabel: false)
         return view
     }
 
     // Create an apple default Marker (development only)
-    private func createPlaceMarkerView(for placeAnnotation: MKPlaceAnnotation,
-                                              on mapView: MKMapView) -> MKAnnotationView {
+    private func createPlaceAppleMarkerView(for placeAnnotation: any MKPlaceAnnotationRepresentable,
+                                            on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.applePlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
                                                          for: placeAnnotation) as? MKMarkerAnnotationView
@@ -124,63 +143,64 @@ struct AnnotationViewFactory {
         return view
     }
 
-    // Create a regular place
-    private func createPlaceView(for placeAnnotation: MKPlaceAnnotation,
+    // Create a regular place (promoted overlay, or the base annotation when clustering is on)
+    private func createPlaceView(for placeAnnotation: any MKPlaceAnnotationRepresentable,
                                  on mapView: MKMapView) -> MKAnnotationView {
-        let identifier = Identifiers.place
+        // DEBUG: swapped to a plain UIKit ring (no UIHostingController) to test
+        // whether the hosting-controller layer is the cause of pin/map decorrelation.
+        let identifier = Identifiers.promotedPlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
-                                                         for: placeAnnotation) as? HostingAnnotationView
-            ?? HostingAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+                                                         for: placeAnnotation) as? PlaceAnnotationView
+            ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        let (showLabel, priority) = declutterState(for: mapView)
-        view.showLabel = showLabel
-        view.configure(mapSettings: mapSettings)
+        view.configure(color: placeAnnotation.color,
+                       icon: placeAnnotation.place.group?.icon,
+                       iconExtra: placeAnnotation.place.icon,
+                       pinStyle: mapSettings.pinStyle,
+                       size: mapSettings.pinSize,
+                       title: placeAnnotation.place.name,
+                       showLabel: declutterState(for: mapView))
         if mapSettings.clustering {
             view.clusteringIdentifier = "PlaceCluster"
         }
-        view.canShowCallout = false
-        view.displayPriority = priority
-        view.collisionMode = .circle
+        return view
+    }
+
+    // Create a dot for a place not currently promoted (no-cluster mode only)
+    private func createDotView(for placeAnnotation: MKPlaceDotAnnotation,
+                               on mapView: MKMapView) -> MKAnnotationView {
+        let identifier = Identifiers.dot
+        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
+                                                         for: placeAnnotation) as? DotAnnotationView
+            ?? DotAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+        view.annotation = placeAnnotation
+        view.configure(color: placeAnnotation.color)
         return view
     }
 
     // MARK: - Declutter
 
-    /// Single source of truth for how zoomed-out the map currently is. Used
-    /// both at annotation-view creation time and when refreshing already-
-    /// created views on camera settle.
-    private func declutterState(for mapView: MKMapView) -> (showLabel: Bool, priority: MKFeatureDisplayPriority) {
-        let altitude = mapView.camera.altitude
-        let showLabel = altitude < DropinApp.map.mapLabelHideAltitude
-        guard !mapSettings.clustering else {
-            return (showLabel, .required)   // clustering already owns density; never drop glyphs ourselves
-        }
-        let priority: MKFeatureDisplayPriority = altitude > DropinApp.map.mapPinDropAltitude ? .defaultLow : .required
-        return (showLabel, priority)
+    /// Single source of truth for whether labels should show at the current
+    /// camera altitude. Used both at annotation-view creation time and when
+    /// refreshing already-created views on camera settle.
+    private func declutterState(for mapView: MKMapView) -> Bool {
+        mapView.camera.altitude < DropinApp.map.mapLabelHideAltitude
     }
 
-    /// Called on camera-settle (not mid-gesture) to refresh already-created annotation views
+    /// Called on camera-settle to refresh already-created annotation views
     /// `createPlaceView` only runs once per dequeue, so
-    /// without this, showLabel/displayPriority get stuck at whatever altitude
-    /// was current the last time MapKit dequeued that specific view.
+    /// without this, showLabel would get stuck at whatever altitude was current the last time MapKit dequeued that specific view.
     mutating func refreshDeclutterState(on mapView: MKMapView) {
-        let (showLabel, priority) = declutterState(for: mapView)
+        let showLabel = declutterState(for: mapView)
 
-        // Skip the walk entirely if the altitude bucket didn't actually change
-        // At high pin density, reconfiguring every view on every settle (even a no-op one) is too expensive
-        if let last = lastDeclutterState, last.showLabel == showLabel, last.priority == priority {
-            return
-        }
-        lastDeclutterState = (showLabel, priority)
+        // Only touch views actually on screen that are currently full pins
+        // bounds the cost to what's visible regardless of how many places/annotations exist total.
+        for annotation in mapView.annotations(in: mapView.visibleMapRect) {
+            guard let annotation = annotation as? MKAnnotation else { continue }
 
-        // Only touch pins actually on screen, not every places
-        // Bounds the cost to what's visible regardless of how many places exist total.
-        let visiblePlaces = mapView.annotations(in: mapView.visibleMapRect)
-            .compactMap { $0 as? MKPlaceAnnotation }
-        for placeAnnotation in visiblePlaces {
-            guard let view = mapView.view(for: placeAnnotation) as? HostingAnnotationView else { continue }
-            view.showLabel = showLabel
-            view.displayPriority = priority
+            if let view = mapView.view(for: annotation) as? PlaceAnnotationView {
+                view.showLabel = showLabel
+            }
         }
     }
 }

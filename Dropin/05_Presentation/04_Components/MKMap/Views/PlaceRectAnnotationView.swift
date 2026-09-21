@@ -7,12 +7,65 @@
 
 import SwiftUI
 
+/// Hosts `PlaceRectAnnotationLayerView` (UIKit) — the production rect style now
+/// renders via the UIKit port. `LEGACY_PlaceRectAnnotationView` below is the
+/// original SwiftUI implementation, kept (unused in production) for
+/// side-by-side comparison in `MockPlaceRectAnnotationView`'s preview.
 struct PlaceRectAnnotationView: View {
-    
-    static func heightFor(size: CGFloat) -> CGFloat {
-        return size * 30 / 36
+
+    private var color: Color
+    private var icon: Icon?
+    private var iconExtra: Icon?
+    private var size: CGFloat
+
+    init(color: Color = .dropinPrimary,
+         icon: Icon? = nil,
+         iconExtra: Icon? = nil,
+         size: CGFloat = 36) {
+        self.color = color
+        self.icon = icon
+        self.iconExtra = iconExtra
+        self.size = size
     }
-    
+
+    var body: some View {
+        PlaceRectAnnotationLayerViewRepresentable(color: UIColor(color),
+                                                   icon: icon,
+                                                   iconExtra: iconExtra)
+            .frame(width: size, height: size)
+    }
+}
+
+private struct PlaceRectAnnotationLayerViewRepresentable: UIViewRepresentable {
+    var color: UIColor
+    var icon: Icon?
+    var iconExtra: Icon?
+
+    func makeUIView(context: Context) -> PlaceRectAnnotationLayerView {
+        PlaceRectAnnotationLayerView()
+    }
+
+    func updateUIView(_ uiView: PlaceRectAnnotationLayerView, context: Context) {
+        uiView.configure(color: color, icon: icon, iconExtra: iconExtra)
+    }
+}
+
+/// Original SwiftUI implementation — not used in production anymore, kept for
+/// comparison against the UIKit-hosted `PlaceRectAnnotationView` above.
+struct LEGACY_PlaceRectAnnotationView: View {
+
+//    static func heightFor(width: CGFloat) -> CGFloat {
+//        return width * 30 / 36
+//    }
+
+    private let borderWidth: CGFloat = 4
+    private var rectHeight: CGFloat {
+        size * 29 / 36
+    }
+    private var bellHeight: CGFloat {
+        size - rectHeight - 0.5 * borderWidth
+    }
+
     // MARK: - private vars
     private var color: Color
     private var icon: Icon?
@@ -32,57 +85,67 @@ struct PlaceRectAnnotationView: View {
 
     // MARK: - Body
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerSize: 5)
-                .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                .fill(.backgroundPrimary)
-                .frame(width: size,
-                       height: PlaceRectAnnotationView.heightFor(size: size))
-            RoundedRectangle(cornerSize: 5)
-                .stroke(color.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                .fill(.backgroundPrimary)
-                .frame(width: size * 34 / 36, height: size * 28 / 36)
-            RoundedRectangle(cornerSize: 5)
-                .stroke(color.opacity(0.2), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                .fill(.backgroundPrimary)
-                .frame(width: size * 32 / 36, height: size * 26 / 36)
-            if let icon = icon {
-                IconView(icon: icon)
-                    .size(size * 18 / 36)
-            } else {
-                PlaceholderPinShape()
-                    .frame(width: size * 18 / 36,
-                           height: size * 18 / 36)
-                    .foregroundStyle(.textPrimary)
-                    //.offset(y: contentOffsetY)
-
-                /*
-                Image("empty")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundStyle(.textPrimary.opacity(0.3))
-                    .frame(width: size * 17 / 36, height: size * 17 / 36)
-                 */
-            }
-        }
-        .overlay(content: {
-            if let iconExtra = iconExtra {
-                VStack(spacing: 0) {
-                    HStack(spacing: 0) {
-                        Spacer()
-                        PlaceIconView(icon: iconExtra, size: size * 20 / 36)
-                    }
-                    Spacer()
+        VStack(spacing: borderWidth * 0.5) {
+            ZStack {
+                RoundedRectangle(cornerSize: 5)
+                    .stroke(color,
+                    //.stroke(.red,
+                            style: StrokeStyle(lineWidth: borderWidth,
+                                               lineCap: .round,
+                                               lineJoin: .round))
+                    .fill(.backgroundPrimary)
+                    .frame(width: size,
+                           height: rectHeight)
+                RoundedRectangle(cornerSize: 5)
+                    .stroke(color.opacity(0.5),
+                    //.stroke(.green.opacity(0.0),
+                            style: StrokeStyle(lineWidth: borderWidth,
+                                               lineCap: .round,
+                                               lineJoin: .round))
+                    .fill(.backgroundPrimary)
+                    .frame(width: size * 34 / 36, height: size * 28 / 36)
+                RoundedRectangle(cornerSize: 5)
+                    .stroke(color.opacity(0.2),
+                    //.stroke(.blue.opacity(0.0),
+                            style: StrokeStyle(lineWidth: borderWidth,
+                                               lineCap: .round,
+                                               lineJoin: .round))
+                    .fill(.backgroundPrimary)
+                    .frame(width: size * 32 / 36, height: size * 26 / 36)
+                if let icon = icon {
+                    IconView(icon: icon)
+                        .size(size * 18 / 36)
+                } else {
+                    PlaceholderPinShape()
+                        .frame(width: size * 18 / 36,
+                               height: size * 18 / 36)
+                        .foregroundStyle(.textPrimary)
                 }
-                .offset(x: size * 12 / 36, y: size * -12 / 36)
             }
-        })
+            .overlay(content: {
+                if let iconExtra = iconExtra {
+                    VStack(spacing: 0) {
+                        HStack(spacing: 0) {
+                            Spacer()
+                            PlaceIconView(icon: iconExtra, size: size * 20 / 36)
+                        }
+                        Spacer()
+                    }
+                    .offset(x: size * 12 / 36, y: size * -12 / 36)
+                }
+            })
+
+            BellCurveShape()
+                .fill(color)
+                .frame(width: bellHeight * 3.33, height: bellHeight)
+        }
     }
 }
 
 #if DEBUG
 struct MockPlaceRectAnnotationView: View {
     var mock: MockContainer
+    @State var size: CGFloat = 150
     @State var place1: PlaceUI
     @State var place2: PlaceUI
     @State var place3: PlaceUI
@@ -90,12 +153,42 @@ struct MockPlaceRectAnnotationView: View {
     @State var place5: PlaceUI
 
     var body: some View {
-        HStack(spacing: 50) {
-            contentView.environment(\.colorScheme, .light)
-            contentView.environment(\.colorScheme, .dark)
+        VStack {
+            HStack(spacing: 50) {
+                contentView.environment(\.colorScheme, .light)
+                contentView.environment(\.colorScheme, .dark)
+            }
+            .padding(.bottom, 50)
+            Divider()
+                .padding(.bottom, 50)
+
+            // New (UIKit-hosted) vs Legacy (SwiftUI) side by side, at the
+            // slider-controlled size, for direct comparison.
+            HStack(spacing: 30) {
+                VStack {
+                    Text("New").font(.caption)
+                    PlaceRectAnnotationView(color: place5.groupColor,
+                                            icon: place5.group?.icon,
+                                            iconExtra: place5.icon,
+                                            size: size)
+                }
+                VStack {
+                    Text("Legacy").font(.caption)
+                    LEGACY_PlaceRectAnnotationView(color: place5.groupColor,
+                                                   icon: place5.group?.icon,
+                                                   iconExtra: place5.icon,
+                                                   size: size)
+                }
+            }
+            .frame(height: 220)
+
+            Slider(value: $size, in: 10...200)
+                .padding(.horizontal, 30)
+
+            Divider()
         }
     }
-    
+
     var contentView: some View {
         VStack(spacing: 30) {
             PlaceRectAnnotationView(color: place1.groupColor,
@@ -115,7 +208,7 @@ struct MockPlaceRectAnnotationView: View {
                                     iconExtra: place5.icon)
         }
     }
-    
+
     init() {
         let mock = MockContainer()
         self.mock = mock
@@ -146,4 +239,3 @@ struct MockPlaceRectAnnotationView: View {
     MockPlaceRectAnnotationView()
 }
 #endif
-

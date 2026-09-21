@@ -101,6 +101,7 @@ struct MapSettingsPreviewView: View {
     }
     
     private func annotation(_ place: PlaceUI) -> some MapContent {
+        // TODO: FIX MAP behaviour, no cluster should display them all
         Annotation(place.name, coordinate: place.coordinates) {
             switch appSettings.mapSettings.pinStyle {
                 case .rounded:
@@ -109,17 +110,10 @@ struct MapSettingsPreviewView: View {
                                            iconExtra: place.icon,
                                            size: appSettings.mapSettings.pinSize)
                 case .rect:
-                    VStack(spacing: 0) {
-                        PlaceRectAnnotationView(color: place.groupColor,
-                                                icon: place.group?.icon,
-                                                iconExtra: place.icon,
-                                                size: appSettings.mapSettings.pinSize)
-                        let rectHeight = PlaceRectAnnotationView.heightFor(size: appSettings.mapSettings.pinSize)
-                        let arrrowHeight = appSettings.mapSettings.pinSize - rectHeight
-                        BellCurveShape()
-                            .fill(place.groupColor)
-                            .frame(width: arrrowHeight * 3.33, height: arrrowHeight)
-                    }
+                    PlaceRectAnnotationView(color: place.groupColor,
+                                            icon: place.group?.icon,
+                                            iconExtra: place.icon,
+                                            size: appSettings.mapSettings.pinSize)
             }
         }
     }

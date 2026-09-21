@@ -8,6 +8,8 @@
 import MapKit
 import SwiftUI
 
+// Disabled - superseded by UIKit annotations as swiftUI hosted annotations are buggy
+#if false
 class HostingAnnotationView: MKAnnotationView {
     
     // MARK: public properties
@@ -36,6 +38,7 @@ class HostingAnnotationView: MKAnnotationView {
 
     // MARK: private properties
     private var hostingController: UIHostingController<PlaceAnnotationView>?
+    private var lastAppliedPinSize: CGFloat?
     
     // MARK: inits
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
@@ -51,6 +54,7 @@ class HostingAnnotationView: MKAnnotationView {
         super.prepareForReuse()
         hostingController?.view.removeFromSuperview()
         hostingController = nil
+        lastAppliedPinSize = nil
     }
 
     // MARK: public methods
@@ -71,42 +75,38 @@ class HostingAnnotationView: MKAnnotationView {
             
             addSubview(hostingController.view)
         }
+        
         guard let hostingController = hostingController else { return }
-        
-        let size = hostingController.sizeThatFits(in: UIView.layoutFittingCompressedSize)
-        let pinSize = pinSize ?? size.height
-        let offsetY: CGFloat = {
-            if annotation is MKTempPlaceAnnotation { return -(size.height / 2) }
-            let bottomHeight = size.height - pinSize
-            return -size.height * 0.5 + bottomHeight
-        }()
+        guard let pinSize = pinSize else { return }
 
-        // Avoid any animation, when updating 
+        // The inner hosting view's frame is purely internal layout (never seen by
+        // MapKit) — reassert it unconditionally on every configure so SwiftUI can
+        // never silently resize it away from pinSize×pinSize in response to new
+        // content (e.g. a different-length label). If it drifted, the *visible*
+        // pixels would no longer match this view's actual bounds/frame, which is
+        // what MapKit uses for both positioning and touch hit-testing — a pin
+        // that looks wrong and can't be tapped where it visually appears.
         UIView.performWithoutAnimation {
-            hostingController.view.frame = CGRect(origin: .zero, size: size)
-            bounds       = CGRect(origin: .zero, size: size)
-            centerOffset = CGPoint(x: 0, y: offsetY)
-            layer.removeAllAnimations()    // belt + suspenders if a parent block started one
+            hostingController.view.frame = CGRect(origin: .zero, size: CGSize(square: pinSize))
         }
 
-        /* OLD implementation
-        // Set the size
-        let size = hostingController.sizeThatFits(in: UIView.layoutFittingCompressedSize)
-        hostingController.view.frame = CGRect(origin: .zero, size: size)
-        bounds = CGRect(origin: .zero, size: size)
-        
-        guard let pinSize = pinSize else { fatalError("undefined pinSize") }
-        // Set the offset (pin bottom should be centered on coordinate)
-        if let _ = annotation as? MKTempPlaceAnnotation {
-            // No text below pin
-            centerOffset = CGPoint(x: 0, y: -(size.height / 2))
-        } else {
-            let pinHeight: CGFloat = pinSize
-            let bottomHeight = size.height - pinHeight // text + spacing
-            let offset: CGFloat = -size.height * 0.5 + bottomHeight
-            centerOffset = CGPoint(x: 0, y: offset)
+        // Outer bounds/centerOffset affect this view's position on the map itself,
+        // so skip re-touching them when the pin size hasn't actually changed —
+        // every such write is a chance to collide with MapKit's own in-flight
+        // position animation for this view during a gesture.
+        guard pinSize != lastAppliedPinSize else { return }
+        lastAppliedPinSize = pinSize
+
+        UIView.performWithoutAnimation {
+            bounds       = CGRect(origin: .zero, size: CGSize(square: pinSize))
+            // TEMP diagnostic: zeroed out (was `CGPoint(x: 0, y: -(pinSize / 2))`)
+            // to test whether the bottom-anchor offset itself is implicated in the
+            // decorrelation — with this at .zero the pin anchors at its center,
+            // same as the dot. Revert once the theory is confirmed/refuted.
+//            centerOffset = .zero
+
+            centerOffset = CGPoint(x: 0, y: -(pinSize / 2))
         }
-         */
     }
     
     private func configure() {
@@ -118,7 +118,7 @@ class HostingAnnotationView: MKAnnotationView {
             configure(view: PlaceAnnotationView(tempAnnotation: tempPlaceAnnotation,
                                                 pinStyle: pinStyle,
                                                 pinSize: pinSize))
-        } else if let placeAnnotation = annotation as? MKPlaceAnnotation {
+        } else if let placeAnnotation = annotation as? MKPlaceAnnotationRepresentable {
             configure(view: PlaceAnnotationView(annotation: placeAnnotation,
                                                 isSelected: isSelected,
                                                 pinStyle: pinStyle,
@@ -132,7 +132,7 @@ class HostingAnnotationView: MKAnnotationView {
     private func updateSelection() {
         guard let pinStyle = pinStyle else { fatalError("undefined pinStyle") }
         guard let pinSize = pinSize else { fatalError("undefined pinSize") }
-        guard let placeAnnotation = annotation as? MKPlaceAnnotation else { return }
+        guard let placeAnnotation = annotation as? MKPlaceAnnotationRepresentable else { return }
         let swiftUIView = PlaceAnnotationView(annotation: placeAnnotation,
                                               isSelected: isSelected,
                                               pinStyle: pinStyle,
@@ -141,3 +141,4 @@ class HostingAnnotationView: MKAnnotationView {
         hostingController?.rootView = swiftUIView
     }
 }
+#endif
