@@ -142,13 +142,15 @@ struct SideMenuView: View {
             .padding(.bottom, 0)
             
             SideMenuItemView(label: "common.tags",
-                             systemImage: "slider.horizontal.3",
+                             systemImage: "tag",
                              context: .tags,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
             
+            #if false
+            // disabled sections
             Divider()
                 .padding(.vertical, 5)
             
@@ -166,6 +168,7 @@ struct SideMenuView: View {
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
+            #endif
             
             Divider()
                 .padding(.vertical, 5)
@@ -184,6 +187,8 @@ struct SideMenuView: View {
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
+            #if false
+            // disabled sections
             SideMenuItemView(label: "common.reportproblem",
                              systemImage: "exclamationmark.triangle",
                              context: .toBeImplemnented,
@@ -191,6 +196,7 @@ struct SideMenuView: View {
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
+            #endif
         }
     }
     
