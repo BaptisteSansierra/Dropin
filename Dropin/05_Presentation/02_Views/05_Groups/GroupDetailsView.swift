@@ -15,10 +15,13 @@ struct GroupDetailsView: View {
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
     
-    var blurEffectHeight: CGFloat {
+    private var blurEffectHeight: CGFloat {
         DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
     }
-    
+    private var activePlaces: [PlaceUI] {
+        viewModel.places.filter { $0.isActive }
+    }
+
     // MARK: - Init
     init(viewModel: GroupDetailsViewModel) {
         self.viewModel = viewModel
@@ -58,7 +61,7 @@ struct GroupDetailsView: View {
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .toolbar {
-            if viewModel.places.count > 0 {
+            if activePlaces.count > 0 {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.pushGroupMapView()
@@ -82,8 +85,8 @@ struct GroupDetailsView: View {
                 }
             }
         } message: {
-            if viewModel.places.count > 0 {
-                Text("alert.remove_group_body_\(viewModel.group.name)_\(viewModel.places.count)")
+            if activePlaces.count > 0 {
+                Text("alert.remove_group_body_\(viewModel.group.name)_\(activePlaces.count)")
             } else {
                 Text("alert.remove_group_empty_body_\(viewModel.group.name)")
             }
@@ -205,7 +208,7 @@ struct GroupDetailsView: View {
             }
         } else {
             VStack(alignment: .leading) {
-                if viewModel.places.count > 0 {
+                if activePlaces.count > 0 {
                     Text("common.related_places")
                         .textStyle(.formSectionTitle2)
                         .textCase(.uppercase)
@@ -214,7 +217,7 @@ struct GroupDetailsView: View {
                     
                     ScrollView {
                         LazyVStack(spacing: 15) {
-                            ForEach(viewModel.places) { place in
+                            ForEach(activePlaces) { place in
                                 placeRow(place)
                             }
                         }
@@ -255,8 +258,7 @@ struct GroupDetailsView: View {
                     // Remove the place from group list so UI is updated
                     viewModel.places.remove(at: idx)
                     // Remove the group from place and update the database from it
-                    place.group = nil
-                    updatePlace(place)
+                    nullifyPlaceGroup(place)
                 } label: {
                     Text("common.unlink")
                 }
@@ -305,10 +307,10 @@ struct GroupDetailsView: View {
         }
     }
     
-    private func updatePlace(_ place: PlaceUI) {
+    private func nullifyPlaceGroup(_ place: PlaceUI) {
         Task {
             do {
-                try await viewModel.updatePlace(place)
+                try await viewModel.nullifyPlaceGroup(place)
             } catch {
                 // TODO: handle error
                 assertionFailure("Could not update place: \(error)")

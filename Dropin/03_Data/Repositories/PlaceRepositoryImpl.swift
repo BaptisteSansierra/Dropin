@@ -53,8 +53,8 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
 
     func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity] {
+        // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
         let predicate: Predicate<SDPlace>? = nil
-        // predicate = #Predicate<SDPlace> { $0.deletedAt == nil }
         let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
         let descriptor = FetchDescriptor<SDPlace>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)

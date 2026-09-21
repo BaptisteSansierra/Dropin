@@ -132,6 +132,9 @@ struct PlaceEntity: Hashable, Sendable {
 }
 
 extension PlaceEntity {
+    
+    var isActive: Bool { deletedAt == nil }
+    
     func isIdentical(name: String, coords: CLLocationCoordinate2D) -> Bool {
         // Let's not be too strict with place's case, the coords check is strong enough
         let compareName = self.name.lowercased() == name.lowercased()

@@ -46,7 +46,7 @@ import SwiftUI
     func loadTags() async throws {
         let domainTags = try await fetchTags()
         tags = domainTags
-            .filter { $0.deletedAt == nil }
+            .filter { $0.isActive }
             .map { TagMapper.toUI($0) }
     }
 }

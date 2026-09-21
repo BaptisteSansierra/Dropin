@@ -74,7 +74,7 @@ actor ImportMapstrService: ImportServiceProtocol {
 
         // Fetch existing
         existingHardPlaces = try await fetchPlaces()
-            .filter { $0.deletedAt == nil }
+            .filter { $0.isActive }
         existingTags = try await fetchTags()
         existingGroups = try await fetchGroups()
 
@@ -150,7 +150,7 @@ actor ImportMapstrService: ImportServiceProtocol {
     private func createLocalItems(_ collection: FeatureCollection, progress: @MainActor @Sendable (Int) -> Void) async throws {
         // Create marker Group:
         //   all mapstr places are grouped under a specific mapstr group, it must not exists already
-        if let existing = existingGroups.first(where: { $0.name == markerGroupName }), existing.deletedAt == nil {
+        if let existing = existingGroups.first(where: { $0.name == markerGroupName }), existing.isActive {
             throw ImportError.markerExists(markerGroupName)
         }
         let markerGroup = GroupEntity(name: markerGroupName,
@@ -166,7 +166,7 @@ actor ImportMapstrService: ImportServiceProtocol {
                 
                 if tagsByName[mapstrTag.name] == nil {
                     if let existingTag = existingTags.first(where: { item in item.name == mapstrTag.name }),
-                       existingTag.deletedAt == nil {
+                       existingTag.isActive {
                         // Avoid creating duplicated tags appart if it was deleted
                         tagsByName[mapstrTag.name] = (tag: existingTag,
                                                       exists: true)
@@ -248,7 +248,7 @@ actor ImportMapstrService: ImportServiceProtocol {
     
     private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> PlaceEntity? {
         for place in existingHardPlaces {
-            if place.isIdentical(name: name, coords: coordinates) && place.deletedAt == nil {
+            if place.isIdentical(name: name, coords: coordinates) && place.isActive {
                 Log.warning("duplicate found: \(name) > \(place.name) id:\(place.id)")
                 return place
             }

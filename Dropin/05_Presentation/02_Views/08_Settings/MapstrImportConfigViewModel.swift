@@ -71,7 +71,7 @@ import Foundation
     private func activeGroupNames() async -> Set<String> {
         do {
             return Set(try await fetchGroups()
-                .filter { $0.deletedAt == nil }
+                .filter { $0.isActive }
                 .map(\.name))
         } catch {
             Log.error("MapstrImportConfigViewModel: fetchGroups failed: \(error)")

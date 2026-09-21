@@ -15,8 +15,11 @@ struct TagDetailsView: View {
     // MARK: - Env
     @Environment(\.dismiss) private var dismiss
     
-    var blurEffectHeight: CGFloat {
+    private var blurEffectHeight: CGFloat {
         DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
+    }
+    private var activePlaces: [PlaceUI] {
+        viewModel.places.filter { $0.isActive }
     }
     
     // MARK: - Init
@@ -55,7 +58,7 @@ struct TagDetailsView: View {
             }
         }
         .toolbar {
-            if viewModel.places.count > 0 {
+            if activePlaces.count > 0 {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.pushTagMapView(tagId: viewModel.tag.id)
@@ -82,7 +85,7 @@ struct TagDetailsView: View {
             }
         } message: {
             if viewModel.places.count > 0 {
-                Text("alert.remove_tag_body_\(viewModel.tag.name)_\(viewModel.places.count)")
+                Text("alert.remove_tag_body_\(viewModel.tag.name)_\(activePlaces.count)")
             } else {
                 Text("alert.remove_tag_empty_body_\(viewModel.tag.name)")
             }
@@ -157,7 +160,7 @@ struct TagDetailsView: View {
             }
         } else {
             VStack(alignment: .leading) {
-                if viewModel.places.count > 0 {
+                if activePlaces.count > 0 {
                     Text("common.related_places")
                         .textStyle(.formSectionTitle2)
                         .textCase(.uppercase)
@@ -167,7 +170,7 @@ struct TagDetailsView: View {
                     
                     ScrollView {
                         LazyVStack(spacing: 15) {
-                            ForEach(viewModel.places) { place in
+                            ForEach(activePlaces) { place in
                                 placeRow(place)
                             }
                         }
@@ -209,8 +212,7 @@ struct TagDetailsView: View {
                     // Remove the place from tag list so UI is updated
                     viewModel.places.remove(at: idx)
                     // Remove the tag in place list and update the database from it
-                    place.tags.remove(at: tagIdx)
-                    updatePlace(place)
+                    unlinkPlaceFromTag(place, at: tagIdx)
                 } label: {
                     Text("common.unlink")
                 }
@@ -259,10 +261,10 @@ struct TagDetailsView: View {
         }
     }
     
-    private func updatePlace(_ place: PlaceUI) {
+    private func unlinkPlaceFromTag(_ place: PlaceUI, at tagIdx: Int) {
         Task {
             do {
-                try await viewModel.updatePlace(place)
+                try await viewModel.unlinkPlaceFromTag(place, at: tagIdx)
             } catch {
                 // TODO: handle error
                 assertionFailure("Could not update place: \(error)")

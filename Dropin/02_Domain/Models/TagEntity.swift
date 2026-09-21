@@ -68,3 +68,7 @@ struct TagEntity: Hashable, Sendable {
         hasher.combine(id)
     }
 }
+
+extension TagEntity {
+    var isActive: Bool { deletedAt == nil }
+}

@@ -53,8 +53,8 @@ public final class GroupRepositoryImpl: GroupRepository {
     }
     
     func fetch() async throws -> [GroupEntity] {
+        // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
         let predicate: Predicate<SDGroup>? = nil
-        //let predicate = #Predicate<SDGroup> { $0.deletedAt == nil }
         let desc = FetchDescriptor<SDGroup>(predicate: predicate,
                                             sortBy: [SortDescriptor(\SDGroup.name),
                                                      SortDescriptor(\SDGroup.createdAt)])
@@ -64,7 +64,6 @@ public final class GroupRepositoryImpl: GroupRepository {
 
     func fetchWithPlaceCount() async throws -> [(GroupEntity, Int)] {
         let predicate: Predicate<SDGroup>? = nil
-        //let predicate = #Predicate<SDGroup> { $0.deletedAt == nil }
         let desc = FetchDescriptor<SDGroup>(predicate: predicate,
                                             sortBy: [SortDescriptor(\SDGroup.name),
                                                      SortDescriptor(\SDGroup.createdAt)])

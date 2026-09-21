@@ -29,9 +29,12 @@ struct ExportService {
 
     func execute() async throws -> URL {
         async let placesTask = fetchPlaces()
+            .filter { $0.isActive }
         async let groupsTask = fetchGroups()
+            .filter { $0.isActive }
         async let tagsTask = fetchTags()
-        
+            .filter { $0.isActive }
+
         let (places, groups, tags) = try await (placesTask, groupsTask, tagsTask)
 
         let dropinExport = DropinInOut(exportedAt: Date(),

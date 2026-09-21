@@ -52,8 +52,8 @@ public final class TagRepositoryImpl: TagRepository {
     }
 
     func fetch() async throws -> [TagEntity] {
+        // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
         let predicate: Predicate<SDTag>? = nil
-        //let predicate = #Predicate<SDTag> { $0.deletedAt == nil }
         let desc = FetchDescriptor<SDTag>(predicate: predicate,
                                           sortBy: [SortDescriptor(\SDTag.name),
                                                    SortDescriptor(\SDTag.createdAt)])
@@ -63,7 +63,6 @@ public final class TagRepositoryImpl: TagRepository {
 
     func fetchWithPlaceCount() async throws -> [(TagEntity, Int)] {
         let predicate: Predicate<SDTag>? = nil
-        //let predicate = #Predicate<SDTag> { $0.deletedAt == nil }
         let desc = FetchDescriptor<SDTag>(predicate: predicate,
                                           sortBy: [SortDescriptor(\SDTag.name),
                                                    SortDescriptor(\SDTag.createdAt)])

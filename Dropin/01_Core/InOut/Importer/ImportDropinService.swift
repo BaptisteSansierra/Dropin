@@ -72,7 +72,7 @@ actor ImportDropinService: ImportServiceProtocol {
 
         // Fetch existing
         existingHardPlaces = try await fetchPlaces()
-            .filter { $0.deletedAt == nil }
+            .filter { $0.isActive }
         existingGroups = try await fetchGroups()
         existingTags = try await fetchTags()
 
@@ -133,7 +133,7 @@ actor ImportDropinService: ImportServiceProtocol {
         for group in export.groups {
             try Task.checkCancellation()
             if let existingGroup = existingGroups.first(where: { item in item.name == group.name }),
-               existingGroup.deletedAt == nil {
+               existingGroup.isActive {
                 replacedGroups[group] = existingGroup
             } else {
                 try await upsertGroup(group, shouldSave: false)
@@ -143,7 +143,7 @@ actor ImportDropinService: ImportServiceProtocol {
         for tag in export.tags {
             try Task.checkCancellation()
             if let existingTag = existingTags.first(where: { item in item.name == tag.name }),
-               existingTag.deletedAt == nil{
+               existingTag.isActive {
                 replacedTags[tag] = existingTag
             } else {
                 try await upsertTag(tag, shouldSave: false)
@@ -205,7 +205,7 @@ actor ImportDropinService: ImportServiceProtocol {
     
     private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> PlaceEntity? {
         for place in existingHardPlaces {
-            if place.isIdentical(name: name, coords: coordinates) && place.deletedAt == nil {
+            if place.isIdentical(name: name, coords: coordinates) && place.isActive {
                 Log.warning("duplicate found: \(name) > \(place.name) id:\(place.id)")
                 return place
             }

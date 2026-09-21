@@ -27,6 +27,7 @@ import SwiftUI
     func createGenericMapView() -> GenericMapView {
         let vm = GenericMapViewModel(appContainer) {
             try await self.fetchTagPlaces(self.tagId)
+                .filter({ $0.isActive })
         }
         return GenericMapView(viewModel: vm)
     }

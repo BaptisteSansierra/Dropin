@@ -46,6 +46,10 @@ import SwiftUI
     func softDeleteGroup() async throws {
         group.deletedAt = Date()
         try await updateGroup(shouldUpdatePlaces: false)
+        // WARN: group.places is empty here, do not rely on it
+        for place in places {
+            try await nullifyPlaceGroup(place)
+        }
     }
 
     // MARK: Navigation
@@ -62,25 +66,29 @@ import SwiftUI
     func updateGroup(shouldUpdatePlaces: Bool = true) async throws {
         try await updateGroup(GroupMapper.toDomain(group))
         if shouldUpdatePlaces {
-            updatePlaces()
+            updateCachedPlaces()
         }
     }
  
     func fetchPlaces() async throws {
         loadingPlaces = true
         places = try await fetchGroupPlaces(group.id)
-            .map({ PlaceMapper.toUI($0) })
+            .filter { $0.isActive }
+            .map { PlaceMapper.toUI($0) }
         loadingPlaces = false
     }
     
-    func updatePlace(_ place: PlaceUI) async throws {
+    func nullifyPlaceGroup(_ place: PlaceUI) async throws {
+        place.group = nil
         try await updatePlace(PlaceMapper.toDomain(place))
     }
     
     // MARK: - private methods
-    private func updatePlaces() {
+    private func updateCachedPlaces() {
+        // This is a purely UI update on PlaceUI array
+        // so the places arrow are updated with the right group properties
         for idx in places.indices {
-            places[idx].group = group
+            places[idx].group = group.isActive ? group : nil
         }
     }
 }

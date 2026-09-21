@@ -55,11 +55,11 @@ import Foundation
     func loadCounts() async {
         do {
             let places = try await fetchPlaces()
-                .filter({ $0.deletedAt == nil })
+                .filter({ $0.isActive })
             let groups = try await fetchGroups()
-                .filter({ $0.deletedAt == nil })
+                .filter({ $0.isActive })
             let tags = try await fetchTags()
-                .filter({ $0.deletedAt == nil })
+                .filter({ $0.isActive })
             var photos = 0
             for place in places {
                 let thumbs = try await imageRepository.fetchThumbnails(placeId: place.id)

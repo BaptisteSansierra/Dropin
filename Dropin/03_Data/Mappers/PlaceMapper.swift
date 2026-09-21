@@ -14,8 +14,10 @@ public enum PlaceMapper {
         var group: GroupEntity? = nil
         var tags = [TagEntity]()
         if !skipRelationships {
-            tags = sdPlace.tags.map { TagMapper.toDomain($0) }
-            if let sdGroup = sdPlace.group {
+            tags = sdPlace.tags
+                .filter { $0.deletedAt == nil }  // Ignore deleted tags
+                .map { TagMapper.toDomain($0) }
+            if let sdGroup = sdPlace.group, sdGroup.deletedAt == nil {
                 group = GroupMapper.toDomain(sdGroup)
             }
         }

@@ -24,11 +24,6 @@ import SwiftUI
     @ObservationIgnored private var fetchTagPlaces: FetchTagPlaces
     @ObservationIgnored private var updatePlace: UpdatePlace
     
-    
-//    TODO
-//    * Try delete a tag/group : when the deleted_at is set ?
-//    * Try to logout with pending modifications
-    
     init(_ appContainer: AppContainer,
          locationManager: LocationManager,
          coordinator: TagCoordinator,
@@ -50,6 +45,11 @@ import SwiftUI
     func softDeleteTag() async throws {
         tag.deletedAt = Date()
         try await updateTag(shouldUpdatePlaces: false)
+        // WARN: tag.places is empty here, do not rely on it
+        for place in places {
+            guard let tagIdx = place.tags.firstIndex(where: { tag.id == $0.id }) else { continue }
+            try await unlinkPlaceFromTag(place, at: tagIdx)
+        }
     }
     
     // MARK: Navigation
@@ -66,24 +66,27 @@ import SwiftUI
     func updateTag(shouldUpdatePlaces: Bool = true) async throws {
         try await updateTag(TagMapper.toDomain(tag))
         if shouldUpdatePlaces {
-            updatePlaces()
+            updateCachedPlaces()
         }
     }
     
     func fetchPlace() async throws {
         loadingPlaces = true
         places = try await fetchTagPlaces(tag.id)
-            .map({ PlaceMapper.toUI($0) })
+            .filter { $0.isActive }
+            .map { PlaceMapper.toUI($0) }
         loadingPlaces = false
-        print("\(places.count) PLACES LOADED")
     }
     
-    func updatePlace(_ place: PlaceUI) async throws {
+    func unlinkPlaceFromTag(_ place: PlaceUI, at tagIdx: Int) async throws {
+        place.tags.remove(at: tagIdx)
         try await updatePlace(PlaceMapper.toDomain(place))
     }
     
     // MARK: - private methods
-    private func updatePlaces() {
+    private func updateCachedPlaces() {
+        // This is a purely UI update on PlaceUI array
+        // so the places arrow are updated with the right group properties
         for idx in places.indices {
             if let tagIdx = places[idx].tags.firstIndex(where: { $0.id == tag.id }) {
                 places[idx].tags[tagIdx] = tag

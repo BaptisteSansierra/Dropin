@@ -72,3 +72,7 @@ struct GroupEntity: Hashable, Sendable {
         hasher.combine(id)
     }
 }
+
+extension GroupEntity {
+    var isActive: Bool { deletedAt == nil }
+}

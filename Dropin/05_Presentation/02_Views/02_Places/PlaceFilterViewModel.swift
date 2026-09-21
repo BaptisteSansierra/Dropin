@@ -30,10 +30,10 @@ import SwiftUI
     
     func loadData() async throws {
         groups = try await fetchGroups() 
-            .filter { $0.deletedAt == nil }
+            .filter { $0.isActive }
             .map { GroupMapper.toUI($0) }
         tags = try await fetchTags()
-            .filter { $0.deletedAt == nil }
+            .filter { $0.isActive }
             .map { TagMapper.toUI($0) }
     }
 }
