@@ -36,6 +36,8 @@ import SwiftUI
 
     func loadGroups() async throws {
         let domainGroups = try await fetchGroups()
-        groups = domainGroups.map { GroupMapper.toUI($0) }
+        groups = domainGroups
+            .filter { $0.deletedAt == nil }
+            .map { GroupMapper.toUI($0) }
     }
 }
