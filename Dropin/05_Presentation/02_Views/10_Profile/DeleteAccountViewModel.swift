@@ -45,8 +45,8 @@ import Foundation
         self.imageRepository = imageRepository
     }
 
-    /// The exact, localized phrase the user must type to confirm — compared
-    /// case-sensitively against a translated string, never a hardcoded "I AGREE".
+    /// The exact, localized phrase the user must type to confirm
+    /// compared  case-sensitively against a translated string, never a hardcoded "I AGREE".
     var confirmToken: String { String(localized: "delete_account.gate.token") }
     var isAgreementValid: Bool { agreementText == confirmToken }
 
@@ -55,8 +55,11 @@ import Foundation
     func loadCounts() async {
         do {
             let places = try await fetchPlaces()
+                .filter({ $0.deletedAt == nil })
             let groups = try await fetchGroups()
+                .filter({ $0.deletedAt == nil })
             let tags = try await fetchTags()
+                .filter({ $0.deletedAt == nil })
             var photos = 0
             for place in places {
                 let thumbs = try await imageRepository.fetchThumbnails(placeId: place.id)
