@@ -49,8 +49,6 @@ struct BellCurveShape: Shape {
 }
 
 #Preview {
-    let w: CGFloat = 390
-    let h: CGFloat = 350
     VStack(spacing: 0) {
         
         Rectangle()

@@ -8,11 +8,12 @@
 import Network
 import SwiftUI
 
+@MainActor
 protocol ReachabilityServiceProtocol {
     var isConnected: Bool { get }
 }
 
-//@MainActor
+@MainActor
 @Observable final class ReachabilityService: Sendable {
     private(set) var isConnected: Bool = true
     private let verbose: Bool = false

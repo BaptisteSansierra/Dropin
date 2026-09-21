@@ -82,8 +82,6 @@ struct MapPinView: View {
 
 
 #Preview {
-    let w: CGFloat = 390
-    let h: CGFloat = 350
     VStack {
         HStack {
             MapPinView(color: .red,

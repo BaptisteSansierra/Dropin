@@ -166,10 +166,6 @@ struct MockPlaceEditView: View {
         let mock = MockContainer()
         self.mock = mock
         self.place = mock.getPlaceUI(index)
-        
-        Log.debug("PLACE \(place.name) has GROUP \(place.group?.name)")
-        
-        //self.place = mock.getPlaceUI(1) // No group
     }
 }
 

@@ -80,6 +80,7 @@ struct MapPinShape: Shape {
                 cx = center.x + cos(cAngle) * cRadius
                 cy = center.y + sin(cAngle) * cRadius
             }
+            #if false
             if addCtrlPoints {
                 ctrlPointsPath.addArc(center: CGPoint(x: cx, y: cy),
                                       radius: 2,
@@ -87,6 +88,7 @@ struct MapPinShape: Shape {
                                       endAngle: .degrees(360),
                                       clockwise: true)
             }
+            #endif
             if i == 0 {
                 arrowPath.move(to: CGPoint(x: cx, y: cy))
             } else {
@@ -96,9 +98,11 @@ struct MapPinShape: Shape {
         }
         arrowPath.closeSubpath()
         path.addPath(arrowPath)
+        #if false
         if addCtrlPoints {
             path.addPath(ctrlPointsPath)
         }
+        #endif
 
         return path
     }

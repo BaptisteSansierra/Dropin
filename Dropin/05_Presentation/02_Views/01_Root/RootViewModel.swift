@@ -90,8 +90,9 @@ enum SideMenuContext {
     func switchAppIcon() {
         // Note: ios is now always showing the alert... DISABLED ;(
         return
-        
+        #if false
         let icon = ["AppIcon", "AppIcon2", "AppIcon3", "AppIcon4"][Int.random(in: 0...3)]
         UIApplication.setApplicationIconWithoutAlert(icon)
+        #endif
     }
 }
