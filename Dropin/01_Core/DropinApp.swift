@@ -212,6 +212,7 @@ extension DropinApp {
         static let mainTabBarHeight: CGFloat = 80
         struct button {
             static let height: Double = 52
+            static let smallHeight: Double = 42
             //static let width: Double = 200
         }
         static let addressPickerSheetHeight: CGFloat = 225

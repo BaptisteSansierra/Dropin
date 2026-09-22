@@ -17,6 +17,7 @@ struct DropinButton: View {
     private var systemImage: String?
     private var text: LocalizedStringKey
     private var maxWidth: CGFloat?
+    private var height: CGFloat
     private var background: Color
     private var foreground: Color
     private var stroke: Color
@@ -26,6 +27,7 @@ struct DropinButton: View {
     init(text: LocalizedStringKey,
          systemImage: String? = nil,
          maxWidth: CGFloat? = nil,
+         height: CGFloat = DropinApp.ui.button.height,
          background: Color = .surface1,
          foreground: Color = .dropinPrimary,
          stroke: Color = .fieldBorder,
@@ -34,6 +36,7 @@ struct DropinButton: View {
         self.systemImage = systemImage
         self.text = text
         self.maxWidth = maxWidth
+        self.height = height
         self.background = background
         self.foreground = foreground
         self.stroke = stroke
@@ -44,33 +47,50 @@ struct DropinButton: View {
     var body: some View {
         VStack(spacing: 0) {
             Button(action: action, label: {
+                #if false
                 ZStack {
                     RoundedRectangle(cornerRadius: 14)
                         .fill(background)
                         .stroke(stroke, lineWidth: 1)
-                        .frame(height: DropinApp.ui.button.height)
+                        .frame(height: height)
                         .frame(maxWidth: maxWidth)
                     
-                    switch progress {
-                        case .none:
-                            contentView
-                        case .run(let color, let replaceContent):
-                            if replaceContent {
-                                ProgressView()
-                                    .tint(color)
-                            } else {
-                                contentView
-                            }
-                    }
+                    contentView
                     
                 }
+                #else
+                
+                contentView
+                    .frame(height: height)
+                    .frame(maxWidth: maxWidth)
+                    .background {
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(background)
+                            .stroke(stroke, lineWidth: 1)
+                    }
+                #endif
             })
             .buttonStyle(.plain)
         }
     }
-    
+
     @ViewBuilder
     private var contentView: some View {
+        switch progress {
+            case .none:
+                buttonContentView
+            case .run(let color, let replaceContent):
+                if replaceContent {
+                    ProgressView()
+                        .tint(color)
+                } else {
+                    buttonContentView
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var buttonContentView: some View {
         HStack(spacing: 0) {
             let (replaceSI, progressColor) = resolve()
             if replaceSI {
@@ -84,6 +104,7 @@ struct DropinButton: View {
             Text(text)
                 .textStyle(.mainButton, color: foreground)
         }
+        .padding(.horizontal, 15)
     }
     
     private func resolve() -> (Bool, Color) {
@@ -130,6 +151,14 @@ struct DropinButton: View {
                        progress: .run(color: .surface1, replaceContent: false),
                        action: {})
                 .disabled(true)
+            
+            HStack {
+                Text(verbatim: "dummy")
+                Spacer()
+                MainSmallButton(text: "Small Main", action: {})
+                SecondarySmallButton(text: "Small 2ndry", action: {})
+            }
+
         }
         .padding(.horizontal, 15)
     }

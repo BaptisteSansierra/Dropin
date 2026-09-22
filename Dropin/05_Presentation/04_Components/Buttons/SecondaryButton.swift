@@ -12,22 +12,29 @@ struct SecondaryButton: View {
     private var text: LocalizedStringKey
     private var systemImage: String? = nil
     private var progress: DropinButton.Progress
+    private var maxWidth: CGFloat?
+    private var height: CGFloat
     private let action: () -> Void
     
     init(text: LocalizedStringKey,
          systemImage: String? = nil,
          progress: DropinButton.Progress = .none,
+         maxWidth: CGFloat? = .infinity,
+         height: CGFloat = DropinApp.ui.button.height,
          action: @escaping () -> Void) {
         self.systemImage = systemImage
         self.text = text
         self.progress = progress
+        self.maxWidth = maxWidth
+        self.height = height
         self.action = action
     }
     
     var body: some View {
         DropinButton(text: text,
                      systemImage: systemImage,
-                     maxWidth: .infinity,
+                     maxWidth: maxWidth,
+                     height: height,
                      background: .surface1,
                      foreground: .dropinPrimary,
                      progress: progress,

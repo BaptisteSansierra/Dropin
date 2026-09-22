@@ -124,43 +124,9 @@ struct TagSelectorView: View {
                         }
                     }
                 }
-
-//            MainButton(text: "common.add") {
-//                
-//            }
-//            .frame(maxWidth: nil)
             
-            Button {
-                guard !createdTagName.isEmpty else {
-                    withAnimation(.linear(duration: 0.5)) {
-                        isShowingNameWarn.toggle()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            withAnimation(.linear(duration: 0.5)) {
-                                isShowingNameWarn.toggle()
-                            }
-                        }
-                    }
-                    return
-                }
-                Task {
-                    let newTag = try await viewModel.createTag(name: createdTagName, color: createdTagColor.hex)
-                    addTag(newTag)
-                    createdTagName = ""
-                    createdTagColor = Color.random()
-                }
-            } label: {
-                Text("common.add")
-                    .textStyle(.mainButton, color: .surface1)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 9)
-                    .background(createdTagName.isEmpty ? .disabled : .dropinPrimary,
-                                in: RoundedRectangle(cornerRadius: 10))
-                    .opacity(createdTagName.isEmpty ? 0.45 : 1)
-            }
-            .buttonStyle(.plain)
-            
-            
-            
+            MainSmallButton(text: "common.add", action: createTag)
+                .disabled(createdTagName.isEmpty)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -182,6 +148,26 @@ struct TagSelectorView: View {
         }
         place.tags.remove(at: index)
         viewModel.updateData(place)
+    }
+    
+    private func createTag() {
+        guard !createdTagName.isEmpty else {
+            withAnimation(.linear(duration: 0.5)) {
+                isShowingNameWarn.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.linear(duration: 0.5)) {
+                        isShowingNameWarn.toggle()
+                    }
+                }
+            }
+            return
+        }
+        Task {
+            let newTag = try await viewModel.createTag(name: createdTagName, color: createdTagColor.hex)
+            addTag(newTag)
+            createdTagName = ""
+            createdTagColor = Color.random()
+        }
     }
 }
 

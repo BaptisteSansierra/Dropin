@@ -50,10 +50,10 @@ struct GroupSelectorView: View {
 
             ScrollView {
                 listView
-                    .padding(.top, 16)
                     .padding(.horizontal, 18)
                     .padding(.bottom, 12)
             }
+            .padding(.top, 16)
 
             createGroupView
         }
@@ -171,7 +171,9 @@ struct GroupSelectorView: View {
         HStack(spacing: 10) {
             // Color picker
             ZStack {
-                ColorPicker(String(""), selection: $createdGroupColor, supportsOpacity: false)
+                ColorPicker(String(""),
+                            selection: $createdGroupColor,
+                            supportsOpacity: false)
                     .labelsHidden()
                 Circle()
                     .frame(width: 15, height: 15)
@@ -220,19 +222,9 @@ struct GroupSelectorView: View {
                         }
                     }
                 }
-
-            Button {
-                createGroup()
-            } label: {
-                Text("common.add")
-                    .textStyle(.mainButton)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 9)
-                    .background(.dropinPrimary, in: RoundedRectangle(cornerRadius: 10))
-                    .opacity(createdGroupName.isEmpty ? 0.45 : 1)
-            }
-            .buttonStyle(.plain)
-            .disabled(createdGroupName.isEmpty)
+            
+            MainSmallButton(text: "common.add", action: createGroup)
+                .disabled(createdGroupName.isEmpty)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

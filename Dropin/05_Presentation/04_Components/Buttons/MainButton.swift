@@ -9,38 +9,48 @@ import SwiftUI
 
 struct MainButton: View {
     
-    enum Style {
-        case filled
-        case bordered
-    }
+//    enum Style {
+//        case filled
+//        case bordered
+//    }
 
     private var systemImage: String? = nil
     private var text: LocalizedStringKey
-    private let style: Style
+//    private let style: Style
     private var progress: DropinButton.Progress
+    private var maxWidth: CGFloat?
+    private var height: CGFloat
     private let action: () -> Void
     
     init(text: LocalizedStringKey,
          systemImage: String? = nil,
-         style: Style = .filled,
+//         style: Style = .filled,
          progress: DropinButton.Progress = .none,
+         maxWidth: CGFloat? = .infinity,
+         height: CGFloat = DropinApp.ui.button.height,
          action: @escaping () -> Void) {
         self.systemImage = systemImage
         self.text = text
-        self.style = style
+//        self.style = style
         self.progress = progress
+        self.maxWidth = maxWidth
+        self.height = height
         self.action = action
     }
     
     var body: some View {
         DropinButton(text: text,
                      systemImage: systemImage,
-                     maxWidth: .infinity,
+                     maxWidth: maxWidth,
+                     height: height,
                      //background: .dropinPrimary,
                      //foreground: .surface1,
-                     background: style == .filled ? .dropinPrimary : .surface1,
-                     foreground: style == .filled ? .surface1 : .dropinPrimary,
-                     stroke: style == .filled ? .clear : .dropinPrimary.opacity(0.25),
+//                     background: style == .filled ? .dropinPrimary : .surface1,
+//                     foreground: style == .filled ? .surface1 : .dropinPrimary,
+//                     stroke: style == .filled ? .clear : .dropinPrimary.opacity(0.25),
+                     background: .dropinPrimary,
+                     foreground: .surface1,
+                     stroke: .clear,
                      progress: progress,
                      action: action)
         .shadow(color: .dropinPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
