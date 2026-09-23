@@ -17,7 +17,7 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     // MARK: States & Bindings
     @Bindable private var viewModel: PlacesMapViewModel
     @Binding private var selectedPlaceId: UUID?
-    @State private var tmpPlaceAnnotation: MKTempPlaceAnnotation?
+    @State private var draftPlaceAnnotation: MKDraftPlaceAnnotation?
     @Environment(AppSettings.self) private var appSettings
 
     private var places: [PlaceUI]
@@ -145,8 +145,8 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         mapView.addAnnotations(newAnnotations)
 
         // Add temporary place
-        if let tmpPlace = viewModel.tmpPlace {
-            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
+        if let draftPlace = viewModel.draftPlace {
+            mapView.addAnnotation(MKDraftPlaceAnnotation(coordinate: draftPlace.coordinates))
         }
     }
     
@@ -166,9 +166,9 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
         mapView.addAnnotations(toAdd)
 
         // Temporary place
-        mapView.removeAnnotations(mapView.annotations.compactMap { $0 as? MKTempPlaceAnnotation })
-        if let tmpPlace = viewModel.tmpPlace {
-            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: tmpPlace.coordinates))
+        mapView.removeAnnotations(mapView.annotations.compactMap { $0 as? MKDraftPlaceAnnotation })
+        if let draftPlace = viewModel.draftPlace {
+            mapView.addAnnotation(MKDraftPlaceAnnotation(coordinate: draftPlace.coordinates))
         }
     }
 }

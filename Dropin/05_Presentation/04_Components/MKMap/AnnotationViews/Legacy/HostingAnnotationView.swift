@@ -114,7 +114,7 @@ class HostingAnnotationView: MKAnnotationView {
         guard let pinStyle = pinStyle else { return }
         guard let pinSize = pinSize else { return }
 
-        if let tempPlaceAnnotation = annotation as? MKTempPlaceAnnotation {
+        if let tempPlaceAnnotation = annotation as? MKDraftPlaceAnnotation {
             configure(view: PlaceAnnotationView(tempAnnotation: tempPlaceAnnotation,
                                                 pinStyle: pinStyle,
                                                 pinSize: pinSize))

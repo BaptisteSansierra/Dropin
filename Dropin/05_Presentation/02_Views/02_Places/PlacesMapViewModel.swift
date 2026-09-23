@@ -10,18 +10,13 @@ import CoreLocation
 import SwiftUI
 import MapKit
 
-//@MainActor
-//@Observable protocol PlacesMapViewModelProtocol {
-//
-//}
-
 @MainActor
 @Observable class PlacesMapViewModel {
 
     // MARK: - Observed Properties
     private(set) var coordinator: PlaceCoordinator
     // Used for creating a new place
-    var tmpPlace: PlaceUI? = nil
+    var draftPlace: PlaceUI? = nil
     // Alerts toggles
     var showAuthLocAlert = false
     var showQuickCreateSheet = false
@@ -89,10 +84,10 @@ import MapKit
     
     // MARK: - UI child
     func createPlaceCreateQuickView() -> PlaceCreateQuickView {
-        guard let tmpPlace = tmpPlace else {
+        guard let draftPlace = draftPlace else {
             fatalError("temporary place undefined")
         }
-        return appContainer.createPlaceCreateQuickView(place: tmpPlace)
+        return appContainer.createPlaceCreateQuickView(place: draftPlace)
     }
 
     // MARK: - callbacks
@@ -144,7 +139,7 @@ import MapKit
     
     func preparePlaceFromCoords(coords: CLLocationCoordinate2D) {
         let createdPlace = PlaceUI(coordinates: coords)
-        tmpPlace = createdPlace
+        draftPlace = createdPlace
     }
 
     func preparePlaceFromAddress(coords: CLLocationCoordinate2D,
@@ -153,11 +148,11 @@ import MapKit
         if let address = address {
             createdPlace.address = address
         }
-        tmpPlace = createdPlace
+        draftPlace = createdPlace
     }
 
-    func discardCreation() {
-        reset()
+    func discardDraftPlace() {
+        draftPlace = nil
     }
     
     func coordinatesPickerUpdate(_ newCoords: CLLocationCoordinate2D) {
@@ -181,10 +176,10 @@ import MapKit
     }
     
     // MARK: - private
-    private func reset() {
-        tmpPlace = nil
-        //mapActionBus.performAction(.updateData)
-    }
+//    private func reset() {
+//        draftPlace = nil
+//        //mapActionBus.performAction(.updateData)
+//    }
     
     private func updatePlacePickerPositions() {
         updatePlacePickerPositions(coords: mapConfig.currentCamera.centerCoordinate)

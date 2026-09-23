@@ -63,7 +63,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let config: Configuration
     private let mapController: MapController
     private let places: [PlaceUI]
-    private let pendingCoordinate: CLLocationCoordinate2D?
+    private let draftCoordinate: CLLocationCoordinate2D?
     private let bottomInset: CGFloat
     private let mapReloadGen: Int
     private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
@@ -75,7 +75,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     init(config: Configuration,
          mapController: MapController,
          places: [PlaceUI],
-         pendingCoordinate: CLLocationCoordinate2D? = nil,
+         draftCoordinate: CLLocationCoordinate2D? = nil,
          selectedPlaceId: Binding<UUID?>,
          onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
          onMapCameraUpdate: MapCameraUpdateHandler? = nil,
@@ -86,7 +86,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         self.config = config
         self.mapController = mapController
         self.places = places
-        self.pendingCoordinate = pendingCoordinate
+        self.draftCoordinate = draftCoordinate
         self._selectedPlaceId = selectedPlaceId
         //self.onPlaceSelected = onPlaceSelected
         self.onLongPress = onLongPress
@@ -114,7 +114,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         
         return viewController
     }
-    
+        
     func updateUIViewController(_ viewController: PlacesMKMapVC, context: Context) {
         guard let mapView = context.coordinator.mapView else { assertionFailure(); return }
         
@@ -122,16 +122,28 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         mapController.connect(context.coordinator)
 
         // Set additional safe area insets
-        viewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0,
-                                                               left: 0,
-                                                               bottom: bottomInset,
-                                                               right: 0)
+        let safeAreaInsets = UIEdgeInsets(top: 0,
+                                          left: 0,
+                                          bottom: bottomInset,
+                                          right: 0)
+        if viewController.additionalSafeAreaInsets != safeAreaInsets {
+            viewController.additionalSafeAreaInsets = safeAreaInsets
+        } else {
+            //print("1 no-op safearea")
+        }
+
         //
         // Map style
         //
-        applyMapStyle(to: mapView,
-                      satellite: appSettings.mapSettings.satellite,
-                      hidePointsOfInterest: appSettings.mapSettings.hidePOI)
+        if mapStyleHasChanged(mapView,
+                              satellite: appSettings.mapSettings.satellite,
+                              hidePointsOfInterest: appSettings.mapSettings.hidePOI) {
+            applyMapStyle(to: mapView,
+                          satellite: appSettings.mapSettings.satellite,
+                          hidePointsOfInterest: appSettings.mapSettings.hidePOI)
+        } else {
+            //print("2 no-op map style")
+        }
         
         //
         // Check if settings were updated
@@ -141,28 +153,27 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
             let affectsAnns = appSettings.mapSettings.isDiffAffectsAnnotations(context.coordinator.mapSettings)
             context.coordinator.updateSettings(appSettings.mapSettings)
             if affectsAnns { shouldUpdateAnnotation = true }
+        } else {
+            //print("3 no-op map settings")
         }
-        
+
         //
         // Update pendingCoordinate if needed (trigger center on new one)
         //
-        if let pendingCoordinate = pendingCoordinate,
-           context.coordinator.pendingCoordinate != pendingCoordinate {
-            context.coordinator.updatePendingCoordinate(pendingCoordinate)
-            updatePendingAnnotations(mapView)
-        } else if context.coordinator.pendingCoordinate != nil {
-            context.coordinator.resetPendingCoordinate()
-            updatePendingAnnotations(mapView)
+        if let draftCoordinate = draftCoordinate,
+           context.coordinator.draftCoordinate != draftCoordinate {
+            // Coordinator is not aligned, which means we have a new draft
+            // > update coordinator and center on map
+            context.coordinator.updateDraftCoordinate(draftCoordinate)
+            updateDraftAnnotations(mapView)
+        } else if let _ = draftCoordinate {
+            // No-op: coordinator is aligned with VCR
+            //print("4 no-op draft annotation")
+        } else if context.coordinator.draftCoordinate != nil {
+            // We need to reset coordinator, aka remove the draft annotation
+            context.coordinator.resetDraftCoordinate()
+            updateDraftAnnotations(mapView)
         }
-
-        
-        
-//        var updatedPendingCoords = false
-//        if let pendingCoordinate = pendingCoordinate {
-//            updatedPendingCoords = context.coordinator.centerOnPendingCoordinateIfNeeded(pendingCoordinate)
-//        } else {
-//            context.coordinator.resetPendingCoordinate()
-//        }
 
         // Reload annotations (places were reloaded from )
         if context.coordinator.lastReloadGen != mapReloadGen || shouldUpdateAnnotation {
@@ -180,6 +191,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                 guard let mapView else { return }
                 context.coordinator.refreshPinSelection(mapView)
             }
+        } else {
+            //print("5 no-op reload annotation")
         }
 
         // Update annotations — only rebuild when the active place set actually changed
@@ -192,6 +205,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                 guard let mapView else { return }
                 context.coordinator.refreshPinSelection(mapView)
             }
+        } else {
+            //print("6 no-op update annotation")
         }
 
         //
@@ -214,6 +229,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         } else if mapView.selectedAnnotations.count > 0 && selectedPlaceId == nil {
             // Deselect — harmless regardless of tab, no camera movement.
             mapView.deselectAnnotation(mapView.selectedAnnotations[0], animated: true)
+        } else {
+            //print("7 no-op selected annotation")
         }
     }
     
@@ -229,6 +246,26 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     }
     
     // MARK: private methods
+    private func mapStyleHasChanged(_ mapView: MKMapView, satellite: Bool, hidePointsOfInterest: Bool) -> Bool {
+        if mapView.mapType == .standard && satellite {
+            return true
+        }
+        if mapView.mapType == .hybrid && !satellite {
+            return true
+        }
+        if let poiFilter = mapView.pointOfInterestFilter {
+            if hidePointsOfInterest && poiFilter.includes(.airport) {
+                return true
+            }
+            if !hidePointsOfInterest && !poiFilter.includes(.airport) {
+                return true
+            }
+        } else {
+            return true
+        }
+        return false
+    }
+    
     private func applyMapStyle(to mapView: MKMapView, satellite: Bool, hidePointsOfInterest: Bool) {
         // Map type
         mapView.mapType = satellite ? .hybrid : .standard
@@ -239,9 +276,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         } else {
             mapView.pointOfInterestFilter = .includingAll
         }
-        
         // Traffic
-        mapView.showsTraffic = false
+        //mapView.showsTraffic = false
     }
     
     private func reloadDotAnnotations(_ mapView: MKMapView) {
@@ -270,21 +306,27 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         mapView.addAnnotations(toAdd)
     }
     
-    private func updatePendingAnnotations(_ mapView: MKMapView) {
+    private func updateDraftAnnotations(_ mapView: MKMapView) {
         // Remove old pending coordinate if needed
-        let pendingAnnotations = mapView.annotations.compactMap { $0 as? MKTempPlaceAnnotation }
-        if pendingAnnotations.count > 1 {
-            assertionFailure("More than one pending annotation found...")
+        let draftAnnotations = mapView.annotations.compactMap { $0 as? MKDraftPlaceAnnotation }
+        if draftAnnotations.count > 1 {
+            assertionFailure("More than one draft annotation found...")
         }
-        mapView.removeAnnotations(pendingAnnotations)
-        // Add new pending coordinate if needed
-        if let pendingCoordinate = pendingCoordinate {
-            mapView.addAnnotation(MKTempPlaceAnnotation(coordinate: pendingCoordinate))
+        
+        if let existing = draftAnnotations.first, let draftCoordinate {
+            // Same annotation, new position, mutate in place so MapKit animates
+            // it smoothly instead of tearing down and recreating the view.
+            existing.coordinate = draftCoordinate
+        } else {
+            mapView.removeAnnotations(draftAnnotations)
+            if let draftCoordinate {
+                mapView.addAnnotation(MKDraftPlaceAnnotation(coordinate: draftCoordinate))
+            }
         }
     }
     
-    private func pendingAnnotation(_ mapView: MKMapView) -> MKTempPlaceAnnotation? {
-        let pendingAnnotations = mapView.annotations.compactMap { $0 as? MKTempPlaceAnnotation }
+    private func pendingAnnotation(_ mapView: MKMapView) -> MKDraftPlaceAnnotation? {
+        let pendingAnnotations = mapView.annotations.compactMap { $0 as? MKDraftPlaceAnnotation }
         guard pendingAnnotations.count <= 1 else {
             assertionFailure("More than one pending annotation found...")
             mapView.removeAnnotations(pendingAnnotations)
@@ -308,7 +350,7 @@ extension PlacesMKMapVCR {
         private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
         private let onMapCameraUpdate: MapCameraUpdateHandler?
         private let interactionStatus: (() -> InteractionStatus)
-        private(set) var pendingCoordinate: CLLocationCoordinate2D? = nil
+        private(set) var draftCoordinate: CLLocationCoordinate2D? = nil
 
         private var hasSnappedToUser = false
 
@@ -377,16 +419,16 @@ extension PlacesMKMapVCR {
                      animated: true)
         }
         
-        func updatePendingCoordinate(_ coords: CLLocationCoordinate2D) {
-            guard pendingCoordinate != coords else { return }
-            pendingCoordinate = coords
+        func updateDraftCoordinate(_ coords: CLLocationCoordinate2D) {
+            guard draftCoordinate != coords else { return }
+            draftCoordinate = coords
             centerOn(coords: coords,
                      withSheetOffset: true,
                      animated: true)
         }
         
-        func resetPendingCoordinate() {
-            pendingCoordinate = nil
+        func resetDraftCoordinate() {
+            draftCoordinate = nil
         }
 
         // MARK: - debounced declutter/pin refresh
@@ -749,7 +791,7 @@ struct MockPlacesMKMapVCR: View {
                                                                         .zoom(0.2))),
                                mapController: MapController(),
                                places: places,
-                               pendingCoordinate: .barcelona.offset(x: 0.02, y: -0.02),
+                               draftCoordinate: .barcelona.offset(x: 0.02, y: -0.02),
                                selectedPlaceId: Binding<UUID?>.constant(nil),
                                interactionStatus: { return .none },
                                mapReloadGen: 0,

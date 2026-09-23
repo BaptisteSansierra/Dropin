@@ -35,7 +35,7 @@ struct PlaceAnnotationView: View {
         self.showLabel = showLabel
     }
 
-    init(tempAnnotation: MKTempPlaceAnnotation, pinStyle: PinStyle, pinSize: CGFloat) {
+    init(tempAnnotation: MKDraftPlaceAnnotation, pinStyle: PinStyle, pinSize: CGFloat) {
         self.place = nil
         self.isSelected = false
         self.pinStyle = pinStyle

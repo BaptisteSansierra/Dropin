@@ -325,8 +325,10 @@ struct PlacesView: View {
         switch action {
             case .showOnMap:
                 viewModel.selectedTab = 0
+                
             case .reloadMainPlaces:
                 Task {
+                    //print("[PLACES_VIEW]<reloadMainPlaces> =>> loadPlaces")
                     try? await viewModel.loadPlaces()
                 }
 //            case .updateMapAnnotations:

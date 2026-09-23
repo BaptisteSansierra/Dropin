@@ -62,7 +62,7 @@ struct AnnotationViewFactory {
         }
 
         // Temporary place (used for creation)
-        if let tmp = annotation as? MKTempPlaceAnnotation {
+        if let tmp = annotation as? MKDraftPlaceAnnotation {
             return createTmpPlaceView(for: tmp, on: mapView)
         }
 
@@ -100,7 +100,7 @@ struct AnnotationViewFactory {
         return view
     }
 
-    private func createTmpPlaceView(for placeAnnotation: MKTempPlaceAnnotation,
+    private func createTmpPlaceView(for placeAnnotation: MKDraftPlaceAnnotation,
                                            on mapView: MKMapView) -> MKAnnotationView {
         let identifier = Identifiers.tempPlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,

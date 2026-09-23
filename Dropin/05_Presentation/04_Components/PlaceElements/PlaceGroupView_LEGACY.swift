@@ -5,6 +5,10 @@
 //  Created by baptiste sansierra on 12/8/25.
 //
 
+// FIXME: obsolete code
+
+#if false
+
 import SwiftUI
 
 struct PlaceGroupView: View {
@@ -134,5 +138,7 @@ struct MockPlaceGroupView: View {
         MockPlaceGroupView()
     }
 }
+
+#endif
 
 #endif

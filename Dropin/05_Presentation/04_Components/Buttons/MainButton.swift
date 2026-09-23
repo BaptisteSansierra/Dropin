@@ -53,6 +53,6 @@ struct MainButton: View {
                      stroke: .clear,
                      progress: progress,
                      action: action)
-        .shadow(color: .dropinPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
+        .shadow(color: .dropinPrimary.opacity(0.3), radius: 10, x: 0, y: 8)
     }
 }

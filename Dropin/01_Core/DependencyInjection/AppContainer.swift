@@ -629,6 +629,10 @@ extension AppContainer {
         mockPlaces[6].group = mockGroups[8]
         mockPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
 
+        for p in mockPlaces {
+            print("Mock place insert '\(p.name)' Group(\(p.group?.name ?? "N/A")) Tags(\(p.tags.count))")
+        }
+        
         try modelContext.save()
     }
 }

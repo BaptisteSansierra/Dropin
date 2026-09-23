@@ -58,7 +58,7 @@ struct PlacesMapView: View {
                 PlacesMKMapVCR(config: viewModel.launchConfig,
                                mapController: viewModel.mapController,
                                places: places,
-                               pendingCoordinate: viewModel.tmpPlace?.coordinates,
+                               draftCoordinate: viewModel.draftPlace?.coordinates,
                                selectedPlaceId: $selectedPlaceId,
                                onLongPress: viewModel.onLongPress,
                                onMapCameraUpdate: viewModel.onCameraUpdate,
@@ -90,12 +90,13 @@ struct PlacesMapView: View {
         }
         // Sheets
         .sheet(isPresented: $viewModel.showQuickCreateSheet, onDismiss: {
-            viewModel.discardCreation()
+            viewModel.discardDraftPlace()
             // Load the possible created place
             actionBus.send(.reloadMainPlaces)
         }, content: {
             viewModel.createPlaceCreateQuickView()
-                .presentationDetents([.height(createPlaceSheetDefaultDetent), .large])
+                .presentationDetents([PlaceCreateQuickView.sheetHeight])
+                .presentationDragIndicator(.visible)
         })
         .sheetOverlay(isPresented: $viewModel.pickingAddress) {
             AddressPickerView(coords: $viewModel.addressPickerCoords,

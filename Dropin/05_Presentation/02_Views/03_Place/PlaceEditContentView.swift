@@ -553,8 +553,6 @@ extension PlaceEditContentView {
                 }) {
                     HStack {
                         GroupView(group: group,
-                                  //actionType: .remove,
-                                  actionType: .none,
                                   action: { place.group = nil })
                         .padding(.vertical, 20)
                         .padding(.leading, 0)
@@ -603,7 +601,6 @@ extension PlaceEditContentView {
         }
         .sheet(isPresented: $showingTagSelector) {
             viewModel.createTagSelectorView(place: $place)
-                .padding(.top, 20)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.backgroundPrimary)
@@ -639,38 +636,6 @@ extension PlaceEditContentView {
             }
         }
     }
-
-    /*
-    private var tagView: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("common.tags")
-                .textStyle(.formSectionTitle2)
-                .padding(.leading)
-                .padding(.bottom, 10)
-            ZStack {
-                PlaceTagsView(place: $place,
-                              showingTagsSelector: $showingTagSelector,
-                              editEnabled: true,
-                              presentationMode: .form)
-                if place.tags.count == 0 {
-                    Text("placeholder.no_tags")
-                        .foregroundStyle(.disabled)
-                        .textStyle(.body)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                }
-            }
-            .background(.backgroundPrimary)
-            
-        }
-        .sheet(isPresented: $showingTagSelector) {
-            viewModel.createTagSelectorView(place: $place)
-                .padding(.top, 20)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-        }
-    }
-     */
 }
 
 // MARK: - ICON Card
