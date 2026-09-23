@@ -32,7 +32,7 @@ struct TagSelectorView: View {
     var body: some View {
         VStack(spacing: 0) {
             headerView
-                .padding(.top, 12)
+                .padding(.top, 25)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
@@ -337,9 +337,18 @@ struct TagSelectorView: View {
 struct MockTagSelectorView: View {
     var mock: MockContainer
     @State var place: PlaceUI
+    @State var present: Bool = false
 
     var body: some View {
-        mock.appContainer.createTagSelectorView(place: $place)
+        MainButton(text: "go") {
+            present.toggle()
+        }
+        .padding()
+        .sheet(isPresented: $present) {
+            mock.appContainer.createTagSelectorView(place: $place)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     init() {
