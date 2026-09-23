@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftData
 
+
+// TODO: fix animation when keboard appears
 struct GroupSelectorView: View {
 
     // MARK: - State & Bindings
@@ -22,6 +24,7 @@ struct GroupSelectorView: View {
     @State private var markerPlaceholderOpacity: CGFloat
     @State private var markerPlaceholderColor: Color
     @State private var markerPlaceholderFont: Font
+    @FocusState private var isNameFieldFocused: Bool
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
@@ -45,7 +48,7 @@ struct GroupSelectorView: View {
     var body: some View {
         VStack(spacing: 0) {
             headerView
-                .padding(.top, 12)
+                .padding(.top, 25)
                 .padding(.horizontal, 20)
 
             ScrollView {
@@ -56,6 +59,7 @@ struct GroupSelectorView: View {
             .padding(.top, 16)
 
             createGroupView
+                //.opacity(isNameFieldFocused ? 0 : 1)
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
         .task {
@@ -70,6 +74,11 @@ struct GroupSelectorView: View {
         .fullScreenCover(isPresented: $showingMarkerPicker) {
             MarkerListView(selected: $createdGroupIcon)
         }
+        //.toolbar {
+        //    ToolbarItemGroup(placement: .keyboard) {
+        //        createGroupView
+        //    }
+        //}
     }
 
     // MARK: - Header
@@ -213,6 +222,7 @@ struct GroupSelectorView: View {
             TextField("group_selector.new", text: $createdGroupName)
                 .textStyle(.body)
                 .autocorrectionDisabled()
+                .focused($isNameFieldFocused)
                 .overlay {
                     if isShowingNameWarn {
                         ZStack(alignment: .leading) {
@@ -282,9 +292,18 @@ struct GroupSelectorView: View {
 struct MockGroupSelectorView: View {
     var mock: MockContainer
     @State var place: PlaceUI
+    @State var present: Bool = false
 
     var body: some View {
-        mock.appContainer.createGroupSelectorView(place: $place)
+        MainButton(text: "go") {
+            present.toggle()
+        }
+        .padding()
+        .sheet(isPresented: $present) {
+            mock.appContainer.createGroupSelectorView(place: $place)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     init() {
