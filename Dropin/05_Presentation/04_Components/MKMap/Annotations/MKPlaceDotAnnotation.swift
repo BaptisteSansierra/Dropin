@@ -17,7 +17,7 @@ class MKPlaceDotAnnotation: NSObject, MKPlaceAnnotationRepresentable {
     let subtitle: String?
     let place: PlaceUI
 
-    init(place: PlaceUI) {
+    required init(place: PlaceUI) {
         self.id = place.id
         self.coordinate = place.coordinates
         self.title = place.name

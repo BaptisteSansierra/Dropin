@@ -50,8 +50,6 @@ class PlaceAnnotationView: MKAnnotationView {
 
     private func setup() {
         canShowCallout = false
-        displayPriority = .defaultHigh
-        collisionMode = .circle
         zPriority = .max   // always draw above a dot sharing the same coordinate
 
         // Bottom-anchored so the selection scale grows from the pin's tip

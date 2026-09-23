@@ -27,9 +27,12 @@ struct AnnotationViewFactory {
     }
 
     private var mapSettings: MapSettings
+    // See `PlacesMKMapVCR.Configuration.displayAllPins`.
+    private var displayAllPins: Bool
 
-    init(mapSettings: MapSettings) {
+    init(mapSettings: MapSettings, displayAllPins: Bool = false) {
         self.mapSettings = mapSettings
+        self.displayAllPins = displayAllPins
     }
 
     func registerViews(for mapView: MKMapView) {
@@ -110,10 +113,7 @@ struct AnnotationViewFactory {
         view.temporary = true
         view.isEnabled = false
         view.canShowCallout = false
-        // No place identity yet — same neutral color for both pin styles
-        // (the old SwiftUI path used two different defaults, `.dropinPrimary`
-        // for `.rect` and `.gray` for `.rounded`, an inconsistency not worth
-        // preserving).
+        // No place identity yet, use a neutral color
         view.configure(color: UIColor(Color.dropinPrimary),
                        icon: nil,
                        iconExtra: nil,
@@ -153,6 +153,8 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? PlaceAnnotationView
             ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
+        view.displayPriority = displayAllPins ? .required : .defaultHigh
+        view.collisionMode = .circle
         view.configure(color: placeAnnotation.color,
                        icon: placeAnnotation.place.group?.icon,
                        iconExtra: placeAnnotation.place.icon,

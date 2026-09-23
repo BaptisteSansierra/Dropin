@@ -38,14 +38,17 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         var showsUserLocation = true
         //var tracksUserAtLaunch = true
         var positionAtLaunch: LaunchPosition = .user
-        //var hidesLabelsWhenZoomedOut = true
+        // PlaceAnnotationView collides by default (displayPriority = .defaultHigh)
+        // force .required so every pin shows, regardless of density.
+        var displayAllPins = false
 
         static let interactive = Configuration()                 // main map
         static let preview = Configuration(scrollEnabled: false,
                                            zoomEnabled: false,
                                            showsUserLocation: false,
                                            positionAtLaunch: .region(region: .abbeyRoad
-                                            .offset(lat: -0.001)))
+                                            .offset(lat: -0.001)),
+                                           displayAllPins: true)
         static let browse = Configuration(positionAtLaunch: .none)  // group/tag map ??
     }
     
@@ -70,6 +73,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let onMapCameraUpdate: MapCameraUpdateHandler?
     private let interactionStatus: (() -> InteractionStatus)
     private let isActiveTab: Bool
+    /// Filter pins to avoid overpopulation
+    private let usePinPromotionLogic = true
 
     // MARK: Init
     init(config: Configuration,
@@ -88,7 +93,6 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         self.places = places
         self.draftCoordinate = draftCoordinate
         self._selectedPlaceId = selectedPlaceId
-        //self.onPlaceSelected = onPlaceSelected
         self.onLongPress = onLongPress
         self.onMapCameraUpdate = onMapCameraUpdate
         self.interactionStatus = interactionStatus
@@ -148,11 +152,11 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //
         // Check if settings were updated
         //
-        var shouldUpdateAnnotation = false
+        var shouldReloadAnnotation = false
         if context.coordinator.mapSettings != appSettings.mapSettings {
             let affectsAnns = appSettings.mapSettings.isDiffAffectsAnnotations(context.coordinator.mapSettings)
             context.coordinator.updateSettings(appSettings.mapSettings)
-            if affectsAnns { shouldUpdateAnnotation = true }
+            if affectsAnns { shouldReloadAnnotation = true }
         } else {
             //print("3 no-op map settings")
         }
@@ -175,35 +179,43 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
             updateDraftAnnotations(mapView)
         }
 
-        // Reload annotations (places were reloaded from )
-        if context.coordinator.lastReloadGen != mapReloadGen || shouldUpdateAnnotation {
+        // Reload all annotations (places were reloaded from )
+        if context.coordinator.lastReloadGen != mapReloadGen || shouldReloadAnnotation {
             context.coordinator.lastReloadGen = mapReloadGen
             reloadDotAnnotations(mapView)
-            // Full wipe just tore down any promoted annotations too — reset the
-            // bookkeeping so refreshPinSelection treats everyone as needing to be
-            // re-added rather than skipping because the id set happens to match.
-            context.coordinator.resetPromotedTracking()
-            // Deferred a run-loop turn: mapView.annotations(in:) isn't guaranteed to
-            // reflect annotations added earlier in this same call stack, so calling
-            // refreshPinSelection synchronously here can race and see an empty
-            // visible set — silently promoting nothing.
-            DispatchQueue.main.async { [weak mapView] in
-                guard let mapView else { return }
-                context.coordinator.refreshPinSelection(mapView)
+            if usePinPromotionLogic {
+                // Full wipe just tore down any promoted annotations too — reset the
+                // bookkeeping so refreshPinSelection treats everyone as needing to be
+                // re-added rather than skipping because the id set happens to match.
+                context.coordinator.resetPromotedTracking()
+                // Deferred a run-loop turn: mapView.annotations(in:) isn't guaranteed to
+                // reflect annotations added earlier in this same call stack, so calling
+                // refreshPinSelection synchronously here can race and see an empty
+                // visible set — silently promoting nothing.
+                DispatchQueue.main.async { [weak mapView] in
+                    guard let mapView else { return }
+                    context.coordinator.refreshPinSelection(mapView)
+                }
+            } else {
+                reloadPinAnnotations(mapView)
             }
         } else {
             //print("5 no-op reload annotation")
         }
 
-        // Update annotations — only rebuild when the active place set actually changed
+        // Update annotations - only rebuild when the active place set actually changed
         let activeIds = Set(places.lazy.filter { $0.isActive }.map { $0.id })
         if activeIds != context.coordinator.lastActiveIds {
             context.coordinator.lastActiveIds = activeIds
             updateDotAnnotations(mapView)
-            // Same deferral as above — avoids racing mapView.annotations(in:).
-            DispatchQueue.main.async { [weak mapView] in
-                guard let mapView else { return }
-                context.coordinator.refreshPinSelection(mapView)
+            if usePinPromotionLogic {
+                // Same deferral as above - avoids racing mapView.annotations(in:).
+                DispatchQueue.main.async { [weak mapView] in
+                    guard let mapView else { return }
+                    context.coordinator.refreshPinSelection(mapView)
+                }
+            } else {
+                updatePinAnnotations(mapView)
             }
         } else {
             //print("6 no-op update annotation")
@@ -279,18 +291,34 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         // Traffic
         //mapView.showsTraffic = false
     }
-    
+
     private func reloadDotAnnotations(_ mapView: MKMapView) {
+        reloadPlaceAnnotations(mapView, as: MKPlaceDotAnnotation.self)
+    }
+
+    private func updateDotAnnotations(_ mapView: MKMapView) {
+        updatePlaceAnnotations(mapView, as: MKPlaceDotAnnotation.self)
+    }
+
+    private func reloadPinAnnotations(_ mapView: MKMapView) {
+        reloadPlaceAnnotations(mapView, as: MKPlacePromotedAnnotation.self)
+    }
+
+    private func updatePinAnnotations(_ mapView: MKMapView) {
+        updatePlaceAnnotations(mapView, as: MKPlacePromotedAnnotation.self)
+    }
+
+    private func reloadPlaceAnnotations<T: MKPlaceAnnotationRepresentable>(_ mapView: MKMapView, as: T.Type) {
         let latestAnnotations = places
             .filter { $0.isActive }
-            .map { MKPlaceDotAnnotation(place: $0) }
-        mapView.removeAnnotations(mapView.annotations)
+            .map { T.init(place: $0) }
+        mapView.removeAnnotations(mapView.annotations.compactMap({ $0 as? T }))
         mapView.addAnnotations(latestAnnotations)
     }
     
-    private func updateDotAnnotations(_ mapView: MKMapView) {
+    private func updatePlaceAnnotations<T: MKPlaceAnnotationRepresentable>(_ mapView: MKMapView, as: T.Type) {
         let activePlaces = places.filter { $0.isActive }
-        let current = mapView.annotations.compactMap { $0 as? MKPlaceDotAnnotation }
+        let current = mapView.annotations.compactMap { $0 as? T }
 
         let newIds = Set(activePlaces.map { $0.id })
         let currentIds = Set(current.map { $0.id })
@@ -302,7 +330,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         // Add new annotations
         let toAdd = activePlaces
             .filter { !currentIds.contains($0.id) }
-            .map { MKPlaceDotAnnotation(place: $0) }
+            .map { T(place: $0) }
         mapView.addAnnotations(toAdd)
     }
     
@@ -375,16 +403,18 @@ extension PlacesMKMapVCR {
              interactionStatus: @escaping (() -> InteractionStatus) ) {
             self.config = config
             self.mapSettings = mapSettings
-            self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings)
+            self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings,
+                                                               displayAllPins: config.displayAllPins)
             self.onPlaceSelected = onPlaceSelected
             self.onLongPress = onLongPress
             self.onMapCameraUpdate = onMapCameraUpdate
             self.interactionStatus = interactionStatus
         }
-        
+
         func updateSettings(_ mapSettings: MapSettings) {
             self.mapSettings = mapSettings
-            self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings)
+            self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings,
+                                                               displayAllPins: config.displayAllPins)
         }
         
         // MARK: - gestures
