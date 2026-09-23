@@ -72,6 +72,8 @@ struct LookupResolvedItem: Identifiable {
     }
 }
 
+// TODO: Use different celle style for POI vs. Adress (cf. AddressLookupService todos)
+
 @MainActor
 @Observable class LookupPlacesViewModel {
     

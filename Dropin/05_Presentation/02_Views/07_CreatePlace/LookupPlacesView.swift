@@ -21,6 +21,9 @@ struct LookupPlacesView: View {
         viewModel.resultOffset = UIScreen.main.bounds.height
         self.viewModel = viewModel
         self._editedPlace = .constant(nil)
+        #if DEBUG
+        initialAddress = "la grange"
+        #endif
     }
 
     init(viewModel: LookupPlacesViewModel, place: Binding<PlaceUI>) {
@@ -39,6 +42,7 @@ struct LookupPlacesView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
+            Color.backgroundPrimary.ignoresSafeArea()
             VStack(spacing: 0) {
                 SearchTextFieldView(text: $viewModel.query,
                                     placeholder: "Search a name or an address")
@@ -66,9 +70,16 @@ struct LookupPlacesView: View {
                 Spacer()
             }
             if let resolvedPlace = $viewModel.resolvedPlace.wrappedValue {
+                
+//                Rectangle()
+//                    .fill(.regularMaterial)
+//                    .opacity(viewModel.resultBgOpacity)
+//                    .ignoresSafeArea()
+
                 Color.overlayAlphaLayer
                     .opacity(viewModel.resultBgOpacity)
                     .ignoresSafeArea()
+                
                 viewModel.createLookupPlaceView(resolvedPlace,
                                                 place: $editedPlace,
                                                 status: $viewModel.resultStatus)
@@ -124,16 +135,21 @@ struct LookupPlacesView: View {
 
     private var resultsView: some View {
         ZStack {
-            List {
-                ForEach(viewModel.results, id: \.id) { item in
-                    Button {
-                        presentDetails(item)
-                    } label: {
-                        itemCell(item)
+            HStack {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(viewModel.results, id: \.id) { item in
+                            Button {
+                                presentDetails(item)
+                            } label: {
+                                itemCell(item)
+                            }
+                            Divider()
+                        }
                     }
                 }
+
             }
-            .listStyle(.inset)
             if viewModel.searching {
                 loadingView
             }
@@ -156,12 +172,20 @@ struct LookupPlacesView: View {
     }
     
     private func itemCell(_ item: LookupResult) -> some View {
-        VStack(alignment: .leading) {
+        VStack(spacing: 0) {
             Text(item.localSearchCompletion.title)
                 .textStyle(.cellTitle)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 15)
             Text(item.localSearchCompletion.subtitle)
                 .textStyle(.cellSubtitle)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 4)
+                .padding(.bottom, 15)
         }
+        .padding(.horizontal)
     }
     
     // MARK: - private methods

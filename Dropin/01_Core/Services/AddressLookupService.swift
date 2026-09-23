@@ -17,6 +17,8 @@ struct LookupResult: Identifiable, Sendable {
     }
 }
 
+// TODO: Improvement: Use a 2nd completer with "resultTypes = .pointOfInterest"
+// so we can know which result is POI, which is an address
 @MainActor
 final class AddressLookupService: NSObject {
     
@@ -28,6 +30,10 @@ final class AddressLookupService: NSObject {
         self.locationManager = locationManager
         completer = MKLocalSearchCompleter()
         super.init()
+        if let coords = locationManager.lastKnownLocation {
+            completer.region = MKCoordinateRegion(center: coords,
+                                                  span: .init(squareDelta: 0.3))
+        }
         completer.resultTypes = [.address, .pointOfInterest]
         completer.delegate = self
     }
