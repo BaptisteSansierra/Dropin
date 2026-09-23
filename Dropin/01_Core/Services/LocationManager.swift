@@ -32,8 +32,8 @@ enum LocationManagerError: Error {
     }()
     
     override init() {
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.distanceFilter = kCLDistanceFilterNone
+        manager.desiredAccuracy = kCLLocationAccuracyBest // dead configuration, startMonitoringSignificantLocationChanges ignores it
+        manager.distanceFilter = kCLDistanceFilterNone    // dead configuration, startMonitoringSignificantLocationChanges ignores it
     }
     
     func start() {
@@ -42,7 +42,8 @@ enum LocationManagerError: Error {
         lastKnownLocation = manager.location?.coordinate
         checkAuthorizationStatus()
         guard authorized == true else { return }
-        manager.startUpdatingLocation()
+        // Using `startMonitoringSignificantLocationChanges` instead of `startUpdatingLocation` is enough as there's no tracking feature in the app
+        manager.startMonitoringSignificantLocationChanges()
     }
     
     private func checkAuthorizationStatus() {
