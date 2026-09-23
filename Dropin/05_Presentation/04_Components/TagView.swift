@@ -42,7 +42,7 @@ struct TagView: View {
             lightAlphaBgColor = .lerp(from: lightAlphaBgColor, to: .textPrimary, lerp)
         } else if luminance < 0.25 {
             let lerp = (0.25 - luminance) * 4
-            print("LUMI:\(luminance) +> LERP:\(lerp)")
+            //print("LUMI:\(luminance) +> LERP:\(lerp)")
             darkColor = .lerp(from: darkColor, to: .init(rgba: "BBBBBB"), lerp)
             darkAlphaBgColor = .lerp(from: darkAlphaBgColor, to: .backgroundPrimaryL, lerp)
         }
