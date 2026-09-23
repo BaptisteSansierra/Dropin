@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-/// SDGroup UI representation: bordered rounded rect text
+/// Group UI representation: bordered rounded rect text
 struct GroupView: View {
     
+    // FIXME: ActionType is legacy code, should be cleaned up
+    // actions are now handled outside
     enum ActionType {
         case remove
         case edit
@@ -33,7 +35,7 @@ struct GroupView: View {
     private var c3: Color
     private var icon: Icon?
     private var action: (() -> Void)?
-    private var actionType: ActionType
+    private var actionType: ActionType = .none
     private var style: Style
     
     private var textStyle: TextStyle {
@@ -89,13 +91,13 @@ struct GroupView: View {
     init(name: String,
          color: Color,
          icon: Icon?,
-         actionType: ActionType = .none,
+         //actionType: ActionType = .none,
          action: (() -> Void,)? = nil,
          style: Style = .regular) {
         self.name = name
         self.color = color
         self.icon = icon
-        self.actionType = actionType
+        //self.actionType = actionType
         self.action = action
         self.style = style
         
@@ -103,13 +105,13 @@ struct GroupView: View {
     }
     
     init(group: GroupUI,
-         actionType: ActionType = .none,
+         //actionType: ActionType = .none,
          action: (() -> Void)? = nil,
          style: Style = .regular) {
         self.name = group.name
         self.color = group.color
         self.icon = group.icon
-        self.actionType = actionType
+        //self.actionType = actionType
         self.action = action
         self.style = style
 
@@ -337,14 +339,14 @@ struct MockGroupView: View {
             GroupView(name: "No Mark",
                       color: .brown,
                       icon: nil,
-                      actionType: .remove,
+                      //actionType: .remove,
                       action: { Log.info("Do the work") },
                       style: .small)
 
             GroupView(name: "Mark",
                       color: .brown,
                       icon: .sf("carrot"),
-                      actionType: .edit,
+                      //actionType: .edit,
                       action: { Log.info("Eat a carrot") },
                       style: .small)
 
