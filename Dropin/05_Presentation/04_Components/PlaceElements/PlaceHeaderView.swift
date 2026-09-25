@@ -62,7 +62,7 @@ struct PlaceHeaderView: View {
                                 .fill(.backgroundPrimary)
                                 .stroke(.separator)
                         }
-                    Text(place.address.flatMap { $0.isEmpty ? nil : $0 } ?? place.coordinates.formatted())
+                    Text(place.address ?? place.coordinates.formatted())
                         .textStyle(.stringFieldTitle)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
