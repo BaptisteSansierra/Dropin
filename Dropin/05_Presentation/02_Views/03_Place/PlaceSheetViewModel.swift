@@ -98,14 +98,14 @@ import CoreLocation
     }
     
     func routeThrowWaze(place: PlaceUI) {
-        guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude)-\(place.coordinates.longitude)&navigate=yes") else { return }
+        guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude),\(place.coordinates.longitude)&navigate=yes") else { return }
         //guard let url = URL(string:"https://www.waze.com/ul?ll=\(place.address)") else { return }
         UIApplication.shared.open(url)
     }
     
     func copyAddressToClipboard(place: PlaceUI) {
         guard let address = place.address else { return }
-        UIPasteboard.general.string = place.address
+        UIPasteboard.general.string = address
     }
     
     func copyCoordinatesToClipboard(place: PlaceUI) {
