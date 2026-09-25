@@ -562,9 +562,21 @@ extension PlacesMKMapVCR {
             // Get the list of visible places in this rect
             let visible = mapView.annotations(in: mapView.visibleMapRect)
                 .compactMap { $0 as? MKPlaceDotAnnotation }
+                .filter { lastActiveIds.contains($0.id) }
             var candidates: [UUID: PlaceUI] = [:]
             for dot in visible { candidates[dot.id] = dot.place }
 
+            // Drop promoted pins whose place isn't a candidate at all anymore (filtered out/deleted/scrolled out)
+            // the cap-based demotion below only ever considers ids that ARE still candidates, so a candidate that disappears
+            // entirely is never routed to removeAnnotations without this.
+            let staleIds = promotedIds.subtracting(candidates.keys)
+            if !staleIds.isEmpty {
+                mapView.removeAnnotations(mapView.annotations
+                    .compactMap { $0 as? MKPlacePromotedAnnotation }
+                    .filter { staleIds.contains($0.id) })
+                promotedIds.subtract(staleIds)
+            }
+            
             // Sort the list so that higher position = higher chance to get promoted
             let sorted = candidates.sorted {
                 if $0.value.updatedAt != $1.value.updatedAt {
