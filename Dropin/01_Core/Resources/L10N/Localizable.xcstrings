@@ -291,6 +291,70 @@
         }
       }
     },
+    "address_picker.coord_desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste from your map app or type latitude, longitude."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collez depuis votre appli de cartes ou saisissez latitude, longitude."
+          }
+        }
+      }
+    },
+    "address_picker.fetch_error.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You seem to be offline. Add the place anyway, the address will follow."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous semblez hors ligne. Ajoutez le lieu quand même, l'adresse suivra."
+          }
+        }
+      }
+    },
+    "address_picker.fetch_error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't find the address"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de trouver l'adresse"
+          }
+        }
+      }
+    },
+    "address_picker.fetching" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding address..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de l'adresse..."
+          }
+        }
+      }
+    },
     "alert.address_copied_body" : {
       "localizations" : {
         "en" : {
@@ -1569,6 +1633,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fermer"
+          }
+        }
+      }
+    },
+    "common.continue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
           }
         }
       }
@@ -3908,6 +3988,7 @@
       }
     },
     "menu.new_place.contact" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3972,6 +4053,7 @@
       }
     },
     "menu.new_place.image_library" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

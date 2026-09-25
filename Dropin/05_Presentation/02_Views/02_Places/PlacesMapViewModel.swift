@@ -34,20 +34,11 @@ import MapKit
             //mapActionBus.performAction(.updatePlacePickerPositions)
         }
     }
+    var pickingAddressWithCoords = false
     var pickedAddress: String? = nil   // Used for creating a new place by address picking
     var addressPickerCoords: CLLocationCoordinate2D = .zero
     var addressPickerViewCoords: CGPoint = .zero
-    
-    // Properties for creating a new place by coordinates picking
-    var pickingCoordinates: Bool = false {
-        didSet {
-            guard pickingCoordinates else { return }
-            updatePlacePickerPositions()
-            //mapActionBus.performAction(.updatePlacePickerPositions)
-        }
-    }
-    var coordinatesPickerCoords: CLLocationCoordinate2D = .zero
-    var coordinatesPickerViewCoords: CGPoint = .zero
+    var fetchingAddressPicker = false
     
     // Map configuration
     var launchConfig: PlacesMKMapVCR.Configuration {
@@ -114,13 +105,13 @@ import MapKit
         appContainer.rememberMapRegion(region)
 
         // Update picker position if needed
-        guard pickingAddress || pickingCoordinates else { return }
+        guard pickingAddress else { return }
         let cameraCenter = camera.centerCoordinate
         updatePlacePickerPositions(coords: cameraCenter)
     }
 
     func interactionStatus() -> PlacesMKMapVCR.InteractionStatus {
-        return (!pickingAddress && !pickingCoordinates) ? .all : .none
+        return !pickingAddress ? .all : .none
     }
     
     // MARK: - Actions
@@ -186,12 +177,12 @@ import MapKit
     }
 
     private func updatePlacePickerPositions(coords: CLLocationCoordinate2D) {
-        guard pickingAddress || pickingCoordinates else {
+        guard pickingAddress else {
             assertionFailure()
             return
         }
         // Compute pickers coordinates
-        let sheetHeight = pickingAddress ? DropinApp.ui.addressPickerSheetHeight : DropinApp.ui.coordinatesPickerSheetHeight
+        let sheetHeight = DropinApp.ui.addressPickerSheetHeight
         let offset: CGFloat = (sheetHeight - DropinApp.ui.mainTabBarHeight) * -0.5
 
         guard let centerPoint = mapController.point(for: coords) else { // unproject(point) // mapView.convert(mapView.camera.centerCoordinate, toPointTo: mapView)
@@ -203,20 +194,14 @@ import MapKit
             assertionFailure("MapController not connected")
             return
         }
-        
-        if pickingAddress {
-            addressPickerCoords = offsetCoords
-            addressPickerViewCoords = offsetPoint
-        } else {
-            coordinatesPickerCoords = offsetCoords
-            coordinatesPickerViewCoords = offsetPoint
-        }
+        addressPickerCoords = offsetCoords
+        addressPickerViewCoords = offsetPoint
         pickedAddress = nil
         fetchAddress()
     }
     
     private func fetchAddress() {
-        guard pickingAddress || pickingCoordinates else {
+        guard pickingAddress else {
             assertionFailure()
             return
         }
@@ -224,20 +209,22 @@ import MapKit
             // Already fetched for this position
             return
         }
-        let coords = pickingAddress ? addressPickerCoords : coordinatesPickerCoords
+        fetchingAddressPicker = true
         addressPickingTask?.cancel()
         addressPickingTask = Task {
             try? await Task.sleep(for: .seconds(1.5))
             guard !Task.isCancelled else {
+                // The task should only be cancelled by a new fetch request
+                // keep the fetching flag = true
                 return
             }
             do {
-                let address = try await fetchAddress(coords: coords)
+                let address = try await fetchAddress(coords: addressPickerCoords)
                 pickedAddress = address
             } catch {
                 // TODO: handle error
-                return
             }
+            fetchingAddressPicker = false
         }
     }
     

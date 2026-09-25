@@ -182,38 +182,28 @@ struct TextStyleModifier: ViewModifier {
     var colorOverride: Color? = nil
     var trackingOverride: CGFloat? = nil
     var lineSpacingOverride: CGFloat? = nil
-
+    @Environment(\.colorScheme) private var colorScheme
+    
+    // Note: foregroundStyle is causing some display issues (Text animation in sheet appearing)
+    // Use foregroundColor instead and use the resolvedColor workaround for trait resolved color
+    // FIXME: te be tested with higher version
+    
     func body(content: Content) -> some View {
         content
             .font(style.font)
-            .foregroundStyle(colorOverride ?? style.color)
+            .foregroundColor(resolvedColor)
             .tracking((trackingOverride ?? style.tracking) ?? 0)
             .lineSpacing((lineSpacingOverride ?? style.lineSpacing) ?? 0)
     }
-}
-
-/*
-// MARK: - View helper
-//
-// NOTE: Replace your existing `extension View { func textStyle(...) }` with this
-// one. It adds an optional `color:` override so you can keep a semantic style's
-// font while swapping only its colour — no more dropping down to raw `.font(...)`:
-//
-//   Text(verbatim: viewModel.headerSubtitle)
-//       .textStyle(.cellSubtitle, color: .textSecondary.opacity(0.75))
-//
-extension View {
-    func textStyle(_ style: TextStyle,
-                   color: Color? = nil,
-                   tracking: CGFloat = 0,
-                   lineSpacing: CGFloat = 0) -> some View {
-        modifier(TextStyleModifier(style: style,
-                                   colorOverride: color,
-                                   trackingOverride: tracking,
-                                   lineSpacingOverride: lineSpacing))
+    
+    private var resolvedColor: Color {
+        let dynamic = colorOverride ?? style.color
+        let uiColor = UIColor(dynamic).resolvedColor(
+            with: UITraitCollection(userInterfaceStyle: colorScheme == .dark ? .dark : .light)
+        )
+        return Color(uiColor)
     }
 }
- */
 
 #if DEBUG
 

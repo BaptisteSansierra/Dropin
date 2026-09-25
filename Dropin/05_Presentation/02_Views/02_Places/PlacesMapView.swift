@@ -67,7 +67,7 @@ struct PlacesMapView: View {
                                bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea(),
                                isActiveTab: isActiveTab)
                  
-                if viewModel.pickingAddress || viewModel.pickingCoordinates {
+                if viewModel.pickingAddress {
                     pickingMarkerView
                         .allowsHitTesting(false)
                 }
@@ -78,7 +78,6 @@ struct PlacesMapView: View {
             guard isParentPresenting else { return }
             isParentPresenting.toggle()
             viewModel.pickingAddress = false
-            viewModel.pickingCoordinates = false
         })
         // Overlays
         .overlay {
@@ -99,25 +98,17 @@ struct PlacesMapView: View {
                 .presentationDragIndicator(.visible)
         })
         .sheetOverlay(isPresented: $viewModel.pickingAddress) {
-            AddressPickerView(coords: $viewModel.addressPickerCoords,
-                              address: $viewModel.pickedAddress,
-                              //onFetch: { },
-                              onComplete: onAddressPickerComplete)
+            return AddressPickerView(editCoords: viewModel.pickingAddressWithCoords,
+                                     coords: $viewModel.addressPickerCoords,
+                                     address: $viewModel.pickedAddress,
+                                     fetching: $viewModel.fetchingAddressPicker,
+                                     isPresented: $viewModel.pickingAddress,
+                                     onCoordsEdit: onAddressPickerCoordsEdit,
+                                     onComplete: onAddressPickerComplete)
             .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
             .sheetOverlayDragIndicator(.visible)
-        }
-        .sheetOverlay(isPresented: $viewModel.pickingCoordinates) {
-            CoordinatesPickerView(coords: Binding<CLLocationCoordinate2D>(get: {
-                viewModel.coordinatesPickerCoords
-            }, set: { edited in
-                Log.debug("SET COORDS : \(edited)")
-                viewModel.coordinatesPickerUpdate(edited)
-            }),
-                                  address: $viewModel.pickedAddress,
-                                  onComplete: onCoordinatesPickerComplete)
-            .sheetOverlayDetents([.height(DropinApp.ui.coordinatesPickerSheetHeight)])
-            .sheetOverlayDragIndicator(.visible)
             .sheetOverlayKeyboardPolicy(.maxOffset(100))
+            .id(viewModel.pickingAddressWithCoords)
         }
     }
     
@@ -166,6 +157,7 @@ struct PlacesMapView: View {
         // Create place from moving map under cursor
         Button {
             viewModel.pickedAddress = nil
+            viewModel.pickingAddressWithCoords = false
             viewModel.pickingAddress.toggle()
         } label: {
             Text("menu.new_place.drop_pin")
@@ -174,11 +166,13 @@ struct PlacesMapView: View {
         // Create place from lat/long
         Button {
             viewModel.pickedAddress = nil
-            viewModel.pickingCoordinates.toggle()
+            viewModel.pickingAddressWithCoords = true
+            viewModel.pickingAddress.toggle()
         } label: {
             Text("menu.new_place.coords")
                 .textStyle(.body)
         }
+        #if false // TODO: DRO-32 > implement place creation from contact / image
         // Create place from contact
         Button {
         } label: {
@@ -193,6 +187,7 @@ struct PlacesMapView: View {
             Text("menu.new_place.image_library")
                 .textStyle(.body)
         }
+        #endif
     }
 
     private var zoomOnUserOverlay: some View {
@@ -240,9 +235,7 @@ struct PlacesMapView: View {
     @ViewBuilder
     private var pickingMarkerView: some View {
         let markerSize: CGFloat = appSettings.mapSettings.pinSize
-        let offsetY: CGFloat = viewModel.pickingAddress ?
-                                viewModel.addressPickerViewCoords.y :
-                                viewModel.coordinatesPickerViewCoords.y
+        let offsetY: CGFloat = viewModel.addressPickerViewCoords.y
         MapPinView(icon: Icon(rawValue: "sf:pin"))
             .frame(width: markerSize, height: markerSize)
             .offset(x: 0,
@@ -267,22 +260,21 @@ struct PlacesMapView: View {
         viewModel.centerOn(coordinates)
     }
     
+    private func onAddressPickerCoordsEdit(_ coords: CLLocationCoordinate2D) {
+        viewModel.coordinatesPickerUpdate(coords)
+    }
+
     private func onAddressPickerComplete() {
-        onPlacePickerComplete(viewModel.addressPickerCoords)
+        onAddressPickerComplete(viewModel.addressPickerCoords)
     }
 
-    private func onCoordinatesPickerComplete() {
-        onPlacePickerComplete(viewModel.coordinatesPickerCoords)
-    }
-
-    private func onPlacePickerComplete(_ coordinates: CLLocationCoordinate2D) {
+    private func onAddressPickerComplete(_ coordinates: CLLocationCoordinate2D) {
         viewModel.preparePlaceFromAddress(coords: coordinates,
                                           address: viewModel.pickedAddress)
         // Reset picked address
         viewModel.pickedAddress = nil
         // Hide sheet
         viewModel.pickingAddress = false
-        viewModel.pickingCoordinates = false
         Task {
             try? await Task.sleep(for: .seconds(0.35))
             // Show the creation sheet

@@ -215,8 +215,7 @@ extension DropinApp {
             static let smallHeight: Double = 42
             //static let width: Double = 200
         }
-        static let addressPickerSheetHeight: CGFloat = 225
-        static let coordinatesPickerSheetHeight: CGFloat = 300
+        static let addressPickerSheetHeight: CGFloat = 400
         //static let pinHeight: CGFloat = 36 // Height of the pins displayed on the map
     }
     struct storage {

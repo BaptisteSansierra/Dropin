@@ -1,60 +1,55 @@
 //
-//  CoordinatesPickerView.swift
+//  AddressPickerView.swift
 //  Dropin
 //
-//  Created by baptiste sansierra on 23/3/26.
+//  Created by baptiste sansierra on 17/3/26.
 //
 
+#if false
 import SwiftUI
 import CoreLocation
 import MapKit
+import SheetOverlay
 
-struct CoordinatesPickerView: View {
+struct AddressPickerView: View {
         
     // MARK: - States & Bindings
     @Binding private var coords: CLLocationCoordinate2D
     @Binding private var address: String?
     @State private var loading: Bool = false
-    @State private var tfCoords: String
-    @State private var showInvalidAlert: Bool = false
     @State private var fetching: Bool = false
-    @State private var addressViewOpacity: CGFloat = 0
-
+    @State private var addressViewOpacity: CGFloat = 1
+    
     // MARK: - private properties
-    private let onComplete: () -> Void
+    //let onFetch: () -> Void
+    let onComplete: () -> Void
 
     // MARK: - init
     init(coords: Binding<CLLocationCoordinate2D>,
          address: Binding<String?>,
+         //onFetch: @escaping () -> Void,
          onComplete: @escaping () -> Void) {
         self._coords = coords
         self._address = address
+        //self.onFetch = onFetch
         self.onComplete = onComplete
-        self.tfCoords = coords.wrappedValue.formatted()
     }
     
     // MARK: - body
     var body: some View {
-        VStack(spacing: 0) {
-            inputView
-            Spacer()
-            ZStack {
+        ZStack() {
+            
+            VStack(spacing: 0) {
+#if false
+                coordinatesView
+#endif
                 addressView
                     .opacity(addressViewOpacity)
-                    .padding(.bottom, 10)
-
-                SecondaryButton(text: "create_place.fetch", systemImage: "text.magnifyingglass") {
-                    fetching = true
-                }
-                .opacity(fetching ? 0 : 1)
-                .animation(.easeInOut, value: fetching)
+                Spacer()
             }
-            Spacer()
-            MainButton(text: "create_place.create") {
-                onComplete()
-            }
-            .padding(.bottom, 40)
+            actionsView
         }
+        /*
         .onChange(of: fetching) { oldValue, newValue in
             guard oldValue != newValue else { return }
             withAnimation {
@@ -68,17 +63,12 @@ struct CoordinatesPickerView: View {
                 return
             }
         }
-        .onChange(of: coords) { _, newValue in
-            tfCoords = coords.formatted()
-        }
-        .alertOk(isPresented: $showInvalidAlert,
-                 title: "alert.invalid_coords.title",
-                 body: "alert.invalid_coords.body")
+         */
     }
-
+    
     // MARK: - subviews
     @ViewBuilder
-    private var inputView: some View {
+    var coordinatesView: some View {
         Text("common.coordinates")
             .textStyle(.formSectionTitle)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -86,11 +76,8 @@ struct CoordinatesPickerView: View {
             .padding(.top, 20)
             .padding(.bottom, 5)
         
-        TextField("common.coordinates", text: $tfCoords)
+        Text(verbatim: coords.formatted())
             .textStyle(.formSectionTitle2)
-            .keyboardType(.numbersAndPunctuation)
-            .autocorrectionDisabled()
-            .submitLabel(.done)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .padding(.vertical, 10)
@@ -100,12 +87,14 @@ struct CoordinatesPickerView: View {
                     .stroke(.gray, style: StrokeStyle(lineWidth: 0.5))
             }
             .padding(.horizontal)
-            .onSubmit {
-                submitCoords()
+            .contextMenu {
+                Button(action: { copyCoordinatesToClipboard() } ){
+                    Text("common.copy_coordinates")
+                }
             }
     }
     
-    private var addressView: some View {
+    var addressView: some View {
         VStack(spacing: 0) {
             Text("common.address")
                 .textStyle(.formSectionTitle)
@@ -131,7 +120,6 @@ struct CoordinatesPickerView: View {
                             Text("common.copy_address")
                         }
                     }
-
             } else {
                 ZStack {
                     Text(verbatim: "\n\n")
@@ -151,18 +139,35 @@ struct CoordinatesPickerView: View {
                 }
             }
         }
+        .padding(.top, 20)
+    }
+    
+    var actionsView: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            
+            /*
+            SecondaryButton(text: "create_place.fetch", systemImage: "text.magnifyingglass") {
+                fetching = true
+            }
+            .opacity(fetching ? 0 : 1)
+            .animation(.easeInOut, value: fetching)
+             */
+            
+            Spacer()
+
+            MainButton(text: "create_place.create") {
+                onComplete()
+            }
+            .padding(.bottom, 40)
+        }
     }
 
     // MARK: - private methods
-    private func submitCoords() {
-        guard let tmpCoords = CLLocationCoordinate2D(string: tfCoords) else {
-            showInvalidAlert = true
-            tfCoords = coords.formatted()
-            return
-        }
-        coords = tmpCoords
+    private func copyCoordinatesToClipboard() {
+        UIPasteboard.general.string = coords.formatted()
     }
-    
+
     private func copyAddressToClipboard() {
         guard let address = address else { return }
         UIPasteboard.general.string = address
@@ -179,11 +184,13 @@ struct CoordinatesPickerView: View {
         presented = true
     }
     .sheetOverlay(isPresented: $presented) {
-        CoordinatesPickerView(coords: $coords,
-                              address: $address,
-                              onComplete: {
+        AddressPickerView(coords: $coords,
+                          address: $address) {
             Log.debug("complete")
-        })
-        .sheetOverlayDetents([.height(DropinApp.ui.coordinatesPickerSheetHeight)])
+        }
+        .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
     }
 }
+
+#endif
+

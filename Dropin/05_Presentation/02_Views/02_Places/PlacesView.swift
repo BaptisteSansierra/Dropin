@@ -240,7 +240,7 @@ struct PlacesView: View {
                     }
                     .background {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(.white)
+                            .fill(.backgroundPrimary)
                     }
                     .padding(.top)
                     .transition(.opacity)
