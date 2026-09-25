@@ -4224,6 +4224,23 @@
         }
       }
     },
+    "placeholder.address_missing" : {
+      "comment" : "Shown in place of the address when it hasn't been fetched yet (e.g. offline)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address will be added automatically"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’adresse sera ajoutée automatiquement"
+          }
+        }
+      }
+    },
     "placeholder.group_name" : {
       "localizations" : {
         "en" : {

@@ -14,8 +14,8 @@ struct PlaceEntityDTO: Decodable {
     let id: UUID
     var name: String
     var coordinates: CLLocationCoordinate2D
-    var address: String
-    var address2: String
+    var address: String?
+    var address2: String?
     var tagIds: [UUID]
     var groupId: UUID?
     var images: [UUID]
@@ -34,8 +34,8 @@ struct PlaceEntityDTO: Decodable {
         self.id = try c.decode(UUID.self, forKey: .id)
         self.name = try c.decode(String.self, forKey: .name)
         self.coordinates = try c.decode(CLLocationCoordinate2D.self, forKey: .coordinates)
-        self.address = try c.decode(String.self, forKey: .address)
-        self.address2 = try c.decode(String.self, forKey: .address2)
+        self.address = try c.decodeIfPresent(String.self, forKey: .address)
+        self.address2 = try c.decodeIfPresent(String.self, forKey: .address2)
         self.tagIds = try c.decode([UUID].self, forKey: .tagIds)
         self.groupId = try c.decodeIfPresent(UUID.self, forKey: .groupId)
         self.images = []  // Not supported

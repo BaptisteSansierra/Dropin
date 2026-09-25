@@ -62,7 +62,7 @@ struct PlaceHeaderView: View {
                                 .fill(.backgroundPrimary)
                                 .stroke(.separator)
                         }
-                    Text(place.address.isEmpty ? "" : place.address)
+                    Text(place.address.flatMap { $0.isEmpty ? nil : $0 } ?? place.coordinates.formatted())
                         .textStyle(.stringFieldTitle)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
@@ -87,8 +87,9 @@ struct PlaceHeaderView: View {
     
     // MARK: private methods
     private func copyAddressToClipboard() {
+        guard let address = place.address else { return }
         showingAddressToClipboard.toggle()
-        UIPasteboard.general.string = place.address
+        UIPasteboard.general.string = address
     }
 }
 
@@ -96,17 +97,26 @@ struct PlaceHeaderView: View {
 struct MockPlaceHeaderView: View {
     var mock: MockContainer
     @State var place: PlaceUI
+    @State var placeNoAddress: PlaceUI
     @FocusState var isNameFocused
 
     var body: some View {
-        PlaceHeaderView(place: $place,
-                        isNameFocused: $isNameFocused)
+        VStack {
+            PlaceHeaderView(place: $place,
+                            isNameFocused: $isNameFocused)
+            .padding(.bottom, 30)
+            Divider()
+            PlaceHeaderView(place: $placeNoAddress,
+                            isNameFocused: $isNameFocused)
+            .padding(.top, 30)
+        }
     }
     
     init() {
         let mock = MockContainer()
         self.mock = mock
         self.place = mock.getPlaceUI(1)
+        self.placeNoAddress = mock.getNoAddressPlaceUI()
     }
 }
 

@@ -25,7 +25,7 @@ struct PlaceCreateView: View {
     // MARK: - Init
     init(viewModel: PlaceCreateViewModel,
          coordinates: CLLocationCoordinate2D,
-         address: String,
+         address: String?,
          name: String,
          marker: String?,
          tags: [UUID],
@@ -85,10 +85,6 @@ struct PlaceCreateView: View {
             let name = place.name.trimmingCharacters(in: [" "])
             guard !name.isEmpty else {
                 showMissingName = true
-                return
-            }
-            guard !place.address.isEmpty else {
-                assertionFailure("Place \(name) has an empty address")
                 return
             }
             // Remove empty contact fields

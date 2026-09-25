@@ -99,6 +99,13 @@ final class MockContainer {
         }
     }
     
+    func getNoAddressPlaceUI() -> PlaceUI {
+        guard let place = getAllPlaceUI().first(where: { $0.hasNoAddress }) else {
+            fatalError("no mock place without address")
+        }
+        return place
+    }
+    
     func getTagUI(_ index: Int = 0) -> TagUI {
         do {
             let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.createdAt)]

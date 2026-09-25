@@ -71,7 +71,7 @@ struct PlaceHeaderViewV2: View {
                         .autocorrectionDisabled()
                         .disabled(!editEnabled)
                         .focused(isNameFocused)
-                    Text(place.address.isEmpty ? "" : place.address)
+                    Text(place.address ?? "")
                         .textStyle(.placeholder)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
@@ -99,7 +99,7 @@ struct PlaceHeaderViewV2: View {
     // MARK: private methods
     private func copyAddressToClipboard() {
         showingAddressToClipboard.toggle()
-        UIPasteboard.general.string = place.address
+        UIPasteboard.general.string = place.address ?? ""
     }
 }
 

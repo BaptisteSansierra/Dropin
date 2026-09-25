@@ -65,7 +65,9 @@ struct PlacesMapView: View {
                                interactionStatus: viewModel.interactionStatus,
                                mapReloadGen: mapReloadGen,
                                bottomInset: DropinApp.ui.mainTabBarHeight - UIApplication.rootBottomSafeArea(),
-                               isActiveTab: isActiveTab)
+                               isActiveTab: isActiveTab,
+                               pinsOpacity: 1.0) // TODO: FIXME: lower pins opacity when address picker is presented
+                               //pinsOpacity: viewModel.pickingAddress ? 0.5 : 1.0)
                  
                 if viewModel.pickingAddress {
                     pickingMarkerView

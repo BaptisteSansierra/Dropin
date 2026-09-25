@@ -57,7 +57,7 @@ struct PlaceRowView: View {
                         Text(locationManager.distanceStringTo(place.coordinates) ?? "5.5km")
                             .textStyle(.cellDetail)
                     }
-                    Text(place.address.isEmpty ? "" : place.address)
+                    Text(place.address ?? place.coordinates.formatted())
                         .textStyle(.cellSubtitle)
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
@@ -91,6 +91,7 @@ struct MockPlaceRowView: View {
     @State var place2: PlaceUI
     @State var place3: PlaceUI
     @State var place4: PlaceUI
+    @State var place5: PlaceUI
 
     var body: some View {
         ZStack {
@@ -106,6 +107,8 @@ struct MockPlaceRowView: View {
                 PlaceRowView(place: place3,
                              locationManager: mock.locationManager)
                 PlaceRowView(place: place4,
+                             locationManager: mock.locationManager)
+                PlaceRowView(place: place5,
                              locationManager: mock.locationManager)
             }
             .padding(.horizontal)
@@ -134,6 +137,7 @@ struct MockPlaceRowView: View {
         self.place2 = mock.getPlaceUI(1)
         self.place3 = mock.getPlaceUI(4)
         self.place4 = mock.getPlaceUI(5)
+        self.place5 = mock.getNoAddressPlaceUI()
     }
 }
 

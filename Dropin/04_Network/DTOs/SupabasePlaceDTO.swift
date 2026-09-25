@@ -11,8 +11,8 @@ struct SupabasePlaceDTO: Codable {
     let name: String
     let latitude: Double
     let longitude: Double
-    let address: String
-    let address2: String
+    let address: String?
+    let address2: String?
     let groupId: UUID?
     let tagIds: [UUID]
     let icon: String?

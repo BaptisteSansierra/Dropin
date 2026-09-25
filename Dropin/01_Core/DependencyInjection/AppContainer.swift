@@ -398,7 +398,7 @@ final class AppContainer {
     }
 
     func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
-                               address: String,
+                               address: String?,
                                name: String,
                                marker: String?,
                                tags: [UUID],

@@ -13,8 +13,8 @@ struct PlaceEntity: Hashable, Sendable {
     let id: UUID
     let name: String
     let coordinates: CLLocationCoordinate2D
-    let address: String
-    let address2: String
+    let address: String?
+    let address2: String?
     var tags: [TagEntity]
     var group: GroupEntity?
     let images: [UUID]
@@ -33,8 +33,8 @@ struct PlaceEntity: Hashable, Sendable {
     init(id: UUID,
          name: String,
          coordinates: CLLocationCoordinate2D,
-         address: String,
-         address2: String,
+         address: String?,
+         address2: String?,
          tags: [TagEntity],
          group: GroupEntity?,
          images: [UUID] = [],
@@ -50,8 +50,8 @@ struct PlaceEntity: Hashable, Sendable {
         self.id = id
         self.name = name
         self.coordinates = coordinates
-        self.address = address
-        self.address2 = address2
+        self.address = Self.normalized(address)
+        self.address2 = Self.normalized(address2)
         self.tags = tags
         self.group = group
         self.images = images
@@ -70,7 +70,7 @@ struct PlaceEntity: Hashable, Sendable {
     init(id: UUID,
          name: String,
          coordinates: CLLocationCoordinate2D,
-         address: String,
+         address: String?,
          tags: [TagEntity],
          group: GroupEntity? = nil,
          icon: Icon? = nil,
@@ -78,12 +78,12 @@ struct PlaceEntity: Hashable, Sendable {
         self.id = id
         self.name = name
         self.coordinates = coordinates
-        self.address = address
+        self.address = Self.normalized(address)
         self.tags = tags
         self.group = group
         self.icon = icon
 
-        self.address2 = ""
+        self.address2 = nil
         self.rating = nil
         self.phone = []
         self.email = []
@@ -97,6 +97,13 @@ struct PlaceEntity: Hashable, Sendable {
         self.deletedAt = nil
     }
     
+    /// "" is never a valid stored address — nil means "no address" (e.g. not yet fetched / offline lookup).
+    /// Normalizing here catches empty strings from any source: legacy data predating this distinction,
+    /// imports, or callers that haven't been updated to pass nil.
+    private static func normalized(_ value: String?) -> String? {
+        value?.isEmpty == true ? nil : value
+    }
+
     func deleted(deletedAt: Date) -> PlaceEntity {
         var copy = self
         copy.deletedAt = deletedAt

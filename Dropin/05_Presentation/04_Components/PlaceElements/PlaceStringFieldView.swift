@@ -5,6 +5,10 @@
 //  Created by baptiste sansierra on 12/8/25.
 //
 
+#if false
+
+// FIXME: Legacy
+
 import SwiftUI
 
 struct PlaceStringFieldView: View {
@@ -53,3 +57,4 @@ struct PlaceStringFieldView: View {
         self.editEnabled = editEnabled
     }
 }
+#endif

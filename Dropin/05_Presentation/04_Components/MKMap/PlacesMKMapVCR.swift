@@ -69,6 +69,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let draftCoordinate: CLLocationCoordinate2D?
     private let bottomInset: CGFloat
     private let mapReloadGen: Int
+    private let pinsOpacity: CGFloat
     private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
     private let onMapCameraUpdate: MapCameraUpdateHandler?
     private let interactionStatus: (() -> InteractionStatus)
@@ -87,7 +88,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
          interactionStatus: @escaping (() -> InteractionStatus),
          mapReloadGen: Int = 0,
          bottomInset: CGFloat = 0,
-         isActiveTab: Bool = true) {
+         isActiveTab: Bool = true,
+         pinsOpacity: CGFloat = 1.0) {
         self.config = config
         self.mapController = mapController
         self.places = places
@@ -99,6 +101,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         self.mapReloadGen = mapReloadGen
         self.bottomInset = bottomInset
         self.isActiveTab = isActiveTab
+        self.pinsOpacity = pinsOpacity
     }
     
     func makeUIViewController(context: Context) -> PlacesMKMapVC {
@@ -244,6 +247,15 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         } else {
             //print("7 no-op selected annotation")
         }
+
+        //
+        // Update pins opacity
+        //
+        if pinsOpacity != context.coordinator.opacity {
+            context.coordinator.updatePinsOpacity(pinsOpacity, on: mapView)
+        } else {
+            //print("8 no-op update opacity")
+        }
     }
     
     func makeCoordinator() -> Coordinator {
@@ -384,6 +396,7 @@ extension PlacesMKMapVCR {
 
         var lastReloadGen: Int = 0
         weak var mapView: MKMapView?
+        var opacity: CGFloat { annotationViewFactory.pinsOpacity }
 
         // Annotation update guard
         var lastActiveIds: Set<UUID> = []
@@ -413,8 +426,49 @@ extension PlacesMKMapVCR {
 
         func updateSettings(_ mapSettings: MapSettings) {
             self.mapSettings = mapSettings
+            let pinsOpacity = annotationViewFactory.pinsOpacity
             self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings,
                                                                displayAllPins: config.displayAllPins)
+            self.annotationViewFactory.pinsOpacity = pinsOpacity
+        }
+
+        func updatePinsOpacity(_ opacity: CGFloat, on mapView: MKMapView) {
+            guard annotationViewFactory.pinsOpacity != opacity else { return }
+            annotationViewFactory.pinsOpacity = opacity
+            refreshPinsOpacity(mapView)
+        }
+
+        /// Called on camera-settle to refresh already-created annotation views
+        /// `createPlaceView` only runs once per dequeue, so
+        /// without this, showLabel would get stuck at whatever altitude was current the last time MapKit dequeued that specific view.
+        private func refreshDeclutterState(_ mapView: MKMapView) {
+            let showLabel = annotationViewFactory.declutterState(for: mapView)
+
+            // Only touch views actually on screen that are currently full pins
+            // bounds the cost to what's visible regardless of how many places/annotations exist total.
+            for annotation in mapView.annotations(in: mapView.visibleMapRect) {
+                guard let annotation = annotation as? MKAnnotation else { continue }
+
+                if let view = mapView.view(for: annotation) as? PlaceAnnotationView {
+                    view.showLabel = showLabel
+                }
+            }
+        }
+
+        /// Called whenever `pinsOpacity` changes to refresh already-created annotation views
+        /// `createPlaceView`/`createDotView` only run once per dequeue, so
+        /// without this, alpha would get stuck at whatever it was the last time MapKit dequeued that specific view.
+        private func refreshPinsOpacity(_ mapView: MKMapView) {
+            let pinsOpacity = annotationViewFactory.pinsOpacity
+            for annotation in mapView.annotations(in: mapView.visibleMapRect) {
+                guard let annotation = annotation as? MKAnnotation else { continue }
+
+                if let view = mapView.view(for: annotation) as? PlaceAnnotationView {
+                    view.alpha = pinsOpacity
+                } else if let view = mapView.view(for: annotation) as? DotAnnotationView {
+                    view.alpha = pinsOpacity
+                }
+            }
         }
         
         // MARK: - gestures
@@ -473,7 +527,7 @@ extension PlacesMKMapVCR {
             pendingDeclutterRefresh?.cancel()
             let workItem = DispatchWorkItem { [weak self, weak mapView] in
                 guard let self, let mapView else { return }
-                self.annotationViewFactory.refreshDeclutterState(on: mapView)
+                self.refreshDeclutterState(mapView)
                 self.refreshPinSelection(mapView)
             }
             pendingDeclutterRefresh = workItem

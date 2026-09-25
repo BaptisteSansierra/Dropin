@@ -35,8 +35,8 @@ struct LookupPlacesView: View {
             guard value != nil else { return }
             place.wrappedValue = value!
         })
-        Log.debug("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address)'")
-        self.initialAddress = place.wrappedValue.address
+        Log.debug("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address ?? "")'")
+        self.initialAddress = place.wrappedValue.address ?? ""
     }
 
     // MARK: - Body

@@ -14,8 +14,8 @@ final class SDPlace {
     var name: String
     var latitude: Double
     var longitude: Double
-    var address: String
-    var address2: String
+    var address: String?
+    var address2: String?
     @Relationship(deleteRule: .nullify, inverse: \SDTag.places) var tags: [SDTag]
     @Relationship(deleteRule: .nullify, inverse: \SDGroup.places) var group: SDGroup?
     @Relationship(deleteRule: .cascade, inverse: \SDImage.place) var images: [SDImage]
@@ -36,8 +36,8 @@ final class SDPlace {
          name: String,
          latitude: Double,
          longitude: Double,
-         address: String,
-         address2: String = "",
+         address: String? = nil,
+         address2: String? = nil,
          tags: [SDTag] = [],
          group: SDGroup? = nil,
          images: [SDImage] = [],
@@ -163,7 +163,16 @@ extension SDPlace {  // Mock extension
                          group: nil,
                          icon: .sf("basket"))
 
-        return [l1, l2, l3, l4, l5, l6, l7, l8, l9]
+        let l10 = SDPlace(identifier: UUID(),
+                         name: "Place without address",
+                         latitude: 42.399426209480154,
+                         longitude: 2.21545083631,
+                         address: nil,
+                         tags: [],
+                         group: nil,
+                         icon: .sf("basket"))
+
+        return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10]
     }
 }
 #endif

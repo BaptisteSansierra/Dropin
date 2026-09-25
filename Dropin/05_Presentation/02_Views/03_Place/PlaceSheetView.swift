@@ -190,13 +190,15 @@ struct PlaceSheetView: View {
         .frame(maxWidth: .infinity)
         
         // Address
-        Text(place.address.isEmpty ? "" : place.address)
+        Text(place.address ?? place.coordinates.formatted())
             .textStyle(.placeholder)
             .padding(.horizontal)
             .padding(.top, 10)
             .contextMenu {
-                Button(action: { viewModel.copyAddressToClipboard(place: place) } ){
-                    Text("common.copy_address")
+                if let _ = place.address {
+                    Button(action: { viewModel.copyAddressToClipboard(place: place) } ){
+                        Text("common.copy_address")
+                    }
                 }
                 Button(action: { viewModel.copyCoordinatesToClipboard(place: place) } ){
                     Text("common.copy_coordinates")
@@ -205,8 +207,8 @@ struct PlaceSheetView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         
         // Address Line 2
-        if !place.address2.isEmpty {
-            Text(place.address2)
+        if let address2 = place.address2, !address2.isEmpty {
+            Text(address2)
                 .foregroundStyle(.textTertiary)
                 .font(.footnoteRegular)
                 .padding(.horizontal)
@@ -257,6 +259,7 @@ struct PlaceSheetView: View {
                 squareButton(systemImage: "square.and.arrow.up",
                              label: "common.share",
                              width: btWidth,
+                             disabled: true,
                              action: share)
                 .padding(.leading, spacing)
             }
@@ -551,7 +554,8 @@ struct MockPlaceDetailSheetView: View {
         self.index = index
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(index)
+        //self.place = mock.getPlaceUI(index)
+        self.place = mock.getNoAddressPlaceUI()
     }
 }
 

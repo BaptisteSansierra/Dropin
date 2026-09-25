@@ -36,8 +36,8 @@ extension PlaceEntity: Encodable {
         try c.encode(id, forKey: .id)
         try c.encode(name, forKey: .name)
         try c.encode(coordinates, forKey: .coordinates)
-        try c.encode(address, forKey: .address)
-        try c.encode(address2, forKey: .address2)
+        try c.encodeIfPresent(address, forKey: .address)
+        try c.encodeIfPresent(address2, forKey: .address2)
         let tagIds = tags.map { $0.id }
         try c.encode(tagIds, forKey: .tagIds)
         try c.encodeIfPresent(group?.id, forKey: .groupId)

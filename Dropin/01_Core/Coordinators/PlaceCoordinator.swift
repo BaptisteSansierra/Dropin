@@ -53,7 +53,7 @@ import CoreLocation
     }
 
     func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
-                                 address: String,
+                                 address: String?,
                                  name: String,
                                  marker: String?,
                                  tags: [UUID],
@@ -112,7 +112,7 @@ enum NavigationItem: Hashable {
     case lookupPlacesView
     case lookupPlacesEditView(placeId: UUID)
     case placeCreateView(coordinates: CLLocationCoordinate2D,
-                         address: String,
+                         address: String?,
                          name: String,
                          marker: String?,
                          tags: [UUID],

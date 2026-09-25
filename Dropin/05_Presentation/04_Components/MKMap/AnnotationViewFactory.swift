@@ -29,6 +29,9 @@ struct AnnotationViewFactory {
     private var mapSettings: MapSettings
     // See `PlacesMKMapVCR.Configuration.displayAllPins`.
     private var displayAllPins: Bool
+    // Applied to full pins + dots at creation time; see `refreshPinsOpacity`
+    // for keeping already-created views in sync when this changes.
+    var pinsOpacity: CGFloat = 1.0
 
     init(mapSettings: MapSettings, displayAllPins: Bool = false) {
         self.mapSettings = mapSettings
@@ -155,6 +158,7 @@ struct AnnotationViewFactory {
         view.annotation = placeAnnotation
         view.displayPriority = displayAllPins ? .required : .defaultHigh
         view.collisionMode = .circle
+        view.alpha = pinsOpacity
         view.configure(color: placeAnnotation.color,
                        icon: placeAnnotation.place.group?.icon,
                        iconExtra: placeAnnotation.place.icon,
@@ -177,32 +181,16 @@ struct AnnotationViewFactory {
             ?? DotAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
         view.configure(color: placeAnnotation.color)
+        view.alpha = pinsOpacity
         return view
     }
 
     // MARK: - Declutter
 
     /// Single source of truth for whether labels should show at the current
-    /// camera altitude. Used both at annotation-view creation time and when
-    /// refreshing already-created views on camera settle.
-    private func declutterState(for mapView: MKMapView) -> Bool {
+    /// camera altitude. Used both at annotation-view creation time and by
+    /// `Coordinator` when refreshing already-created views on camera settle.
+    func declutterState(for mapView: MKMapView) -> Bool {
         mapView.camera.altitude < DropinApp.map.mapLabelHideAltitude
-    }
-
-    /// Called on camera-settle to refresh already-created annotation views
-    /// `createPlaceView` only runs once per dequeue, so
-    /// without this, showLabel would get stuck at whatever altitude was current the last time MapKit dequeued that specific view.
-    mutating func refreshDeclutterState(on mapView: MKMapView) {
-        let showLabel = declutterState(for: mapView)
-
-        // Only touch views actually on screen that are currently full pins
-        // bounds the cost to what's visible regardless of how many places/annotations exist total.
-        for annotation in mapView.annotations(in: mapView.visibleMapRect) {
-            guard let annotation = annotation as? MKAnnotation else { continue }
-
-            if let view = mapView.view(for: annotation) as? PlaceAnnotationView {
-                view.showLabel = showLabel
-            }
-        }
     }
 }

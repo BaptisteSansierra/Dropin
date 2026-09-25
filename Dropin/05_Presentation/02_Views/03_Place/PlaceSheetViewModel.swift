@@ -87,13 +87,13 @@ import CoreLocation
     
     func routeThrowGoogle(place: PlaceUI) {
         //guard let url = URL(string: "comgooglemaps://?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
-        guard let url = URL(string:"comgooglemaps://?daddr=\(place.address)") else { return }
+        guard let url = URL(string:"comgooglemaps://?daddr=\(place.address ?? "")") else { return }
         UIApplication.shared.open(url)
     }
     
     func routeThrowApple(place: PlaceUI) {
         //guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
-        guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.address)") else { return }
+        guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.address ?? "")") else { return }
         UIApplication.shared.open(url)
     }
     
@@ -104,6 +104,7 @@ import CoreLocation
     }
     
     func copyAddressToClipboard(place: PlaceUI) {
+        guard let address = place.address else { return }
         UIPasteboard.general.string = place.address
     }
     

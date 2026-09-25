@@ -107,10 +107,6 @@ struct PlaceEditView: View {
             showMissingName = true
             return
         }
-        guard !frozenEdit.address.isEmpty else {
-            assertionFailure("Place \(name) has an empty address")
-            return
-        }
         // Remove empty contact fields
         // Note: if not using a copy (frozenEdit), editedPlace is edited before updatePlace to be called and removed empty fields are re-added... the why should be investigated further
         frozenEdit.phone.removeEmptyFields()

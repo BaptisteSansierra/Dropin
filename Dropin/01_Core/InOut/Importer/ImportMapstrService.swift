@@ -232,7 +232,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         let place = PlaceEntity(id: UUID(),
                                 name: feature.properties.name,
                                 coordinates: coords,
-                                address: feature.properties.address ?? "",
+                                address: feature.properties.address,
                                 tags: placeTags,
                                 group: markerGroup,
                                 icon: Self.mapIcon(feature.properties.icon),

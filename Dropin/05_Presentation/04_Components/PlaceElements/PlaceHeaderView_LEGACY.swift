@@ -61,7 +61,7 @@ struct PlaceHeaderView: View {
                         .textStyle(.title)
                         .autocorrectionDisabled()
                         .disabled(!editEnabled)
-                    Text(place.address.isEmpty ? "" : place.address)
+                    Text(place.address ?? "")
                         .textStyle(.placeholder)
                         .onLongPressGesture {
                             copyAddressToClipboard()
@@ -128,7 +128,7 @@ struct PlaceHeaderView: View {
     // MARK: private methods
     private func copyAddressToClipboard() {
         showingAddressToClipboard.toggle()
-        UIPasteboard.general.string = place.address
+        UIPasteboard.general.string = place.address ?? ""
     }
 }
 

@@ -46,7 +46,7 @@ struct PlaceCreateQuickView: View {
             .padding(.horizontal)
         }
         .task {
-            if place.address.isEmpty {
+            if place.address == nil {
                 await fetchAddress()
             }
         }

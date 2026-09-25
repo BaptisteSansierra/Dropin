@@ -515,9 +515,15 @@ extension PlaceEditContentView {
                 .padding(.bottom, cardSubtitleBottomMargin)
                 .padding(.top, 10)
 
-            let address = place.address
-            Text(place.address.isEmpty ? "" : address)
-                .textStyle(.body)
+            Group {
+                if let address = place.address {
+                    Text(address)
+                        .textStyle(.body)
+                } else {
+                    Text("placeholder.address_missing")
+                        .textStyle(.placeholder, color: .textTertiary)
+                }
+            }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .confirmationDialog(String(""),
                                     isPresented: $showEditAddressMenu,
@@ -529,7 +535,10 @@ extension PlaceEditContentView {
         
         inCardDivider
 
-        TextField("placeholder.address2", text: $place.address2)
+        TextField("placeholder.address2", text: Binding(
+            get: { place.address2 ?? "" },
+            set: { place.address2 = $0 }
+        ))
             .textStyle(.body)
             .padding(.top, -5)
             .background(.clear)
@@ -1082,7 +1091,7 @@ struct MockPlaceEditContentView: View {
                              name: "El Col·leccionista",
                              latitude: 41.40602900686343,
                              longitude: 2.160639939265184,
-                             address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
+                             address: nil,
                              tags: [],
                              group: nil,
                              icon: nil)

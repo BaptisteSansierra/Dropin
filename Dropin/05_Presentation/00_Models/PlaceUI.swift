@@ -36,8 +36,18 @@ struct PlaceImageUI: Identifiable {
     let id: UUID
     var name: String = ""
     var coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D.zero
-    var address: String = ""
-    var address2: String = ""
+    // "" is never a valid stored address — nil means "no address" (e.g. not yet fetched / offline lookup).
+    // Normalizing on every set catches empty strings from any writer (bindings, placeholders, etc.).
+    var address: String? = nil {
+        didSet {
+            if address?.isEmpty == true { address = nil }
+        }
+    }
+    var address2: String? = nil {
+        didSet {
+            if address2?.isEmpty == true { address2 = nil }
+        }
+    }
     var icon: Icon? = nil
     var tags: [TagUI] = [TagUI]()
     var group: GroupUI? = nil
@@ -58,6 +68,10 @@ struct PlaceImageUI: Identifiable {
     
     var isActive: Bool {
         deletedAt == nil
+    }
+
+    var hasNoAddress: Bool {
+        (address ?? "").isEmpty
     }
 
     var changeToken: Int {
@@ -81,8 +95,8 @@ struct PlaceImageUI: Identifiable {
     init(id: UUID,
          name: String,
          coordinates: CLLocationCoordinate2D,
-         address: String,
-         address2: String,
+         address: String?,
+         address2: String?,
          tags: [TagUI],
          group: GroupUI? = nil,
          images: [PlaceImageUI] = [],
