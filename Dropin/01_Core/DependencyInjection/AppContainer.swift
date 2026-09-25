@@ -93,7 +93,13 @@ final class AppContainer {
                                       reachability: reachabilityService)
         self.syncService = syncService
         // Wrap local repos so mutations notify SyncService
-        placeRepository = SyncingPlaceRepository(wrapped: localPlaceRepo, sync: syncService)
+        let syncingPlaceRepo = SyncingPlaceRepository(wrapped: localPlaceRepo, sync: syncService)
+        let addressBackfillService = AddressBackfillService(repository: syncingPlaceRepo, reachability: reachabilityService)
+        syncService.addressBackfillService = addressBackfillService
+        // Decorates reads so every place-fetching screen gets address backfill for
+        // free (see AddressBackfillingPlaceRepository) — SyncService triggers it
+        // separately, straight after a pull, via the same service above.
+        placeRepository = AddressBackfillingPlaceRepository(wrapped: syncingPlaceRepo, backfillService: addressBackfillService)
         groupRepository = SyncingGroupRepository(wrapped: localGroupRepo, sync: syncService)
         tagRepository = SyncingTagRepository(wrapped: localTagRepo, sync: syncService)
         imageRepository = SyncingImageRepository(wrapped: localImageRepo, sync: syncService)

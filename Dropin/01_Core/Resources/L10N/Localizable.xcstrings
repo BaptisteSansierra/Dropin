@@ -2894,6 +2894,7 @@
     },
     "create_place.fetching" : {
       "comment" : "Fetching address from coordinates",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4206,6 +4207,23 @@
         }
       }
     },
+    "placeholder.address_missing" : {
+      "comment" : "Shown in place of the address when it hasn't been fetched yet (e.g. offline)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address will be added automatically"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’adresse sera ajoutée automatiquement"
+          }
+        }
+      }
+    },
     "placeholder.address2" : {
       "comment" : "Field : Address line 2",
       "extractionState" : "manual",
@@ -4220,23 +4238,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appartement, suite, unité, bâtiment, étage, etc."
-          }
-        }
-      }
-    },
-    "placeholder.address_missing" : {
-      "comment" : "Shown in place of the address when it hasn't been fetched yet (e.g. offline)",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Address will be added automatically"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’adresse sera ajoutée automatiquement"
           }
         }
       }

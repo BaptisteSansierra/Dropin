@@ -122,6 +122,28 @@ struct PlaceEntity: Hashable, Sendable {
         return copy
     }
 
+    /// Used by AddressBackfillService once a reverse-geocode lookup resolves an
+    /// address for a place that didn't have one yet.
+    func withAddress(_ address: String) -> PlaceEntity {
+        PlaceEntity(id: id,
+                   name: name,
+                   coordinates: coordinates,
+                   address: address,
+                   address2: address2,
+                   tags: tags,
+                   group: group,
+                   images: images,
+                   icon: icon,
+                   rating: rating,
+                   phone: phone,
+                   email: email,
+                   url: url,
+                   notes: notes,
+                   createdAt: createdAt,
+                   updatedAt: updatedAt,
+                   deletedAt: deletedAt)
+    }
+
     func replacedGroupAndTags(group: GroupEntity?, tags: [TagEntity]) -> PlaceEntity {
         var copy = self
         copy.group = group

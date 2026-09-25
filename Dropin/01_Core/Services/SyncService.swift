@@ -85,6 +85,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     private let remoteImageRepo: any RemoteImageRepository
     private let remoteProfileRepo: any RemoteProfileRepository
     private let reachability: any ReachabilityServiceProtocol
+    /// Set by AppContainer right after both are constructed — can't be a
+    /// constructor param: AddressBackfillService writes through the
+    /// syncing-decorated PlaceRepository, which itself needs this SyncService
+    /// instance, so injecting it here would be circular.
+    var addressBackfillService: (any AddressBackfillServiceProtocol)?
     private let userDefaults: UserDefaults
 
     init(localPlaceRepo: any PlaceRepository,
@@ -352,7 +357,13 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
             if let profile { try await localProfileRepo.upsert(profile) }
             for tag   in tags   { try await localTagRepo.upsert(tag, shouldSave: true) }
             for group in groups { try await localGroupRepo.upsert(group, shouldSave: true) }
-            for place in places { try await localPlaceRepo.upsert(place, shouldSave: true) }
+            for place in places {
+                try await localPlaceRepo.upsert(place, shouldSave: true)
+                // A place synced down without an address (e.g. created offline on
+                // another device) gets backfilled here rather than waiting for it
+                // to be displayed.
+                addressBackfillService?.backfillIfNeeded(place)
+            }
 
             // lazy ImageLoader: this doesn't download bytes anymore, only inserts metadata stubs.
             await pullImages(since: since)
