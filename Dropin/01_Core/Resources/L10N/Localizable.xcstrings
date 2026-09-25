@@ -2894,6 +2894,7 @@
     },
     "create_place.fetching" : {
       "comment" : "Fetching address from coordinates",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4206,20 +4207,35 @@
         }
       }
     },
-    "placeholder.address2" : {
-      "comment" : "Field : Address line 2",
-      "extractionState" : "manual",
+    "place_sheet.share.error" : {
+      "comment" : "Body of the alert shown when creating a share link fails",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apt, suite, unit, building, floor, etc."
+            "value" : "Couldn't create a share link for this place. Please try again."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appartement, suite, unité, bâtiment, étage, etc."
+            "value" : "Impossible de créer un lien de partage pour ce lieu. Réessayez."
+          }
+        }
+      }
+    },
+    "place_sheet.share.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share failed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec du partage"
           }
         }
       }
@@ -4237,6 +4253,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L’adresse sera ajoutée automatiquement"
+          }
+        }
+      }
+    },
+    "placeholder.address2" : {
+      "comment" : "Field : Address line 2",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apt, suite, unit, building, floor, etc."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appartement, suite, unité, bâtiment, étage, etc."
           }
         }
       }

@@ -36,21 +36,27 @@ import CoreLocation
     var urlScale: CGFloat = 1
     var thumbnails: [(id: UUID, state: ImageLoadState)] = []
     var selectedImageIndex: Int? = nil
+    var isSharing: Bool = false
+    var shareURL: IdentifiableURL? = nil
+    var shareError: String? = nil
 
     @ObservationIgnored private var coordinator: any PlaceNavigationCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
+    @ObservationIgnored private var shareService: any ShareServiceProtocol
     @ObservationIgnored private var getPlaceThumbnails: GetPlaceThumbnails
     @ObservationIgnored private var getPlaceImage: GetPlaceImage
 
     init(_ appContainer: AppContainer,
          coordinator: any PlaceNavigationCoordinator,
          locationManager: LocationManager,
+         shareService: any ShareServiceProtocol,
          getPlaceThumbnails: GetPlaceThumbnails,
          getPlaceImage: GetPlaceImage) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
+        self.shareService = shareService
         self.getPlaceThumbnails = getPlaceThumbnails
         self.getPlaceImage = getPlaceImage
     }
@@ -103,6 +109,19 @@ import CoreLocation
         UIApplication.shared.open(url)
     }
     
+    func share(place: PlaceUI) async {
+        shareError = nil
+        isSharing = true
+        defer { isSharing = false }
+        do {
+            let url = try await shareService.shareURL(placeId: place.id)
+            shareURL = IdentifiableURL(url: url)
+        } catch {
+            Log.error("PlaceSheetViewModel: share failed for place \(place.id): \(error)")
+            shareError = "place_sheet.share.error"
+        }
+    }
+
     func copyAddressToClipboard(place: PlaceUI) {
         guard let address = place.address else { return }
         UIPasteboard.general.string = place.address

@@ -30,6 +30,12 @@ final class StubRemoteProfileRepository: RemoteProfileRepository {
     func upsert(_ profile: ProfileEntity) async throws {}
 }
 
+final class StubShareService: ShareServiceProtocol {
+    func shareURL(placeId: UUID) async throws -> URL {
+        URL(string: "https://dropin.lat/p.html?id=\(UUID().uuidString)")!
+    }
+}
+
 final class StubRemoteImageRepository: RemoteImageRepository {
     func upload(imageId: UUID, placeId: UUID, full: Data, thumbnail: Data) async throws {}
     func delete(imageId: UUID, placeId: UUID) async throws {}

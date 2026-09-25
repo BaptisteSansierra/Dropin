@@ -80,6 +80,16 @@ struct PlaceSheetView: View {
                 onDismiss: { viewModel.selectedImageIndex = nil }
             )
         }
+        .sheet(item: $viewModel.shareURL) { shareURL in
+            ShareSheet(url: shareURL.url)
+        }
+        .alertOk(isPresented: Binding(get: {
+            viewModel.shareError != nil
+        }, set: { v in
+            if !v { viewModel.shareError = nil }
+        }),
+                 title: "place_sheet.share.error.title",
+                 body: LocalizedStringKey(viewModel.shareError ?? ""))
     }
     
     // MARK: - Subviews
@@ -259,7 +269,7 @@ struct PlaceSheetView: View {
                 squareButton(systemImage: "square.and.arrow.up",
                              label: "common.share",
                              width: btWidth,
-                             disabled: true,
+                             disabled: viewModel.isSharing,
                              action: share)
                 .padding(.leading, spacing)
             }
@@ -520,7 +530,9 @@ struct PlaceSheetView: View {
     }
 
     private func share() {
-        Log.warning("TO BE IMPLEMENTED")
+        Task {
+            await viewModel.share(place: place)
+        }
     }
 }
 

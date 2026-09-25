@@ -39,6 +39,7 @@ final class AppContainer {
     private let authStatus: AuthStatus
     private let profileService: any ProfileServiceProtocol
     private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
+    private let shareService: any ShareServiceProtocol
     // Map memory
     private(set) var lastMapRegion: MKCoordinateRegion?
     
@@ -67,6 +68,7 @@ final class AppContainer {
         self.supabaseService = supabaseService
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
+        self.shareService = ShareService(client: supabaseService.client, auth: authService)
         // Local repos (raw — used by SyncService for push)
         let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext)
         let localGroupRepo = GroupRepositoryImpl(modelContext: modelContext)
@@ -132,6 +134,7 @@ final class AppContainer {
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
         self.syncService = syncService
+        self.shareService = StubShareService()
         // Repos — no syncing wrapper needed (stub would no-op anyway)
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
@@ -369,6 +372,7 @@ final class AppContainer {
         let vm = PlaceSheetViewModel(self,
                                      coordinator: currentPlaceCoordinator(),
                                      locationManager: locationManager,
+                                     shareService: shareService,
                                      getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                      getPlaceImage: GetPlaceImage(loader: imageLoader))
         return PlaceSheetView(viewModel: vm,

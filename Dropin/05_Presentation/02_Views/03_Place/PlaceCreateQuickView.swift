@@ -32,7 +32,7 @@ struct PlaceCreateQuickView: View {
                 .ignoresSafeArea()
             VStack(spacing: 0) {
                 PlaceHeaderView(place: $place,
-                                  isNameFocused: $isNameFocused)
+                                isNameFocused: $isNameFocused)
                 .padding(.bottom)
                 .padding(.top, 30)
                 
@@ -191,14 +191,15 @@ struct PlaceCreateQuickView: View {
     private func fetchAddress() async {
         Log.debug("Fetch address from coords : \(place.coordinates)")
         // Fetch address from coords
-        place.address = String(localized: "create_place.fetching")
+        //place.address = String(localized: "create_place.fetching")
         do {
             let address = try await viewModel.fetchAddress(coords: place.coordinates)
             Log.debug("Address fetched : \(address)")
             self.place.address = address
         } catch is CancellationError {
         } catch {
-            self.place.address = String(localized: "common.na")
+            // Keep nil address
+            //self.place.address = String(localized: "common.na")
         }
     }
     
