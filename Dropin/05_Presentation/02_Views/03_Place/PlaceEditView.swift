@@ -15,15 +15,15 @@ struct PlaceEditView: View {
     @Environment(RootView.ActionBus.self) private var actionBus
 
     // MARK: - private properties
-    private var srcPlace: PlaceUI
+    private var srcPlace: PlaceUIModel
 
     // To be moved in VM
-    @State private var editedPlace: PlaceUI
+    @State private var editedPlace: PlaceUIModel
     @State private var confirmCancel: Bool = false
     @State private var edited: Bool = false // true if contains some edits
 
     // MARK: - Init
-    init(viewModel: PlaceEditViewModel, place: PlaceUI) {
+    init(viewModel: PlaceEditViewModel, place: PlaceUIModel) {
         self.viewModel = viewModel
         self.srcPlace = place
         self.editedPlace = place.copy()
@@ -151,7 +151,7 @@ struct PlaceEditView: View {
 struct MockPlaceEditView: View {
     var mock: MockContainer
     var index: Int
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     
     var body: some View {
         mock.appContainer.createPlaceEditView(place: place)
@@ -161,7 +161,7 @@ struct MockPlaceEditView: View {
         self.index = index
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(index)
+        self.place = mock.getPlaceUIModel(index)
     }
 }
 

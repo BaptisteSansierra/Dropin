@@ -13,16 +13,16 @@ actor ImportMapstrService: ImportServiceProtocol {
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
     private let fetchPlaces: FetchPlaces
-    private let fetchGroups: FetchGroups
+    private let fetchCategories: FetchCategories
     private let fetchTags: FetchTags
     private let upsertPlace: UpsertPlace
-    private let upsertGroup: UpsertGroup
+    private let upsertCategory: UpsertCategory
     private let upsertTag: UpsertTag
-    private let markerGroupName: String
+    private let markerCategoryName: String
 
-    private var existingHardPlaces: [PlaceEntity] = []  // contains all the non-deleted existing places on disk
-    private var existingGroups: [GroupEntity] = []      // contains all the existsing groups on disk
-    private var existingTags: [TagEntity] = []          // contains all the existsing tags on disk
+    private var existingHardPlaces: [Place] = []  // contains all the non-deleted existing places on disk
+    private var existingCategories: [Category] = []      // contains all the existsing categories on disk
+    private var existingTags: [Tag] = []          // contains all the existsing tags on disk
     private var duplicatePlacesCount: Int = 0
     private var createdPlacesCount: Int = 0
     private var createdTagsCount: Int = 0
@@ -30,21 +30,21 @@ actor ImportMapstrService: ImportServiceProtocol {
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
-         fetchGroups: FetchGroups,
+         fetchCategories: FetchCategories,
          fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
-         upsertGroup: UpsertGroup,
+         upsertCategory: UpsertCategory,
          upsertTag: UpsertTag,
-         markerGroupName: String) {
+         markerCategoryName: String) {
         self.saveContext = saveContext
         self.rollbackContext = rollbackContext
         self.fetchPlaces = fetchPlaces
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
         self.upsertPlace = upsertPlace
-        self.upsertGroup = upsertGroup
+        self.upsertCategory = upsertCategory
         self.upsertTag = upsertTag
-        self.markerGroupName = markerGroupName
+        self.markerCategoryName = markerCategoryName
     }
 
     func execute(_ url: URL,
@@ -76,7 +76,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         existingHardPlaces = try await fetchPlaces()
             .filter { $0.isActive }
         existingTags = try await fetchTags()
-        existingGroups = try await fetchGroups()
+        existingCategories = try await fetchCategories()
 
         guard !Task.isCancelled else { await cancel(canceled); return }
 
@@ -148,18 +148,18 @@ actor ImportMapstrService: ImportServiceProtocol {
     }
 
     private func createLocalItems(_ collection: FeatureCollection, progress: @MainActor @Sendable (Int) -> Void) async throws {
-        // Create marker Group:
-        //   all mapstr places are grouped under a specific mapstr group, it must not exists already
-        if let existing = existingGroups.first(where: { $0.name == markerGroupName }), existing.isActive {
-            throw ImportError.markerExists(markerGroupName)
+        // Create marker Category:
+        //   all mapstr places are grouped under a specific mapstr category, it must not exists already
+        if let existing = existingCategories.first(where: { $0.name == markerCategoryName }), existing.isActive {
+            throw ImportError.markerExists(markerCategoryName)
         }
-        let markerGroup = GroupEntity(name: markerGroupName,
+        let markerCategory = Category(name: markerCategoryName,
                                       color: String.randomColor(),
                                       icon: .sf("square.and.arrow.down"))
-        try await upsertGroup(markerGroup, shouldSave: false)
+        try await upsertCategory(markerCategory, shouldSave: false)
 
         // Create all tags found in mapstr file
-        var tagsByName: [String: (tag: TagEntity, exists: Bool)] = [:]
+        var tagsByName: [String: (tag: Tag, exists: Bool)] = [:]
         for feature in collection.features {
             for mapstrTag in feature.properties.tags ?? [] {
                 try Task.checkCancellation()
@@ -178,7 +178,7 @@ actor ImportMapstrService: ImportServiceProtocol {
                         //    createdTagsCount += 1
                         //}
                     } else {
-                        let newTag = TagEntity(name: mapstrTag.name, color: mapstrTag.color)
+                        let newTag = Tag(name: mapstrTag.name, color: mapstrTag.color)
                         tagsByName[mapstrTag.name] = (tag: newTag,
                                                       exists: false)
                         existingTags.append(newTag)
@@ -200,7 +200,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         for feature in collection.features {
             try Task.checkCancellation()
             // process place
-            try await processFeature(feature, markerGroup: markerGroup, tagsByName: tagsByName)
+            try await processFeature(feature, markerCategory: markerCategory, tagsByName: tagsByName)
             // and increment
             upsertCount += 1
             await progress(upsertCount)
@@ -208,8 +208,8 @@ actor ImportMapstrService: ImportServiceProtocol {
     }
     
     private func processFeature(_ feature: Feature,
-                                markerGroup: GroupEntity,
-                                tagsByName: [String: (tag: TagEntity, exists: Bool)]) async throws {
+                                markerCategory: Category,
+                                tagsByName: [String: (tag: Tag, exists: Bool)]) async throws {
         guard feature.geometry.coordinates.count >= 2 else { return }
         let coords = CLLocationCoordinate2D(latitude: feature.geometry.coordinates[1],
                                             longitude: feature.geometry.coordinates[0])
@@ -229,12 +229,12 @@ actor ImportMapstrService: ImportServiceProtocol {
         //    continue
         //}
         
-        let place = PlaceEntity(id: UUID(),
+        let place = Place(id: UUID(),
                                 name: feature.properties.name,
                                 coordinates: coords,
                                 address: feature.properties.address,
                                 tags: placeTags,
-                                group: markerGroup,
+                                category: markerCategory,
                                 icon: Self.mapIcon(feature.properties.icon),
                                 notes: feature.properties.userComment)
         
@@ -246,7 +246,7 @@ actor ImportMapstrService: ImportServiceProtocol {
         createdPlacesCount += 1
     }
     
-    private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> PlaceEntity? {
+    private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Place? {
         for place in existingHardPlaces {
             if place.isIdentical(name: name, coords: coordinates) && place.isActive {
                 Log.warning("duplicate found: \(name) > \(place.name) id:\(place.id)")

@@ -15,7 +15,7 @@ struct UpsertTag {
         self.repository = repository
     }
     
-    func callAsFunction(_ tag: TagEntity, shouldSave: Bool = true) async throws {
+    func callAsFunction(_ tag: Tag, shouldSave: Bool = true) async throws {
         guard !tag.name.isEmpty else {
             throw DomainError.Tag.missingName
         }

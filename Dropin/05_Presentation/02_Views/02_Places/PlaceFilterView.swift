@@ -33,7 +33,7 @@ struct PlaceFilterView: View {
         VStack {
             headerView
             ScrollView {
-                groupsView
+                categoriesView
                 Divider()
                     .padding(.leading)
                 tagsView
@@ -77,38 +77,38 @@ struct PlaceFilterView: View {
         }
     }
     
-    private var groupsView: some View {
+    private var categoriesView: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(String(localized: "common.groups").uppercased())
+                Text(String(localized: "common.categories").uppercased())
                     .textStyle(.formSectionTitle2, color: .textSecondary)
                 Spacer()
                 TextButton(text: "common.clear", textStyle: .smallButton) {
-                    clearGroups()
+                    clearCategories()
                 }
             }
             .padding(.top, 10)
             .padding(.horizontal)
 
             FlowLayout(alignment: .leading) {
-                GroupView(name: String(localized: "common.not_grouped"),
+                CategoryView(name: String(localized: "common.uncategorized"),
                           color: .gray,
                           icon: nil,
                           style: .small)
-                    .if( !filter.includeUngrouped ) { view in
+                    .if( !filter.includeUncategorized ) { view in
                         view.opacity(unselectOpacity)
                     }
                     .onTapGesture {
-                        filter.includeUngrouped.toggle()
+                        filter.includeUncategorized.toggle()
                     }
 
-                ForEach(viewModel.groups) { group in
-                    GroupView(group: group, style: .small)
-                        .if( !filter.groupIDs.contains(group.id) ) { view in
+                ForEach(viewModel.categories) { category in
+                    CategoryView(category: category, style: .small)
+                        .if( !filter.categoryIDs.contains(category.id) ) { view in
                             view.opacity(unselectOpacity)
                         }
                         .onTapGesture {
-                            toggle(group)
+                            toggle(category)
                         }
                 }
             }
@@ -173,15 +173,15 @@ struct PlaceFilterView: View {
     }
     
     // MARK: private methods
-    private func toggle(_ group: GroupUI) {
-        if filter.groupIDs.contains(group.id) {
-            filter.groupIDs.remove(group.id)
+    private func toggle(_ category: CategoryUIModel) {
+        if filter.categoryIDs.contains(category.id) {
+            filter.categoryIDs.remove(category.id)
         } else {
-            filter.groupIDs.insert(group.id)
+            filter.categoryIDs.insert(category.id)
         }
     }
     
-    private func toggle(_ tag: TagUI) {
+    private func toggle(_ tag: TagUIModel) {
         if filter.tagIDs.contains(tag.id) {
             filter.tagIDs.remove(tag.id)
         } else {
@@ -189,9 +189,9 @@ struct PlaceFilterView: View {
         }
     }
 
-    private func clearGroups() {
-        filter.groupIDs.removeAll()
-        filter.includeUngrouped = false
+    private func clearCategories() {
+        filter.categoryIDs.removeAll()
+        filter.includeUncategorized = false
     }
     
     private func clearTags() {

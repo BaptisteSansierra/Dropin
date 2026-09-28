@@ -105,12 +105,12 @@ struct LEGACY_PlacePinAnnotationView: View {
 struct MockPlacePinAnnotationView: View {
     var mock: MockContainer
     @State var size: CGFloat = 150
-    @State var place1: PlaceUI
-    @State var place2: PlaceUI
-    @State var place3: PlaceUI
-    @State var place4: PlaceUI
-    @State var place5: PlaceUI
-    @State var place6: PlaceUI
+    @State var place1: PlaceUIModel
+    @State var place2: PlaceUIModel
+    @State var place3: PlaceUIModel
+    @State var place4: PlaceUIModel
+    @State var place5: PlaceUIModel
+    @State var place6: PlaceUIModel
 
     var body: some View {
         VStack {
@@ -128,14 +128,14 @@ struct MockPlacePinAnnotationView: View {
                 VStack {
                     Text("New").font(.caption)
                     PlacePinAnnotationView(color: place5.groupColor,
-                                           icon: place5.group?.icon,
+                                           icon: place5.category?.icon,
                                            iconExtra: place5.icon,
                                            size: size)
                 }
                 VStack {
                     Text("Legacy").font(.caption)
                     LEGACY_PlacePinAnnotationView(color: place5.groupColor,
-                                                  icon: place5.group?.icon,
+                                                  icon: place5.category?.icon,
                                                   iconExtra: place5.icon,
                                                   size: size)
                 }
@@ -143,13 +143,13 @@ struct MockPlacePinAnnotationView: View {
             HStack(spacing: 30) {
                 VStack {
                     PlacePinAnnotationView(color: place6.groupColor,
-                                           icon: place6.group?.icon,
+                                           icon: place6.category?.icon,
                                            iconExtra: place6.icon,
                                            size: size)
                 }
                 VStack {
                     LEGACY_PlacePinAnnotationView(color: place6.groupColor,
-                                                  icon: place6.group?.icon,
+                                                  icon: place6.category?.icon,
                                                   iconExtra: place6.icon,
                                                   size: size)
                 }
@@ -170,22 +170,22 @@ struct MockPlacePinAnnotationView: View {
         VStack(spacing: 30) {
             HStack(spacing: 10) {
                 PlacePinAnnotationView(color: place1.groupColor,
-                                       icon: place1.group?.icon,
+                                       icon: place1.category?.icon,
                                        iconExtra: place1.icon,
                                        size: 50)
                 PlacePinAnnotationView(color: place2.groupColor,
-                                       icon: place2.group?.icon,
+                                       icon: place2.category?.icon,
                                        iconExtra: place2.icon,
                                        size: 50)
             }
 
             HStack(spacing: 10) {
                 PlacePinAnnotationView(color: place3.groupColor,
-                                       icon: place3.group?.icon,
+                                       icon: place3.category?.icon,
                                        iconExtra: place3.icon,
                                        size: 50)
                 PlacePinAnnotationView(color: place4.groupColor,
-                                       icon: place4.group?.icon,
+                                       icon: place4.category?.icon,
                                        iconExtra: place4.icon,
                                        size: 50)
             }
@@ -195,12 +195,12 @@ struct MockPlacePinAnnotationView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        let group1 = mock.getGroupUI(0)  // FA Symbol
+        let group1 = mock.getCategoryUIModel(0)  // FA Symbol
         group1.icon = Icon.fa("spa")
-        let group2 = mock.getGroupUI(1)  // SF Symbol
+        let group2 = mock.getCategoryUIModel(1)  // SF Symbol
         //group2.icon = Icon.fa("pizza-slice")
 
-        let place = mock.getPlaceUI()
+        let place = mock.getPlaceUIModel()
         self.place1 = place
         self.place2 = place.copy()
         self.place3 = place.copy()
@@ -208,12 +208,12 @@ struct MockPlacePinAnnotationView: View {
         self.place5 = place.copy()
         self.place6 = place.copy()
 
-        self.place1.group = nil
-        self.place2.group = group1
-        self.place3.group = group2
-        self.place4.group = nil
-        self.place5.group = group2
-        self.place6.group = group1
+        self.place1.category = nil
+        self.place2.category = group1
+        self.place3.category = group2
+        self.place4.category = nil
+        self.place5.category = group2
+        self.place6.category = group1
 
         self.place2.icon = .sf("duffle.bag")
         self.place3.icon = nil

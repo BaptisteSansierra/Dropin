@@ -15,7 +15,7 @@ struct FetchTagsWithCount {
         self.repository = repository
     }
     
-    func callAsFunction() async throws -> [(TagEntity, Int)] {
+    func callAsFunction() async throws -> [(Tag, Int)] {
         return try await repository.fetchWithPlaceCount()
     }
 }

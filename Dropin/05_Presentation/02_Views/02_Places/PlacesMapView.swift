@@ -22,7 +22,7 @@ struct PlacesMapView: View {
     @Environment(AppSettings.self) private var appSettings
 
     // MARK: - Properties
-    private var places: [PlaceUI]
+    private var places: [PlaceUIModel]
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
     private var navBarHeight: CGFloat
     private var mapReloadGen: Int
@@ -30,7 +30,7 @@ struct PlacesMapView: View {
 
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
-         places: [PlaceUI],
+         places: [PlaceUIModel],
          selectedPlaceId: Binding<UUID?>,
          isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>,
@@ -288,7 +288,7 @@ struct PlacesMapView: View {
 #if DEBUG
 struct MockPlacesMapView: View {
     var mock: MockContainer
-    @State var places: [PlaceUI]
+    @State var places: [PlaceUIModel]
     @State var selectedPlaceId: UUID? = nil
     @State var isParentPresenting: Bool = false
     @State var showingCreatePlaceMenu: Bool = false
@@ -305,7 +305,7 @@ struct MockPlacesMapView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.places = mock.getAllPlaceUI()
+        self.places = mock.getAllPlaceUIModel()
     }
 }
 

@@ -135,9 +135,9 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? MKMarkerAnnotationView
             ?? MKMarkerAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        view.markerTintColor = UIColor(placeAnnotation.place.group?.color ?? .gray)
-        if let group = placeAnnotation.place.group {
-            view.glyphImage = UIImage(icon: group.icon)
+        view.markerTintColor = UIColor(placeAnnotation.place.category?.color ?? .gray)
+        if let category = placeAnnotation.place.category {
+            view.glyphImage = UIImage(icon: category.icon)
         }
         view.canShowCallout = true
         if mapSettings.clustering {
@@ -160,7 +160,7 @@ struct AnnotationViewFactory {
         view.collisionMode = .circle
         view.alpha = pinsOpacity
         view.configure(color: placeAnnotation.color,
-                       icon: placeAnnotation.place.group?.icon,
+                       icon: placeAnnotation.place.category?.icon,
                        iconExtra: placeAnnotation.place.icon,
                        pinStyle: mapSettings.pinStyle,
                        size: mapSettings.pinSize,

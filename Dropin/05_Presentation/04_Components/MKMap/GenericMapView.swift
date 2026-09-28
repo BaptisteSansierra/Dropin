@@ -11,24 +11,24 @@ import SwiftUI
 @Observable class GenericMapViewModel {
     
     var loadingPlaces = false
-    var places: [PlaceUI] = []
+    var places: [PlaceUIModel] = []
     var mapController: MapController
     var selectedPlaceId: UUID? = nil
     /// Current place detail sheet detent
     var detailSheetDetent: PresentationDetent = .medium
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var fetchPlaces: () async throws -> [PlaceEntity]
+    @ObservationIgnored private var fetchPlaces: () async throws -> [Place]
     
     init(_ appContainer: AppContainer,
-         fetchPlaces: @escaping () async throws -> [PlaceEntity]) {
+         fetchPlaces: @escaping () async throws -> [Place]) {
         self.appContainer = appContainer
         self.fetchPlaces = fetchPlaces
         self.mapController = MapController()
     }
     
     // MARK: UI Child
-    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
         return appContainer.createPlaceSheetView(place: place, detent: detent)
     }
     

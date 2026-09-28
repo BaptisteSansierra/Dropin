@@ -14,20 +14,20 @@ import CoreLocation
     
     // MARK: - Observed properties
     var coordinator: PlaceCoordinator
-    var places: [PlaceUI] = [PlaceUI]()
+    var places: [PlaceUIModel] = [PlaceUIModel]()
     /*private(set)*/ var mapReloadGen: Int = 0    // bumps after each significant reload
 
     var syncStatus: SyncStatus
     var reachabilityService: ReachabilityService
 
     /// Places filtered with `currentFilter`
-    var filteredPlaces: [PlaceUI] {
+    var filteredPlaces: [PlaceUIModel] {
         guard let filter = currentFilter else { return places }
         return filter.apply(places)
     }
 
     /// Places filtered with `currentFilter` ans sorted with `sortPolicy`
-    var sortedPlaces: [PlaceUI] {
+    var sortedPlaces: [PlaceUIModel] {
         sortPolicy.apply(filteredPlaces, userPosition: locationManager.lastKnownLocation)
     }
     
@@ -117,11 +117,11 @@ import CoreLocation
         return appContainer.createPlacesListView(places: sortedPlaces, selectedPlaceId: bindingSelectedPlaceId)
     }
 
-    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
         return appContainer.createPlaceSheetView(place: place, detent: detent)
     }
 
-    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
+    func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
         return appContainer.createPlaceEditView(place: place)
     }
 
@@ -129,7 +129,7 @@ import CoreLocation
         return appContainer.createLookupPlacesView()
     }
     
-    func createLookupPlacesView(place: Binding<PlaceUI>) -> LookupPlacesView {
+    func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
         return appContainer.createLookupPlacesView(place: place)
     }
 
@@ -138,13 +138,13 @@ import CoreLocation
                                name: String,
                                marker: String?,
                                tags: [UUID],
-                               group: UUID?) -> PlaceCreateView {
+                               category: UUID?) -> PlaceCreateView {
         return appContainer.createPlaceCreateView(coordinates: coordinates,
                                                   address: address,
                                                   name: name,
                                                   marker: marker,
                                                   tags: tags,
-                                                  group: group)
+                                                  category: category)
     }
     
     func createPlaceFilterView() -> PlaceFilterView {
@@ -159,6 +159,18 @@ import CoreLocation
     // MARK: Use cases
     func loadPlaces() async throws {
         let newPlaces = try await fetchPlaces().map { PlaceMapper.toUI($0) }
+        
+        var dups: [Place: Int] = [:]
+        for p in newPlaces {
+            let dp = PlaceMapper.toDomain(p)
+            if let _ = dups[dp] { continue }
+            dups[dp] = newPlaces.filter({ $0.id == dp.id }).count
+        }
+        let rdups = dups.filter { $1 > 1 }
+        for p in rdups.keys {
+            print("PLACE '\(p.name)'  DUP(\(rdups[p]))")
+        }
+        
 
         // loadPlaces() gets called from several independent triggers (view appear,
         // sync completion, place edit/create) that can fire in a tight cluster —

@@ -25,17 +25,17 @@ final class StubAuthService: AuthServiceProtocol {
 }
 
 final class StubRemoteProfileRepository: RemoteProfileRepository {
-    func fetch() async throws -> ProfileEntity? { nil }
-    func fetch(updatedAfter date: Date) async throws -> ProfileEntity? { nil }
-    func upsert(_ profile: ProfileEntity) async throws {}
+    func fetch() async throws -> Profile? { nil }
+    func fetch(updatedAfter date: Date) async throws -> Profile? { nil }
+    func upsert(_ profile: Profile) async throws {}
 }
 
-final class StubRemoteImageRepository: RemoteImageRepository {
+final class StubRemoteImageRepository: RemotePlaceImageRepository {
     func upload(imageId: UUID, placeId: UUID, full: Data, thumbnail: Data) async throws {}
     func delete(imageId: UUID, placeId: UUID) async throws {}
     func downloadThumbnail(imageId: UUID, placeId: UUID) async throws -> Data? { nil }
     func downloadFull(imageId: UUID, placeId: UUID) async throws -> Data? { nil }
-    func fetch(createdAfter date: Date) async throws -> [RemoteImageRef] { [] }
+    func fetch(createdAfter date: Date) async throws -> [RemotePlaceImageRef] { [] }
 }
 
 @MainActor
@@ -43,7 +43,7 @@ final class StubSyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     var syncStatus: SyncStatus = SyncStatus()
     var pendingChangeCount: Int { 0 }
     func markPlaceDirty(_ id: UUID) {}
-    func markGroupDirty(_ id: UUID) {}
+    func markCategoryDirty(_ id: UUID) {}
     func markTagDirty(_ id: UUID) {}
     func markImagesChanged() {}
     func markProfileDirty() {}
@@ -57,9 +57,9 @@ final class StubSyncService: SyncServiceProtocol, SyncServicePausableProtocol {
 @MainActor
 @Observable
 final class StubProfileService: ProfileServiceProtocol {
-    var profile: ProfileEntity? = nil
+    var profile: Profile? = nil
     func load() async {
-        profile = ProfileEntity(id: UUID(),
+        profile = Profile(id: UUID(),
                                 email: "john.doe@gmail.com",
                                 displayName: "John Doe",
                                 plan: .earlyStage,
@@ -71,7 +71,7 @@ final class StubProfileService: ProfileServiceProtocol {
             assertionFailure("no profile")
             return
         }
-        self.profile = ProfileEntity(id: UUID(),
+        self.profile = Profile(id: UUID(),
                                      email: profile.email,
                                      displayName: newValue,
                                      plan: profile.plan,

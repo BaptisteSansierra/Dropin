@@ -91,8 +91,8 @@ struct DeleteAccountView: View {
         if viewModel.counts.places > 0 {
             rows.append(("mappin.and.ellipse", "delete_account.consequence.places", viewModel.counts.places))
         }
-        if viewModel.counts.groupsAndTags > 0 {
-            rows.append(("folder", "delete_account.consequence.groups_tags", viewModel.counts.groupsAndTags))
+        if viewModel.counts.categoriesAndTags > 0 {
+            rows.append(("folder", "delete_account.consequence.categories_tags", viewModel.counts.categoriesAndTags))
         }
         if viewModel.counts.photos > 0 {
             rows.append(("photo", "delete_account.consequence.photos", viewModel.counts.photos))

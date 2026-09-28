@@ -11,13 +11,13 @@ import ContactFieldKit
 @MainActor
 extension PlaceMapper {
     
-    static func toUI(_ place: PlaceEntity, skipRelationships: Bool = false) -> PlaceUI {
-        var groupUI: GroupUI? = nil
-        var tagsUI = [TagUI]()
+    static func toUI(_ place: Place, skipRelationships: Bool = false) -> PlaceUIModel {
+        var groupUI: CategoryUIModel? = nil
+        var tagsUI = [TagUIModel]()
         if !skipRelationships {
             tagsUI = place.tags.map { TagMapper.toUI($0) }
-            if let group = place.group {
-                groupUI = GroupMapper.toUI(group)
+            if let category = place.category {
+                groupUI = CategoryMapper.toUI(category)
             }
         }
         
@@ -31,14 +31,14 @@ extension PlaceMapper {
             .filter { ContactItem(rawValue: $0) != nil }
             .map { ContactItem(rawValue: $0)! }
         
-        let placeUI = PlaceUI(id: place.id,
+        let placeUI = PlaceUIModel(id: place.id,
                               name: place.name,
                               coordinates: place.coordinates,
                               address: place.address,
                               address2: place.address2,
                               tags: tagsUI,
-                              group: groupUI,
-                              images: place.images.map { PlaceImageUI(dbId: $0) },
+                              category: groupUI,
+                              images: place.images.map { PlaceImageUIModel(dbId: $0) },
                               icon: place.icon,
                               rating: place.rating,
                               phone: phones,
@@ -57,22 +57,22 @@ extension PlaceMapper {
         return placeUI
     }
     
-    static func toDomain(_ placeUI: PlaceUI, skipRelationships: Bool = false) -> PlaceEntity {
-        var group: GroupEntity? = nil
-        var tags = [TagEntity]()
+    static func toDomain(_ placeUI: PlaceUIModel, skipRelationships: Bool = false) -> Place {
+        var category: Category? = nil
+        var tags = [Tag]()
         if !skipRelationships {
             tags = placeUI.tags.map { TagMapper.toDomain($0) }
-            if let groupUI = placeUI.group {
-                group = GroupMapper.toDomain(groupUI)
+            if let groupUI = placeUI.category {
+                category = CategoryMapper.toDomain(groupUI)
             }
         }
-        let place = PlaceEntity(id: placeUI.id,
+        let place = Place(id: placeUI.id,
                                 name: placeUI.name,
                                 coordinates: placeUI.coordinates,
                                 address: placeUI.address,
                                 address2: placeUI.address2,
                                 tags: tags,
-                                group: group,
+                                category: category,
                                 images: placeUI.images.compactMap(\.dbId),
                                 icon: placeUI.icon,
                                 rating: placeUI.rating,

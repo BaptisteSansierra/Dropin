@@ -14,7 +14,7 @@ import CoreLocation
 struct PlaceSmallAnnotation: MapContent {
     
     // MARK: - private vars
-    private var place: PlaceUI
+    private var place: PlaceUIModel
     
     // MARK: - Body
     var body: some MapContent {
@@ -30,7 +30,7 @@ struct PlaceSmallAnnotation: MapContent {
     }
      */
     
-    init(place: PlaceUI) {
+    init(place: PlaceUIModel) {
         self.place = place
     }
 }
@@ -61,7 +61,7 @@ struct PlaceSmallAnnotationView: View {
 #if DEBUG
 struct MockPlaceSmallAnnotation: View {
     var mock: MockContainer
-    @State var places: [PlaceUI]
+    @State var places: [PlaceUIModel]
 
     var body: some View {
         Map {
@@ -74,7 +74,7 @@ struct MockPlaceSmallAnnotation: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.places = mock.getAllPlaceUI()
+        self.places = mock.getAllPlaceUIModel()
     }
 }
 

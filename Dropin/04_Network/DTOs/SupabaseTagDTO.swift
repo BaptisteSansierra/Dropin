@@ -35,7 +35,7 @@ struct SupabaseTagDTO: Codable {
         try c.encode(deletedAt, forKey: .deletedAt)
     }
 
-    init(from tag: TagEntity, userId: UUID) {
+    init(from tag: Tag, userId: UUID) {
         self.id        = tag.id
         self.userId    = userId
         self.name      = tag.name
@@ -45,8 +45,8 @@ struct SupabaseTagDTO: Codable {
         self.deletedAt = tag.deletedAt
     }
 
-    func toDomain() -> TagEntity {
-        TagEntity(id: id, name: name, color: color,
+    func toDomain() -> Tag {
+        Tag(id: id, name: name, color: color,
                   createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
     }
 }

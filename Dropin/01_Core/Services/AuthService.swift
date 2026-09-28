@@ -93,16 +93,16 @@ final class AuthService: AuthServiceProtocol {
             session = nil
         }
         do {
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                group.addTask {
+            try await withThrowingTaskGroup(of: Void.self) { category in
+                category.addTask {
                     try await self.client.auth.signOut()
                 }
-                group.addTask {
+                category.addTask {
                     try await Task.sleep(for: .seconds(3))
                     throw SignOutTimeout()
                 }
-                try await group.next() // first complete win
-                group.cancelAll()
+                try await category.next() // first complete win
+                category.cancelAll()
             }
             Log.info("Remote signOut completed")
         } catch is SignOutTimeout {

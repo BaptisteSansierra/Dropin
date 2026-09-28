@@ -12,13 +12,13 @@ import Foundation
 
     var groupName: String
     var showingNameUpdatedAlert = false
-    private(set) var confirmedGroupName: String?
+    private(set) var confirmedCategoryName: String?
 
-    @ObservationIgnored private let fetchGroups: FetchGroups
+    @ObservationIgnored private let fetchCategories: FetchCategories
 
-    init(baseName: String, fetchGroups: FetchGroups) {
+    init(baseName: String, fetchCategories: FetchCategories) {
         self.groupName = baseName
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
     }
 
     var isConfirmDisabled: Bool {
@@ -31,12 +31,12 @@ import Foundation
     func resolveInitialName() async {
         let trimmed = groupName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
-        let activeNames = await activeGroupNames()
+        let activeNames = await activeCategoryNames()
         guard activeNames.contains(trimmed) else { return }
         groupName = uniqueCandidate(for: trimmed, avoiding: activeNames)
     }
 
-    /// Called when the group name field loses focus (keyboard dismissed).
+    /// Called when the category name field loses focus (keyboard dismissed).
     /// Only adjusts the name if needed — never confirms.
     func handleKeyboardDismiss() async {
         await ensureUnique(confirmIfAlreadyUnique: false)
@@ -54,11 +54,11 @@ import Foundation
         let trimmed = groupName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return false }
 
-        let activeNames = await activeGroupNames()
+        let activeNames = await activeCategoryNames()
 
         guard activeNames.contains(trimmed) else {
             if confirmIfAlreadyUnique {
-                confirmedGroupName = trimmed
+                confirmedCategoryName = trimmed
             }
             return true
         }
@@ -68,13 +68,13 @@ import Foundation
         return false
     }
 
-    private func activeGroupNames() async -> Set<String> {
+    private func activeCategoryNames() async -> Set<String> {
         do {
-            return Set(try await fetchGroups()
+            return Set(try await fetchCategories()
                 .filter { $0.isActive }
                 .map(\.name))
         } catch {
-            Log.error("MapstrImportConfigViewModel: fetchGroups failed: \(error)")
+            Log.error("MapstrImportConfigViewModel: fetchCategories failed: \(error)")
             return []
         }
     }

@@ -12,7 +12,7 @@ struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
-    @Binding private var editedPlace: PlaceUI?
+    @Binding private var editedPlace: PlaceUIModel?
     
     private var initialAddress = ""
 
@@ -26,10 +26,10 @@ struct LookupPlacesView: View {
         #endif
     }
 
-    init(viewModel: LookupPlacesViewModel, place: Binding<PlaceUI>) {
+    init(viewModel: LookupPlacesViewModel, place: Binding<PlaceUIModel>) {
         viewModel.resultOffset = UIScreen.main.bounds.height
         self.viewModel = viewModel
-        self._editedPlace = Binding<PlaceUI?>(get: {
+        self._editedPlace = Binding<PlaceUIModel?>(get: {
             place.wrappedValue
         }, set: { value in
             guard value != nil else { return }

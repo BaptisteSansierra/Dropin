@@ -9,8 +9,8 @@ import Foundation
 
 public enum TagMapper {
     
-    static func toDomain(_ sdTag: SDTag) -> TagEntity {
-        let tag = TagEntity(id: sdTag.identifier,
+    static func toDomain(_ sdTag: TagRecord) -> Tag {
+        let tag = Tag(id: sdTag.identifier,
                             name: sdTag.name,
                             color: sdTag.color,
                             createdAt: sdTag.createdAt,
@@ -19,11 +19,11 @@ public enum TagMapper {
         return tag
     }
     
-    static func toData(_ tag: TagEntity) -> SDTag {
-        let sd = SDTag(identifier: tag.id,
+    static func toData(_ tag: Tag) -> TagRecord {
+        let sd = TagRecord(identifier: tag.id,
                        name: tag.name,
                        color: tag.color)
-        // SDTag.init hardcodes fresh dates; preserve domain timestamps so
+        // TagRecord.init hardcodes fresh dates; preserve domain timestamps so
         // server-originated rows (incl. soft-deletes) survive a pull.
         sd.createdAt = tag.createdAt
         sd.updatedAt = tag.updatedAt

@@ -32,11 +32,11 @@ struct LookupPlaceView: View {
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlaceViewModel
     @Binding private var status: PresentationStatus
-    @Binding private var editedPlace: PlaceUI?
+    @Binding private var editedPlace: PlaceUIModel?
 
     // MARK: - init
     init(viewModel: LookupPlaceViewModel,
-         place: Binding<PlaceUI?>,
+         place: Binding<PlaceUIModel?>,
          status: Binding<LookupPlaceView.PresentationStatus>) {
         self.viewModel = viewModel
         self._editedPlace = place
@@ -197,7 +197,7 @@ struct LookupPlaceView: View {
     }
     
     // MARK: - private methods
-    private func relocatedPlace(_ place: PlaceUI, _ lookupResolvedItem: LookupResolvedItem) -> PlaceUI {
+    private func relocatedPlace(_ place: PlaceUIModel, _ lookupResolvedItem: LookupResolvedItem) -> PlaceUIModel {
         let relocated = place.copy()
         relocated.coordinates = lookupResolvedItem.coordinates
         return relocated

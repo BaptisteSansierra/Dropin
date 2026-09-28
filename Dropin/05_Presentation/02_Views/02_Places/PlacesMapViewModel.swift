@@ -16,7 +16,7 @@ import MapKit
     // MARK: - Observed Properties
     private(set) var coordinator: PlaceCoordinator
     // Used for creating a new place
-    var draftPlace: PlaceUI? = nil
+    var draftPlace: PlaceUIModel? = nil
     // Alerts toggles
     var showAuthLocAlert = false
     var showQuickCreateSheet = false
@@ -129,13 +129,13 @@ import MapKit
     }
     
     func preparePlaceFromCoords(coords: CLLocationCoordinate2D) {
-        let createdPlace = PlaceUI(coordinates: coords)
+        let createdPlace = PlaceUIModel(coordinates: coords)
         draftPlace = createdPlace
     }
 
     func preparePlaceFromAddress(coords: CLLocationCoordinate2D,
                                  address: String?) {
-        let createdPlace = PlaceUI(coordinates: coords)
+        let createdPlace = PlaceUIModel(coordinates: coords)
         if let address = address {
             createdPlace.address = address
         }

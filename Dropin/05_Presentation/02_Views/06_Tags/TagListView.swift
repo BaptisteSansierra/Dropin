@@ -12,7 +12,7 @@ struct TagListView: View {
     // Create a specific struct so Now each row's body is its own observation context.
     // Then when tag.name changes via the detail view's mutation, only that row's body re-evaluates
     private struct TagListRow: View {
-        let tag: TagUI       // TagUI is @Observable; tag is a reference
+        let tag: TagUIModel       // TagUIModel is @Observable; tag is a reference
         var body: some View {
             //TagView(name: tag.name, color: tag.color)
             //            ^^^^^^^^         ^^^^^^^^^
@@ -26,7 +26,7 @@ struct TagListView: View {
                     .frame(width: 8)
                     .padding(.trailing)
                 Text(verbatim: tag.name)
-                    .textStyle(.groupSticker, color: textColor)
+                    .textStyle(.categorySticker, color: textColor)
                 Spacer()
                 Text("tag_list_view.num_places_\(nPlaces)")
                     .textStyle(.placeholder, color: textColor)
@@ -39,7 +39,7 @@ struct TagListView: View {
     @Binding private var showingSideMenu: Bool
         
     // MARK: - private properties
-    private var activeTags: [TagUI] {
+    private var activeTags: [TagUIModel] {
         viewModel.tags.filter { $0.isActive }
     }
 
@@ -126,7 +126,7 @@ struct TagListView: View {
         }
     }
     
-    private func tagRow(_ tag: TagUI) -> some View {
+    private func tagRow(_ tag: TagUIModel) -> some View {
         TagListRow(tag: tag)
             .contentShape(Rectangle())
             .swipeActions {
@@ -143,7 +143,7 @@ struct TagListView: View {
     }
     
     // MARK: - Actions
-    private func deleteTagCallback(_ tag: TagUI) {
+    private func deleteTagCallback(_ tag: TagUIModel) {
         viewModel.tagToRemove = tag
         viewModel.showingRemoveAlert = true
     }
@@ -171,7 +171,7 @@ struct TagListView: View {
         return viewModel.createTagMapView(tagId: tagId)
     }
     
-    private func createPlaceEditView(_ placeRef: PlaceUIRef) -> PlaceEditView {
+    private func createPlaceEditView(_ placeRef: PlaceUIModelRef) -> PlaceEditView {
         return viewModel.createPlaceEditView(place: placeRef.place)
     }
 

@@ -17,7 +17,7 @@ struct PlaceBubbleAnnotation: MapContent {
     
     @Environment(NavigationContext.self) private var navigationContext
 
-    private var place: PlaceEntity
+    private var place: Place
 
     var body: some MapContent {
         Annotation(place.name, coordinate: place.coordinates) {
@@ -40,7 +40,7 @@ struct PlaceBubbleAnnotation: MapContent {
         .annotationTitles(.visible)
     }
     
-    init(place: SDPlace) {
+    init(place: PlaceRecord) {
         self.place = place
     }
 }
@@ -74,7 +74,7 @@ struct PlaceBubbleAnnotationView: View {
 #Preview {
     @Previewable @State var navigationContext = NavigationContext()
     Map {
-        PlaceBubbleAnnotation(place: SDPlace.l1)
+        PlaceBubbleAnnotation(place: PlaceRecord.l1)
     }
 //    .sheet(item: $navigationContext.pinPlace) { place in
 //        Text("PLACE: \(place.name)")

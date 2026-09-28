@@ -13,15 +13,17 @@ struct DropinInOut: Codable {
 
     private(set) var version: Int
     private(set) var exportedAt: Date
-    private(set) var groups: [GroupEntity]
-    private(set) var tags: [TagEntity]
-    private(set) var places: [PlaceEntity]
+    private(set) var categories: [Category]
+    private(set) var tags: [Tag]
+    private(set) var places: [Place]
     
     enum CodingKeys: String, CodingKey {
         case version
         case exportedAt
         case tags
-        case groups
+        // Wire key stays "groups" — old exported .dropin v1 files use it, and
+        // this is a stable on-disk format, unlike the in-app Category rename.
+        case categories = "groups"
         case places
     }
     
@@ -29,13 +31,13 @@ struct DropinInOut: Codable {
     #endif
     
     init(exportedAt: Date,
-         places: [PlaceEntity],
-         groups: [GroupEntity],
-         tags: [TagEntity]) {
+         places: [Place],
+         categories: [Category],
+         tags: [Tag]) {
         self.version = CURRENT_VERSION
         self.exportedAt = exportedAt
         self.places = places
-        self.groups = groups
+        self.categories = categories
         self.tags = tags
     }
     
@@ -43,7 +45,7 @@ struct DropinInOut: Codable {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(version, forKey: .version)
         try c.encode(exportedAt, forKey: .exportedAt)
-        try c.encode(groups, forKey: .groups)
+        try c.encode(categories, forKey: .categories)
         try c.encode(tags, forKey: .tags)
         try c.encode(places, forKey: .places)
     }
@@ -54,7 +56,7 @@ struct DropinInOut: Codable {
         self.version = -1
         self.exportedAt = Date.distantFuture
         self.places = []
-        self.groups = []
+        self.categories = []
         self.tags = []
 
         // Check version
@@ -70,24 +72,24 @@ struct DropinInOut: Codable {
     private mutating func loadV1(_ container: KeyedDecodingContainer<CodingKeys>) throws {
         self.exportedAt = try container.decode(Date.self, forKey: .exportedAt)
 
-        self.tags = try container.decode([TagEntity].self, forKey: .tags)
-        self.groups = try container.decode([GroupEntity].self, forKey: .groups)
-        let placesDTO = try container.decode([PlaceEntityDTO].self, forKey: .places)
+        self.tags = try container.decode([Tag].self, forKey: .tags)
+        self.categories = try container.decode([Category].self, forKey: .categories)
+        let placesDTO = try container.decode([PlaceDTO].self, forKey: .places)
 
         // Create places
         self.places = placesDTO.map({ placeDTO in
             let placeTags = tags.filter({ placeDTO.tagIds.contains($0.id) })
-            var placeGroup: GroupEntity? = nil
-            if let groupId = placeDTO.groupId {
-                placeGroup = groups.first(where: { $0.id == groupId })
+            var placeCategory: Category? = nil
+            if let categoryId = placeDTO.categoryId {
+                placeCategory = categories.first(where: { $0.id == categoryId })
             }
-            return PlaceEntity(id: placeDTO.id,
+            return Place(id: placeDTO.id,
                                name: placeDTO.name,
                                coordinates: placeDTO.coordinates,
                                address: placeDTO.address,
                                address2: placeDTO.address2,
                                tags: placeTags,
-                               group: placeGroup,
+                               category: placeCategory,
                                images: [],
                                icon: placeDTO.icon,
                                rating: placeDTO.rating,

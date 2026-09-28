@@ -38,9 +38,9 @@ enum TextStyle: String, CaseIterable {
     case cellSubtitle
     case cellDetail
     case tagSticker
-    case groupSticker
-    case groupStickerSmall
-    case groupStickerBig
+    case categorySticker
+    case categoryStickerSmall
+    case categoryStickerBig
     case formSectionTitle
     case formSectionTitle2
     case avatarLarge
@@ -130,11 +130,11 @@ enum TextStyle: String, CaseIterable {
                 (Font.captionRegular, nil, nil, nil)
             case .tagSticker:
                 (Font.footnoteBold, Color.backgroundPrimary, nil, nil)
-            case .groupStickerBig:
+            case .categoryStickerBig:
                 (Font.bodySemibold, nil, nil, nil)
-            case .groupSticker:
+            case .categorySticker:
                 (Font.bodyMedium, nil, nil, nil)
-            case .groupStickerSmall:
+            case .categoryStickerSmall:
                 (Font.captionMedium, nil, nil, nil)
             case .formSectionTitle:
                 (Font.subheadlineSemibold, Color.textTertiary, nil, nil)
@@ -296,8 +296,8 @@ struct TextStyleModifier: ViewModifier {
                 .textStyle(.tagSticker)
                 .padding(5)
                 .background(.purple)
-            Text("groupSticker")
-                .textStyle(.groupSticker)
+            Text("categorySticker")
+                .textStyle(.categorySticker)
                 .padding(5)
                 .border(.purple, width: 2)
             Text("formSectionTitle")

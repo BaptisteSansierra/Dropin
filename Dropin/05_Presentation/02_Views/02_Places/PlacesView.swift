@@ -118,7 +118,7 @@ struct PlacesView: View {
     @ViewBuilder
     private var trailingToolbarContent: some View {
         HStack(spacing: 0) {
-            Button("common.organize_by_group",
+            Button("common.organize_by_category",
                    systemImage: viewModel.currentFilter == nil ?
                      "line.3.horizontal.decrease" :
                      "line.3.horizontal.decrease.circle.fill") {
@@ -272,13 +272,13 @@ struct PlacesView: View {
                 viewModel.createLookupPlacesView()
             case .lookupPlacesEditView(let placeId):
                 createLookupPlacesView(placeId: placeId)
-            case .placeCreateView(let coordinates, let address, let name, let marker, let tags, let group):
+            case .placeCreateView(let coordinates, let address, let name, let marker, let tags, let category):
                 viewModel.createPlaceCreateView(coordinates: coordinates,
                                                 address: address,
                                                 name: name,
                                                 marker: marker,
                                                 tags: tags,
-                                                group: group)
+                                                category: category)
             // development cases
             case .undefinedDummyView:
                 ZStack {

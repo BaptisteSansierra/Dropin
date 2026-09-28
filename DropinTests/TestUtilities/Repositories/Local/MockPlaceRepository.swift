@@ -10,39 +10,39 @@ import Foundation
 
 @MainActor
 final class MockPlaceRepository: PlaceRepository {
-    private var places: [PlaceEntity]
+    private var places: [Place]
 
-    init(initialPlaces: [PlaceEntity] = []) {
+    init(initialPlaces: [Place] = []) {
         self.places = initialPlaces
     }
     
-    func exists(_ place: Dropin.PlaceEntity) async throws -> Bool {
+    func exists(_ place: Dropin.Place) async throws -> Bool {
         if let _ = places.first(where: { $0.id == place.id }) {
             return true
         }
         return false
     }
     
-    func fetch(_ id: UUID) async throws -> Dropin.PlaceEntity {
+    func fetch(_ id: UUID) async throws -> Dropin.Place {
         guard let g = places.first(where: { $0.id == id }) else {
             throw DataError.notFound(msg: "not found")
         }
         return g
     }
     
-    func fetch() async throws -> [Dropin.PlaceEntity] {
+    func fetch() async throws -> [Dropin.Place] {
         return try await fetch(nil)
     }
 
-    func fetch(groupId: UUID) async throws -> [PlaceEntity] {
+    func fetch(categoryId: UUID) async throws -> [Place] {
         return [] // dummy impl
     }
     
-    func fetch(tagId: UUID) async throws -> [PlaceEntity] {
+    func fetch(tagId: UUID) async throws -> [Place] {
         return [] // dummy impl
     }
 
-    func fetch(_ filter: Dropin.PlaceFilter?) async throws -> [Dropin.PlaceEntity] {
+    func fetch(_ filter: Dropin.PlaceFilter?) async throws -> [Dropin.Place] {
         guard let filter = filter, filter.isActive else {
             // no filtering
             return places
@@ -50,12 +50,12 @@ final class MockPlaceRepository: PlaceRepository {
         return places.filter { filter.matches($0) }
     }
     
-    func create(_ place: PlaceEntity) async throws {
+    func create(_ place: Place) async throws {
         places.append(place)
     }
     
     /*
-    func delete(_ place: PlaceEntity) async throws {
+    func delete(_ place: Place) async throws {
         guard let index = places.firstIndex(where: { $0.id == place.id }) else {
             fatalError("shouldn't be reached, protected by UseCase")
         }
@@ -65,14 +65,14 @@ final class MockPlaceRepository: PlaceRepository {
     }
      */
     
-    func update(_ place: PlaceEntity) async throws {
+    func update(_ place: Place) async throws {
         guard let index = places.firstIndex(where: { $0.id == place.id }) else {
             throw DataError.notFound(msg: "not found")
         }
         places[index] = place
     }
 
-    func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws {
+    func upsert(_ place: Place, shouldSave: Bool) async throws {
         if let index = places.firstIndex(where: { $0.id == place.id }) {
             places[index] = place
         } else {

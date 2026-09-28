@@ -14,11 +14,11 @@ struct PlaceRowView: View {
     @Environment(AppSettings.self) private var appSettings
 
     // MARK: - private vars
-    private var place: PlaceUI
+    private var place: PlaceUIModel
     private var locationManager: LocationManager
 
     // MARK: - init
-    init(place: PlaceUI,
+    init(place: PlaceUIModel,
          locationManager: LocationManager) {
         self.place = place
         self.locationManager = locationManager
@@ -36,13 +36,13 @@ struct PlaceRowView: View {
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
-                                                icon: place.group?.icon,
+                                                icon: place.category?.icon,
                                                 iconExtra: place.icon)
                         .padding(.trailing)
                         .padding(.top, place.icon == nil ? 0 : 10)
                     case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
-                                               icon: place.group?.icon,
+                                               icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                shadow: false)
                         .padding(.trailing)
@@ -87,11 +87,11 @@ struct PlaceRowView: View {
 #if DEBUG
 struct MockPlaceRowView: View {
     var mock: MockContainer
-    @State var place1: PlaceUI
-    @State var place2: PlaceUI
-    @State var place3: PlaceUI
-    @State var place4: PlaceUI
-    @State var place5: PlaceUI
+    @State var place1: PlaceUIModel
+    @State var place2: PlaceUIModel
+    @State var place3: PlaceUIModel
+    @State var place4: PlaceUIModel
+    @State var place5: PlaceUIModel
 
     var body: some View {
         ZStack {
@@ -133,11 +133,11 @@ struct MockPlaceRowView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.place1 = mock.getPlaceUI(0)
-        self.place2 = mock.getPlaceUI(1)
-        self.place3 = mock.getPlaceUI(4)
-        self.place4 = mock.getPlaceUI(5)
-        self.place5 = mock.getNoAddressPlaceUI()
+        self.place1 = mock.getPlaceUIModel(0)
+        self.place2 = mock.getPlaceUIModel(1)
+        self.place3 = mock.getPlaceUIModel(4)
+        self.place4 = mock.getPlaceUIModel(5)
+        self.place5 = mock.getNoAddressPlaceUIModel()
     }
 }
 

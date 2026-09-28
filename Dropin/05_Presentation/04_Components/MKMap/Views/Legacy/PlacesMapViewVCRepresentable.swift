@@ -20,13 +20,13 @@ struct PlacesMapViewVCRepresentable: UIViewControllerRepresentable {
     @State private var draftPlaceAnnotation: MKDraftPlaceAnnotation?
     @Environment(AppSettings.self) private var appSettings
 
-    private var places: [PlaceUI]
+    private var places: [PlaceUIModel]
     var bottomInset: CGFloat = 0
     let mapReloadGen: Int
 
     // MARK: Init
     init(viewModel: PlacesMapViewModel,
-         places: [PlaceUI],
+         places: [PlaceUIModel],
          selectedPlaceId: Binding<UUID?>,
          mapReloadGen: Int,
          bottomInset: CGFloat) {
@@ -404,7 +404,7 @@ class PlacesMapViewController: UIViewController {
 /*
 struct MockPlacesMapViewVCRepresentable: View {
     var mock: MockContainer
-    @State var places: [PlaceUI]
+    @State var places: [PlaceUIModel]
     @State var selectedPlaceId: UUID? = nil
     @State var vm: PlacesMapViewModel
 
@@ -421,10 +421,10 @@ struct MockPlacesMapViewVCRepresentable: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        //self.places = mock.getAllPlaceUI()
-        let place1 = PlaceUI(coordinates: .barcelona)
-        let place2 = PlaceUI(coordinates: .barcelona.offset(x: 0.01))
-        let place3 = PlaceUI(coordinates: .barcelona.offset(y: 0.01))
+        //self.places = mock.getAllPlaceUIModel()
+        let place1 = PlaceUIModel(coordinates: .barcelona)
+        let place2 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.01))
+        let place3 = PlaceUIModel(coordinates: .barcelona.offset(y: 0.01))
         self.places = [place1, place2, place3]
 
         

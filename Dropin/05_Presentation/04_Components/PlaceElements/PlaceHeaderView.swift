@@ -13,7 +13,7 @@ struct PlaceHeaderView: View {
     // MARK: - State & Bindings
     /// show/hide the copied to clipboard alert
     @State private var showingAddressToClipboard: Bool = false
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     //@Binding private var showingMarkerList: Bool
     @Environment(AppSettings.self) private var appSettings
 
@@ -22,7 +22,7 @@ struct PlaceHeaderView: View {
     private var isNameFocused: FocusState<Bool>.Binding
 
     // MARK: - init
-    init(place: Binding<PlaceUI>,
+    init(place: Binding<PlaceUIModel>,
          //showingMarkerList: Binding<Bool>,
          //editEnabled: Bool,
          isNameFocused: FocusState<Bool>.Binding) {
@@ -39,12 +39,12 @@ struct PlaceHeaderView: View {
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
-                                            icon: place.group?.icon,
+                                            icon: place.category?.icon,
                                             iconExtra: place.icon)
                         .padding(.trailing)
                     case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
-                                               icon: place.group?.icon,
+                                               icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                size: 40,
                                                shadow: false)
@@ -96,8 +96,8 @@ struct PlaceHeaderView: View {
 #if DEBUG
 struct MockPlaceHeaderView: View {
     var mock: MockContainer
-    @State var place: PlaceUI
-    @State var placeNoAddress: PlaceUI
+    @State var place: PlaceUIModel
+    @State var placeNoAddress: PlaceUIModel
     @FocusState var isNameFocused
 
     var body: some View {
@@ -115,8 +115,8 @@ struct MockPlaceHeaderView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(1)
-        self.placeNoAddress = mock.getNoAddressPlaceUI()
+        self.place = mock.getPlaceUIModel(1)
+        self.placeNoAddress = mock.getNoAddressPlaceUIModel()
     }
 }
 

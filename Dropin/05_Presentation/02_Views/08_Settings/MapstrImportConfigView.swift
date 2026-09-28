@@ -13,7 +13,7 @@ struct MapstrImportConfigView: View {
     let onConfirm: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @FocusState private var isGroupNameFocused: Bool
+    @FocusState private var isCategoryNameFocused: Bool
 
     init(viewModel: MapstrImportConfigViewModel, onConfirm: @escaping (String) -> Void) {
         self.viewModel = viewModel
@@ -25,13 +25,13 @@ struct MapstrImportConfigView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("settings.mapstr_import.group_placeholder", text: $viewModel.groupName)
+                    TextField("settings.mapstr_import.category_placeholder", text: $viewModel.groupName)
                         .autocorrectionDisabled()
-                        .focused($isGroupNameFocused)
+                        .focused($isCategoryNameFocused)
                 } header: {
-                    Text("settings.mapstr_import.group_section")
+                    Text("settings.mapstr_import.category_section")
                 } footer: {
-                    Text("settings.mapstr_import.group_footer")
+                    Text("settings.mapstr_import.category_footer")
                 }
             }
             .navigationTitle("settings.mapstr_import.title")
@@ -50,11 +50,11 @@ struct MapstrImportConfigView: View {
             .task {
                 await viewModel.resolveInitialName()
             }
-            .onChange(of: isGroupNameFocused) { wasFocused, isFocused in
+            .onChange(of: isCategoryNameFocused) { wasFocused, isFocused in
                 guard wasFocused, !isFocused else { return }
                 Task { await viewModel.handleKeyboardDismiss() }
             }
-            .onChange(of: viewModel.confirmedGroupName) { _, newValue in
+            .onChange(of: viewModel.confirmedCategoryName) { _, newValue in
                 guard let newValue else { return }
                 dismiss()
                 onConfirm(newValue)

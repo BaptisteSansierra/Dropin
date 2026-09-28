@@ -485,50 +485,50 @@
         }
       }
     },
-    "alert.remove_group_body_%@_%lld" : {
+    "alert.remove_category_body_%@_%lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warning: Group “%1$@” is used by %2$lld places!\nThis action cannot be undone.\nConfirm group deletion ?"
+            "value" : "Warning: Category “%1$@” is used by %2$lld places!\nThis action cannot be undone.\nConfirm category deletion ?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attention: Le groupe “%1$@” est associé à %2$lld lieux!\nCette action est irréversible.\nConfirmer la suppression du groupe ?"
+            "value" : "Attention : La catégorie “%1$@” est associée à %2$lld lieux!\nCette action est irréversible.\nConfirmer la suppression de la catégorie ?"
           }
         }
       }
     },
-    "alert.remove_group_empty_body_%@" : {
+    "alert.remove_category_empty_body_%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This action cannot be undone.\nConfirm group deletion ?"
+            "value" : "This action cannot be undone.\nConfirm category deletion ?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette action est irréversible.\nConfirmer la suppression du groupe ?"
+            "value" : "Cette action est irréversible.\nConfirmer la suppression de la catégorie ?"
           }
         }
       }
     },
-    "alert.remove_group_title" : {
+    "alert.remove_category_title" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete group?"
+            "value" : "Delete category?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer le groupe ?"
+            "value" : "Supprimer la catégorie ?"
           }
         }
       }
@@ -587,13 +587,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This will permanently delete all your places, groups and tags. This action cannot be undone."
+            "value" : "This will permanently delete all your places, categories and tags. This action cannot be undone."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette action supprimera définitivement tous vos lieux, groupes et tags. Elle est irréversible."
+            "value" : "Cette action supprimera définitivement tous vos lieux, catégories et tags. Elle est irréversible."
           }
         }
       }
@@ -1188,6 +1188,131 @@
         }
       }
     },
+    "category_list_view.num_places_%lld" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieu"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieux"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "category_selector.header" : {
+      "comment" : "Category selector, new-UI centered nav-style title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catégorie"
+          }
+        }
+      }
+    },
+    "category_selector.hint" : {
+      "comment" : "Category selector, new-UI caption under the title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A place belongs to one category."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un lieu appartient à une seule catégorie."
+          }
+        }
+      }
+    },
+    "category_selector.new" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvelle catégorie"
+          }
+        }
+      }
+    },
+    "category_selector.none" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de catégorie"
+          }
+        }
+      }
+    },
+    "category_selector.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Should this place be in a category ?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mettre dans une catégorie ?"
+          }
+        }
+      }
+    },
     "category.accommodation" : {
       "comment" : "Icon category name",
       "extractionState" : "manual",
@@ -1537,6 +1662,86 @@
         }
       }
     },
+    "common.categories" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categories"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catégories"
+          }
+        }
+      }
+    },
+    "common.category" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catégorie"
+          }
+        }
+      }
+    },
+    "common.category_color" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur de la catégorie"
+          }
+        }
+      }
+    },
+    "common.category_name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom de la catégorie"
+          }
+        }
+      }
+    },
+    "common.category_symbol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category symbol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symbole de la catégorie"
+          }
+        }
+      }
+    },
     "common.change" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1719,18 +1924,18 @@
         }
       }
     },
-    "common.delete_group" : {
+    "common.delete_category" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete group"
+            "value" : "Delete category"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ce groupe"
+            "value" : "Supprimer cette catégorie"
           }
         }
       }
@@ -1989,86 +2194,6 @@
         }
       }
     },
-    "common.group" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Group"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Groupe"
-          }
-        }
-      }
-    },
-    "common.group_color" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Group color"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couleur du groupe"
-          }
-        }
-      }
-    },
-    "common.group_name" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Group name"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom du groupe"
-          }
-        }
-      }
-    },
-    "common.group_symbol" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Group symbol"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Symbole du groupe"
-          }
-        }
-      }
-    },
-    "common.groups" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Groups"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Groupes"
-          }
-        }
-      }
-    },
     "common.import" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2299,22 +2424,6 @@
         }
       }
     },
-    "common.not_grouped" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Grouped"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non groupé"
-          }
-        }
-      }
-    },
     "common.notes" : {
       "comment" : "Note field (aka short message)",
       "localizations" : {
@@ -2381,18 +2490,18 @@
         }
       }
     },
-    "common.organize_by_group" : {
+    "common.organize_by_category" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Organize by group"
+            "value" : "Organize by category"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grouper"
+            "value" : "Catégoriser"
           }
         }
       }
@@ -2808,6 +2917,22 @@
         }
       }
     },
+    "common.uncategorized" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uncategorized"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans catégorie"
+          }
+        }
+      }
+    },
     "common.unlink" : {
       "comment" : "Unlink place from tag/group",
       "localizations" : {
@@ -2949,13 +3074,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This erases all your places, groups, tags, and photos from Dropin - on this device and from your account."
+            "value" : "This erases all your places, categories, tags, and photos from Dropin - on this device and from your account."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela efface tous vos lieux, groupes, tags et photos de Dropin - sur cet appareil et sur votre compte."
+            "value" : "Cela efface tous vos lieux, catégories, tags et photos de Dropin - sur cet appareil et sur votre compte."
           }
         }
       }
@@ -2978,20 +3103,20 @@
         }
       }
     },
-    "delete_account.consequence.groups_tags" : {
+    "delete_account.consequence.categories_tags" : {
       "comment" : "Delete account screen, consequences card row label",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Groups & tags"
+            "value" : "Categories & tags"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Groupes et tags"
+            "value" : "Catégories et tags"
           }
         }
       }
@@ -3425,131 +3550,6 @@
         }
       }
     },
-    "group_list_view.num_places_%lld" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld place"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld places"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld lieu"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld lieux"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "group_selector.header" : {
-      "comment" : "Group selector, new-UI centered nav-style title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Group"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Groupe"
-          }
-        }
-      }
-    },
-    "group_selector.hint" : {
-      "comment" : "Group selector, new-UI caption under the title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A place belongs to one group."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un lieu appartient à un seul groupe."
-          }
-        }
-      }
-    },
-    "group_selector.new" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New Group"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nouveau groupe"
-          }
-        }
-      }
-    },
-    "group_selector.none" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Group"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas de groupe"
-          }
-        }
-      }
-    },
-    "group_selector.title" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Should this place be in a group ?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mettre dans un groupe ?"
-          }
-        }
-      }
-    },
     "import.complete.count" : {
       "localizations" : {
         "en" : {
@@ -3566,18 +3566,18 @@
         }
       }
     },
-    "import.complete.count.group" : {
+    "import.complete.count.category" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Groups imported"
+            "value" : "Categories imported"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Groupes importés"
+            "value" : "Catégories importées"
           }
         }
       }
@@ -3683,13 +3683,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The group %@ already exists, please select a new group name for your Mapstr import"
+            "value" : "The category %@ already exists, please select a new category name for your Mapstr import"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le groupe %@ existe déjà, veuillez choisir un nouveau nom de groupe pour votre import Mapstr"
+            "value" : "La catégorie %@ existe déjà, veuillez choisir un nouveau nom de catégorie pour votre import Mapstr"
           }
         }
       }
@@ -4242,18 +4242,70 @@
         }
       }
     },
-    "placeholder.group_name" : {
+    "placeholder.category_name" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Give group a name"
+            "value" : "Give category a name"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donner un nom au groupe"
+            "value" : "Donner un nom à la catégorie"
+          }
+        }
+      }
+    },
+    "placeholder.no_categories.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create categories by editing a place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créez des catégories en éditant un lieu"
+          }
+        }
+      }
+    },
+    "placeholder.no_categories.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No categories yet"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune catégorie"
+          }
+        }
+      }
+    },
+    "placeholder.no_category" : {
+      "comment" : "No category associated to place",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune catégorie"
           }
         }
       }
@@ -4287,58 +4339,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune donnée de contact "
-          }
-        }
-      }
-    },
-    "placeholder.no_group" : {
-      "comment" : "No group associated to place",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No group"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun groupe"
-          }
-        }
-      }
-    },
-    "placeholder.no_groups.body" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create groups by editing a place"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Créez des groupes en éditant un lieu"
-          }
-        }
-      }
-    },
-    "placeholder.no_groups.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No groups yet"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun groupe"
           }
         }
       }
@@ -4727,13 +4727,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Places, groups, tags, and photos you add are stored on your device and on secure third-party cloud servers, which may be located outside your country. This data is never shared, sold, or used for advertising."
+            "value" : "Places, categories, tags, and photos you add are stored on your device and on secure third-party cloud servers, which may be located outside your country. This data is never shared, sold, or used for advertising."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les lieux, groupes, tags et photos que vous ajoutez sont stockés sur votre appareil et sur des serveurs cloud tiers sécurisés, pouvant être situés hors de votre pays. Ces données ne sont jamais partagées, vendues, ni utilisées à des fins publicitaires."
+            "value" : "Les lieux, catégories, tags et photos que vous ajoutez sont stockés sur votre appareil et sur des serveurs cloud tiers sécurisés, pouvant être situés hors de votre pays. Ces données ne sont jamais partagées, vendues, ni utilisées à des fins publicitaires."
           }
         }
       }
@@ -4995,13 +4995,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Some places, groups, or tags may have been modified recently - or while your device was offline - and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
+            "value" : "Some places, categories, or tags may have been modified recently - or while your device was offline - and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certains lieux, groupes ou tags ont peut-être été modifiés récemment - ou pendant que votre appareil était hors-ligne - et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
+            "value" : "Certains lieux, catégories ou tags ont peut-être été modifiés récemment - ou pendant que votre appareil était hors-ligne - et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
           }
         }
       }
@@ -5282,50 +5282,50 @@
         }
       }
     },
-    "settings.mapstr_import.group_footer" : {
+    "settings.mapstr_import.category_footer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All imported places will be grouped under it so you can find them easily"
+            "value" : "All imported places will be categorized under it so you can find them easily"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les lieux importés seront regroupés sous celui-ci pour les retrouver facilement"
+            "value" : "Tous les lieux importés seront classés dans celle-ci pour les retrouver facilement"
           }
         }
       }
     },
-    "settings.mapstr_import.group_placeholder" : {
+    "settings.mapstr_import.category_placeholder" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Group name"
+            "value" : "Category name"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nom du groupe"
+            "value" : "Nom de la catégorie"
           }
         }
       }
     },
-    "settings.mapstr_import.group_section" : {
+    "settings.mapstr_import.category_section" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Import group"
+            "value" : "Import category"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Groupe d'import"
+            "value" : "Catégorie d'import"
           }
         }
       }
@@ -5335,13 +5335,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A group with that name already exists, so we adjusted it to keep group names unique. Feel free to edit it before continuing."
+            "value" : "A category with that name already exists, so we adjusted it to keep category names unique. Feel free to edit it before continuing."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un groupe portant ce nom existe déjà, nous l'avons donc ajusté pour garder des noms uniques. N'hésitez pas à le modifier avant de continuer."
+            "value" : "Une catégorie portant ce nom existe déjà, nous l'avons donc ajustée pour garder des noms uniques. N'hésitez pas à la modifier avant de continuer."
           }
         }
       }

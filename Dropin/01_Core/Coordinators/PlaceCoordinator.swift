@@ -36,7 +36,7 @@ import CoreLocation
     
     // MARK: navigation methods
     
-    func pushPlaceEditView(placeRef: PlaceUIRef) {
+    func pushPlaceEditView(placeRef: PlaceUIModelRef) {
         push(NavigationItem.placeEditView(placeId: placeRef.place.id))
     }
     
@@ -57,13 +57,13 @@ import CoreLocation
                                  name: String,
                                  marker: String?,
                                  tags: [UUID],
-                                 group: UUID?) {
+                                 category: UUID?) {
         push(NavigationItem.placeCreateView(coordinates: coordinates,
                                             address: address,
                                             name: name,
                                             marker: marker,
                                             tags: tags,
-                                            group: group))
+                                            category: category))
     }
 
     func pushUndefinedDummyView() {
@@ -116,7 +116,7 @@ enum NavigationItem: Hashable {
                          name: String,
                          marker: String?,
                          tags: [UUID],
-                         group: UUID?)
+                         category: UUID?)
     //case dropAPin
     
     // development

@@ -13,14 +13,14 @@ struct PlaceCreateQuickView: View {
     
     // MARK: - State & Bindings
     @State private var viewModel: PlaceCreateQuickViewModel
-    @State private var place: PlaceUI
+    @State private var place: PlaceUIModel
     @FocusState private var isNameFocused
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Init
-    init(viewModel: PlaceCreateQuickViewModel, place: PlaceUI) {
+    init(viewModel: PlaceCreateQuickViewModel, place: PlaceUIModel) {
         self._viewModel = State(initialValue: viewModel)
         self._place = State(initialValue: place)
     }
@@ -55,8 +55,8 @@ struct PlaceCreateQuickView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        .sheet(isPresented: $viewModel.showingGroupSelector) {
-            viewModel.createGroupSelectorView(place: $place)
+        .sheet(isPresented: $viewModel.showingCategorySelector) {
+            viewModel.createCategorySelectorView(place: $place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
@@ -76,7 +76,7 @@ struct PlaceCreateQuickView: View {
             tagsView
                 .padding(.horizontal, 20)
             detailsSeparatorView
-            groupsView
+            categoriesView
                 .padding(.horizontal, 20)
                 .frame(height: 40)
         }
@@ -142,40 +142,40 @@ struct PlaceCreateQuickView: View {
     }
 
     @ViewBuilder
-    private var groupsView: some View {
-        if let group = place.group {
-            filledGroupView(group)
+    private var categoriesView: some View {
+        if let category = place.category {
+            filledCategoryView(category)
                 .frame(height: 40)
         } else {
-            emptyGroupView
+            emptyCategoryView
                 .frame(height: 40)
         }
     }
     
-    private var emptyGroupView: some View {
+    private var emptyCategoryView: some View {
         HStack(spacing: 0) {
             Image(systemName: "folder")
                 .textStyle(.subheadline, color: .textSecondary)
                 .padding(.trailing)
-            Text("common.group")
+            Text("common.category")
                 .textStyle(.subheadline, color: .textSecondary)
             Spacer()
-            TextButton(text: "common.choose", action: editGroup)
+            TextButton(text: "common.choose", action: editCategory)
         }
     }
     
-    private func filledGroupView(_ group: GroupUI) -> some View {
+    private func filledCategoryView(_ category: CategoryUIModel) -> some View {
         HStack(spacing: 0) {
             Image(systemName: "folder")
                 .textStyle(.subheadline, color: .textSecondary)
                 .padding(.trailing)
-            GroupView(group: group, style: .small)
+            CategoryView(category: category, style: .small)
                 .onTapGesture {
-                    editGroup()
+                    editCategory()
                 }
                 .padding(.trailing, -10)
             Spacer()
-            TextButton(text: "common.change", action: editGroup)
+            TextButton(text: "common.change", action: editCategory)
         }
     }
 
@@ -184,8 +184,8 @@ struct PlaceCreateQuickView: View {
         viewModel.showingTagsSelector.toggle()
     }
     
-    private func editGroup() {
-        viewModel.showingGroupSelector.toggle()
+    private func editCategory() {
+        viewModel.showingCategorySelector.toggle()
     }
 
     private func fetchAddress() async {
@@ -226,7 +226,7 @@ struct PlaceCreateQuickView: View {
 #if DEBUG
 struct MockPlaceCreateQuickView: View {
     var mock: MockContainer
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var present: Bool = false
 
     var body: some View {
@@ -248,7 +248,7 @@ struct MockPlaceCreateQuickView: View {
         let mock = MockContainer()
         self.mock = mock
         // Get a place with plenty of tags
-        let places = mock.getAllPlaceUI().sorted(by: { p1, p2 in
+        let places = mock.getAllPlaceUIModel().sorted(by: { p1, p2 in
             p1.tags.count > p2.tags.count
         })
         //for p in places {

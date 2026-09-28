@@ -32,13 +32,13 @@ struct DropinApp: App {
     init() {
         // Create database, wire app
         do {
-            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self, SDProfile.self)
+            let modelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
             if false {
                 do {
-                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
+                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<PlaceRecord>())
                     if places.count == 0 {
                         Log.info("Empty database, mock populating")
                         try AppContainer.insertMockData(modelContext: modelContainer.mainContext)

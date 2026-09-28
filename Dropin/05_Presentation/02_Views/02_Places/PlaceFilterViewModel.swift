@@ -10,28 +10,28 @@ import SwiftUI
 @MainActor
 @Observable class PlaceFilterViewModel {
     
-    var groups: [GroupUI] = []
-    var tags: [TagUI] = []
+    var categories: [CategoryUIModel] = []
+    var tags: [TagUIModel] = []
     var filter: Binding<PlaceFilter?>
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private let fetchGroups: FetchGroups
+    @ObservationIgnored private let fetchCategories: FetchCategories
     @ObservationIgnored private let fetchTags: FetchTags
 
     init(_ appContainer: AppContainer,
-         fetchGroups: FetchGroups,
+         fetchCategories: FetchCategories,
          fetchTags: FetchTags,
          filter: Binding<PlaceFilter?>) {
         self.appContainer = appContainer
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
         self.filter = filter
     }
     
     func loadData() async throws {
-        groups = try await fetchGroups() 
+        categories = try await fetchCategories() 
             .filter { $0.isActive }
-            .map { GroupMapper.toUI($0) }
+            .map { CategoryMapper.toUI($0) }
         tags = try await fetchTags()
             .filter { $0.isActive }
             .map { TagMapper.toUI($0) }

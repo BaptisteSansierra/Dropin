@@ -11,7 +11,7 @@ import CoreLocation
 extension PlaceSortPolicy {
     
     @MainActor
-    func apply(_ places: [PlaceUI], userPosition: CLLocationCoordinate2D?) -> [PlaceUI] {
+    func apply(_ places: [PlaceUIModel], userPosition: CLLocationCoordinate2D?) -> [PlaceUIModel] {
         switch self {
             case .alphabetically:
                 return places.sorted { p1, p2 in

@@ -14,8 +14,8 @@ import CoreLocation
     // MARK: Properties
     var showingMarkerList = false
     var showingTagsSelector = false
-    var showingGroupSelector = false
-    var selectedGroup: SDGroup?
+    var showingCategorySelector = false
+    var selectedCategory: CategoryRecord?
     var missingName = false
 
     // MARK: un-tracked properties
@@ -32,26 +32,26 @@ import CoreLocation
     }
 
     // MARK: Navigation
-    func pushCreatePlaceFullView(place: PlaceUI) {
+    func pushCreatePlaceFullView(place: PlaceUIModel) {
         coordinator.pushCreatePlaceFullView(coordinates: place.coordinates,
                                             address: place.address,
                                             name: place.name,
                                             marker: place.icon?.rawValue,
                                             tags: place.tags.map { $0.id },
-                                            group: place.group?.id)
+                                            category: place.category?.id)
     }
 
     // MARK: UI Childs
-    func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
+    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
         return appContainer.createTagSelectorView(place: place)
     }
     
-    func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
-        return appContainer.createGroupSelectorView(place: place)
+    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+        return appContainer.createCategorySelectorView(place: place)
     }
 
     // MARK: Use cases
-    func save(place: PlaceUI) async throws {
+    func save(place: PlaceUIModel) async throws {
         let placeEntity = PlaceMapper.toDomain(place)
         try await createPlace(placeEntity)
     }

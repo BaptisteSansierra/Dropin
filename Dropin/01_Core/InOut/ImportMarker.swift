@@ -9,5 +9,5 @@ import Foundation
 
 enum ImportMarker {
     case tag(String)
-    case group(String)
+    case category(String)
 }

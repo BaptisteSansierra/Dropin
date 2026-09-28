@@ -15,7 +15,7 @@ struct PlaceHeaderView: View {
     // MARK: - State & Bindings
     /// show/hide the copied to clipboard alert
     @State private var showingAddressToClipboard: Bool = false
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @Binding private var showingMarkerList: Bool
     @Binding private var showPhoneField: Bool
     @Binding private var showUrlField: Bool
@@ -25,7 +25,7 @@ struct PlaceHeaderView: View {
     private var editEnabled: Bool
     
     // MARK: - init
-    init(place: Binding<PlaceUI>,
+    init(place: Binding<PlaceUIModel>,
          showingMarkerList: Binding<Bool>,
          showPhoneField: Binding<Bool>,
          showUrlField: Binding<Bool>,
@@ -47,7 +47,7 @@ struct PlaceHeaderView: View {
                 ZStack(alignment: .topLeading) {
                     let color = place.groupColor
                     PlaceRectAnnotationView(color: color,
-                                        icon: place.group?.icon,
+                                        icon: place.category?.icon,
                                         iconExtra: place.icon)
                     .padding()
                     IcoButton(systemImage: "ellipsis",
@@ -135,7 +135,7 @@ struct PlaceHeaderView: View {
 #if DEBUG
 struct MockPlaceHeaderView: View {
     var mock: MockContainer
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var showingMarkerList: Bool = true
     @State var showPhoneField: Bool = false
     @State var showUrlField: Bool = false
@@ -153,7 +153,7 @@ struct MockPlaceHeaderView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(1)
+        self.place = mock.getPlaceUIModel(1)
     }
 }
 

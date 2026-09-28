@@ -13,35 +13,35 @@ actor ImportDropinService: ImportServiceProtocol {
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
     private let fetchPlaces: FetchPlaces
-    private let fetchGroups: FetchGroups
+    private let fetchCategories: FetchCategories
     private let fetchTags: FetchTags
     private let upsertPlace: UpsertPlace
-    private let upsertGroup: UpsertGroup
+    private let upsertCategory: UpsertCategory
     private let upsertTag: UpsertTag
     
-    private var existingHardPlaces: [PlaceEntity] = []  // contains all the non-deleted existing places on disk
-    private var existingGroups: [GroupEntity] = []      // contains all the existsing groups on disk
-    private var existingTags: [TagEntity] = []          // contains all the existsing tags on disk
+    private var existingHardPlaces: [Place] = []  // contains all the non-deleted existing places on disk
+    private var existingCategories: [Category] = []      // contains all the existsing categories on disk
+    private var existingTags: [Tag] = []          // contains all the existsing tags on disk
     private var createdPlacesCount: Int = 0
     private var duplicatePlacesCount: Int = 0
     private var createdTagsCount: Int = 0
-    private var createdGroupsCount: Int = 0
+    private var createdCategoriesCount: Int = 0
     
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
-         fetchGroups: FetchGroups,
+         fetchCategories: FetchCategories,
          fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
-         upsertGroup: UpsertGroup,
+         upsertCategory: UpsertCategory,
          upsertTag: UpsertTag) {
         self.saveContext = saveContext
         self.rollbackContext = rollbackContext
         self.fetchPlaces = fetchPlaces
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
         self.upsertPlace = upsertPlace
-        self.upsertGroup = upsertGroup
+        self.upsertCategory = upsertCategory
         self.upsertTag = upsertTag
     }
 
@@ -73,7 +73,7 @@ actor ImportDropinService: ImportServiceProtocol {
         // Fetch existing
         existingHardPlaces = try await fetchPlaces()
             .filter { $0.isActive }
-        existingGroups = try await fetchGroups()
+        existingCategories = try await fetchCategories()
         existingTags = try await fetchTags()
 
         guard !Task.isCancelled else { await cancel(canceled); return }
@@ -87,8 +87,8 @@ actor ImportDropinService: ImportServiceProtocol {
         } catch {
             throw ImportError.corrupted(error.localizedDescription)
         }
-        Log.info("Found \(export.places.count) places, \(export.tags.count) tags, \(export.groups.count) groups")
-        guard export.places.count + export.tags.count + export.groups.count > 0 else {
+        Log.info("Found \(export.places.count) places, \(export.tags.count) tags, \(export.categories.count) categories")
+        guard export.places.count + export.tags.count + export.categories.count > 0 else {
             throw ImportError.emptyFile
         }
         
@@ -106,7 +106,7 @@ actor ImportDropinService: ImportServiceProtocol {
         guard !Task.isCancelled else { return }
         try await saveContext()
         Log.info(" -> persisted")
-        await completion(createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount)
+        await completion(createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount)
     }
 
     // MARK: - Private
@@ -126,18 +126,18 @@ actor ImportDropinService: ImportServiceProtocol {
 
     private func createLocalItems(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
         
-        var replacedTags = [TagEntity: TagEntity]()
-        var replacedGroups = [GroupEntity: GroupEntity]()
+        var replacedTags = [Tag: Tag]()
+        var replacedCategories = [Category: Category]()
 
-        // Upsert groups and tags first (places depend on them)
-        for group in export.groups {
+        // Upsert categories and tags first (places depend on them)
+        for category in export.categories {
             try Task.checkCancellation()
-            if let existingGroup = existingGroups.first(where: { item in item.name == group.name }),
-               existingGroup.isActive {
-                replacedGroups[group] = existingGroup
+            if let existingCategory = existingCategories.first(where: { item in item.name == category.name }),
+               existingCategory.isActive {
+                replacedCategories[category] = existingCategory
             } else {
-                try await upsertGroup(group, shouldSave: false)
-                createdGroupsCount += 1
+                try await upsertCategory(category, shouldSave: false)
+                createdCategoriesCount += 1
             }
         }
         for tag in export.tags {
@@ -151,18 +151,18 @@ actor ImportDropinService: ImportServiceProtocol {
             }
         }
         
-        // Replace group and tags in places
-        var updatedPlaces: [PlaceEntity] = []
+        // Replace category and tags in places
+        var updatedPlaces: [Place] = []
         for place in export.places {
-            // Find group replacement if needed
-            var group: GroupEntity? = place.group
-            if let currentGroup = place.group {
-                if let replacement = replacedGroups[currentGroup] {
-                    group = replacement
+            // Find category replacement if needed
+            var category: Category? = place.category
+            if let currentCategory = place.category {
+                if let replacement = replacedCategories[currentCategory] {
+                    category = replacement
                 }
             }
             // Find tags replacements if needed
-            var tags: [TagEntity] = []
+            var tags: [Tag] = []
             for tag in place.tags {
                 if let replacement = replacedTags[tag] {
                     tags.append(replacement)
@@ -170,8 +170,8 @@ actor ImportDropinService: ImportServiceProtocol {
                     tags.append(tag)
                 }
             }
-            // Create place from replaced group and tags
-            updatedPlaces.append(place.replacedGroupAndTags(group: group, tags: tags))
+            // Create place from replaced category and tags
+            updatedPlaces.append(place.replacedCategoryAndTags(category: category, tags: tags))
         }
 
         // Upsert places
@@ -186,7 +186,7 @@ actor ImportDropinService: ImportServiceProtocol {
         }
     }
     
-    private func processPlace(_ place: PlaceEntity) async throws {
+    private func processPlace(_ place: Place) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
             duplicatePlacesCount += 1
@@ -203,7 +203,7 @@ actor ImportDropinService: ImportServiceProtocol {
         createdPlacesCount += 1
     }
     
-    private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> PlaceEntity? {
+    private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Place? {
         for place in existingHardPlaces {
             if place.isIdentical(name: name, coords: coordinates) && place.isActive {
                 Log.warning("duplicate found: \(name) > \(place.name) id:\(place.id)")

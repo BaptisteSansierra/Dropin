@@ -21,7 +21,7 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
         self.auth = auth
     }
 
-    func fetch() async throws -> ProfileEntity? {
+    func fetch() async throws -> Profile? {
         let userId = try await requireUserId()
         let dtos: [SupabaseProfileDTO] = try await client
             .from("profiles")
@@ -33,7 +33,7 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
         return dtos.first?.toDomain()
     }
 
-    func fetch(updatedAfter date: Date) async throws -> ProfileEntity? {
+    func fetch(updatedAfter date: Date) async throws -> Profile? {
         let userId = try await requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabaseProfileDTO] = try await client
@@ -47,7 +47,7 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
         return dtos.first?.toDomain()
     }
 
-    func upsert(_ profile: ProfileEntity) async throws {
+    func upsert(_ profile: Profile) async throws {
         _ = try await requireUserId()
         let dto = SupabaseProfileDTO(from: profile)
         try await client.from("profiles").upsert(dto, onConflict: "id").execute()

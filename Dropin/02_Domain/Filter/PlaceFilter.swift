@@ -8,26 +8,26 @@
 import Foundation
 
 struct PlaceFilter {
-    var groupIDs: Set<UUID> = []
-    var includeUngrouped: Bool = false
+    var categoryIDs: Set<UUID> = []
+    var includeUncategorized: Bool = false
     var tagIDs: Set<UUID> = []
     var includeUntagged: Bool = false
 
     var isActive: Bool {
-        !groupIDs.isEmpty || includeUngrouped || !tagIDs.isEmpty || includeUntagged
+        !categoryIDs.isEmpty || includeUncategorized || !tagIDs.isEmpty || includeUntagged
     }
 }
 
 extension PlaceFilter {
-    func matches(_ place: PlaceEntity) -> Bool {
+    func matches(_ place: Place) -> Bool {
         guard isActive else { return true }
-        // Check if place matches group filtering
-        if let group = place.group {
-            if groupIDs.contains(group.id) {
+        // Check if place matches category filtering
+        if let category = place.category {
+            if categoryIDs.contains(category.id) {
                 return true
             }
         } else {
-            if includeUngrouped {
+            if includeUncategorized {
                 return true
             }
         }

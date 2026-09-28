@@ -269,7 +269,7 @@ struct SettingsView: View {
     
     private func mapstrConfigSheetContent() -> some View {
         MapstrImportConfigView(viewModel: viewModel.createMapstrImportConfigViewModel()) { finalName in
-            viewModel.mapstrMarkerGroupName = finalName
+            viewModel.mapstrMarkerCategoryName = finalName
             viewModel.importSource = .mapstr
             viewModel.pickFile = true
         }

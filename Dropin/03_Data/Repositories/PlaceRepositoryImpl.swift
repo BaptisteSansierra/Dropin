@@ -16,7 +16,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
     
     // MARK: repository protocol methods
-    func exists(_ place: PlaceEntity) async throws -> Bool {
+    func exists(_ place: Place) async throws -> Bool {
         do {
             _ = try await retrievePlace(domainPlace: place)
             return true
@@ -27,36 +27,36 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         }
     }
     
-    func create(_ place: PlaceEntity) async throws {
+    func create(_ place: Place) async throws {
         let sdPlace = PlaceMapper.toData(place)
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
-        try await linkGroup(sdPlace: sdPlace, domainPlace: place)
+        try await linkCategory(sdPlace: sdPlace, domainPlace: place)
         modelContext.insert(sdPlace)
         try modelContext.save()
     }
     
     /* hard delete not used
-    func delete(_ place: PlaceEntity) async throws {
+    func delete(_ place: Place) async throws {
         let model = try await retrievePlace(domainPlace: place)
         modelContext.delete(model)
         try modelContext.save()
     }
      */
 
-    func fetch(_ id: UUID) async throws -> PlaceEntity {
+    func fetch(_ id: UUID) async throws -> Place {
         let sdPlace = try await retrievePlace(uuid: id)
         return PlaceMapper.toDomain(sdPlace)
     }
 
-    func fetch() async throws -> [PlaceEntity] {
+    func fetch() async throws -> [Place] {
         return try await fetch(nil)
     }
 
-    func fetch(_ filter: PlaceFilter?) async throws -> [PlaceEntity] {
+    func fetch(_ filter: PlaceFilter?) async throws -> [Place] {
         // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
-        let predicate: Predicate<SDPlace>? = nil
-        let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
-        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate, sortBy: sorts)
+        let predicate: Predicate<PlaceRecord>? = nil
+        let sorts: [SortDescriptor<PlaceRecord>] = [SortDescriptor<PlaceRecord>(\.createdAt), SortDescriptor<PlaceRecord>(\.name)]
+        let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)
         let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
         if let filter = filter, filter.isActive {
@@ -68,18 +68,18 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         }
     }
     
-    func fetch(groupId: UUID) async throws -> [PlaceEntity] {
-        let predicate = #Predicate<SDPlace> { /*$0.deletedAt == nil &&*/ $0.group?.identifier == groupId }
-        let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
-        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate, sortBy: sorts)
+    func fetch(categoryId: UUID) async throws -> [Place] {
+        let predicate = #Predicate<PlaceRecord> { /*$0.deletedAt == nil &&*/ $0.category?.identifier == categoryId }
+        let sorts: [SortDescriptor<PlaceRecord>] = [SortDescriptor<PlaceRecord>(\.createdAt), SortDescriptor<PlaceRecord>(\.name)]
+        let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)
         let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
         return domainPlaces
     }
     
-    func fetch(tagId: UUID) async throws -> [PlaceEntity] {
-        let sorts: [SortDescriptor<SDPlace>] = [SortDescriptor<SDPlace>(\.createdAt), SortDescriptor<SDPlace>(\.name)]
-        let descriptor = FetchDescriptor<SDPlace>(
+    func fetch(tagId: UUID) async throws -> [Place] {
+        let sorts: [SortDescriptor<PlaceRecord>] = [SortDescriptor<PlaceRecord>(\.createdAt), SortDescriptor<PlaceRecord>(\.name)]
+        let descriptor = FetchDescriptor<PlaceRecord>(
             predicate: #Predicate { place in
                 /*place.deletedAt == nil &&*/ place.tags.contains { $0.identifier == tagId }
             }, sortBy: sorts
@@ -89,7 +89,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         return domainPlaces
     }
     
-    func update(_ place: PlaceEntity) async throws {
+    func update(_ place: Place) async throws {
         let sdPlace = try await retrievePlace(domainPlace: place)
         sdPlace.name = place.name
         sdPlace.latitude = place.coordinates.latitude
@@ -104,15 +104,15 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         sdPlace.notes = place.notes
         sdPlace.updatedAt = place.updatedAt
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
-        try await linkGroup(sdPlace: sdPlace, domainPlace: place)
+        try await linkCategory(sdPlace: sdPlace, domainPlace: place)
         sdPlace.deletedAt = place.deletedAt
         try modelContext.save()
     }
 
-    func upsert(_ place: PlaceEntity, shouldSave: Bool) async throws {
+    func upsert(_ place: Place, shouldSave: Bool) async throws {
         let placeId = place.id
-        let predicate = #Predicate<SDPlace> { $0.identifier == placeId }
-        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
+        let predicate = #Predicate<PlaceRecord> { $0.identifier == placeId }
+        let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate)
         if let existing = try modelContext.fetch(descriptor).first {
             // Update
             existing.name = place.name
@@ -128,13 +128,13 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             existing.notes = place.notes
             existing.updatedAt = place.updatedAt
             try await linkTags(sdPlace: existing, domainPlace: place)
-            try await linkGroup(sdPlace: existing, domainPlace: place)
+            try await linkCategory(sdPlace: existing, domainPlace: place)
             existing.deletedAt = place.deletedAt
         } else if place.deletedAt == nil {
             // Insert
             let sdPlace = PlaceMapper.toData(place)
             try await linkTags(sdPlace: sdPlace, domainPlace: place)
-            try await linkGroup(sdPlace: sdPlace, domainPlace: place)
+            try await linkCategory(sdPlace: sdPlace, domainPlace: place)
             modelContext.insert(sdPlace)
         } else {
             // Tombstone for a place we never had locally — nothing to do.
@@ -147,24 +147,24 @@ public final class PlaceRepositoryImpl: PlaceRepository {
 
     func clearTable() async throws {
         // Batch delete is more efficient but has a limitation, it can't honor relationship rules, may be fixed at some point ?...
-        // try modelContext.delete(model: SDPlace.self)
+        // try modelContext.delete(model: PlaceRecord.self)
 
-        let all = try modelContext.fetch(FetchDescriptor<SDPlace>())
+        let all = try modelContext.fetch(FetchDescriptor<PlaceRecord>())
         for item in all { modelContext.delete(item) }
         try modelContext.save()
     }
 
     // MARK: private methods
-    private func retrievePlace(domainPlace: PlaceEntity) async throws -> SDPlace {
+    private func retrievePlace(domainPlace: Place) async throws -> PlaceRecord {
         return try await retrievePlace(uuid: domainPlace.id)
     }
     
-    private func retrievePlace(uuid: UUID) async throws -> SDPlace {
-        let predicate = #Predicate<SDPlace> { $0.identifier == uuid }
-        let descriptor = FetchDescriptor<SDPlace>(predicate: predicate)
+    private func retrievePlace(uuid: UUID) async throws -> PlaceRecord {
+        let predicate = #Predicate<PlaceRecord> { $0.identifier == uuid }
+        let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate)
         let sdPlaces = try modelContext.fetch(descriptor)
         guard let result = sdPlaces.first else {
-            throw DataError.notFound(msg: "couldn't find SDPlace with id \(uuid)")
+            throw DataError.notFound(msg: "couldn't find PlaceRecord with id \(uuid)")
         }
         guard sdPlaces.count < 2 else {
             throw DataError.duplicate(msg: "found \(sdPlaces.count) SDPlaces with id \(uuid)")
@@ -172,41 +172,50 @@ public final class PlaceRepositoryImpl: PlaceRepository {
         return result
     }
     
-    private func linkTags(sdPlace: SDPlace, domainPlace: PlaceEntity) async throws {
+    private func linkTags(sdPlace: PlaceRecord, domainPlace: Place) async throws {
         guard domainPlace.tags.count > 0 else {
             sdPlace.tags = []
             return
         }
         let tagIdentifiers = Set(domainPlace.tags.map { $0.id }) // Ensure no duplicates
-        let tagPredicate = #Predicate<SDTag> { tagIdentifiers.contains($0.identifier) }
-        let tagDescriptor = FetchDescriptor<SDTag>(predicate: tagPredicate)
+        let tagPredicate = #Predicate<TagRecord> { tagIdentifiers.contains($0.identifier) }
+        let tagDescriptor = FetchDescriptor<TagRecord>(predicate: tagPredicate)
         let sdTags = try modelContext.fetch(tagDescriptor)
-        
+
+        // A referenced tag that isn't found locally means it's been deleted —
+        // TagRepositoryImpl.upsert intentionally skips materializing a tombstone
+        // for a tag we never had locally. Drop the dangling reference rather
+        // than failing the whole place over it.
         if sdTags.count < tagIdentifiers.count {
-            throw DataError.notFound(msg: "some tags from list \(tagIdentifiers) couldn't be found while linking place \(sdPlace.name) id:\(sdPlace.id)")
+            Log.debug("linkTags: place \(sdPlace.name) references \(tagIdentifiers.count - sdTags.count) tag(s) no longer available locally — dropping")
         }
         if sdTags.count > tagIdentifiers.count {
-            throw DataError.duplicate(msg: "found \(sdTags.count) SDTags when looking for \(tagIdentifiers.count) ids : \(tagIdentifiers)")
+            throw DataError.duplicate(msg: "found \(sdTags.count) TagRecords when looking for \(tagIdentifiers.count) ids : \(tagIdentifiers)")
         }
         sdPlace.tags = sdTags
     }
     
-    private func linkGroup(sdPlace: SDPlace, domainPlace: PlaceEntity) async throws {
-        guard let group = domainPlace.group else {
-            sdPlace.group = nil
+    private func linkCategory(sdPlace: PlaceRecord, domainPlace: Place) async throws {
+        guard let category = domainPlace.category else {
+            sdPlace.category = nil
             return
         }
-        let groupId = group.id
-        let groupPredicate = #Predicate<SDGroup> { $0.identifier == groupId }
-        let groupDescriptor = FetchDescriptor<SDGroup>(predicate: groupPredicate)
-        let sdGroups = try modelContext.fetch(groupDescriptor)
-        guard let sdGroup = sdGroups.first else {
-            throw DataError.notFound(msg: "couldn't find SDGroup with id \(group.id)")
+        let categoryId = category.id
+        let categoryPredicate = #Predicate<CategoryRecord> { $0.identifier == categoryId }
+        let categoryDescriptor = FetchDescriptor<CategoryRecord>(predicate: categoryPredicate)
+        let sdCategories = try modelContext.fetch(categoryDescriptor)
+        guard let sdCategory = sdCategories.first else {
+            // Same as linkTags: a referenced category that no longer exists
+            // locally (deleted, tombstone skipped) shouldn't fail the whole
+            // place — just drop the dangling reference.
+            Log.debug("linkCategory: place \(sdPlace.name) references category \(category.id) no longer available locally — dropping")
+            sdPlace.category = nil
+            return
         }
-        guard sdGroups.count < 2 else {
-            throw DataError.duplicate(msg: "found \(sdGroups.count) SDGroups with id \(group.id)")
+        guard sdCategories.count < 2 else {
+            throw DataError.duplicate(msg: "found \(sdCategories.count) CategoryRecords with id \(category.id)")
         }
-        sdPlace.group = sdGroup
+        sdPlace.category = sdCategory
     }
 }
 

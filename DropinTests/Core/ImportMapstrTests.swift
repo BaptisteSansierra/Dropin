@@ -97,24 +97,24 @@ struct ImportMapstrTests {
     
     private let localGeneralRepo: MockGeneralRepository = MockGeneralRepository()
     private let localPlaceRepo: MockPlaceRepository = MockPlaceRepository()
-    private let localGroupRepo: MockGroupRepository = MockGroupRepository()
+    private let localCategoryRepo: MockCategoryRepository = MockCategoryRepository()
     private let localTagRepo: MockTagRepository = MockTagRepository()
     
     private func importService() -> ImportMapstrService {
         ImportMapstrService(saveContext: SaveContext(repository: localGeneralRepo),
                             rollbackContext: RollbackContext(repository: localGeneralRepo),
                             fetchPlaces: FetchPlaces(repository: localPlaceRepo),
-                            fetchGroups: FetchGroups(repository: localGroupRepo),
+                            fetchCategories: FetchCategories(repository: localCategoryRepo),
                             fetchTags: FetchTags(repository: localTagRepo),
                             upsertPlace: UpsertPlace(repository: localPlaceRepo),
-                            upsertGroup: UpsertGroup(repository: localGroupRepo),
+                            upsertCategory: UpsertCategory(repository: localCategoryRepo),
                             upsertTag: UpsertTag(repository: localTagRepo),
-                            markerGroupName: markerName)
+                            markerCategoryName: markerName)
     }
     
     ///
     /// Test ImportMapstrService simple import:
-    /// one place with a group + one tag
+    /// one place with a category + one tag
     ///
     @Test func importMapstrServiceBase() async throws {
         var counter = 0
@@ -125,25 +125,25 @@ struct ImportMapstrTests {
             #expect(count == counter + 1)    // Check progress counter
             counter += 1
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 5)      // Check created tags counter
         }
         
-        let groups = try await localGroupRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
         let tags = try await localTagRepo.fetch()
         let places = try await localPlaceRepo.fetch()
-        // Check we have 1 group on disk
-        #expect(groups.count == 1)
-        // Check we group name is the expected
-        #expect(groups[0].name == markerName)
+        // Check we have 1 category on disk
+        #expect(categories.count == 1)
+        // Check we category name is the expected
+        #expect(categories[0].name == markerName)
         // Check we have 5 tag on disk
         #expect(tags.count == 5)
         // Check we have 1 place on disk
         #expect(places.count == 2)
-        // Check place has a group
+        // Check place has a category
         guard let madeleine = places.first(where: { $0.name == madeleineName }) else {
             Issue.record("madeleine not found")
             return
@@ -157,10 +157,10 @@ struct ImportMapstrTests {
         // Check judy has 4 tags
         #expect(judy.tags.count == 4)
         
-        // Check madeleine has 1 group
-        #expect(madeleine.group != nil)
-        // Check judy has 1 group
-        #expect(judy.group != nil)
+        // Check madeleine has 1 category
+        #expect(madeleine.category != nil)
+        // Check judy has 1 category
+        #expect(judy.category != nil)
     }
     
     ///
@@ -202,12 +202,12 @@ struct ImportMapstrTests {
     }
     
     ///
-    /// Test ImportMapstrService shouls throw if marker group already exists
+    /// Test ImportMapstrService shouls throw if marker category already exists
     ///
     @Test func importMapstrServiceMarkerError() async throws {
         // Fill the local database
-        let g1Local = GroupEntity(name: markerName, color: String.randomColor(), icon: Icon.mock)
-        try await UpsertGroup(repository: localGroupRepo)(g1Local)
+        let g1Local = Dropin.Category(name: markerName, color: String.randomColor(), icon: Icon.mock)
+        try await UpsertCategory(repository: localCategoryRepo)(g1Local)
         // Import
         await #expect(throws: ImportError.markerExists("no_matter")) {
             let importMapstrService = importService()
@@ -228,8 +228,8 @@ struct ImportMapstrTests {
     ///
     @Test func importMapstrServiceTagsDuplicates() async throws {
         // Fill the local database
-        let t1Local = TagEntity(name: "Cafe", color: String.randomColor())
-        let t2Local = TagEntity(name: "Grignotage", color: String.randomColor())
+        let t1Local = Dropin.Tag(name: "Cafe", color: String.randomColor())
+        let t2Local = Dropin.Tag(name: "Grignotage", color: String.randomColor())
         try await UpsertTag(repository: localTagRepo)(t1Local)
         try await UpsertTag(repository: localTagRepo)(t2Local)
         
@@ -238,17 +238,17 @@ struct ImportMapstrTests {
             #expect(placesCount == 2)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 3)      // Check created tags counter
         }
         let tags = try await localTagRepo.fetch()
         let places = try await localPlaceRepo.fetch()
         // Check we have 5 tag on disk
         #expect(tags.count == 5)
-        // Check place has a group
+        // Check place has a category
         guard let madeleine = places.first(where: { $0.name == madeleineName }) else {
             Issue.record("madeleine not found")
             return
@@ -268,9 +268,9 @@ struct ImportMapstrTests {
     ///
     @Test func importMapstrServiceTagsDuplicatesDeleted() async throws {
         // Fill the local database
-        var t1Local = TagEntity(name: "Cafe", color: String.randomColor())
+        var t1Local = Dropin.Tag(name: "Cafe", color: String.randomColor())
         t1Local = t1Local.deleted(deletedAt: Date())
-        var t2Local = TagEntity(name: "Grignotage", color: String.randomColor())
+        var t2Local = Dropin.Tag(name: "Grignotage", color: String.randomColor())
         t2Local = t2Local.deleted(deletedAt: Date())
         try await UpsertTag(repository: localTagRepo)(t1Local)
         try await UpsertTag(repository: localTagRepo)(t2Local)
@@ -280,10 +280,10 @@ struct ImportMapstrTests {
             #expect(placesCount == 2)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 5)      // Check created tags counter
         }
         let tags = try await localTagRepo.fetch()
@@ -292,7 +292,7 @@ struct ImportMapstrTests {
         #expect(tags.count == 7)
         // Check we have 2 soft deleted tags on disk
         #expect(tags.reduce(0) { $1.deletedAt == nil ? $0 : $0 + 1 } == 2)
-        // Check place has a group
+        // Check place has a category
         guard let madeleine = places.first(where: { $0.name == madeleineName }) else {
             Issue.record("madeleine not found")
             return
@@ -319,9 +319,9 @@ struct ImportMapstrTests {
     @Test func importMapstrServicePlacesDuplicates() async throws {
         // Fill the local database
         let madeleineCoords = CLLocationCoordinate2D(latitude: 48.86985199999999, longitude: 2.324822)
-        let madeleineLocal = PlaceEntity(id: UUID(), name: madeleineName, coordinates: madeleineCoords, address: "nop")
+        let madeleineLocal = Place(id: UUID(), name: madeleineName, coordinates: madeleineCoords, address: "nop")
         try await UpsertPlace(repository: localPlaceRepo)(madeleineLocal)
-        let judyLocal = PlaceEntity(id: UUID(), name: judyName, coordinates: .abbeyRoad, address: "nop")
+        let judyLocal = Place(id: UUID(), name: judyName, coordinates: .abbeyRoad, address: "nop")
         try await UpsertPlace(repository: localPlaceRepo)(judyLocal)
         
         let importMapstrService = importService()
@@ -329,10 +329,10 @@ struct ImportMapstrTests {
             #expect(placesCount == 2)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 1)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 5)      // Check created tags counter
         }
         let places = try await localPlaceRepo.fetch()
@@ -349,7 +349,7 @@ struct ImportMapstrTests {
     @Test func importMapstrServicePlacesDuplicatesDeleted() async throws {
         // Fill the local database
         let madeleineCoords = CLLocationCoordinate2D(latitude: 48.86985199999999, longitude: 2.324822)
-        var madeleineLocal = PlaceEntity(id: UUID(), name: madeleineName, coordinates: madeleineCoords, address: "nop")
+        var madeleineLocal = Place(id: UUID(), name: madeleineName, coordinates: madeleineCoords, address: "nop")
         madeleineLocal = madeleineLocal.deleted(deletedAt: Date())
         try await UpsertPlace(repository: localPlaceRepo)(madeleineLocal)
         
@@ -358,10 +358,10 @@ struct ImportMapstrTests {
             #expect(placesCount == 2)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 5)      // Check created tags counter
         }
         let places = try await localPlaceRepo.fetch()

@@ -11,7 +11,7 @@ import Combine
 struct RootView: View {
     
     /// Handle app shared action
-    /// exemple: "Show on map" tapped on a place under "Group detail" view
+    /// exemple: "Show on map" tapped on a place under "Category detail" view
     ///                  Should trigger actions :
     ///                     1 - Side menu back to main
     ///                     2 - Main view select map tab
@@ -73,8 +73,8 @@ struct RootView: View {
         switch viewModel.appContext.currentSideMenuContext {
             case .main:
                 viewModel.createPlacesView()
-            case .groups:
-                viewModel.createGroupListView()
+            case .categories:
+                viewModel.createCategoryListView()
             case .tags:
                 viewModel.createTagListView()
             case .settings:

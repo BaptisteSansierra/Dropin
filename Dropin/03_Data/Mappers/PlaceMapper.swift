@@ -10,24 +10,24 @@ import CoreLocation
 
 public enum PlaceMapper {
     
-    static func toDomain(_ sdPlace: SDPlace, skipRelationships: Bool = false) -> PlaceEntity {
-        var group: GroupEntity? = nil
-        var tags = [TagEntity]()
+    static func toDomain(_ sdPlace: PlaceRecord, skipRelationships: Bool = false) -> Place {
+        var category: Category? = nil
+        var tags = [Tag]()
         if !skipRelationships {
             tags = sdPlace.tags
                 .filter { $0.deletedAt == nil }  // Ignore deleted tags
                 .map { TagMapper.toDomain($0) }
-            if let sdGroup = sdPlace.group, sdGroup.deletedAt == nil {
-                group = GroupMapper.toDomain(sdGroup)
+            if let sdCategory = sdPlace.category, sdCategory.deletedAt == nil {
+                category = CategoryMapper.toDomain(sdCategory)
             }
         }
-        let place = PlaceEntity(id: sdPlace.identifier,
+        let place = Place(id: sdPlace.identifier,
                                 name: sdPlace.name,
                                 coordinates: CLLocationCoordinate2D(latitude: sdPlace.latitude, longitude: sdPlace.longitude),
                                 address: sdPlace.address,
                                 address2: sdPlace.address2,
                                 tags: tags,
-                                group: group,
+                                category: category,
                                 images: sdPlace.images.map(\.id),
                                 icon: sdPlace.icon,
                                 rating: sdPlace.rating,
@@ -41,15 +41,15 @@ public enum PlaceMapper {
         return place
     }
     
-    static func toData(_ place: PlaceEntity) -> SDPlace {
-        let sd = SDPlace(identifier: place.id,
+    static func toData(_ place: Place) -> PlaceRecord {
+        let sd = PlaceRecord(identifier: place.id,
                          name: place.name,
                          latitude: place.coordinates.latitude,
                          longitude: place.coordinates.longitude,
                          address: place.address,
                          address2: place.address2,
-                         tags: [SDTag](),
-                         group: nil,
+                         tags: [TagRecord](),
+                         category: nil,
                          images: [],
                          icon: place.icon,
                          rating: place.rating,
@@ -57,7 +57,7 @@ public enum PlaceMapper {
                          email: place.email,
                          url: place.url,
                          notes: place.notes)
-        // SDPlace.init always stamps fresh dates ("now") and nil deletedAt.
+        // PlaceRecord.init always stamps fresh dates ("now") and nil deletedAt.
         // Overwrite with the domain values so server-originated timestamps
         // (and soft-delete markers) are preserved across pulls.
         sd.createdAt = place.createdAt

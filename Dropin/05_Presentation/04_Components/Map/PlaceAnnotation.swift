@@ -13,16 +13,16 @@ struct PlaceAnnotation: MapContent {
     
     // MARK: - State & Bindables
     @Binding var selectedPlaceId: UUID?
-    @Binding var place: PlaceUI
+    @Binding var place: PlaceUIModel
     @Environment(AppSettings.self) private var appSettings
 
     // MARK: - init
-    init(place: Binding<PlaceUI>) {
+    init(place: Binding<PlaceUIModel>) {
         self._place = place
         self._selectedPlaceId = .constant(nil)
     }
 
-    init(place: Binding<PlaceUI>, selectedPlaceId: Binding<UUID?>) {
+    init(place: Binding<PlaceUIModel>, selectedPlaceId: Binding<UUID?>) {
         self._place = place
         self._selectedPlaceId = selectedPlaceId
     }
@@ -34,11 +34,11 @@ struct PlaceAnnotation: MapContent {
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
-                                                icon: place.group?.icon,
+                                                icon: place.category?.icon,
                                                 iconExtra: place.icon)
                     case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
-                                               icon: place.group?.icon,
+                                               icon: place.category?.icon,
                                                iconExtra: place.icon)
                 }
             }
@@ -52,11 +52,11 @@ struct PlaceAnnotation: MapContent {
 #if DEBUG
 struct MockPlaceAnnotation: View {
     var mock: MockContainer
-    @State var place1: PlaceUI
-    @State var place2: PlaceUI
-    @State var place3: PlaceUI
-    @State var place4: PlaceUI
-    @State var place5: PlaceUI
+    @State var place1: PlaceUIModel
+    @State var place2: PlaceUIModel
+    @State var place3: PlaceUIModel
+    @State var place4: PlaceUIModel
+    @State var place5: PlaceUIModel
     @State var selectedPlaceId: UUID? = nil
 
     var body: some View {
@@ -72,21 +72,21 @@ struct MockPlaceAnnotation: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        let group1 = mock.getGroupUI(0)
-        let group2 = mock.getGroupUI(1)
+        let group1 = mock.getCategoryUIModel(0)
+        let group2 = mock.getCategoryUIModel(1)
 
-        let place = mock.getPlaceUI()
+        let place = mock.getPlaceUIModel()
         self.place1 = place
         self.place2 = place.copy()
         self.place3 = place.copy()
         self.place4 = place.copy()
         self.place5 = place.copy()
 
-        self.place1.group = nil
-        self.place2.group = group1
-        self.place3.group = group2
-        self.place4.group = nil
-        self.place5.group = group2
+        self.place1.category = nil
+        self.place2.category = group1
+        self.place3.category = group2
+        self.place4.category = nil
+        self.place5.category = group2
 
         self.place2.icon = .sf("duffle.bag")
         self.place3.icon = nil

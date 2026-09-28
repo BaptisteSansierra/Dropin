@@ -21,17 +21,17 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
         self.auth = auth
     }
 
-    func upsert(_ place: PlaceEntity) async throws {
+    func upsert(_ place: Place) async throws {
         let userId = try await requireUserId()
         let dto = SupabasePlaceDTO(from: place, userId: userId)
-        //Log.debug("UPSERT PLACE DTO with GROUP:\(dto.groupId)")
+        //Log.debug("UPSERT PLACE DTO with GROUP:\(dto.categoryId)")
         try await client.from("places").upsert(dto, onConflict: "id").execute()
         //let confirmObj = try await fetch(placeId: dto.id)
-        //Log.debug("UPTODATE PLACE with GROUP:\(confirmObj?.group?.id)")
+        //Log.debug("UPTODATE PLACE with GROUP:\(confirmObj?.category?.id)")
     }
 
     // DEBUG purpose
-    func fetch(placeId: UUID) async throws -> PlaceEntity? {
+    func fetch(placeId: UUID) async throws -> Place? {
         _ = try await requireUserId()
         let dtos: [SupabasePlaceDTO] = try await client
             .from("places")
@@ -42,15 +42,17 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
         return dtos.map { $0.toDomain() }.first
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [PlaceEntity] {
+    func fetch(updatedAfter date: Date) async throws -> [Place] {
         _ = try await requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
-        let dtos: [SupabasePlaceDTO] = try await client
-            .from("places")
-            .select()
-            .gte("updated_at", value: dateStr)
-            .execute()
-            .value
+        let dtos: [SupabasePlaceDTO] = try await SupabasePaginator.fetchAll { from, to in
+            client
+                .from("places")
+                .select()
+                .gte("updated_at", value: dateStr)
+                .order("id")
+                .range(from: from, to: to)
+        }
         return dtos.map { $0.toDomain() }
     }
 

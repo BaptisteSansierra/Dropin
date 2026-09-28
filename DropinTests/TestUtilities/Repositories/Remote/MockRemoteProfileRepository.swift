@@ -6,22 +6,22 @@ import Foundation
 @testable import Dropin
 
 final class MockRemoteProfileRepository: RemoteProfileRepository, @unchecked Sendable {
-    var profileToReturn: ProfileEntity?
-    private(set) var upserted: [ProfileEntity] = []
+    var profileToReturn: Profile?
+    private(set) var upserted: [Profile] = []
     var shouldThrowOnUpsert = false
 
-    init(profileToReturn: ProfileEntity? = nil) {
+    init(profileToReturn: Profile? = nil) {
         self.profileToReturn = profileToReturn
     }
 
-    func fetch() async throws -> ProfileEntity? { profileToReturn }
+    func fetch() async throws -> Profile? { profileToReturn }
 
-    func fetch(updatedAfter date: Date) async throws -> ProfileEntity? {
+    func fetch(updatedAfter date: Date) async throws -> Profile? {
         guard let p = profileToReturn, p.updatedAt > date else { return nil }
         return p
     }
 
-    func upsert(_ profile: ProfileEntity) async throws {
+    func upsert(_ profile: Profile) async throws {
         if shouldThrowOnUpsert { throw MockSyncError.intentional }
         upserted.append(profile)
     }

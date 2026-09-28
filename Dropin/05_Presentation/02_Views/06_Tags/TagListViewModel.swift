@@ -12,9 +12,9 @@ import SwiftUI
     
     var coordinator: TagCoordinator
     var syncStatus: SyncStatus
-    var tags: [TagUI] = []
+    var tags: [TagUIModel] = []
     var showingRemoveAlert: Bool = false
-    var tagToRemove: TagUI? = nil
+    var tagToRemove: TagUIModel? = nil
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchTagsWithCount: FetchTagsWithCount
@@ -41,7 +41,7 @@ import SwiftUI
     }
     
     // MARK: UI Child
-    func createTagDetailsView(tag: TagUI) -> TagDetailsView {
+    func createTagDetailsView(tag: TagUIModel) -> TagDetailsView {
         return appContainer.createTagDetailsView(tag: tag)
     }
 
@@ -49,7 +49,7 @@ import SwiftUI
         return appContainer.createTagMapView(tagId: tagId)
     }
     
-    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
+    func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
         return appContainer.createPlaceEditView(place: place)
     }
 
@@ -66,7 +66,7 @@ import SwiftUI
         tags = items
     }
     
-    private func updateTag(_ tag: TagUI) async throws {
+    private func updateTag(_ tag: TagUIModel) async throws {
         try await updateTag(TagMapper.toDomain(tag))
     }
 }

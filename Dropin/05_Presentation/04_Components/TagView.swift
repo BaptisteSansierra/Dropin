@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// SDTag UI representation: colored rounded rect text 
+/// TagRecord UI representation: colored rounded rect text 
 struct TagView: View {
 
     enum Style {

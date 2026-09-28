@@ -1,0 +1,41 @@
+//
+//  Profile.swift
+//  Dropin
+//
+
+import Foundation
+
+struct Profile: Hashable, Sendable {
+    let id: UUID
+    let email: String?
+    let displayName: String?
+    let plan: UserPlan
+    let createdAt: Date
+    let updatedAt: Date
+
+    init(id: UUID,
+         email: String?,
+         displayName: String?,
+         plan: UserPlan,
+         createdAt: Date,
+         updatedAt: Date) {
+        self.id = id
+        self.email = email
+        self.displayName = displayName
+        self.plan = plan
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    
+    func withDisplayName(_ displayName: String?) -> Profile {
+        Profile(id: id,
+                      email: email,
+                      displayName: displayName,
+                      plan: plan,
+                      createdAt: createdAt,
+                      updatedAt: Date.now)
+    }
+}

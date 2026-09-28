@@ -10,14 +10,14 @@ import Foundation
 @MainActor
 extension TagMapper {
     
-    static func toUI(_ tag: TagEntity, placeCount: Int) -> TagUI {
+    static func toUI(_ tag: Tag, placeCount: Int) -> TagUIModel {
         let tagUI = toUI(tag)
         tagUI.placeCount = placeCount
         return tagUI
     }
 
-    static func toUI(_ tag: TagEntity, skipRelationships: Bool = false) -> TagUI {
-        let tagUI = TagUI(id: tag.id,
+    static func toUI(_ tag: Tag, skipRelationships: Bool = false) -> TagUIModel {
+        let tagUI = TagUIModel(id: tag.id,
                           name: tag.name,
                           color: tag.color,
                           places: [],
@@ -27,8 +27,8 @@ extension TagMapper {
         return tagUI
     }
     
-    static func toDomain(_ tagUI: TagUI) -> TagEntity {
-        let tag = TagEntity(id: tagUI.id,
+    static func toDomain(_ tagUI: TagUIModel) -> Tag {
+        let tag = Tag(id: tagUI.id,
                             name: tagUI.name,
                             color: tagUI.color.hex,
                             createdAt: tagUI.createdAt,

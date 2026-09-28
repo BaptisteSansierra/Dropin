@@ -18,7 +18,7 @@ struct TagDetailsView: View {
     private var blurEffectHeight: CGFloat {
         DropinApp.ui.button.height + 50 + UIApplication.rootBottomSafeArea()
     }
-    private var activePlaces: [PlaceUI] {
+    private var activePlaces: [PlaceUIModel] {
         viewModel.places.filter { $0.isActive }
     }
     
@@ -203,7 +203,7 @@ struct TagDetailsView: View {
         }
     }
 
-    private func placeRow(_ place: PlaceUI) -> some View {
+    private func placeRow(_ place: PlaceUIModel) -> some View {
         PlaceRowView(place: place, locationManager: viewModel.locationManager)
             .swipeActions(allowsFullSwipe: false) {
                 Button() {
@@ -261,7 +261,7 @@ struct TagDetailsView: View {
         }
     }
     
-    private func unlinkPlaceFromTag(_ place: PlaceUI, at tagIdx: Int) {
+    private func unlinkPlaceFromTag(_ place: PlaceUIModel, at tagIdx: Int) {
         Task {
             do {
                 try await viewModel.unlinkPlaceFromTag(place, at: tagIdx)
@@ -288,7 +288,7 @@ struct TagDetailsView: View {
 
 struct MockTagDetailsView: View {
     var mock: MockContainer
-    @State private var tag: TagUI
+    @State private var tag: TagUIModel
 
     var body: some View {
         mock.appContainer.createTagDetailsView(tag: tag)
@@ -297,7 +297,7 @@ struct MockTagDetailsView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.tag = mock.getTagUI(1)
+        self.tag = mock.getTagUIModel(1)
     }
 }
 

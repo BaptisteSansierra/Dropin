@@ -21,21 +21,23 @@ final class SupabaseTagRepository: RemoteTagRepository {
         self.auth = auth
     }
 
-    func upsert(_ tag: TagEntity) async throws {
+    func upsert(_ tag: Tag) async throws {
         let userId = try await requireUserId()
         let dto = SupabaseTagDTO(from: tag, userId: userId)
         try await client.from("tags").upsert(dto, onConflict: "id").execute()
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [TagEntity] {
+    func fetch(updatedAfter date: Date) async throws -> [Tag] {
         _ = try await requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
-        let dtos: [SupabaseTagDTO] = try await client
-            .from("tags")
-            .select()
-            .gte("updated_at", value: dateStr)
-            .execute()
-            .value
+        let dtos: [SupabaseTagDTO] = try await SupabasePaginator.fetchAll { from, to in
+            client
+                .from("tags")
+                .select()
+                .gte("updated_at", value: dateStr)
+                .order("id")
+                .range(from: from, to: to)
+        }
         return dtos.map { $0.toDomain() }
     }
 

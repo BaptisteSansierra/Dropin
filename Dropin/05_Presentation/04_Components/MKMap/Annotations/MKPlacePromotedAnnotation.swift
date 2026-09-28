@@ -13,9 +13,9 @@ class MKPlacePromotedAnnotation: NSObject, MKPlaceAnnotationRepresentable {
     let coordinate: CLLocationCoordinate2D
     let title: String?
     let subtitle: String?
-    let place: PlaceUI
+    let place: PlaceUIModel
 
-    required init(place: PlaceUI) {
+    required init(place: PlaceUIModel) {
         self.id = place.id
         self.coordinate = place.coordinates
         self.title = place.name

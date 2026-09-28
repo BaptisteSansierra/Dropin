@@ -12,7 +12,7 @@ protocol AddressBackfillServiceProtocol: Sendable {
     /// Fires a background reverse-geocode lookup for `place` if (and only if) it has no address yet. Safe to call repeatedly and from multiple call sites
     /// no-ops if the place already has an address or a lookup is already in flight for it.
     /// Fire-and-forget: on failure (including offline) it just leaves the address nil, to be retried on the next call.
-    @MainActor func backfillIfNeeded(_ place: PlaceEntity)
+    @MainActor func backfillIfNeeded(_ place: Place)
 }
 
 ///  A place's address can be nil, not yet fetched, e.g. created offline.
@@ -30,7 +30,7 @@ final class AddressBackfillService: AddressBackfillServiceProtocol {
     private let reachability: any ReachabilityServiceProtocol
 
     /// Places queued for backfill, in FIFO order.
-    private var queue: [PlaceEntity] = []
+    private var queue: [Place] = []
     private var inFlight: Set<UUID> = []
     private var isDraining = false
 
@@ -39,7 +39,7 @@ final class AddressBackfillService: AddressBackfillServiceProtocol {
         self.reachability = reachability
     }
 
-    func backfillIfNeeded(_ place: PlaceEntity) {
+    func backfillIfNeeded(_ place: Place) {
         guard place.address == nil else { return }
         guard reachability.isConnected else { return }
         guard !inFlight.contains(place.id) else { return }
@@ -69,7 +69,7 @@ final class AddressBackfillService: AddressBackfillServiceProtocol {
         isDraining = false
     }
 
-    private func process(_ place: PlaceEntity) async {
+    private func process(_ place: Place) async {
         defer { inFlight.remove(place.id) }
         guard reachability.isConnected else { return }
         do {

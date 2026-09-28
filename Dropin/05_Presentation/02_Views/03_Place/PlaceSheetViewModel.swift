@@ -56,12 +56,12 @@ import CoreLocation
     }
     
     // MARK: Navigation
-    func pushPlaceEditView(placeRef: PlaceUIRef) {
+    func pushPlaceEditView(placeRef: PlaceUIModelRef) {
         coordinator.pushPlaceEditView(placeRef: placeRef)
     }
     
     // MARK: - callbacks and co
-    func call(place: PlaceUI) {
+    func call(place: PlaceUIModel) {
         guard let phone = place.phone.first else { return }
         do {
             try URLOpener.openURL(contactItem: phone)
@@ -73,7 +73,7 @@ import CoreLocation
         }
     }
     
-    func openWebLink(place: PlaceUI) {
+    func openWebLink(place: PlaceUIModel) {
         guard let url = place.url.first else { return }
         do {
             try URLOpener.openURL(contactItem: url)
@@ -85,30 +85,30 @@ import CoreLocation
         }
     }
     
-    func routeThrowGoogle(place: PlaceUI) {
+    func routeThrowGoogle(place: PlaceUIModel) {
         //guard let url = URL(string: "comgooglemaps://?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
         guard let url = URL(string:"comgooglemaps://?daddr=\(place.address ?? "")") else { return }
         UIApplication.shared.open(url)
     }
     
-    func routeThrowApple(place: PlaceUI) {
+    func routeThrowApple(place: PlaceUIModel) {
         //guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
         guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.address ?? "")") else { return }
         UIApplication.shared.open(url)
     }
     
-    func routeThrowWaze(place: PlaceUI) {
+    func routeThrowWaze(place: PlaceUIModel) {
         guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude),\(place.coordinates.longitude)&navigate=yes") else { return }
         //guard let url = URL(string:"https://www.waze.com/ul?ll=\(place.address)") else { return }
         UIApplication.shared.open(url)
     }
     
-    func copyAddressToClipboard(place: PlaceUI) {
+    func copyAddressToClipboard(place: PlaceUIModel) {
         guard let address = place.address else { return }
         UIPasteboard.general.string = address
     }
     
-    func copyCoordinatesToClipboard(place: PlaceUI) {
+    func copyCoordinatesToClipboard(place: PlaceUIModel) {
         UIPasteboard.general.string = "\(place.coordinates.latitude), \(place.coordinates.longitude)"
     }
     

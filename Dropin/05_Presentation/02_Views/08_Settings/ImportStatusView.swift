@@ -120,10 +120,10 @@ struct ImportStatusView: View {
             resultDetailsSpacerView
 
             HStack {
-                Text("import.complete.count.group")
+                Text("import.complete.count.category")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.createdGroupCount)")
+                Text("\(importStatus.createdCategoryCount)")
                     .textStyle(.subheadline, color: .textSecondary)
             }
 

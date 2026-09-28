@@ -9,9 +9,9 @@ import Foundation
 
 @MainActor
 struct RemovePlaceImage {
-    private let repository: ImageRepository
+    private let repository: PlaceImageRepository
 
-    init(repository: ImageRepository) {
+    init(repository: PlaceImageRepository) {
         self.repository = repository
     }
 

@@ -9,9 +9,9 @@ import UIKit
 
 @MainActor
 struct AddPlaceImage {
-    private let repository: ImageRepository
+    private let repository: PlaceImageRepository
 
-    init(repository: ImageRepository) {
+    init(repository: PlaceImageRepository) {
         self.repository = repository
     }
 

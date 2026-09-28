@@ -50,21 +50,21 @@ import CoreLocation
     }
 
     // MARK: UI Childs
-    func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
+    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
         return appContainer.createTagSelectorView(place: place)
     }
 
-    func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
-        return appContainer.createGroupSelectorView(place: place)
+    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+        return appContainer.createCategorySelectorView(place: place)
     }
 
     // MARK: Use cases
-    func updatePlace(_ place: PlaceUI) async throws {
+    func updatePlace(_ place: PlaceUIModel) async throws {
         let placeEntity = PlaceMapper.toDomain(place)
         try await updatePlace(placeEntity)
     }
 
-    func loadThumbnails(for place: PlaceUI) {
+    func loadThumbnails(for place: PlaceUIModel) {
         Task {
             do {
                 let fetched = try await getPlaceThumbnails(placeId: place.id)
@@ -88,16 +88,16 @@ import CoreLocation
         }
     }
 
-    func addImage(to place: PlaceUI, image: UIImage) {
+    func addImage(to place: PlaceUIModel, image: UIImage) {
         Task {
             let size = DropinApp.storage.thumbnailSize
             let thumbImage = await image.byPreparingThumbnail(ofSize: CGSize(width: size, height: size)) ?? image
             guard let thumbnailData = thumbImage.jpegData(compressionQuality: 0.8) else { return }
-            place.images.append(PlaceImageUI(thumbnail: thumbnailData, fullImage: image))
+            place.images.append(PlaceImageUIModel(thumbnail: thumbnailData, fullImage: image))
         }
     }
 
-    func removeImage(withId id: UUID, from place: PlaceUI) {
+    func removeImage(withId id: UUID, from place: PlaceUIModel) {
         place.images.removeAll { $0.id == id }
     }
 

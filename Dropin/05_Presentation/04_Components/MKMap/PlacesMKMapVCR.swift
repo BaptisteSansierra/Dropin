@@ -49,7 +49,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                                            positionAtLaunch: .region(region: .abbeyRoad
                                             .offset(lat: -0.001)),
                                            displayAllPins: true)
-        static let browse = Configuration(positionAtLaunch: .none)  // group/tag map ??
+        static let browse = Configuration(positionAtLaunch: .none)  // category/tag map ??
     }
     
     struct InteractionStatus {
@@ -65,7 +65,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
 
     private let config: Configuration
     private let mapController: MapController
-    private let places: [PlaceUI]
+    private let places: [PlaceUIModel]
     private let draftCoordinate: CLLocationCoordinate2D?
     private let bottomInset: CGFloat
     private let mapReloadGen: Int
@@ -80,7 +80,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     // MARK: Init
     init(config: Configuration,
          mapController: MapController,
-         places: [PlaceUI],
+         places: [PlaceUIModel],
          draftCoordinate: CLLocationCoordinate2D? = nil,
          selectedPlaceId: Binding<UUID?>,
          onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
@@ -563,7 +563,7 @@ extension PlacesMKMapVCR {
             let visible = mapView.annotations(in: mapView.visibleMapRect)
                 .compactMap { $0 as? MKPlaceDotAnnotation }
                 .filter { lastActiveIds.contains($0.id) }
-            var candidates: [UUID: PlaceUI] = [:]
+            var candidates: [UUID: PlaceUIModel] = [:]
             for dot in visible { candidates[dot.id] = dot.place }
 
             // Drop promoted pins whose place isn't a candidate at all anymore (filtered out/deleted/scrolled out)
@@ -839,7 +839,7 @@ class PlacesMKMapVC: UIViewController {
 #if DEBUG
 
 struct MockPlacesMKMapVCR: View {
-    @State var places: [PlaceUI]
+    @State var places: [PlaceUIModel]
     @State var settings: AppSettings
     @State var clustering: Bool = true
     @State var selectedPlaceId: UUID?
@@ -914,12 +914,12 @@ struct MockPlacesMKMapVCR: View {
     init() {
         //let mock = MockContainer()
         //self.mock = mock
-        let place1 = PlaceUI(coordinates: .barcelona)
-        place1.group = GroupUI(color: "AE271A")
-        let place2 = PlaceUI(coordinates: .barcelona.offset(x: 0.01))
-        let place3 = PlaceUI(coordinates: .barcelona.offset(y: 0.01))
-        let place4 = PlaceUI(coordinates: .barcelona.offset(x: 0.02, y: -0.02))
-        let place5 = PlaceUI(coordinates: .barcelona.offset(x: 0.0201, y: -0.0201))
+        let place1 = PlaceUIModel(coordinates: .barcelona)
+        place1.category = CategoryUIModel(color: "AE271A")
+        let place2 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.01))
+        let place3 = PlaceUIModel(coordinates: .barcelona.offset(y: 0.01))
+        let place4 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.02, y: -0.02))
+        let place5 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.0201, y: -0.0201))
         self.places = [place1, place2, place3, place4, place5]
         
         settings = AppSettings()

@@ -12,7 +12,7 @@ struct PlaceSheetView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: PlaceSheetViewModel
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @Binding private var currentDetent: PresentationDetent
     @Environment(\.dismiss) private var dismiss
     @Namespace private var menuNamespace
@@ -21,7 +21,7 @@ struct PlaceSheetView: View {
     
     // MARK: - init
     init(viewModel: PlaceSheetViewModel,
-         place: Binding<PlaceUI>,
+         place: Binding<PlaceUIModel>,
          detent: Binding<PresentationDetent>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
@@ -34,14 +34,14 @@ struct PlaceSheetView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            if let group = place.group {
-                groupLayerView(group)
+            if let category = place.category {
+                groupLayerView(category)
             }
             ZStack {
                 Color.surface1
                 placeContentView
             }
-            .if( place.group != nil , action: { view in
+            .if( place.category != nil , action: { view in
                 view
                     .cornerRadius(20)
                     .padding(.top, 55)
@@ -84,15 +84,15 @@ struct PlaceSheetView: View {
     
     // MARK: - Subviews
     @ViewBuilder
-    private func groupLayerView(_ group: GroupUI) -> some View {
+    private func groupLayerView(_ category: CategoryUIModel) -> some View {
         place.groupColor
             .ignoresSafeArea()
         VStack {
             HStack(spacing: 0) {
-                IconView(icon: group.icon)
+                IconView(icon: category.icon)
                     .sizeBody()
                     .foregroundStyle(place.groupColor.isDark() ? .backgroundPrimary : .textPrimary)
-                Text(group.name)
+                Text(category.name)
                     .font(.bodySemibold)
                     .foregroundStyle(place.groupColor.isDark() ? .backgroundPrimary : .textPrimary)
                     .padding(.horizontal)
@@ -140,7 +140,7 @@ struct PlaceSheetView: View {
                 .padding(.leading, place.icon == nil ? 15 : 8)
             Spacer()
             Button {
-                viewModel.pushPlaceEditView(placeRef: PlaceUIRef(place: place))
+                viewModel.pushPlaceEditView(placeRef: PlaceUIModelRef(place: place))
                 dismiss()
             } label: {
                 ZStack {
@@ -515,7 +515,7 @@ struct PlaceSheetView: View {
     }
     
     private func edit() {
-        viewModel.pushPlaceEditView(placeRef: PlaceUIRef(place: place))
+        viewModel.pushPlaceEditView(placeRef: PlaceUIModelRef(place: place))
         dismiss()
     }
 
@@ -529,7 +529,7 @@ struct PlaceSheetView: View {
 struct MockPlaceDetailSheetView: View {
     var mock: MockContainer
     var index: Int
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var detailSheetDetent: PresentationDetent = .medium
     @State var presentedSheet: Bool = false
     
@@ -554,8 +554,8 @@ struct MockPlaceDetailSheetView: View {
         self.index = index
         let mock = MockContainer()
         self.mock = mock
-        //self.place = mock.getPlaceUI(index)
-        self.place = mock.getNoAddressPlaceUI()
+        //self.place = mock.getPlaceUIModel(index)
+        self.place = mock.getNoAddressPlaceUIModel()
     }
 }
 
