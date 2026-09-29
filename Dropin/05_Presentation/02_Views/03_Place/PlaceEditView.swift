@@ -123,9 +123,11 @@ struct PlaceEditView: View {
             do {
                 try await viewModel.updatePlace(frozenEdit,
                                                 addImages: imagesToAdd,
-                                                deleteImageIds: imageIdsToDelete)
-                
-                actionBus.send(.reloadMainPlaces)
+                                                deleteImageIds: imageIdsToDelete,
+                                                completion: {
+                    // Reload map after the place is updated on disk
+                    actionBus.send(.reloadMainPlaces)
+                })
                 
             } catch {
                 assertionFailure("Couldn't update place \(frozenEdit.name)")

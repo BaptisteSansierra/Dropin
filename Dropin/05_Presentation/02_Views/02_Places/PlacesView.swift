@@ -328,7 +328,6 @@ struct PlacesView: View {
                 
             case .reloadMainPlaces:
                 Task {
-                    //print("[PLACES_VIEW]<reloadMainPlaces> =>> loadPlaces")
                     try? await viewModel.loadPlaces()
                 }
 //            case .updateMapAnnotations:

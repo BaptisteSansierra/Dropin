@@ -163,7 +163,7 @@ struct PlaceImageUIModel: Identifiable {
         address     = other.address
         address2    = other.address2
         tags        = other.tags
-        category       = other.category
+        category    = other.category
         images      = other.images
         icon        = other.icon
         rating      = other.rating

@@ -59,6 +59,7 @@ import CoreLocation
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
     @ObservationIgnored private var fetchPlaces: FetchPlaces
+    @ObservationIgnored private var placeSources: [Place] = [Place]()
 
     // MARK: init
     init(_ appContainer: AppContainer,
@@ -158,30 +159,21 @@ import CoreLocation
 
     // MARK: Use cases
     func loadPlaces() async throws {
-        let newPlaces = try await fetchPlaces().map { PlaceMapper.toUI($0) }
+        let newPlaces = try await fetchPlaces()
+        let newPlacesUI = newPlaces.map { PlaceMapper.toUI($0) }
         
-        var dups: [Place: Int] = [:]
-        for p in newPlaces {
-            let dp = PlaceMapper.toDomain(p)
-            if let _ = dups[dp] { continue }
-            dups[dp] = newPlaces.filter({ $0.id == dp.id }).count
-        }
-        let rdups = dups.filter { $1 > 1 }
-        for p in rdups.keys {
-            print("PLACE '\(p.name)'  DUP(\(rdups[p]))")
-        }
-        
-
-        // loadPlaces() gets called from several independent triggers (view appear,
-        // sync completion, place edit/create) that can fire in a tight cluster —
-        // unconditionally bumping mapReloadGen on every call forced a full
-        // annotation wipe-and-recreate each time, even when nothing had changed.
-        let oldSignature = Set(places.map { "\($0.id)-\($0.updatedAt)" })
+        // loadPlaces() gets called from several independent triggers (view appear, sync completion, place edit/create)
+        // that could be costly to update pins each time. Only do it if necessary
+        let oldSignature = Set(placeSources.map { "\($0.id)-\($0.updatedAt)" })
         let newSignature = Set(newPlaces.map { "\($0.id)-\($0.updatedAt)" })
 
-        places = newPlaces
-        if oldSignature != newSignature {
-            updateMapAnnotations()
+        guard oldSignature != newSignature else {
+            // NOTE: an update on category or tags color/icon would not be detected here
+            // Not an issue at the moment as it's not editable from the place section currently
+            return
         }
+        places = newPlacesUI
+        updateMapAnnotations()
+        placeSources = newPlaces
     }
 }

@@ -43,7 +43,10 @@ import CoreLocation
     }
 
     // MARK: Use cases
-    func updatePlace(_ place: PlaceUIModel, addImages: [PlaceImageUIModel], deleteImageIds: [UUID]) async throws {
+    func updatePlace(_ place: PlaceUIModel,
+                     addImages: [PlaceImageUIModel],
+                     deleteImageIds: [UUID],
+                     completion: () -> Void) async throws {
         for img in addImages {
             guard let uiImage = img.fullImage else { continue }
             _ = try await addPlaceImage(placeId: place.id, image: uiImage)
@@ -52,6 +55,7 @@ import CoreLocation
             try await removePlaceImage(id: id)
         }
         try await updatePlace(PlaceMapper.toDomain(place))
+        completion()
     }
 
     // MARK: - callbacks and co
