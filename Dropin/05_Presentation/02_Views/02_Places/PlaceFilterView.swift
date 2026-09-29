@@ -133,7 +133,7 @@ struct PlaceFilterView: View {
 
             FlowLayout(alignment: .leading) {
                 TagView(name: String(localized: "placeholder.no_tags"),
-                        color: .backgroundPrimary,
+                        color: .textPrimary,
                         style: filter.includeUntagged ? .selected : .unselected)
                     .if( !filter.includeUntagged ) { view in
                         view.opacity(unselectOpacity)
