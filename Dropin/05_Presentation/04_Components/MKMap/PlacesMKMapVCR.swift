@@ -187,14 +187,6 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
             context.coordinator.lastReloadGen = mapReloadGen
             reloadDotAnnotations(mapView)
             if usePinPromotionLogic {
-                // Full wipe just tore down any promoted annotations too — reset the
-                // bookkeeping so refreshPinSelection treats everyone as needing to be
-                // re-added rather than skipping because the id set happens to match.
-                context.coordinator.resetPromotedTracking()
-                // Deferred a run-loop turn: mapView.annotations(in:) isn't guaranteed to
-                // reflect annotations added earlier in this same call stack, so calling
-                // refreshPinSelection synchronously here can race and see an empty
-                // visible set — silently promoting nothing.
                 DispatchQueue.main.async { [weak mapView] in
                     guard let mapView else { return }
                     context.coordinator.refreshPinSelection(mapView)
@@ -576,7 +568,26 @@ extension PlacesMKMapVCR {
                     .filter { staleIds.contains($0.id) })
                 promotedIds.subtract(staleIds)
             }
-            
+
+            // Refresh already-promoted annotations whose place actually changed (e.g. an edited name)
+            let currentPromoted = mapView.annotations.compactMap { $0 as? MKPlacePromotedAnnotation }
+            var staleToRemove: [MKPlacePromotedAnnotation] = []
+            var freshReplacements: [MKPlacePromotedAnnotation] = []
+            for promoted in currentPromoted {
+                guard let freshPlace = candidates[promoted.id] else { continue }
+                let fresh = MKPlacePromotedAnnotation(place: freshPlace)
+                if !fresh.isEqual(promoted) {
+                    staleToRemove.append(promoted)
+                    freshReplacements.append(fresh)
+                }
+            }
+            if !staleToRemove.isEmpty {
+                mapView.removeAnnotations(staleToRemove)
+            }
+            if !freshReplacements.isEmpty {
+                mapView.addAnnotations(freshReplacements)
+            }
+
             // Sort the list so that higher position = higher chance to get promoted
             let sorted = candidates.sorted {
                 if $0.value.updatedAt != $1.value.updatedAt {
