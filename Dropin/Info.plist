@@ -3,6 +3,11 @@
 <plist version="1.0">
 <dict>
 
+    <key>UIFileSharingEnabled</key>
+    <true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
+
     <key>CFBundleDocumentTypes</key>
     <array>
         <dict>
