@@ -455,7 +455,7 @@ struct PlaceSheetView: View {
                 VStack(spacing: 0) {
                     Image(systemName: systemImage)
                         .font(.body)
-                        .foregroundStyle(.backgroundPrimary)
+                        .foregroundStyle(.surface1)
                 }
                 .frame(maxHeight: .infinity)
                 .padding(.bottom, 15)
@@ -463,7 +463,7 @@ struct PlaceSheetView: View {
                     Spacer()
                     Text(label)
                         .font(.caption2)
-                        .foregroundStyle(.backgroundPrimary)
+                        .foregroundStyle(.surface1)
                         .padding(.bottom, 8)
                 }
             }
@@ -520,6 +520,7 @@ struct PlaceSheetView: View {
     }
 
     private func share() {
+        //toBeImplemented.toggle()
         Log.warning("TO BE IMPLEMENTED")
     }
 }
