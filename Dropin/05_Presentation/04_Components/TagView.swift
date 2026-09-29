@@ -29,10 +29,11 @@ struct TagView: View {
         self.name = name
         self.color = color
         let luminance = color.luminance()
-        var lightColor: Color = .backgroundPrimary
-        var darkColor: Color = .backgroundPrimary
+        var lightColor: Color = .surface1
+        var darkColor: Color = .surface1
         var lightAlphaBgColor: Color = .clear
         var darkAlphaBgColor: Color = .clear
+        /*
         if luminance > 0.7 {
             let lerp = (luminance - 0.7) * 10 / 3
             //print("LUMI:\(luminance) +> LERP:\(lerp)")
@@ -46,6 +47,7 @@ struct TagView: View {
             darkColor = .lerp(from: darkColor, to: .init(rgba: "BBBBBB"), lerp)
             darkAlphaBgColor = .lerp(from: darkAlphaBgColor, to: .backgroundPrimaryL, lerp)
         }
+         */
         self.alphaBgColor = Color(light: lightAlphaBgColor, dark: darkAlphaBgColor)
         self.textColor = Color(light: lightColor, dark: darkColor)
         self.style = style
