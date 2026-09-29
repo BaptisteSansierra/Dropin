@@ -19,7 +19,7 @@ final class MockRemoteTagRepository: RemoteTagRepository, @unchecked Sendable {
         upsertedTags.append(tag)
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [Dropin.Tag] {
-        return tagsToReturn
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Dropin.Tag] {
+        excludeDeleted ? tagsToReturn.filter { $0.deletedAt == nil } : tagsToReturn
     }
 }

@@ -27,14 +27,18 @@ final class SupabaseCategoryRepository: RemoteCategoryRepository {
         try await client.from("categories").upsert(dto, onConflict: "id").execute()
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [Category] {
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Category] {
         _ = try await requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabaseCategoryDTO] = try await SupabasePaginator.fetchAll { from, to in
-            client
+            var query = client
                 .from("categories")
                 .select()
                 .gte("updated_at", value: dateStr)
+            if excludeDeleted {
+                query = query.is("deleted_at", value: nil)
+            }
+            return query
                 .order("id")
                 .range(from: from, to: to)
         }

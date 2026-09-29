@@ -10,8 +10,10 @@ import Foundation
 
     #if DEBUG
     #if true
-    var email: String = "test@dropin.local"
-    var password: String = "test12345"
+    //var email: String = "test@dropin.local"
+    //var password: String = "test12345"
+    var email: String = "demo@dropin.local"
+    var password: String = "Test12345!"
     #else
     var email: String = "baptiste.sansierra@gmail.com"
     var password: String = "Test-12345"

@@ -6,5 +6,6 @@ import Foundation
 
 protocol RemotePlaceRepository: Sendable {
     func upsert(_ place: Place) async throws
-    func fetch(updatedAfter date: Date) async throws -> [Place]
+    /// `excludeDeleted`: skip soft-deleted rows. Only safe on a first-ever pull
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Place]
 }

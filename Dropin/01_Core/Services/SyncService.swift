@@ -340,12 +340,16 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
 
     private func pull() async {
         let since = syncStatus.lastSyncedAt ?? .distantPast
+        // A first-ever pull starts from an empty local store, so there's items to tombstone
+        // skip soft-deleted rows entirely.
+        // Next pulls must still see them to propagate deletions
+        let isFirstSync = since == .distantPast
         do {
             Log.debug("PULL since \(since) ...")
             let profile = try await remoteProfileRepo.fetch(updatedAfter: since)
-            let places  = try await remotePlaceRepo.fetch(updatedAfter: since)
-            let categories  = try await remoteCategoryRepo.fetch(updatedAfter: since)
-            let tags    = try await remoteTagRepo.fetch(updatedAfter: since)
+            let places  = try await remotePlaceRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
+            let categories  = try await remoteCategoryRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
+            let tags    = try await remoteTagRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
             Log.debug(" > PULLED \(places.count) places, \(categories.count) categories, \(tags.count) tags")
 
             // Pull order matters because of local linkage:

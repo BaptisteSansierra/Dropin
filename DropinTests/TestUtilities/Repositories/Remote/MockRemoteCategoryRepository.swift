@@ -22,7 +22,7 @@ final class MockRemoteCategoryRepository: RemoteCategoryRepository, @unchecked S
         upsertedCategories.append(category)
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [Dropin.Category] {
-        return categoriesToReturn
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Dropin.Category] {
+        excludeDeleted ? categoriesToReturn.filter { $0.deletedAt == nil } : categoriesToReturn
     }
 }

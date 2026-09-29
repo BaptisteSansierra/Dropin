@@ -42,14 +42,18 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
         return dtos.map { $0.toDomain() }.first
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [Place] {
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Place] {
         _ = try await requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabasePlaceDTO] = try await SupabasePaginator.fetchAll { from, to in
-            client
+            var query = client
                 .from("places")
                 .select()
                 .gte("updated_at", value: dateStr)
+            if excludeDeleted {
+                query = query.is("deleted_at", value: nil)
+            }
+            return query
                 .order("id")
                 .range(from: from, to: to)
         }

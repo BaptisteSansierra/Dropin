@@ -19,7 +19,7 @@ final class MockRemotePlaceRepository: RemotePlaceRepository, @unchecked Sendabl
         upsertedPlaces.append(place)
     }
 
-    func fetch(updatedAfter date: Date) async throws -> [Place] {
-        return placesToReturn
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Place] {
+        excludeDeleted ? placesToReturn.filter { $0.deletedAt == nil } : placesToReturn
     }
 }
