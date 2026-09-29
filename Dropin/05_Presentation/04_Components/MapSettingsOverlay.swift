@@ -86,11 +86,16 @@ struct MapSettingsOverlay: View {
     }
 }
 
-
+#if DEBUG
+import MapKit
 #Preview {
     @Previewable @State var settingsShown: Bool = false
     
-    MapSettingsOverlay(settingsShown: $settingsShown)
-        .background(.brown)
-        .environment(AppSettings())
+    ZStack {
+        Map { }
+        MapSettingsOverlay(settingsShown: $settingsShown)
+            //.background(.brown)
+            .environment(AppSettings())
+    }
 }
+#endif
