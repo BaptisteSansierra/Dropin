@@ -9,6 +9,10 @@ import Foundation
 @Observable class SignInViewModel {
 
     #if DEBUG
+
+    var email: String = ""      // test@dropin.local
+    var password: String = ""   // test12345
+    /*
     #if true
     //var email: String = "test@dropin.local"
     //var password: String = "test12345"
@@ -18,6 +22,7 @@ import Foundation
     var email: String = "baptiste.sansierra@gmail.com"
     var password: String = "Test-12345"
     #endif
+     */
 
     //var email: String = "test@dropin.local"
     //var password: String = "test12345"
@@ -51,12 +56,19 @@ import Foundation
         defer { isSubmitting = false }
         do {
             try await authService.signIn(email: email, password: password)
+            resetFields()
         } catch AuthServiceError.confirmationRequired {
             coordinator.pushVerifyEmail(email: email, password: password, context: .unconfirmedLogin)
+            resetFields()
         } catch {
             Log.error("SignInViewModel: sign-in failed: \(error)")
             lastError = error.localizedDescription
         }
+    }
+    
+    private func resetFields() {
+        email = ""
+        password = ""
     }
 
     // MARK: - Navigation
