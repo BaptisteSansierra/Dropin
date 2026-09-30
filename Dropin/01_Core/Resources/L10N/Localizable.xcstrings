@@ -817,13 +817,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use at least 8 characters."
+            "value" : "Use at least 8 characters, with uppercase, lowercase, a number and a symbol."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilisez au moins 8 caractères."
+            "value" : "Utilisez au moins 8 caractères, avec majuscule, minuscule, un chiffre et un symbole."
           }
         }
       }

@@ -26,7 +26,14 @@ extension String {
     }
     
     func isValidPassword() -> Bool {
-        // TODO: improve password rules  
-        self.count >= DropinApp.defaults.minimumPasswordLength
+        guard self.count >= DropinApp.defaults.minimumPasswordLength else { return false }
+        var hasLower = false, hasUpper = false, hasDigit = false, hasSymbol = false
+        for scalar in self.unicodeScalars {
+            if CharacterSet.lowercaseLetters.contains(scalar) { hasLower = true }
+            else if CharacterSet.uppercaseLetters.contains(scalar) { hasUpper = true }
+            else if CharacterSet.decimalDigits.contains(scalar) { hasDigit = true }
+            else if !CharacterSet.whitespaces.contains(scalar) { hasSymbol = true }
+        }
+        return hasLower && hasUpper && hasDigit && hasSymbol
     }
 }
