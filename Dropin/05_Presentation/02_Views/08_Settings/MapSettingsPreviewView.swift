@@ -35,34 +35,34 @@ struct MapSettingsPreviewView: View {
 
         let category = Category(name: "", color: "#F0678A", icon: .sf("music.note"))
         let place = Place(id: UUID(),
-                                name: "Abbey Road",
-                                coordinates: CLLocationCoordinate2D.abbeyRoad,
-                                address: "",
-                                tags: [],
-                                category: category,
-                                icon: .sf("pianokeys"))
+                          name: "Abbey Road",
+                          coordinates: CLLocationCoordinate2D.abbeyRoad,
+                          address: "",
+                          tags: [],
+                          category: category,
+                          icon: .sf("pianokeys"))
         self.place = PlaceMapper.toUI(place)
         
         let group1 = Category(name: "", color: "#678AF0", icon: .sf("bolt.fill"))
         let cp1 = Place(id: UUID(),
-                              name: "Recharge station",
-                              coordinates: .init(latitude: 51.530865828646834,
-                                                 longitude: -0.1793235955181529),
-                              address: "",
-                              tags: [],
-                              category: group1,
-                              icon: nil)
+                        name: "Recharge station",
+                        coordinates: .init(latitude: 51.530865828646834,
+                                           longitude: -0.1793235955181529),
+                        address: "",
+                        tags: [],
+                        category: group1,
+                        icon: nil)
         self.clusterPlace1 = PlaceMapper.toUI(cp1)
         
         let group2 = Category(name: "", color: "#8A67F0", icon: .sf("microphone"))
         let cp2 = Place(id: UUID(),
-                              name: "Recording studio",
-                              coordinates: .init(latitude: 51.530665828646834,
-                                                 longitude: -0.1799235955181529),
-                              address: "",
-                              tags: [],
-                              category: group2,
-                              icon: nil)
+                        name: "Recording studio",
+                        coordinates: .init(latitude: 51.530665828646834,
+                                           longitude: -0.1799235955181529),
+                        address: "",
+                        tags: [],
+                        category: group2,
+                        icon: nil)
         self.clusterPlace2 = PlaceMapper.toUI(cp2)
     }
     

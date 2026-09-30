@@ -76,7 +76,7 @@ struct MapSettings: Equatable {
         if store.object(forKey: keys.satellite) != nil {
             satellite = store.bool(forKey: keys.satellite)
         }
-        var clustering = true
+        var clustering = false
         if store.object(forKey: keys.clustering) != nil {
             clustering = store.bool(forKey: keys.clustering)
         }
