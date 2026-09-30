@@ -41,7 +41,11 @@ final class AppContainer {
     private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
     // Map memory
     private(set) var lastMapRegion: MKCoordinateRegion?
-    
+    /// Display name entered on the Sign up form, stashed here (rather than sent  straight to `profileService.setDisplayName`) as there's no define `Profile` at this point
+    /// name will be set in `loadProfile()` which runs later (immediately, or after email confirmation + sign-in).
+    /// Consumed and cleared there once the row exists.
+    var pendingDisplayName: String?
+
     /// Narrow auth-state surface for routing (no full `AuthStatus` exposed).
     /// Reading this from a view body registers observation on both
     /// `isRestoring` and `authService.session` because both are `@Observable`.
@@ -160,6 +164,10 @@ final class AppContainer {
 
     func loadProfile() async {
         await profileService.load()
+        if let pendingDisplayName, !pendingDisplayName.isEmpty {
+            self.pendingDisplayName = nil
+            try? await profileService.setDisplayName(pendingDisplayName)
+        }
     }
 
     func restoreSession() async {
@@ -261,7 +269,7 @@ final class AppContainer {
     }
 
     func createSignUpView() -> SignUpView {
-        let vm = SignUpViewModel(authService: authService, coordinator: authCoordinator)
+        let vm = SignUpViewModel(appContainer: self, authService: authService, coordinator: authCoordinator)
         return SignUpView(viewModel: vm)
     }
 

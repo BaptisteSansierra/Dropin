@@ -15,6 +15,7 @@ import Foundation
     var isSubmitting: Bool = false
     var lastError: String?
 
+    @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var authService: any AuthServiceProtocol
     @ObservationIgnored private var coordinator: AuthCoordinator
 
@@ -34,7 +35,8 @@ import Foundation
             && confirmPassword == password
     }
 
-    init(authService: any AuthServiceProtocol, coordinator: AuthCoordinator) {
+    init(appContainer: AppContainer, authService: any AuthServiceProtocol, coordinator: AuthCoordinator) {
+        self.appContainer = appContainer
         self.authService = authService
         self.coordinator = coordinator
         #if DEBUG
@@ -50,6 +52,9 @@ import Foundation
         lastError = nil
         isSubmitting = true
         defer { isSubmitting = false }
+        // Stashed on the container rather than pushed straight to the profile:
+        // the local Profile row doesn't exist yet at this point (see `loadProfile()`).
+        appContainer.pendingDisplayName = displayName
         do {
             try await authService.signUp(email: email, password: password)
             // No confirmationRequired thrown — Supabase returned a session
