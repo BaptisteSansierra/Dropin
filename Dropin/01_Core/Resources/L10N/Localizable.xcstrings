@@ -3731,13 +3731,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ import expects a \".%@\" file — this one is \".%@\"."
+            "value" : "%@ import expects a \".%@\" file, not \".%@\"."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'import %@ attend un fichier « .%@ » — celui-ci est « .%@ »."
+            "value" : "L'import %@ attend un fichier « .%@ », pas « .%@ »."
           }
         }
       }
@@ -4995,13 +4995,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Some places, categories, or tags may have been modified recently - or while your device was offline - and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
+            "value" : "Some places, categories, or tags may have been modified recently, or while your device was offline, and haven't been synced to the server yet. To avoid losing any data, connect to the internet and wait a few seconds before logging out."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certains lieux, catégories ou tags ont peut-être été modifiés récemment - ou pendant que votre appareil était hors-ligne - et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
+            "value" : "Certains lieux, catégories ou tags ont peut-être été modifiés récemment, ou pendant que votre appareil était hors-ligne, et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
           }
         }
       }
