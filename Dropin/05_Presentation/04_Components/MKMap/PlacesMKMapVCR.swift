@@ -528,7 +528,8 @@ extension PlacesMKMapVCR {
 
         /// No-cluster-mode only. When clustering is on, MapKit handles density  natively and every place is a plain full pin
         /// so there's nothing to promote/demote here.
-        func resetPromotedTracking() {
+        func resetPromotedTracking(_ mapView: MKMapView) {
+            mapView.removeAnnotations(mapView.annotations.compactMap { $0 as? MKPlacePromotedAnnotation })
             promotedIds = []
         }
 
@@ -545,7 +546,7 @@ extension PlacesMKMapVCR {
         // TODO: or just rely on MAPKit collision test and create a pin for everyone
         func refreshPinSelection(_ mapView: MKMapView) {
             guard !mapSettings.clustering else {
-                resetPromotedTracking()
+                resetPromotedTracking(mapView)
                 return
             }
 
