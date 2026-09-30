@@ -69,8 +69,14 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         + dirtyCategoryIds.count
         + dirtyTagIds.count
         + (dirtyProfile ? 1 : 0)
-        + (pendingPush ? 1 : 0)   // If pendingPush we do not want pendingChangeCount to bo 0
-                                  // *WARNING* FIXME: pendingChangeCount is not reflecting the quantity of items being pushed in this case
+        + (pendingPush ? 1 : 0)
+        // A push batch drains its dirty set (e.g. dirtyPlaceIds.removeAll() in
+        // pushDirtyPlaces) before the network calls for that batch actually
+        // complete, so the counts above can read 0 while a push is still mid-flight
+        // (e.g. mid bulk import). pushTask stays non-nil for that whole span —
+        // without this, sign-out's "any pending sync?" guard could pass and wipe
+        // local data still being uploaded.
+        + (pushTask != nil ? 1 : 0)
     }
 
     // MARK: - Dependencies
