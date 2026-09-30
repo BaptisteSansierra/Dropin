@@ -199,6 +199,11 @@ extension DropinApp {
         static let developer = "Baptiste Sansierra"
         static let exportExtension = "dropin"
         static let exportUTTypeId = "com.dropin.export"
+        // redirectTo/emailRedirectTo targets for Supabase auth emails.
+        // Web pages for now; will move to the dropin:// scheme (registered in
+        // Info.plist's CFBundleURLTypes) once in-app handling is implemented.
+        static let resetPasswordURL = URL(string: "https://dropin.lat/reset-password.html")!
+        static let emailConfirmedURL = URL(string: "https://dropin.lat/email-confirmed.html")!
     }
     struct defaults {
         static let minimumPasswordLength: Int = 8

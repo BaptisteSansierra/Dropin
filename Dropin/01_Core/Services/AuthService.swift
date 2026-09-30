@@ -47,7 +47,7 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func signUp(email: String, password: String) async throws {
-        let response = try await client.auth.signUp(email: email, password: password)
+        let response = try await client.auth.signUp(email: email, password: password, redirectTo: DropinApp.strings.emailConfirmedURL)
         // When the Supabase project requires email confirmation, `session` is
         // nil (only `user` is returned) — don't mark the user as
         // authenticated until they've confirmed and actually signed in.
@@ -78,7 +78,7 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func resetPassword(email: String) async throws {
-        try await client.auth.resetPasswordForEmail(email)
+        try await client.auth.resetPasswordForEmail(email, redirectTo: DropinApp.strings.resetPasswordURL)
         Log.info("Password reset link requested for \(email)")
     }
 
