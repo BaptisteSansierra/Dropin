@@ -149,15 +149,13 @@ struct AnnotationViewFactory {
     // Create a regular place (promoted overlay, or the base annotation when clustering is on)
     private func createPlaceView(for placeAnnotation: any MKPlaceAnnotationRepresentable,
                                  on mapView: MKMapView) -> MKAnnotationView {
-        // DEBUG: swapped to a plain UIKit ring (no UIHostingController) to test
-        // whether the hosting-controller layer is the cause of pin/map decorrelation.
         let identifier = Identifiers.promotedPlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
                                                          for: placeAnnotation) as? PlaceAnnotationView
             ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
         view.displayPriority = displayAllPins ? .required : .defaultHigh
-        view.collisionMode = .circle
+        view.collisionMode = DropinApp.map.usePinPromotionLogic ? .circle : .rectangle
         view.alpha = pinsOpacity
         view.configure(color: placeAnnotation.color,
                        icon: placeAnnotation.place.category?.icon,

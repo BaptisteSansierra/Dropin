@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import CoreLocation
+import MapKit
 import ContactFieldKit
 
 // Note:
@@ -207,6 +208,15 @@ extension DropinApp {
         // static let mapPinDropAltitude: Double = 40_000 // legacy: altitude-based collision drop, superseded by maxDisplayPin
         static let maxDisplayPin: Int = 30 // max number of full (SwiftUI) pins shown at once; remaining visible places render as dots
         static let declutterRefreshDebounce: Double = 0.2 // seconds of no camera movement before pin/dot + label state is refreshed
+        static let usePinPromotionLogic = true
+        // When set, the map always launches on this region instead of centering on the user. Used for app screenshots
+        static let hardStartRegion: MKCoordinateRegion? = nil
+        /* Lisbon center : used for screenshots generation
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 38.71108482247233, longitude: -9.137567732050831),
+            span: MKCoordinateSpan(latitudeDelta: 0.02649615024206753, longitudeDelta: 0.020133175667885084)
+        )
+         */
     }
     struct ui {
         static let mainTabBarHeight: CGFloat = 80

@@ -42,10 +42,14 @@ import MapKit
     
     // Map configuration
     var launchConfig: PlacesMKMapVCR.Configuration {
+        var config = PlacesMKMapVCR.Configuration.interactive
+        if let hardStartRegion = DropinApp.map.hardStartRegion {
+            config.positionAtLaunch = .region(region: hardStartRegion)
+            return config
+        }
         guard let lastRegion = appContainer.lastMapRegion else {
             return .interactive
         }
-        var config = PlacesMKMapVCR.Configuration.interactive
         config.positionAtLaunch = .region(region: lastRegion)
         return config
     }
@@ -101,6 +105,13 @@ import MapKit
         // Update camera
         mapConfig.currentCamera = camera
         mapConfig.currentRegion = region
+        
+        #if false
+        // Can be used to define a specific region in order to fill DropinApp.map.hardStartRegion
+        print("CURRENT REGION: ")
+        print("MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: \(region.center.latitude), longitude: \(region.center.longitude)), span: MKCoordinateSpan(latitudeDelta: \(region.span.latitudeDelta), longitudeDelta: \(region.span.longitudeDelta))")
+        #endif
+        
         mapConfig.currentRect = rect
         appContainer.rememberMapRegion(region)
 

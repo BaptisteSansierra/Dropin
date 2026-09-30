@@ -61,8 +61,6 @@ class PlaceAnnotationView: MKAnnotationView {
         contentContainer.addSubview(pinContentView)
         contentContainer.addSubview(rectContentView)
 
-        // The label is a subview positioned below the pin shape
-        // It's not part of the `bounds`/`centerOffset`
         label.textAlignment = .center
         addSubview(label)
 
@@ -70,13 +68,31 @@ class PlaceAnnotationView: MKAnnotationView {
             view.applyLabelStyle()
         }
     }
-
+    
     func configure(color: UIColor, icon: Icon?, iconExtra: Icon?, pinStyle: PinStyle,
                    size: CGFloat, title: String?, showLabel: Bool) {
+        // Measure the label unconditionally so it always renders at its real size/position.
+        // Whether that footprint is also folded into `bounds` (so MapKit's collision pass accounts for it) is separate:
+        // only when promotion logic is off, since with it on
+        // the promoted set is already capped, so we keep the original pin-only bounds.
+        titleText = title
+        applyLabelStyle()
+        label.sizeToFit()
+        let hasTitle = !(title ?? "").isEmpty
+        let foldLabelIntoBounds = !DropinApp.map.usePinPromotionLogic && hasTitle
+        let gap: CGFloat = 4
+        let labelSize = hasTitle ? label.bounds.size : .zero
+
+        let totalWidth = foldLabelIntoBounds ? max(size, labelSize.width) : size
+        let totalHeight = foldLabelIntoBounds ? size + gap + labelSize.height : size
+
         UIView.performWithoutAnimation {
-            bounds = CGRect(origin: .zero, size: CGSize(square: size))
-            centerOffset = CGPoint(x: 0, y: -(size / 2))
-            selectionContainer.frame = bounds
+            bounds = CGRect(origin: .zero, size: CGSize(width: totalWidth, height: totalHeight))
+            // Keep the pin's tip anchored at the true coordinate
+            centerOffset = CGPoint(x: 0, y: totalHeight / 2 - size)
+
+            let pinFrame = CGRect(x: (totalWidth - size) / 2, y: 0, width: size, height: size)
+            selectionContainer.frame = pinFrame
             contentContainer.frame = selectionContainer.bounds
             pinContentView.frame = contentContainer.bounds
             rectContentView.frame = contentContainer.bounds
@@ -93,14 +109,10 @@ class PlaceAnnotationView: MKAnnotationView {
                 rectContentView.configure(color: color, icon: icon, iconExtra: iconExtra)
         }
 
-        titleText = title
-        applyLabelStyle()
-        label.sizeToFit()
-        label.center = CGPoint(x: bounds.midX, y: bounds.maxY + 4 + label.bounds.height / 2)
+        label.center = CGPoint(x: bounds.midX, y: size + gap + labelSize.height / 2)
 
         self.showLabel = showLabel
-        label.isHidden = !showLabel
-        
+        //label.isHidden = !showLabel
         // NOTE: disabled hidden label optimization since we're using MapKit collision test
         label.isHidden = false
     }

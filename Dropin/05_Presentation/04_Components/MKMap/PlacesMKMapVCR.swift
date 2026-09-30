@@ -74,8 +74,6 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let onMapCameraUpdate: MapCameraUpdateHandler?
     private let interactionStatus: (() -> InteractionStatus)
     private let isActiveTab: Bool
-    /// Filter pins to avoid overpopulation
-    private let usePinPromotionLogic = true
 
     // MARK: Init
     init(config: Configuration,
@@ -186,7 +184,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         if context.coordinator.lastReloadGen != mapReloadGen || shouldReloadAnnotation {
             context.coordinator.lastReloadGen = mapReloadGen
             reloadDotAnnotations(mapView)
-            if usePinPromotionLogic {
+            if DropinApp.map.usePinPromotionLogic {
                 DispatchQueue.main.async { [weak mapView] in
                     guard let mapView else { return }
                     context.coordinator.refreshPinSelection(mapView)
@@ -203,7 +201,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         if activeIds != context.coordinator.lastActiveIds {
             context.coordinator.lastActiveIds = activeIds
             updateDotAnnotations(mapView)
-            if usePinPromotionLogic {
+            if DropinApp.map.usePinPromotionLogic {
                 // Same deferral as above - avoids racing mapView.annotations(in:).
                 DispatchQueue.main.async { [weak mapView] in
                     guard let mapView else { return }
