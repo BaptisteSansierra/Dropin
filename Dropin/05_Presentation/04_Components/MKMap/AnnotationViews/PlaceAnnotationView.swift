@@ -10,6 +10,11 @@ import UIKit
 import SwiftUI
 
 class PlaceAnnotationView: MKAnnotationView {
+    
+    private enum LabelStyle {
+        case bottom
+        case bottom3lines
+    }
 
     // Scale (selectionContainer) and wobble (contentContainer) must live on different layers
     // both are `transform` animations and Core Animation doesn't compose those on a single layer:
@@ -20,6 +25,8 @@ class PlaceAnnotationView: MKAnnotationView {
     private let rectContentView = PlaceRectAnnotationLayerView()
     private let label = OutlinedLabel()
     private var titleText: String?
+    private var labelStyle: LabelStyle = .bottom3lines
+    private let showLabelFeatureEnabled = false
 
     // Set by `AnnotationViewFactory.createTmpPlaceView` for the pending-place marker shown while creating a new place
     var temporary: Bool = false
@@ -27,6 +34,7 @@ class PlaceAnnotationView: MKAnnotationView {
     // Settable we can toggle the label depending on external logic
     var showLabel: Bool = true {
         didSet {
+            guard showLabelFeatureEnabled else { return }
             guard oldValue != showLabel else { return }
             label.isHidden = !showLabel
         }
@@ -62,6 +70,12 @@ class PlaceAnnotationView: MKAnnotationView {
         contentContainer.addSubview(rectContentView)
 
         label.textAlignment = .center
+        switch labelStyle {
+            case .bottom:
+                label.numberOfLines = 1
+            case .bottom3lines:
+                label.numberOfLines = 3
+        }
         addSubview(label)
 
         registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: Self, _: UITraitCollection) in
@@ -69,22 +83,51 @@ class PlaceAnnotationView: MKAnnotationView {
         }
     }
     
-    func configure(color: UIColor, icon: Icon?, iconExtra: Icon?, pinStyle: PinStyle,
-                   size: CGFloat, title: String?, showLabel: Bool) {
+    func configure(color: UIColor,
+                   icon: Icon?,
+                   iconExtra: Icon?,
+                   pinStyle: PinStyle,
+                   size: CGFloat,
+                   title: String?,
+                   showLabel: Bool) {
         // Measure the label unconditionally so it always renders at its real size/position.
         // Whether that footprint is also folded into `bounds` (so MapKit's collision pass accounts for it) is separate:
         // only when promotion logic is off, since with it on
         // the promoted set is already capped, so we keep the original pin-only bounds.
         titleText = title
         applyLabelStyle()
+        let fittedSize: CGSize
+        switch labelStyle {
+            case .bottom:
+                label.sizeToFit()
+                fittedSize = label.bounds.size
+            case .bottom3lines:
+                fittedSize = label.sizeThatFits(CGSize(width: size * 2, height: .greatestFiniteMagnitude))
+        }
         label.sizeToFit()
         let hasTitle = !(title ?? "").isEmpty
         let foldLabelIntoBounds = !DropinApp.map.usePinPromotionLogic && hasTitle
-        let gap: CGFloat = 4
-        let labelSize = hasTitle ? label.bounds.size : .zero
+        var totalWidth = size
+        var totalHeight = size
+        var labelCenter = CGPoint.zero
+        var labelFrame = CGRect.zero
 
-        let totalWidth = foldLabelIntoBounds ? max(size, labelSize.width) : size
-        let totalHeight = foldLabelIntoBounds ? size + gap + labelSize.height : size
+        let gap: CGFloat = 4
+        let labelSize = hasTitle ? fittedSize : .zero
+        if foldLabelIntoBounds {
+
+            totalWidth = max(size, labelSize.width)
+            totalHeight = size + gap + labelSize.height
+        }
+        if hasTitle {
+            labelCenter = CGPoint(x: totalWidth * 0.5,
+                                  y: size + gap + labelSize.height / 2)
+         
+            labelFrame = CGRect(x: totalWidth * 0.5 - labelSize.width * 0.5,
+                                y: size + gap,
+                                width: labelSize.width,
+                                height: labelSize.height)
+        }
 
         UIView.performWithoutAnimation {
             bounds = CGRect(origin: .zero, size: CGSize(width: totalWidth, height: totalHeight))
@@ -96,6 +139,7 @@ class PlaceAnnotationView: MKAnnotationView {
             contentContainer.frame = selectionContainer.bounds
             pinContentView.frame = contentContainer.bounds
             rectContentView.frame = contentContainer.bounds
+            label.frame = labelFrame
         }
 
         switch pinStyle {
@@ -109,12 +153,12 @@ class PlaceAnnotationView: MKAnnotationView {
                 rectContentView.configure(color: color, icon: icon, iconExtra: iconExtra)
         }
 
-        label.center = CGPoint(x: bounds.midX, y: size + gap + labelSize.height / 2)
-
-        self.showLabel = showLabel
-        //label.isHidden = !showLabel
-        // NOTE: disabled hidden label optimization since we're using MapKit collision test
-        label.isHidden = false
+        if showLabelFeatureEnabled {
+            self.showLabel = showLabel
+            label.isHidden = !showLabel
+        } else {
+            label.isHidden = false
+        }
     }
 
     override func prepareForReuse() {
@@ -125,7 +169,7 @@ class PlaceAnnotationView: MKAnnotationView {
 
     // MARK: - Label style
     private func applyLabelStyle() {
-        label.font = .systemFont(ofSize: 11, weight: .semibold)
+        label.font = .systemFont(ofSize: 9, weight: .semibold)
         label.textColor = resolvedColor(Color(light: Color(rgba: "#222222"), dark: Color(rgba: "#DDDDDD")))
         label.outlineColor = resolvedColor(Color(light: .white, dark: .black.opacity(0.5)))
         label.outlineWidth = 1
