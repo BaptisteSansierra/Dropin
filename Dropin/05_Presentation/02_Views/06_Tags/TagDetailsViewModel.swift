@@ -59,7 +59,9 @@ import SwiftUI
     
     // MARK: UI Child
     func createPlaceSheetView(place: Binding<PlaceUIModel>) -> PlaceSheetView {
-        return appContainer.createPlaceSheetView(place: place, detent: .constant(.medium))
+        return appContainer.createPlaceSheetView(place: place,
+                                                 mapAction: nil,  // TODO: DRO-34 Allow "Map" action from a category/tag detail
+                                                 detent: .constant(.medium))
     }
     
     // MARK: use cases

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// Generic map showing a list of places
+/// Used by TagMapViewModel / CategoryMapViewModel
 @MainActor
 @Observable class GenericMapViewModel {
     
@@ -29,7 +31,7 @@ import SwiftUI
     
     // MARK: UI Child
     func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
-        return appContainer.createPlaceSheetView(place: place, detent: detent)
+        return appContainer.createPlaceSheetView(place: place, mapAction: nil, detent: detent)
     }
     
     // MARK: use cases

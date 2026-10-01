@@ -379,7 +379,9 @@ final class AppContainer {
         return CategorySelectorView(viewModel: vm, place: place)
     }
     
-    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+    func createPlaceSheetView(place: Binding<PlaceUIModel>,
+                              mapAction: (() -> Void)?,
+                              detent: Binding<PresentationDetent>) -> PlaceSheetView {
         let vm = PlaceSheetViewModel(self,
                                      coordinator: currentPlaceCoordinator(),
                                      locationManager: locationManager,
@@ -387,6 +389,7 @@ final class AppContainer {
                                      getPlaceImage: GetPlaceImage(loader: imageLoader))
         return PlaceSheetView(viewModel: vm,
                               place: place,
+                              mapAction: mapAction,
                               detent: detent)
     }
 

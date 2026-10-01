@@ -74,7 +74,7 @@ struct PlacesListView: View {
     private func placeRowView(_ place: PlaceUIModel) -> some View {
         placeRowContentView(place)
             .contextMenu(menuItems: {
-                Button(action: {showOnMap(place.id)}) {
+                Button(action: { showOnMap(place.id) }) {
                     Text("common.show_on_map")
                 }
             }, preview: {

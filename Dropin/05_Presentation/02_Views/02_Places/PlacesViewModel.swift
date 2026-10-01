@@ -53,6 +53,8 @@ import CoreLocation
     var detailSheetDetent: PresentationDetent = .medium
 
     var navBarHeight: CGFloat = 0
+    
+    /// Selected tab: 0=map, 1=list
     var selectedTab: Int = 0
 
     // MARK: un-tracked properties
@@ -119,7 +121,14 @@ import CoreLocation
     }
 
     func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
-        return appContainer.createPlaceSheetView(place: place, detent: detent)
+        // Display the "Show on map" button only if view is presented from list
+        let mapAction = {
+            self.selectedTab = 0
+            self.selectedPlaceId = place.id
+        }
+        return appContainer.createPlaceSheetView(place: place,
+                                                 mapAction: selectedTab == 1 ? mapAction : nil,
+                                                 detent: detent)
     }
 
     func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
