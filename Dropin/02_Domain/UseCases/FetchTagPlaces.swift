@@ -15,7 +15,7 @@ struct FetchTagPlaces: Sendable {
         self.repository = repository
     }
     
-    func callAsFunction(_ tagId: UUID) async throws -> [PlaceEntity] {
+    func callAsFunction(_ tagId: UUID) async throws -> [Place] {
         return try await repository.fetch(tagId: tagId)
     }
 }

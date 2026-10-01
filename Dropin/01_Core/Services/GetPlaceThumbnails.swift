@@ -2,16 +2,16 @@
 //  GetPlaceThumbnails.swift
 //  Dropin
 //
-//  Thin proxy over ImageLoader so VMs don't depend on the actor directly.
+//  Thin proxy over PlaceImageLoader so VMs don't depend on the actor directly.
 //
 
 import Foundation
 
 @MainActor
 struct GetPlaceThumbnails {
-    private let loader: ImageLoader
+    private let loader: PlaceImageLoader
 
-    init(loader: ImageLoader) {
+    init(loader: PlaceImageLoader) {
         self.loader = loader
     }
 

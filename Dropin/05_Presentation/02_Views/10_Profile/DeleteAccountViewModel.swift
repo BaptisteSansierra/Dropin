@@ -10,7 +10,7 @@ import Foundation
 
     struct Counts {
         var places: Int = 0
-        var groupsAndTags: Int = 0
+        var categoriesAndTags: Int = 0
         var photos: Int = 0
     }
 
@@ -27,20 +27,20 @@ import Foundation
     @ObservationIgnored private let appContainer: AppContainer
     @ObservationIgnored private let coordinator: ProfileCoordinator
     @ObservationIgnored private let fetchPlaces: FetchPlaces
-    @ObservationIgnored private let fetchGroups: FetchGroups
+    @ObservationIgnored private let fetchCategories: FetchCategories
     @ObservationIgnored private let fetchTags: FetchTags
-    @ObservationIgnored private let imageRepository: any ImageRepository
+    @ObservationIgnored private let imageRepository: any PlaceImageRepository
 
     init(appContainer: AppContainer,
          coordinator: ProfileCoordinator,
          fetchPlaces: FetchPlaces,
-         fetchGroups: FetchGroups,
+         fetchCategories: FetchCategories,
          fetchTags: FetchTags,
-         imageRepository: any ImageRepository) {
+         imageRepository: any PlaceImageRepository) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.fetchPlaces = fetchPlaces
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
         self.imageRepository = imageRepository
     }
@@ -56,7 +56,7 @@ import Foundation
         do {
             let places = try await fetchPlaces()
                 .filter({ $0.isActive })
-            let groups = try await fetchGroups()
+            let categories = try await fetchCategories()
                 .filter({ $0.isActive })
             let tags = try await fetchTags()
                 .filter({ $0.isActive })
@@ -66,7 +66,7 @@ import Foundation
                 photos += thumbs.count
             }
             counts = Counts(places: places.count,
-                            groupsAndTags: groups.count + tags.count,
+                            categoriesAndTags: categories.count + tags.count,
                             photos: photos)
         } catch {
             Log.error("DeleteAccountViewModel: loadCounts failed: \(error)")
@@ -79,7 +79,7 @@ import Foundation
         isExporting = true
         do {
             let url = try await ExportService(fetchPlaces: fetchPlaces,
-                                              fetchGroups: fetchGroups,
+                                              fetchCategories: fetchCategories,
                                               fetchTags: fetchTags)
                 .execute()
             exportedTemporaryFile = IdentifiableURL(url: url)

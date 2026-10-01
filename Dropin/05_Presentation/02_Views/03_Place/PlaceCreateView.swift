@@ -12,7 +12,7 @@ struct PlaceCreateView: View {
     
     // MARK: - State & Bindings
     @State private var viewModel: PlaceCreateViewModel
-    @State private var place: PlaceUI
+    @State private var place: PlaceUIModel
     @State private var showMissingName: Bool = false
     @Environment(RootView.ActionBus.self) private var actionBus
 
@@ -20,7 +20,7 @@ struct PlaceCreateView: View {
     @State private var confirmCancel: Bool = false
 
     private var tagIds: [UUID]?
-    private var groupId: UUID?
+    private var categoryId: UUID?
 
     // MARK: - Init
     init(viewModel: PlaceCreateViewModel,
@@ -29,16 +29,16 @@ struct PlaceCreateView: View {
          name: String,
          marker: String?,
          tags: [UUID],
-         group: UUID?) {
+         category: UUID?) {
         self._viewModel = State(initialValue: viewModel)
-        place = PlaceUI(coordinates: coordinates)
+        place = PlaceUIModel(coordinates: coordinates)
         place.address = address
         place.name = name
         if let marker = marker {
             place.icon = Icon(rawValue: marker)
         }
         self.tagIds = tags
-        self.groupId = group
+        self.categoryId = category
     }
 
     var body: some View {
@@ -49,8 +49,8 @@ struct PlaceCreateView: View {
                 if let tagIds = tagIds {
                     place.tags = await viewModel.retrieveTags(tagIds: tagIds)
                 }
-                if let groupId = groupId {
-                    place.group = await viewModel.retrieveGroup(groupId: groupId)
+                if let categoryId = categoryId {
+                    place.category = await viewModel.retrieveCategory(categoryId: categoryId)
                 }
             }
     }

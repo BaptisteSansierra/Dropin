@@ -20,10 +20,10 @@ final class ImportCoordinator {
          saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
-         fetchGroups: FetchGroups,
+         fetchCategories: FetchCategories,
          fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
-         upsertGroup: UpsertGroup,
+         upsertCategory: UpsertCategory,
          upsertTag: UpsertTag,
          sync: any SyncServicePausableProtocol,
          marker: ImportMarker? = nil) throws {
@@ -36,28 +36,28 @@ final class ImportCoordinator {
                 importService = ImportDropinService(saveContext: saveContext,
                                                     rollbackContext: rollbackContext,
                                                     fetchPlaces: fetchPlaces,
-                                                    fetchGroups: fetchGroups,
+                                                    fetchCategories: fetchCategories,
                                                     fetchTags: fetchTags,
                                                     upsertPlace: upsertPlace,
-                                                    upsertGroup: upsertGroup,
+                                                    upsertCategory: upsertCategory,
                                                     upsertTag: upsertTag)
             case .mapstr:
                 Log.info("Mapstr import service created")
-                let markerGroupName: String
-                guard case .group(let name) = marker  else {
+                let markerCategoryName: String
+                guard case .category(let name) = marker  else {
                     // TODO: IMPROVEMENT - User may prefer to tag its import instead of grouping, this should be handled here
                     fatalError("Not implemented")
                 }
-                markerGroupName = name
+                markerCategoryName = name
                 importService = ImportMapstrService(saveContext: saveContext,
                                                     rollbackContext: rollbackContext,
                                                     fetchPlaces: fetchPlaces,
-                                                    fetchGroups: fetchGroups,
+                                                    fetchCategories: fetchCategories,
                                                     fetchTags: fetchTags,
                                                     upsertPlace: upsertPlace,
-                                                    upsertGroup: upsertGroup,
+                                                    upsertCategory: upsertCategory,
                                                     upsertTag: upsertTag,
-                                                    markerGroupName: markerGroupName)
+                                                    markerCategoryName: markerCategoryName)
             default:
                 Log.error("unrecognized file to be imported \(url.pathExtension)")
                 throw ImportError.unsupported(url.pathExtension)
@@ -70,7 +70,7 @@ final class ImportCoordinator {
                  canceled: @MainActor @Sendable () -> Void,
                  completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
         // Pause remote pushes for the duration of the import so each upserted
-        // tag/group/place doesn't trigger its own push. A single push runs at
+        // tag/category/place doesn't trigger its own push. A single push runs at
         // the end with the full dirty set.
         try await sync.withPausedPushes {
             try await importService.execute(url,

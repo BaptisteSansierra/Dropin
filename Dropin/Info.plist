@@ -3,6 +3,11 @@
 <plist version="1.0">
 <dict>
 
+    <key>UIFileSharingEnabled</key>
+    <true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
+
     <key>CFBundleDocumentTypes</key>
     <array>
         <dict>
@@ -41,6 +46,20 @@
         </dict>
     </array>
     
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>com.batsansierra.Dropin.auth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>dropin</string>
+            </array>
+        </dict>
+    </array>
+
     <key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

@@ -62,7 +62,7 @@ struct EditDisplayNameView: View {
             Spacer()
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(false)
         .task {
             try? await Task.sleep(for: .milliseconds(350))
             isFocused = true

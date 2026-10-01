@@ -16,7 +16,7 @@ struct FetchPlace: Sendable {
         self.repository = repository
     }
     
-    func callAsFunction(_ uuid: UUID) async throws -> PlaceEntity {
+    func callAsFunction(_ uuid: UUID) async throws -> Place {
         return try await repository.fetch(uuid)
     }
 }

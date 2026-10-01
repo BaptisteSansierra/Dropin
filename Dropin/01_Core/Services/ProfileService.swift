@@ -16,7 +16,7 @@ import Foundation
 
 @MainActor
 protocol ProfileServiceProtocol: AnyObject {
-    var profile: ProfileEntity? { get }
+    var profile: Profile? { get }
     /// Loads the profile from the local cache, falling back to a remote fetch if
     /// nothing is cached yet. Safe to call repeatedly.
     func load() async
@@ -30,7 +30,7 @@ protocol ProfileServiceProtocol: AnyObject {
 @MainActor
 final class ProfileService: ProfileServiceProtocol {
 
-    private(set) var profile: ProfileEntity?
+    private(set) var profile: Profile?
 
     @ObservationIgnored private let local: any ProfileRepository
     @ObservationIgnored private let remote: any RemoteProfileRepository

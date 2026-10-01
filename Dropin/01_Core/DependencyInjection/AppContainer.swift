@@ -18,16 +18,16 @@ final class AppContainer {
     // Repositories
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
-    private let groupRepository: GroupRepository
-    private let imageRepository: ImageRepository
+    private let groupRepository: CategoryRepository
+    private let imageRepository: PlaceImageRepository
     private let profileRepository: ProfileRepository
     private let generalRepository: GeneralRepository
-    private let imageLoader: ImageLoader
+    private let imageLoader: PlaceImageLoader
     // Coordinators
     private let profileCoordinator: ProfileCoordinator
     private let placeCoordinator: PlaceCoordinator
     private let tagCoordinator: TagCoordinator
-    private let groupCoordinator: GroupCoordinator
+    private let groupCoordinator: CategoryCoordinator
     private let authCoordinator: AuthCoordinator
     private let aboutCoordinator: AboutCoordinator
     // Services
@@ -42,7 +42,11 @@ final class AppContainer {
     private let shareService: any ShareServiceProtocol
     // Map memory
     private(set) var lastMapRegion: MKCoordinateRegion?
-    
+    /// Display name entered on the Sign up form, stashed here (rather than sent  straight to `profileService.setDisplayName`) as there's no define `Profile` at this point
+    /// name will be set in `loadProfile()` which runs later (immediately, or after email confirmation + sign-in).
+    /// Consumed and cleared there once the row exists.
+    var pendingDisplayName: String?
+
     /// Narrow auth-state surface for routing (no full `AuthStatus` exposed).
     /// Reading this from a view body registers observation on both
     /// `isRestoring` and `authService.session` because both are `@Observable`.
@@ -55,7 +59,7 @@ final class AppContainer {
         profileCoordinator = ProfileCoordinator()
         placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
-        groupCoordinator = GroupCoordinator()
+        groupCoordinator = CategoryCoordinator()
         authCoordinator = AuthCoordinator()
         aboutCoordinator = AboutCoordinator()
         // Services
@@ -71,36 +75,42 @@ final class AppContainer {
         self.shareService = ShareService(client: supabaseService.client, auth: authService)
         // Local repos (raw — used by SyncService for push)
         let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext)
-        let localGroupRepo = GroupRepositoryImpl(modelContext: modelContext)
+        let localCategoryRepo = CategoryRepositoryImpl(modelContext: modelContext)
         let localTagRepo = TagRepositoryImpl(modelContext: modelContext)
-        let localImageRepo = ImageRepositoryImpl(modelContext: modelContext)
+        let localImageRepo = PlaceImageRepositoryImpl(modelContext: modelContext)
         let localProfileRepo = ProfileRepositoryImpl(modelContext: modelContext)
         // Remote repos
         let remotePlaceRepo = SupabasePlaceRepository(client: supabaseService.client, auth: authService)
-        let remoteGroupRepo = SupabaseGroupRepository(client: supabaseService.client, auth: authService)
+        let remoteCategoryRepo = SupabaseCategoryRepository(client: supabaseService.client, auth: authService)
         let remoteTagRepo = SupabaseTagRepository(client: supabaseService.client, auth: authService)
-        let remoteImageRepo = SupabaseImageRepository(client: supabaseService.client, auth: authService)
+        let remoteImageRepo = SupabasePlaceImageRepository(client: supabaseService.client, auth: authService)
         let remoteProfileRepo = SupabaseProfileRepository(client: supabaseService.client, auth: authService)
         // Sync
         let syncService = SyncService(localPlaceRepo: localPlaceRepo,
-                                      localGroupRepo: localGroupRepo,
+                                      localCategoryRepo: localCategoryRepo,
                                       localTagRepo: localTagRepo,
                                       localImageRepo: localImageRepo,
                                       localProfileRepo: localProfileRepo,
                                       remotePlaceRepo: remotePlaceRepo,
-                                      remoteGroupRepo: remoteGroupRepo,
+                                      remoteCategoryRepo: remoteCategoryRepo,
                                       remoteTagRepo: remoteTagRepo,
                                       remoteImageRepo: remoteImageRepo,
                                       remoteProfileRepo: remoteProfileRepo,
                                       reachability: reachabilityService)
         self.syncService = syncService
         // Wrap local repos so mutations notify SyncService
-        placeRepository = SyncingPlaceRepository(wrapped: localPlaceRepo, sync: syncService)
-        groupRepository = SyncingGroupRepository(wrapped: localGroupRepo, sync: syncService)
+        let syncingPlaceRepo = SyncingPlaceRepository(wrapped: localPlaceRepo, sync: syncService)
+        let addressBackfillService = AddressBackfillService(repository: syncingPlaceRepo, reachability: reachabilityService)
+        syncService.addressBackfillService = addressBackfillService
+        // Decorates reads so every place-fetching screen gets address backfill for
+        // free (see AddressBackfillingPlaceRepository) — SyncService triggers it
+        // separately, straight after a pull, via the same service above.
+        placeRepository = AddressBackfillingPlaceRepository(wrapped: syncingPlaceRepo, backfillService: addressBackfillService)
+        groupRepository = SyncingCategoryRepository(wrapped: localCategoryRepo, sync: syncService)
         tagRepository = SyncingTagRepository(wrapped: localTagRepo, sync: syncService)
-        imageRepository = SyncingImageRepository(wrapped: localImageRepo, sync: syncService)
+        imageRepository = SyncingPlaceImageRepository(wrapped: localImageRepo, sync: syncService)
         profileRepository = SyncingProfileRepository(wrapped: localProfileRepo, sync: syncService)
-        imageLoader = ImageLoader(local: imageRepository, remote: remoteImageRepo)
+        imageLoader = PlaceImageLoader(local: imageRepository, remote: remoteImageRepo)
         profileService = ProfileService(local: profileRepository, remote: remoteProfileRepo)
         // Not entity-specific, not wrapped: save()/rollback() act on the whole
         // shared modelContext, so there's nothing for a Syncing decorator to do.
@@ -120,7 +130,7 @@ final class AppContainer {
         profileCoordinator = ProfileCoordinator()
         placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
-        groupCoordinator = GroupCoordinator()
+        groupCoordinator = CategoryCoordinator()
         authCoordinator = AuthCoordinator()
         aboutCoordinator = AboutCoordinator()
         // Services
@@ -138,10 +148,10 @@ final class AppContainer {
         // Repos — no syncing wrapper needed (stub would no-op anyway)
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
-        imageRepository = ImageRepositoryImpl(modelContext: modelContext)
+        groupRepository = CategoryRepositoryImpl(modelContext: modelContext)
+        imageRepository = PlaceImageRepositoryImpl(modelContext: modelContext)
         profileRepository = ProfileRepositoryImpl(modelContext: modelContext)
-        imageLoader = ImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
+        imageLoader = PlaceImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
         self.profileService = profileService
         generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
     }
@@ -155,8 +165,15 @@ final class AppContainer {
         await syncService.syncAll()
     }
 
+    /// Current user's display name, e.g. for the share-sheet message's sender attribution.
+    var currentDisplayName: String? { profileService.profile?.displayName }
+
     func loadProfile() async {
         await profileService.load()
+        if let pendingDisplayName, !pendingDisplayName.isEmpty {
+            self.pendingDisplayName = nil
+            try? await profileService.setDisplayName(pendingDisplayName)
+        }
     }
 
     func restoreSession() async {
@@ -258,7 +275,7 @@ final class AppContainer {
     }
 
     func createSignUpView() -> SignUpView {
-        let vm = SignUpViewModel(authService: authService, coordinator: authCoordinator)
+        let vm = SignUpViewModel(appContainer: self, authService: authService, coordinator: authCoordinator)
         return SignUpView(viewModel: vm)
     }
 
@@ -288,7 +305,7 @@ final class AppContainer {
         let vm = DeleteAccountViewModel(appContainer: self,
                                         coordinator: profileCoordinator,
                                         fetchPlaces: FetchPlaces(repository: placeRepository),
-                                        fetchGroups: FetchGroups(repository: groupRepository),
+                                        fetchCategories: FetchCategories(repository: groupRepository),
                                         fetchTags: FetchTags(repository: tagRepository),
                                         imageRepository: imageRepository)
         return DeleteAccountView(viewModel: vm)
@@ -319,7 +336,7 @@ final class AppContainer {
         return PlacesView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
-    func createPlacesMapView(places: [PlaceUI],
+    func createPlacesMapView(places: [PlaceUIModel],
                              selectedPlaceId: Binding<UUID?>,
                              isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>,
@@ -339,7 +356,7 @@ final class AppContainer {
                              isActiveTab: isActiveTab)
     }
     
-    func createPlacesListView(places: [PlaceUI],
+    func createPlacesListView(places: [PlaceUIModel],
                               selectedPlaceId: Binding<UUID?>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
                                      coordinator: placeCoordinator,
@@ -347,28 +364,30 @@ final class AppContainer {
         return PlacesListView(viewModel: vm, places: places, selectedPlaceId: selectedPlaceId)
     }
     
-    func createPlaceCreateQuickView(place: PlaceUI) -> PlaceCreateQuickView {
+    func createPlaceCreateQuickView(place: PlaceUIModel) -> PlaceCreateQuickView {
         let vm = PlaceCreateQuickViewModel(self,
                                            coordinator: placeCoordinator,
                                            createPlace: CreatePlace(repository: placeRepository))
         return PlaceCreateQuickView(viewModel: vm, place: place)
     }
     
-    func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
+    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
                                       fetchTags: FetchTags(repository: tagRepository),
                                       createTags: CreateTag(repository: tagRepository))
         return TagSelectorView(viewModel: vm, place: place)
     }
     
-    func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
-        let vm = GroupSelectorViewModel(self,
-                                        fetchGroups: FetchGroups(repository: groupRepository),
-                                        createGroup: CreateGroup(repository: groupRepository))
-        return GroupSelectorView(viewModel: vm, place: place)
+    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+        let vm = CategorySelectorViewModel(self,
+                                        fetchCategories: FetchCategories(repository: groupRepository),
+                                        createCategory: CreateCategory(repository: groupRepository))
+        return CategorySelectorView(viewModel: vm, place: place)
     }
     
-    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+    func createPlaceSheetView(place: Binding<PlaceUIModel>,
+                              mapAction: (() -> Void)?,
+                              detent: Binding<PresentationDetent>) -> PlaceSheetView {
         let vm = PlaceSheetViewModel(self,
                                      coordinator: currentPlaceCoordinator(),
                                      locationManager: locationManager,
@@ -377,10 +396,11 @@ final class AppContainer {
                                      getPlaceImage: GetPlaceImage(loader: imageLoader))
         return PlaceSheetView(viewModel: vm,
                               place: place,
+                              mapAction: mapAction,
                               detent: detent)
     }
 
-    func createPlaceEditContentView(place: Binding<PlaceUI>,
+    func createPlaceEditContentView(place: Binding<PlaceUIModel>,
                                     mode: PlaceEditContentViewModel.Mode,
                                     showMissingName: Binding<Bool>) -> PlaceEditContentView {
         let vm = PlaceEditContentViewModel(self,
@@ -392,7 +412,7 @@ final class AppContainer {
         return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
     }
 
-    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
+    func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
         let vm = PlaceEditViewModel(self,
                                     coordinator: currentCoordinator(),
                                     updatePlace: UpdatePlace(repository: placeRepository),
@@ -406,12 +426,12 @@ final class AppContainer {
                                name: String,
                                marker: String?,
                                tags: [UUID],
-                               group: UUID?) -> PlaceCreateView {
+                               category: UUID?) -> PlaceCreateView {
         let vm = PlaceCreateViewModel(self,
                                       coordinator: placeCoordinator,
                                       createPlace: CreatePlace(repository: placeRepository),
                                       getTag: FetchTag(repository: tagRepository),
-                                      getGroup: FetchGroup(repository: groupRepository),
+                                      getCategory: FetchCategory(repository: groupRepository),
                                       addPlaceImage: AddPlaceImage(repository: imageRepository))
         return PlaceCreateView(viewModel: vm,
                                coordinates: coordinates,
@@ -419,7 +439,7 @@ final class AppContainer {
                                name: name,
                                marker: marker,
                                tags: tags,
-                               group: group)
+                               category: category)
     }
     
     func createTagListView(showingSideMenu: Binding<Bool>) -> TagListView {
@@ -431,7 +451,7 @@ final class AppContainer {
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
-    func createTagDetailsView(tag: TagUI) -> TagDetailsView {
+    func createTagDetailsView(tag: TagUIModel) -> TagDetailsView {
         let vm = TagDetailsViewModel(self,
                                      locationManager: locationManager,
                                      coordinator: tagCoordinator,
@@ -449,31 +469,31 @@ final class AppContainer {
         return TagMapView(viewModel: vm)
     }
 
-    func createGroupListView(showingSideMenu: Binding<Bool>) -> GroupListView {
-        let vm = GroupListViewModel(self,
+    func createCategoryListView(showingSideMenu: Binding<Bool>) -> CategoryListView {
+        let vm = CategoryListViewModel(self,
                                     coordinator: groupCoordinator,
-                                    fetchGroupsWithCount: FetchGroupsWithCount(repository: groupRepository),
-                                    updateGroup: UpdateGroup(repository: groupRepository),
+                                    fetchCategoriesWithCount: FetchCategoriesWithCount(repository: groupRepository),
+                                    updateCategory: UpdateCategory(repository: groupRepository),
                                     syncStatus: syncService.syncStatus)
-        return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
+        return CategoryListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
-    func createGroupDetailsView(group: GroupUI) -> GroupDetailsView {
-        let vm = GroupDetailsViewModel(self,
+    func createCategoryDetailsView(category: CategoryUIModel) -> CategoryDetailsView {
+        let vm = CategoryDetailsViewModel(self,
                                        locationManager: locationManager,
                                        coordinator: groupCoordinator,
-                                       group: group,
-                                       updateGroup: UpdateGroup(repository: groupRepository),
-                                       fetchGroupPlaces: FetchGroupPlaces(repository: placeRepository),
+                                       category: category,
+                                       updateCategory: UpdateCategory(repository: groupRepository),
+                                       fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository),
                                        updatePlace: UpdatePlace(repository: placeRepository))
-        return GroupDetailsView(viewModel: vm)
+        return CategoryDetailsView(viewModel: vm)
     }
 
-    func createGroupMapView(groupId: UUID) -> GroupMapView {
-        let vm = GroupMapViewModel(self,
-                                   groupId: groupId,
-                                   fetchGroupPlaces: FetchGroupPlaces(repository: placeRepository))
-        return GroupMapView(viewModel: vm)
+    func createCategoryMapView(categoryId: UUID) -> CategoryMapView {
+        let vm = CategoryMapViewModel(self,
+                                   categoryId: categoryId,
+                                   fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository))
+        return CategoryMapView(viewModel: vm)
     }
 
     func createLookupPlacesView() -> LookupPlacesView {
@@ -486,7 +506,7 @@ final class AppContainer {
         return LookupPlacesView(viewModel: vm)
     }
 
-    func createLookupPlacesView(place: Binding<PlaceUI>) -> LookupPlacesView {
+    func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
                                        coordinator: placeCoordinator,
                                        addressLookupService: addressLookupService,
@@ -497,7 +517,7 @@ final class AppContainer {
     }
 
     func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem,
-                               place: Binding<PlaceUI?> = .constant(nil),
+                               place: Binding<PlaceUIModel?> = .constant(nil),
                                status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
         let vm = LookupPlaceViewModel(self,
                                       coordinator: placeCoordinator,
@@ -508,7 +528,7 @@ final class AppContainer {
     
     func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
         let vm = PlaceFilterViewModel(self,
-                                      fetchGroups: FetchGroups(repository: groupRepository),
+                                      fetchCategories: FetchCategories(repository: groupRepository),
                                       fetchTags: FetchTags(repository: tagRepository),
                                       filter: filter)
         return PlaceFilterView(viewModel: vm)
@@ -522,10 +542,10 @@ final class AppContainer {
                                    saveContext: SaveContext(repository: generalRepository),
                                    rollbackContext: RollbackContext(repository: generalRepository),
                                    fetchPlaces: FetchPlaces(repository: placeRepository),
-                                   fetchGroups: FetchGroups(repository: groupRepository),
+                                   fetchCategories: FetchCategories(repository: groupRepository),
                                    fetchTags: FetchTags(repository: tagRepository),
                                    upsertPlace: UpsertPlace(repository: placeRepository),
-                                   upsertGroup: UpsertGroup(repository: groupRepository),
+                                   upsertCategory: UpsertCategory(repository: groupRepository),
                                    upsertTag: UpsertTag(repository: tagRepository),
                                    deleteLibrary: DeleteLibrary(generalRepository: generalRepository,
                                                                 placeRepository: placeRepository,
@@ -536,7 +556,7 @@ final class AppContainer {
     }
 
     func createMapstrImportConfigViewModel(baseName: String) -> MapstrImportConfigViewModel {
-        MapstrImportConfigViewModel(baseName: baseName, fetchGroups: FetchGroups(repository: groupRepository))
+        MapstrImportConfigViewModel(baseName: baseName, fetchCategories: FetchCategories(repository: groupRepository))
     }
 
     // MARK: - about views
@@ -550,7 +570,7 @@ final class AppContainer {
         switch appContext.currentSideMenuContext {
             case .main:
                 return placeCoordinator
-            case .groups:
+            case .categories:
                 return groupCoordinator
             case .tags:
                 return tagCoordinator
@@ -564,7 +584,7 @@ final class AppContainer {
         switch appContext.currentSideMenuContext {
             case .main:
                 return placeCoordinator
-            case .groups:
+            case .categories:
                 return groupCoordinator
             case .tags:
                 return tagCoordinator
@@ -575,7 +595,7 @@ final class AppContainer {
     }
     
     private func clearDatabase() async throws {
-        // Places first: cascade-deletes their images, nullifies tag/group refs
+        // Places first: cascade-deletes their images, nullifies tag/category refs
         try await placeRepository.clearTable()
         try await tagRepository.clearTable()
         try await groupRepository.clearTable()
@@ -591,10 +611,10 @@ final class AppContainer {
 extension AppContainer {
     
     static func insertMockData(modelContext: ModelContext) throws {
-        let mockGroups = SDGroup.mockGroups()
-        let mockTags = SDTag.mockTags()
-        let mockPlaces = SDPlace.mockPlaces()
-        for item in mockGroups {
+        let mockCategories = CategoryRecord.mockCategories()
+        let mockTags = TagRecord.mockTags()
+        let mockPlaces = PlaceRecord.mockPlaces()
+        for item in mockCategories {
             modelContext.insert(item)
         }
         for item in mockTags {
@@ -604,37 +624,37 @@ extension AppContainer {
             modelContext.insert(item)
         }
         
-        mockPlaces[0].group = nil // mockGroups[0]
+        mockPlaces[0].category = nil // mockCategories[0]
         mockPlaces[0].tags = [mockTags[1], mockTags[2], mockTags[3], mockTags[4],
                               mockTags[5], mockTags[6], mockTags[7], mockTags[8],
                               mockTags[10], mockTags[13], mockTags[12], mockTags[14], mockTags[15]]
 
-        mockPlaces[1].group = mockGroups[0]
+        mockPlaces[1].category = mockCategories[0]
         mockPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
 
-        mockPlaces[2].group = mockGroups[4]
+        mockPlaces[2].category = mockCategories[4]
         mockPlaces[2].tags = [mockTags[6], mockTags[7]]
 
-        mockPlaces[3].group = mockGroups[5]
+        mockPlaces[3].category = mockCategories[5]
         mockPlaces[3].tags = [mockTags[1]]
 
-        mockPlaces[4].group = mockGroups[5]
+        mockPlaces[4].category = mockCategories[5]
         mockPlaces[4].tags = [mockTags[1]]
 
-        mockPlaces[5].group = mockGroups[5]
+        mockPlaces[5].category = mockCategories[5]
         mockPlaces[5].tags = [mockTags[11], mockTags[12]]
 
-        mockPlaces[6].group = mockGroups[7]
+        mockPlaces[6].category = mockCategories[7]
         mockPlaces[6].tags = [mockTags[9], mockTags[12]]
 
-        mockPlaces[7].group = mockGroups[8]
+        mockPlaces[7].category = mockCategories[8]
         mockPlaces[7].tags = [mockTags[9]]
 
-        mockPlaces[6].group = mockGroups[8]
+        mockPlaces[6].category = mockCategories[8]
         mockPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
 
         for p in mockPlaces {
-            print("Mock place insert '\(p.name)' Group(\(p.group?.name ?? "N/A")) Tags(\(p.tags.count))")
+            print("Mock place insert '\(p.name)' Category(\(p.category?.name ?? "N/A")) Tags(\(p.tags.count))")
         }
         
         try modelContext.save()

@@ -18,7 +18,7 @@ struct PlaceEditContentView: View {
     // MARK: - States & Bindings
     @State private var viewModel: PlaceEditContentViewModel
     @State private var keyboardObserver = KeyboardObserver()
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @Binding private var showMissingName: Bool
     @FocusState private var isNameFocused
     @Environment(AppSettings.self) private var appSettings
@@ -35,7 +35,7 @@ struct PlaceEditContentView: View {
     @State private var annotationSize: CGFloat = 50
     @State private var annotationBottomPading: CGFloat = 40
     @State private var headerNameOpacity: CGFloat = 0
-    @State private var showingGroupSelector: Bool = false
+    @State private var showingCategorySelector: Bool = false
     @State private var showingTagSelector: Bool = false
     @State private var showingMarkerList: Bool = false
     @State private var showEditAddressMenu: Bool = false
@@ -68,7 +68,7 @@ struct PlaceEditContentView: View {
 
     // MARK: - Init
     init(viewModel: PlaceEditContentViewModel,
-         place: Binding<PlaceUI>,
+         place: Binding<PlaceUIModel>,
          showMissingName: Binding<Bool>) {
 
         self.viewModel = viewModel
@@ -189,12 +189,12 @@ struct PlaceEditContentView: View {
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
                         PlaceRectAnnotationView(color: place.groupColor,
-                                                icon: place.group?.icon,
+                                                icon: place.category?.icon,
                                                 iconExtra: place.icon,
                                                 size: annotationSize)
                     case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
-                                               icon: place.group?.icon,
+                                               icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                size: annotationSize,
                                                shadow: false)
@@ -499,7 +499,7 @@ extension PlaceEditContentView {
                 .submitLabel(.done)
                 .focused($isNameFocused)
                 .onSubmit {
-                    //updateGroup()
+                    //updateCategory()
                 }
             inCardDivider
             addressView
@@ -555,38 +555,38 @@ extension PlaceEditContentView {
     @ViewBuilder
     private var groupCardView: some View {
         Group {
-            if let group = place.group {
-                cardView(title: "common.group",
+            if let category = place.category {
+                cardView(title: "common.category",
                          actionTitle: "common.change", action: {
-                    showingGroupSelector.toggle()
+                    showingCategorySelector.toggle()
                 }) {
                     HStack {
-                        GroupView(group: group,
-                                  action: { place.group = nil })
+                        CategoryView(category: category,
+                                  action: { place.category = nil })
                         .padding(.vertical, 20)
                         .padding(.leading, 0)
                         Spacer()
                     }
                 }
             } else {
-                emptyGroupContentView
+                emptyCategoryContentView
             }
         }
-        .sheet(isPresented: $showingGroupSelector) {
-            viewModel.createGroupSelectorView(place: $place)
+        .sheet(isPresented: $showingCategorySelector) {
+            viewModel.createCategorySelectorView(place: $place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.backgroundPrimary)
         }
     }
 
-    private var emptyGroupContentView: some View {
-        cardView(title: "common.group",
+    private var emptyCategoryContentView: some View {
+        cardView(title: "common.category",
                  actionTitle: "common.choose", action: {
-            showingGroupSelector.toggle()
+            showingCategorySelector.toggle()
         }) {
             HStack {
-                Text("placeholder.no_group")
+                Text("placeholder.no_category")
                     .textStyle(.cardPlaceholder)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, inCardTopMargin)
@@ -806,7 +806,7 @@ extension PlaceEditContentView {
         .padding(.bottom, inCardBottomMargin - 8)
     }
     
-    private func imageContentView(_ item: PlaceImageUI) -> some View {
+    private func imageContentView(_ item: PlaceImageUIModel) -> some View {
         ZStack(alignment: .topTrailing) {
             Button {
                 if item.thumbnail != nil { selectedImageId = item.id }
@@ -1015,7 +1015,7 @@ extension PlaceEditContentView {
 struct MockPlaceEditContentView: View {
     var mock: MockContainer
     var index: Int
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var showMissingName: Bool = false
 
     var body: some View {
@@ -1029,38 +1029,38 @@ struct MockPlaceEditContentView: View {
         let mock = MockContainer()
         self.mock = mock
         if index == Int.max {
-            let t1 = SDTag(identifier: UUID(),
+            let t1 = TagRecord(identifier: UUID(),
                            name: "discoteca",
                            color: Color.random().hex)
-            let t2 = SDTag(identifier: UUID(),
+            let t2 = TagRecord(identifier: UUID(),
                            name: "cool place",
                            color: Color.random().hex)
-            let t3 = SDTag(identifier: UUID(),
+            let t3 = TagRecord(identifier: UUID(),
                            name: "dancing",
                            color: Color.random().hex)
-            let t4 = SDTag(identifier: UUID(),
+            let t4 = TagRecord(identifier: UUID(),
                            name: "dscsdvsdv",
                            color: Color.random().hex)
-            let g = SDGroup(identifier: UUID(),
+            let g = CategoryRecord(identifier: UUID(),
                             name: "Mes places",
                             color: Color.random().hex,
                             icon: Icon.sf("cross"))
             let img1 = UIImage.random(square: 64) // UIImage(systemName: "cross")!
-            let s1 = SDImage(id: UUID(),
+            let s1 = PlaceImageRecord(id: UUID(),
                              thumbnail: img1.compressedForStorage(),
                              full: img1.thumbnailData())
             let img2 = UIImage.rdGeo(square: 64)
-            let s2 = SDImage(id: UUID(),
+            let s2 = PlaceImageRecord(id: UUID(),
                              thumbnail: img2.compressedForStorage(),
                              full: img2.thumbnailData())
-            let p = SDPlace(identifier: UUID(),
+            let p = PlaceRecord(identifier: UUID(),
                              name: "El Col·leccionista",
                              latitude: 41.40602900686343,
                              longitude: 2.160639939265184,
                              address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
                              address2: "escalier D, Apt 2",
                              tags: [t1, t2, t3, t4],
-                             group: g,
+                             category: g,
                             images: [s1, s2],
                              icon: .sf("figure.socialdance"))
             self.place = PlaceMapper.toUI(PlaceMapper.toDomain(p))
@@ -1087,17 +1087,17 @@ struct MockPlaceEditContentView: View {
             
             
         } else if index == Int.min {
-            let p = SDPlace(identifier: UUID(),
+            let p = PlaceRecord(identifier: UUID(),
                              name: "El Col·leccionista",
                              latitude: 41.40602900686343,
                              longitude: 2.160639939265184,
                              address: nil,
                              tags: [],
-                             group: nil,
+                             category: nil,
                              icon: nil)
             self.place = PlaceMapper.toUI(PlaceMapper.toDomain(p))
         } else {
-            self.place = mock.getPlaceUI(index)
+            self.place = mock.getPlaceUIModel(index)
         }
     }
 }

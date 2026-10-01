@@ -138,7 +138,7 @@ struct LookupResolvedItem: Identifiable {
                                             name: lookupResolvedItem.name ?? "",
                                             marker: nil,
                                             tags: [],
-                                            group: nil)
+                                            category: nil)
     }
     
     func isEditMode() -> Bool {
@@ -147,7 +147,7 @@ struct LookupResolvedItem: Identifiable {
 
     // MARK: - UI child
     func createLookupPlaceView(_ lookupResolvedItem: LookupResolvedItem,
-                               place: Binding<PlaceUI?>,
+                               place: Binding<PlaceUIModel?>,
                                status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
         return appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem,
                                                   place: place,
@@ -155,7 +155,7 @@ struct LookupResolvedItem: Identifiable {
     }
     
     // MARK: Use cases
-    func updatePlace(_ place: PlaceUI) async throws {
+    func updatePlace(_ place: PlaceUIModel) async throws {
         try await updatePlace(PlaceMapper.toDomain(place))
     }
 

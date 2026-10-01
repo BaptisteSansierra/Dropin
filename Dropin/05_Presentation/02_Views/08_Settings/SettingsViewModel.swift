@@ -18,7 +18,7 @@ import SwiftUI
     var pickFile = false
     var isImporting = false
     var showMapstrConfig = false
-    var mapstrMarkerGroupName: String = "Mapstr"
+    var mapstrMarkerCategoryName: String = "Mapstr"
 
     var exportedTemporaryFile: IdentifiableURL?
     var isExporting = false
@@ -33,10 +33,10 @@ import SwiftUI
     @ObservationIgnored private var saveContext: SaveContext
     @ObservationIgnored private var rollbackContext: RollbackContext
     @ObservationIgnored private var fetchPlaces: FetchPlaces
-    @ObservationIgnored private var fetchGroups: FetchGroups
+    @ObservationIgnored private var fetchCategories: FetchCategories
     @ObservationIgnored private var fetchTags: FetchTags
     @ObservationIgnored private var upsertPlace: UpsertPlace
-    @ObservationIgnored private var upsertGroup: UpsertGroup
+    @ObservationIgnored private var upsertCategory: UpsertCategory
     @ObservationIgnored private var upsertTag: UpsertTag
     @ObservationIgnored private var deleteLibrary: DeleteLibrary
     @ObservationIgnored private var sync: any SyncServicePausableProtocol
@@ -46,10 +46,10 @@ import SwiftUI
          saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
-         fetchGroups: FetchGroups,
+         fetchCategories: FetchCategories,
          fetchTags: FetchTags,
          upsertPlace: UpsertPlace,
-         upsertGroup: UpsertGroup,
+         upsertCategory: UpsertCategory,
          upsertTag: UpsertTag,
          deleteLibrary: DeleteLibrary,
          sync: any SyncServicePausableProtocol) {
@@ -58,10 +58,10 @@ import SwiftUI
         self.saveContext = saveContext
         self.rollbackContext = rollbackContext
         self.fetchPlaces = fetchPlaces
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
         self.upsertPlace = upsertPlace
-        self.upsertGroup = upsertGroup
+        self.upsertCategory = upsertCategory
         self.upsertTag = upsertTag
         self.deleteLibrary = deleteLibrary
         self.sync = sync
@@ -69,7 +69,7 @@ import SwiftUI
     
     func export() async throws -> URL {
         try await ExportService(fetchPlaces: fetchPlaces,
-                                fetchGroups: fetchGroups,
+                                fetchCategories: fetchCategories,
                                 fetchTags: fetchTags)
             .execute()
     }
@@ -89,7 +89,7 @@ import SwiftUI
     }
 
     func createMapstrImportConfigViewModel() -> MapstrImportConfigViewModel {
-        appContainer.createMapstrImportConfigViewModel(baseName: mapstrMarkerGroupName)
+        appContainer.createMapstrImportConfigViewModel(baseName: mapstrMarkerCategoryName)
     }
 
     func cancelImport() {
@@ -112,13 +112,13 @@ import SwiftUI
                                                  saveContext: saveContext,
                                                  rollbackContext: rollbackContext,
                                                  fetchPlaces: fetchPlaces,
-                                                 fetchGroups: fetchGroups,
+                                                 fetchCategories: fetchCategories,
                                                  fetchTags: fetchTags,
                                                  upsertPlace: upsertPlace,
-                                                 upsertGroup: upsertGroup,
+                                                 upsertCategory: upsertCategory,
                                                  upsertTag: upsertTag,
                                                  sync: sync,
-                                                 marker: source == .mapstr ? .group(mapstrMarkerGroupName) : nil)
+                                                 marker: source == .mapstr ? .category(mapstrMarkerCategoryName) : nil)
             try await impCoord.process { count in
                 importStatus?.setCount(count)
             } progress: { count in
@@ -132,7 +132,7 @@ import SwiftUI
             } completion: { placeCount, duplicatedCount, groupCount, tagCount in
                 importStatus?.setDuplicateCount(duplicatedCount)
                 importStatus?.setCreatedPlaceCount(placeCount)
-                importStatus?.setCreatedGroupCount(groupCount)
+                importStatus?.setCreatedCategoryCount(groupCount)
                 importStatus?.setCreatedTagCount(tagCount)
                 importStatus?.complete()
             }

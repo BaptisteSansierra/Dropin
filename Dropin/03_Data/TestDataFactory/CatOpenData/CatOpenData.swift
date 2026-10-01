@@ -21,7 +21,7 @@ final class CatOpenData {
     private var items = [OpenDataItem]()
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
-    private let groupRepository: GroupRepository
+    private let groupRepository: CategoryRepository
     
     init(modelContext: ModelContext) throws {
         guard let url = URL(string: "https://opendata.amb.cat/equipaments/search") else {
@@ -30,7 +30,7 @@ final class CatOpenData {
         self.url = url
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+        groupRepository = CategoryRepositoryImpl(modelContext: modelContext)
     }
     
     func load() async throws {
@@ -114,32 +114,32 @@ final class CatOpenData {
     
     private func convertToDropinData() async throws {
         Log.debug("Convert data to dropin...")
-        var tags = [TagEntity]()
-        var groups = [GroupEntity]()
-        var places = [PlaceEntity]()
+        var tags = [Tag]()
+        var categories = [Category]()
+        var places = [Place]()
         for item in items {
             Log.debug("   process item : \(item.titol)")
 
-            // Create group
-            var group: GroupEntity? = nil
+            // Create category
+            var category: Category? = nil
             if item.tipusEntitat.count > 0 {
-                if let idx = groups.firstIndex(where: { $0.name == item.tipusEntitat }) {
-                    group = groups[idx]
+                if let idx = categories.firstIndex(where: { $0.name == item.tipusEntitat }) {
+                    category = categories[idx]
                 } else {
-                    let g = GroupEntity(name: item.tipusEntitat,
+                    let g = Category(name: item.tipusEntitat,
                                         color: Color.random().hex,
                                         icon: .sf("lock.open.fill"))
-                    groups.append(g)
-                    group = g
+                    categories.append(g)
+                    category = g
                 }
             }
             // Create tags
-            var placeTags = [TagEntity]()
+            var placeTags = [Tag]()
             if item.ambit.count > 0 {
                 if let idx = tags.firstIndex(where: { $0.name == item.ambit }) {
                     placeTags.append(tags[idx])
                 } else {
-                    let t = TagEntity(name: item.ambit, color: Color.random().hex)
+                    let t = Tag(name: item.ambit, color: Color.random().hex)
                     tags.append(t)
                     placeTags.append(t)
                 }
@@ -148,24 +148,24 @@ final class CatOpenData {
                 if let idx = tags.firstIndex(where: { $0.name == item.subambit }) {
                     placeTags.append(tags[idx])
                 } else {
-                    let t = TagEntity(name: item.subambit, color: Color.random().hex)
+                    let t = Tag(name: item.subambit, color: Color.random().hex)
                     tags.append(t)
                     placeTags.append(t)
                 }
             }
             // Create place
-            let place = PlaceEntity(id: UUID(),
+            let place = Place(id: UUID(),
                                     name: item.titol,
                                     coordinates: item.coords,
                                     address: item.address,
                                     tags: placeTags,
-                                    group: group)
+                                    category: category)
             places.append(place)
         }
         
         do {
-            for group in groups {
-                try await groupRepository.create(group)
+            for category in categories {
+                try await groupRepository.create(category)
             }
             for tag in tags {
                 try await tagRepository.create(tag)
@@ -173,7 +173,7 @@ final class CatOpenData {
             for place in places {
                 try await placeRepository.create(place)
             }
-            Log.debug("\(groups.count) Groups created")
+            Log.debug("\(categories.count) Groups created")
             Log.debug("\(tags.count) Tags created")
             Log.debug("\(places.count) Places created")
             

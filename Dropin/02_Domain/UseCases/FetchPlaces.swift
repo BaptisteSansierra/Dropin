@@ -15,7 +15,7 @@ struct FetchPlaces: Sendable {
         self.repository = repository
     }
     
-    func callAsFunction(_ filter: PlaceFilter? = nil) async throws -> [PlaceEntity] {
+    func callAsFunction(_ filter: PlaceFilter? = nil) async throws -> [Place] {
         return try await repository.fetch(filter)
     }
 }

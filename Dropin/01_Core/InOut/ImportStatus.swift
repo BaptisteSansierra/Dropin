@@ -29,7 +29,7 @@ import Foundation
     private(set) var count: Int = 0               // places count
     private(set) var duplicateCount: Int = 0      // duplicated places count
     private(set) var createdPlaceCount: Int = 0   // created places count: may differ than count at the end: malformed / duplicate / ...
-    private(set) var createdGroupCount: Int = 0   // groups count
+    private(set) var createdCategoryCount: Int = 0   // categories count
     private(set) var createdTagCount: Int = 0     // tags count
     private(set) var progress: Int = 0
     private(set) var status: Status = .importing
@@ -52,8 +52,8 @@ import Foundation
         self.createdPlaceCount = count
     }
 
-    func setCreatedGroupCount(_ count: Int) {
-        self.createdGroupCount = count
+    func setCreatedCategoryCount(_ count: Int) {
+        self.createdCategoryCount = count
     }
     
     func setCreatedTagCount(_ count: Int) {

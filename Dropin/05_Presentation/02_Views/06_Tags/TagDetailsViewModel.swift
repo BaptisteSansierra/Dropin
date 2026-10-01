@@ -10,9 +10,9 @@ import SwiftUI
 @MainActor
 @Observable class TagDetailsViewModel {
     
-    var tag: TagUI
+    var tag: TagUIModel
     var loadingPlaces = false
-    var places: [PlaceUI] = []
+    var places: [PlaceUIModel] = []
     var selectedPlaceId: UUID? = nil
     var tagColor: Color
     var showingRemoveAlert: Bool = false
@@ -27,7 +27,7 @@ import SwiftUI
     init(_ appContainer: AppContainer,
          locationManager: LocationManager,
          coordinator: TagCoordinator,
-         tag: TagUI,
+         tag: TagUIModel,
          updateTag: UpdateTag,
          fetchTagPlaces: FetchTagPlaces,
          updatePlace: UpdatePlace) {
@@ -58,8 +58,10 @@ import SwiftUI
     }
     
     // MARK: UI Child
-    func createPlaceSheetView(place: Binding<PlaceUI>) -> PlaceSheetView {
-        return appContainer.createPlaceSheetView(place: place, detent: .constant(.medium))
+    func createPlaceSheetView(place: Binding<PlaceUIModel>) -> PlaceSheetView {
+        return appContainer.createPlaceSheetView(place: place,
+                                                 mapAction: nil,  // TODO: DRO-34 Allow "Map" action from a category/tag detail
+                                                 detent: .constant(.medium))
     }
     
     // MARK: use cases
@@ -78,15 +80,15 @@ import SwiftUI
         loadingPlaces = false
     }
     
-    func unlinkPlaceFromTag(_ place: PlaceUI, at tagIdx: Int) async throws {
+    func unlinkPlaceFromTag(_ place: PlaceUIModel, at tagIdx: Int) async throws {
         place.tags.remove(at: tagIdx)
         try await updatePlace(PlaceMapper.toDomain(place))
     }
     
     // MARK: - private methods
     private func updateCachedPlaces() {
-        // This is a purely UI update on PlaceUI array
-        // so the places arrow are updated with the right group properties
+        // This is a purely UI update on PlaceUIModel array
+        // so the places arrow are updated with the right category properties
         for idx in places.indices {
             if let tagIdx = places[idx].tags.firstIndex(where: { $0.id == tag.id }) {
                 places[idx].tags[tagIdx] = tag

@@ -87,6 +87,7 @@ enum VerifyEmailContext: Hashable {
         defer { isCheckingConfirmation = false }
         do {
             try await authService.signIn(email: email, password: password)
+            coordinator.popToRoot()
         } catch {
             Log.error("VerifyEmailViewModel: confirmation check failed: \(error)")
             lastError = String(localized: "auth.verify.not_confirmed_yet")

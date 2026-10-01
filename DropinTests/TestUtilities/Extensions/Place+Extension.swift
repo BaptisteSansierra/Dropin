@@ -1,0 +1,196 @@
+//
+//  Place+Extension.swift
+//  DropinTests
+//
+//  Created by baptiste sansierra on 16/10/25.
+//
+
+import Foundation
+import CoreLocation
+import ContactFieldKit
+
+@testable import Dropin
+
+extension Place {  // Mock extension
+
+    // Convenience init for tests — mirrors the old signature, defaults new sync fields.
+    init(id: UUID,
+         name: String,
+         coordinates: CLLocationCoordinate2D,
+         address: String?,
+         address2: String? = nil,
+         tags: [Dropin.Tag] = [],
+         category: Dropin.Category? = nil,
+         images: [UUID] = [],
+         icon: Icon? = nil,
+         rating: Float? = nil,
+         phone: [String] = [],
+         email: [String] = [],
+         url: [String] = [],
+         notes: String? = nil,
+         createdAt: Date = Date(),
+         deletedAt: Date? = nil) {
+        self.init(id: id,
+                  name: name,
+                  coordinates: coordinates,
+                  address: address,
+                  address2: address2,
+                  tags: tags,
+                  category: category,
+                  images: images,
+                  icon: icon,
+                  rating: rating,
+                  phone: phone,
+                  email: email,
+                  url: url,
+                  notes: notes,
+                  createdAt: createdAt,
+                  updatedAt: createdAt,
+                  deletedAt: deletedAt)
+    }
+
+    // Convenience init for copying a place with new tags/category.
+    init(other: Place, tags: [Dropin.Tag], category: Dropin.Category? = nil) {
+        self.init(id: other.id,
+                  name: other.name,
+                  coordinates: other.coordinates,
+                  address: other.address,
+                  address2: other.address2,
+                  tags: tags,
+                  category: category,
+                  images: other.images,
+                  icon: other.icon,
+                  rating: other.rating,
+                  phone: other.phone,
+                  email: other.email,
+                  url: other.url,
+                  notes: other.notes,
+                  createdAt: other.createdAt,
+                  updatedAt: other.updatedAt,
+                  deletedAt: other.deletedAt)
+    }
+
+    static func mockPlaces() -> [Place] {
+
+        let l1 = Place(id: UUID(),
+                             name: "La Chitarra",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.40622777528736, longitude: 2.1595467749244204),
+                             address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("fork.knife.circle"),
+                             createdAt: Date()
+                             )
+
+        let l2 = Place(id: UUID(),
+                             name: "Les Tres a la Cuina",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.40522138362398, longitude: 2.1598304185317847),
+                             // Apple
+                             //coordinates: CLLocationCoordinate2D(latitude: 41.405341,
+                             //longitude: 2.159652,
+                             address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("fork.knife.circle"),
+                             phone: [ContactItem(value: "931054947", label: ContactLabel(kind: .phone, label: .mobile)).rawValue,
+                                     ContactItem(value: "633029920", label: ContactLabel(kind: .phone, label: .home)).rawValue],
+                             email: [ContactItem(value: "tres.a.la@cuina.es", label: ContactLabel(kind: .email, label: .work)).rawValue],
+                             url: [ContactItem(value: "http://lestresalacuina.com", label: ContactLabel(kind: .url, label: .url)).rawValue],
+                             notes: "Don't forget your tupper",
+                             createdAt: Date(),
+                             )
+
+        let l3 = Place(id: UUID(),
+                             name: "Chiringuito Karamba",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.44511384541266, longitude: 2.2495646936392317),
+                             address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("fork.knife.circle"),
+                             createdAt: Date()
+                             )
+
+        let l4 = Place(id: UUID(),
+                             name: "Continental Bar",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.40626764285292, longitude: 2.156492157860694),
+                             address: "Carrer de la Providència, 30, /nGràcia, /n08024 Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("wineglass"),
+                             createdAt: Date()
+                             )
+
+        let l5 = Place(id: UUID(),
+                             name: "Bagdad café",
+                             coordinates: CLLocationCoordinate2D(latitude: 33.321589923265904, longitude: 44.416811639303546),
+                             address: "Rasafi Street, Baghdad, Baghdad Governorate, Irak",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("pianokeys"),
+                             createdAt: Date()
+                             )
+
+        let l6 = Place(id: UUID(),
+                             name: "El Col·leccionista",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.40602900686343, longitude: 2.160639939265184),
+                             address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("figure.socialdance"),
+                             createdAt: Date()
+                             )
+
+        let l7 = Place(id: UUID(),
+                             name: "Molsa Biosí",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.403067387301924, longitude: 2.158858952034207),
+                             address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("carrot"),
+                             createdAt: Date()
+                            )
+
+        let l8 = Place(id: UUID(),
+                             name: "Sincronia Yoga",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.40068001375675, longitude: 2.155838283307449),
+                             address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("swirl.circle.righthalf.filled.inverse"),
+                             createdAt: Date()
+                             )
+
+
+        let l9 = Place(id: UUID(),
+                             name: "Be Laundry Joanic",
+                             coordinates: CLLocationCoordinate2D(latitude: 41.399426209480154, longitude: 2.154584065083631),
+                             address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
+                             address2: "",
+                             tags: [],
+                             category: nil,
+                             icon: .sf("basket"),
+                             createdAt: Date()
+                             )
+        
+        let l10 = Place(id: UUID(),
+                              name: "LONDON",
+                              coordinates: CLLocationCoordinate2D.london,
+                              address: "London\nGreat Britain",
+                              address2: "",
+                              tags: [],
+                              category: nil,
+                              icon: nil,
+                              createdAt: Date()
+                              )
+
+        return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10]
+    }
+}

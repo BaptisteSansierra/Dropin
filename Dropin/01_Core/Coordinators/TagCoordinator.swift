@@ -17,7 +17,7 @@ import SwiftUI
     }
     
     // MARK: navigation methods
-    func pushPlaceEditView(placeRef: PlaceUIRef) {
+    func pushPlaceEditView(placeRef: PlaceUIModelRef) {
         path.append(TagNavigationItem.tagPlace(placeRef: placeRef))
     }
 
@@ -41,7 +41,7 @@ import SwiftUI
 enum TagNavigationItem: Hashable {
     case tagDetails(tagId: UUID)
     case tagMap(tagId: UUID)
-    case tagPlace(placeRef: PlaceUIRef)
+    case tagPlace(placeRef: PlaceUIModelRef)
     // development
     case undefinedDummyView
 }

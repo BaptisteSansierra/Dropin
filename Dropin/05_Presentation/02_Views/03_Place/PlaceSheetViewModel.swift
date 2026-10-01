@@ -38,7 +38,9 @@ import CoreLocation
     var selectedImageIndex: Int? = nil
     var isSharing: Bool = false
     var shareURL: IdentifiableURL? = nil
-    var shareError: String? = nil
+    var shareMessage: String = ""
+    var shareSubject: String = ""
+    var shareErrorMsg: String? = nil
 
     @ObservationIgnored private var coordinator: any PlaceNavigationCoordinator
     @ObservationIgnored private var appContainer: AppContainer
@@ -62,12 +64,12 @@ import CoreLocation
     }
     
     // MARK: Navigation
-    func pushPlaceEditView(placeRef: PlaceUIRef) {
+    func pushPlaceEditView(placeRef: PlaceUIModelRef) {
         coordinator.pushPlaceEditView(placeRef: placeRef)
     }
     
     // MARK: - callbacks and co
-    func call(place: PlaceUI) {
+    func call(place: PlaceUIModel) {
         guard let phone = place.phone.first else { return }
         do {
             try URLOpener.openURL(contactItem: phone)
@@ -79,7 +81,7 @@ import CoreLocation
         }
     }
     
-    func openWebLink(place: PlaceUI) {
+    func openWebLink(place: PlaceUIModel) {
         guard let url = place.url.first else { return }
         do {
             try URLOpener.openURL(contactItem: url)
@@ -91,43 +93,59 @@ import CoreLocation
         }
     }
     
-    func routeThrowGoogle(place: PlaceUI) {
+    func routeThrowGoogle(place: PlaceUIModel) {
         //guard let url = URL(string: "comgooglemaps://?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
         guard let url = URL(string:"comgooglemaps://?daddr=\(place.address ?? "")") else { return }
         UIApplication.shared.open(url)
     }
     
-    func routeThrowApple(place: PlaceUI) {
+    func routeThrowApple(place: PlaceUIModel) {
         //guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.coordinates.latitude),\(place.coordinates.longitude)") else { return }
         guard let url = URL(string:"http://maps.apple.com/?daddr=\(place.address ?? "")") else { return }
         UIApplication.shared.open(url)
     }
     
-    func routeThrowWaze(place: PlaceUI) {
-        guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude)-\(place.coordinates.longitude)&navigate=yes") else { return }
+    func routeThrowWaze(place: PlaceUIModel) {
+        guard let url = URL(string: "https://www.waze.com/ul?ll=\(place.coordinates.latitude),\(place.coordinates.longitude)&navigate=yes") else { return }
         //guard let url = URL(string:"https://www.waze.com/ul?ll=\(place.address)") else { return }
         UIApplication.shared.open(url)
     }
     
-    func share(place: PlaceUI) async {
-        shareError = nil
+    func share(place: PlaceUIModel) async {
+        shareErrorMsg = nil
         isSharing = true
         defer { isSharing = false }
         do {
             let url = try await shareService.shareURL(placeId: place.id)
+            let senderName = appContainer.currentDisplayName?.isEmpty == false
+                ? appContainer.currentDisplayName!
+                : String(localized: "place_sheet.share.sender_fallback")
+            shareMessage = String(format: NSLocalizedString("place_sheet.share.message", comment: ""), senderName)
+            shareSubject = String(format: NSLocalizedString("place_sheet.share.email_subject", comment: ""), senderName, place.name)
             shareURL = IdentifiableURL(url: url)
         } catch {
             Log.error("PlaceSheetViewModel: share failed for place \(place.id): \(error)")
-            shareError = "place_sheet.share.error"
+            if let urlError =  error as? URLError {
+                switch urlError.code {
+                    case .notConnectedToInternet:
+                        shareErrorMsg = "place_sheet.share.error.connection"
+                    default:
+                        // shareErrorMsg is wrapped in LocalizedStringKey(_:) by the view, which needs
+                        // the literal catalog key "place_sheet.share.error.url.%d" (with the code substituted via %d)
+                        shareErrorMsg = String(format: NSLocalizedString("place_sheet.share.error.url.%d", comment: ""), urlError.code.rawValue)
+                }
+            } else {
+                shareErrorMsg = "place_sheet.share.error"
+            }
         }
     }
 
-    func copyAddressToClipboard(place: PlaceUI) {
+    func copyAddressToClipboard(place: PlaceUIModel) {
         guard let address = place.address else { return }
-        UIPasteboard.general.string = place.address
+        UIPasteboard.general.string = address
     }
     
-    func copyCoordinatesToClipboard(place: PlaceUI) {
+    func copyCoordinatesToClipboard(place: PlaceUIModel) {
         UIPasteboard.general.string = "\(place.coordinates.latitude), \(place.coordinates.longitude)"
     }
     

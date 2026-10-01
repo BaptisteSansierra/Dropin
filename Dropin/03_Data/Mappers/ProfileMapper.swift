@@ -7,8 +7,8 @@ import Foundation
 
 public enum ProfileMapper {
 
-    static func toDomain(_ sd: SDProfile) -> ProfileEntity {
-        ProfileEntity(id: sd.identifier,
+    static func toDomain(_ sd: ProfileRecord) -> Profile {
+        Profile(id: sd.identifier,
                       email: sd.email,
                       displayName: sd.displayName,
                       plan: UserPlan(rawValue: sd.plan) ?? .free,
@@ -16,8 +16,8 @@ public enum ProfileMapper {
                       updatedAt: sd.updatedAt)
     }
 
-    static func toData(_ p: ProfileEntity) -> SDProfile {
-        SDProfile(identifier: p.id,
+    static func toData(_ p: Profile) -> ProfileRecord {
+        ProfileRecord(identifier: p.id,
                   email: p.email,
                   displayName: p.displayName,
                   plan: p.plan.rawValue,

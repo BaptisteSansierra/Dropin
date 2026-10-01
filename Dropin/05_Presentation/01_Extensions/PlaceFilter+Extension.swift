@@ -10,7 +10,9 @@ import Foundation
 extension PlaceFilter {
 
     @MainActor
-    func apply(_ places: [PlaceUI]) -> [PlaceUI] {
-        places.filter { matches( PlaceMapper.toDomain($0) ) }
+    func apply(_ places: [PlaceUIModel]) -> [PlaceUIModel] {
+        places
+            //.filter { $0.isActive }
+            .filter { matches( PlaceMapper.toDomain($0) ) }
     }
 }

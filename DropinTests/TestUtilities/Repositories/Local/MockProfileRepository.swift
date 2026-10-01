@@ -7,17 +7,17 @@ import Foundation
 
 @MainActor
 final class MockProfileRepository: ProfileRepository {
-    private var stored: ProfileEntity?
+    private var stored: Profile?
 
-    init(initial: ProfileEntity? = nil) {
+    init(initial: Profile? = nil) {
         self.stored = initial
     }
 
-    func fetch() async throws -> ProfileEntity? { stored }
+    func fetch() async throws -> Profile? { stored }
 
-    func upsert(_ profile: ProfileEntity) async throws { stored = profile }
+    func upsert(_ profile: Profile) async throws { stored = profile }
 
-    func update(displayName: String?) async throws -> ProfileEntity {
+    func update(displayName: String?) async throws -> Profile {
         guard let current = stored else { throw DataError.notFound(msg: "no profile") }
         let updated = current.withDisplayName(displayName)
         stored = updated

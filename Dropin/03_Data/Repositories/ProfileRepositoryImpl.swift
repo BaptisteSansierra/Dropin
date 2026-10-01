@@ -14,15 +14,15 @@ final class ProfileRepositoryImpl: ProfileRepository {
         self.modelContext = modelContext
     }
     
-    func fetch() async throws -> ProfileEntity? {
+    func fetch() async throws -> Profile? {
         // There's only ever one row for the signed-in user (RLS scopes it).
-        let desc = FetchDescriptor<SDProfile>()
+        let desc = FetchDescriptor<ProfileRecord>()
         return try modelContext.fetch(desc).first.map { ProfileMapper.toDomain($0) }
     }
     
-    func upsert(_ profile: ProfileEntity) async throws {
+    func upsert(_ profile: Profile) async throws {
         let targetId = profile.id
-        let desc = FetchDescriptor<SDProfile>(predicate: #Predicate { $0.identifier == targetId })
+        let desc = FetchDescriptor<ProfileRecord>(predicate: #Predicate { $0.identifier == targetId })
         if let existing = try modelContext.fetch(desc).first {
             existing.email       = profile.email
             existing.displayName = profile.displayName
@@ -38,13 +38,13 @@ final class ProfileRepositoryImpl: ProfileRepository {
     /// method on this impl (currently just `update(displayName:)`) must set
     /// `sd.updatedAt = Date()` before saving. Profile uses intent-specific APIs
     /// rather than a generic `update(_:entity)`, so the stamp can't live on
-    /// the `Syncing*Repository` decorator like it does for places/groups/tags
+    /// the `Syncing*Repository` decorator like it does for places/categories/tags
     /// — it lives here, at the persistence layer. If you add another
     /// `update(field:)` method, remember to stamp here too.
-    func update(displayName: String?) async throws -> ProfileEntity {
-        let desc = FetchDescriptor<SDProfile>()
+    func update(displayName: String?) async throws -> Profile {
+        let desc = FetchDescriptor<ProfileRecord>()
         guard let sd = try modelContext.fetch(desc).first else {
-            throw DataError.notFound(msg: "no SDProfile to update")
+            throw DataError.notFound(msg: "no ProfileRecord to update")
         }
         sd.displayName = displayName
         sd.updatedAt = Date()
@@ -53,7 +53,7 @@ final class ProfileRepositoryImpl: ProfileRepository {
     }
     
     func clearTable() async throws {
-        try modelContext.delete(model: SDProfile.self)
+        try modelContext.delete(model: ProfileRecord.self)
         try modelContext.save()
     }
 }

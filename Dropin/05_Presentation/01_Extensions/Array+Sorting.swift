@@ -8,8 +8,8 @@
 import Foundation
 
 @MainActor
-extension Array where Element == PlaceUI {
-    func defaultSorted() -> [PlaceUI] {
+extension Array where Element == PlaceUIModel {
+    func defaultSorted() -> [PlaceUIModel] {
         sorted { lhs, rhs in
             guard lhs.name != rhs.name else {
                 return lhs.createdAt < rhs.createdAt
@@ -20,8 +20,8 @@ extension Array where Element == PlaceUI {
 }
 
 @MainActor
-extension Array where Element == GroupUI {
-    func defaultSorted() -> [GroupUI] {
+extension Array where Element == CategoryUIModel {
+    func defaultSorted() -> [CategoryUIModel] {
         sorted { lhs, rhs in
             guard lhs.name != rhs.name else {
                 return lhs.createdAt < rhs.createdAt
@@ -32,8 +32,8 @@ extension Array where Element == GroupUI {
 }
 
 @MainActor
-extension Array where Element == TagUI {
-    func defaultSorted() -> [TagUI] {
+extension Array where Element == TagUIModel {
+    func defaultSorted() -> [TagUIModel] {
         sorted { lhs, rhs in
             guard lhs.name != rhs.name else {
                 return lhs.createdAt < rhs.createdAt

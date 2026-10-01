@@ -1,6 +1,6 @@
 {
   "version" : 1,
-  "groups" : [
+  "categories" : [
     {
       "color" : "#655991",
       "icon" : "sf:figure.socialdance",
@@ -135,7 +135,7 @@
         "longitude" : -1.0858623,
         "latitude" : 46.1553535
       },
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0"
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0"
     },
     {
       "coordinates" : {
@@ -152,7 +152,7 @@
       "url" : [
 
       ],
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0",
       "tagIds" : [
 
       ],
@@ -169,7 +169,7 @@
       "tagIds" : [
 
       ],
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0",
       "address" : "Calle de Manuel Lamela, 6, 28025 Madrid, Spain",
       "email" : [
 
@@ -207,7 +207,7 @@
       },
       "address" : "Carrer de Martí, 79, 08024 Barcelona, Spain",
       "address2" : "",
-      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "categoryId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
       "phone" : [
         "{\"label\":{\"value\":{\"phone\":{}},\"kind\":\"phone\"},\"id\":\"AAB5970E-A71B-4B2E-B4F8-E500FF2B8B3A\",\"value\":\"932849412\"}"
       ],
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "categoryId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
       "images" : [
 
       ],
@@ -247,7 +247,7 @@
       ]
     },
     {
-      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "categoryId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
       "address" : "Carrer de Joan Blanques, 56, 08024 Barcelona, Spain",
       "name" : "La Chitarra",
       "address2" : "",
@@ -285,7 +285,7 @@
       ],
       "id" : "6D2A8828-5A1E-4615-AF8E-A1EECA461E97",
       "address" : "Carrer del Torrent de les Flors, 46, 08024 Barcelona, Spain",
-      "groupId" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30",
+      "categoryId" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30",
       "phone" : [
 
       ],
@@ -309,7 +309,7 @@
       "id" : "B9247771-6D5D-45F5-B90D-D1ED0EF4C516",
       "name" : "Guillaume",
       "createdAt" : "2026-04-18T11:21:51Z",
-      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "categoryId" : "C144E896-238D-4DC4-9847-0112CE491850",
       "url" : [
 
       ],
@@ -341,7 +341,7 @@
         "{\"label\":{\"kind\":\"phone\",\"value\":{\"custom\":{\"_0\":\"Louis\"}}},\"value\":\"+34 648 69 11 25\",\"id\":\"50FB080A-FA4E-4CFB-9E3F-F68B6FDCA996\"}",
         "{\"id\":\"1B18B302-B65F-4C83-8624-EA7567C06B0B\",\"value\":\"+34 669 30 95 63\",\"label\":{\"value\":{\"custom\":{\"_0\":\"Marilo\"}},\"kind\":\"phone\"}}"
       ],
-      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "categoryId" : "C144E896-238D-4DC4-9847-0112CE491850",
       "createdAt" : "2026-04-18T11:26:57Z",
       "email" : [
 
@@ -382,7 +382,7 @@
         "{\"value\":\"+34 691 52 82 33\",\"id\":\"21519EB0-27A2-4CB0-82D1-744980B0B447\",\"label\":{\"value\":{\"custom\":{\"_0\":\"Stephanie\"}},\"kind\":\"phone\"}}"
       ],
       "name" : "Steph & Jesse",
-      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850"
+      "categoryId" : "C144E896-238D-4DC4-9847-0112CE491850"
     },
     {
       "coordinates" : {
@@ -392,7 +392,7 @@
       "images" : [
 
       ],
-      "groupId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
+      "categoryId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
       "address" : "Carrer de Sant Lluís, 24(Montmany con Sant Lluís), 08012 Barcelona, Spain",
       "name" : "Taverna El Glop",
       "rating" : 4,
@@ -420,7 +420,7 @@
         "B74249E1-CF65-44F8-AD5B-132488AE6F18"
       ],
       "name" : "Can Punyetes",
-      "groupId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
+      "categoryId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
       "images" : [
 
       ],
@@ -448,7 +448,7 @@
       "images" : [
 
       ],
-      "groupId" : null,
+      "categoryId" : null,
       "address" : "Carrer de Manrique de Lara, 8\n08024 Barcelona Barcelona\nSpain",
       "notes" : "Candado 574",
       "name" : "Jardi Alzina",
@@ -494,7 +494,7 @@
 
       ],
       "id" : "D6FF324C-7C16-44A8-B1EF-5F73D225D73E",
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0"
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0"
     },
     {
       "url" : [
@@ -521,7 +521,7 @@
 
       ],
       "id" : "4395DE0A-512C-4448-9EF7-305E27A82266",
-      "groupId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD"
+      "categoryId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD"
     },
     {
       "url" : [
@@ -548,7 +548,7 @@
 
       ],
       "id" : "68E20D85-FD70-4773-93D9-D6702D0C8C00",
-      "groupId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD"
+      "categoryId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD"
     },
     {
       "images" : [
@@ -565,7 +565,7 @@
 
       ],
       "id" : "C7AD9BD3-2451-4355-983A-2B212FD4517C",
-      "groupId" : "B13C1BBB-0351-4F6A-B6ED-9C2D86BFB785",
+      "categoryId" : "B13C1BBB-0351-4F6A-B6ED-9C2D86BFB785",
       "tagIds" : [
         "8E6FE6FF-2BC8-436B-927D-64949C3DDB44",
         "940BBF00-BF58-4415-95BB-89AD4F9D3007"

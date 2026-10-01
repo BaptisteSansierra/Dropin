@@ -13,7 +13,7 @@ struct SupabasePlaceDTO: Codable {
     let longitude: Double
     let address: String?
     let address2: String?
-    let groupId: UUID?
+    let categoryId: UUID?
     let tagIds: [UUID]
     let icon: String?
     let rating: Float?
@@ -34,7 +34,7 @@ struct SupabasePlaceDTO: Codable {
         case longitude
         case address
         case address2
-        case groupId   = "group_id"
+        case categoryId   = "category_id"
         case tagIds    = "tag_ids"
         case icon
         case rating
@@ -50,7 +50,7 @@ struct SupabasePlaceDTO: Codable {
 
     /// Explicit encoder — synthesized Codable uses `encodeIfPresent` for Optionals, which
     /// drops nil keys entirely. Postgrest's `upsert` then leaves those columns untouched,
-    /// so e.g. clearing `place.group` silently fails to nullify `group_id` server-side.
+    /// so e.g. clearing `place.category` silently fails to nullify `group_id` server-side.
     /// Using `encode` writes the key with JSON `null`, which is what we want.
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
@@ -61,7 +61,7 @@ struct SupabasePlaceDTO: Codable {
         try c.encode(longitude, forKey: .longitude)
         try c.encode(address,   forKey: .address)
         try c.encode(address2,  forKey: .address2)
-        try c.encode(groupId,   forKey: .groupId)
+        try c.encode(categoryId,   forKey: .categoryId)
         try c.encode(tagIds,    forKey: .tagIds)
         try c.encode(icon,      forKey: .icon)
         try c.encode(rating,    forKey: .rating)
@@ -75,7 +75,7 @@ struct SupabasePlaceDTO: Codable {
         try c.encode(deletedAt, forKey: .deletedAt)
     }
 
-    init(from place: PlaceEntity, userId: UUID) {
+    init(from place: Place, userId: UUID) {
         self.id        = place.id
         self.userId    = userId
         self.name      = place.name
@@ -83,7 +83,7 @@ struct SupabasePlaceDTO: Codable {
         self.longitude = place.coordinates.longitude
         self.address   = place.address
         self.address2  = place.address2
-        self.groupId   = place.group?.id
+        self.categoryId   = place.category?.id
         self.tagIds    = place.tags.map(\.id)
         self.icon      = place.icon?.rawValue
         self.rating    = place.rating
@@ -97,24 +97,24 @@ struct SupabasePlaceDTO: Codable {
         self.deletedAt = place.deletedAt
     }
 
-    func toDomain() -> PlaceEntity {
-        // Tags and group are resolved from tag_ids/group_id via stubs.
+    func toDomain() -> Place {
+        // Tags and category are resolved from tag_ids/group_id via stubs.
         // PlaceRepositoryImpl.upsert uses only the .id from each entity
-        // to look up the real SDTag/SDGroup objects in SwiftData.
-        // Tags and groups must be synced before places for linkage to succeed.
+        // to look up the real TagRecord/CategoryRecord objects in SwiftData.
+        // Tags and categories must be synced before places for linkage to succeed.
         let stubTags = tagIds.map { id in
-            TagEntity(id: id, name: "", color: "000000",
+            Tag(id: id, name: "", color: "000000",
                       createdAt: .distantPast, updatedAt: .distantPast, deletedAt: nil)
         }
-        let stubGroup = groupId.map { id in
-            GroupEntity(id: id, name: "", color: "000000", icon: .sf(""),
+        let stubCategory = categoryId.map { id in
+            Category(id: id, name: "", color: "000000", icon: .sf(""),
                         createdAt: .distantPast, updatedAt: .distantPast, deletedAt: nil)
         }
-        return PlaceEntity(
+        return Place(
             id: id, name: name,
             coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
             address: address, address2: address2,
-            tags: stubTags, group: stubGroup,
+            tags: stubTags, category: stubCategory,
             images: imageIds,
             icon: icon.flatMap { Icon(rawValue: $0) },
             rating: rating,

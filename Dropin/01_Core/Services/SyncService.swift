@@ -7,11 +7,11 @@ import Foundation
 @MainActor
 protocol SyncServiceProtocol: AnyObject {
     var syncStatus: SyncStatus { get }
-    /// Total number of pending dirty entities (places + groups + tags + profile).
+    /// Total number of pending dirty entities (places + categories + tags + profile).
     /// Used by sign-out to warn the user about unsynced data.
     var pendingChangeCount: Int { get }
     func markPlaceDirty(_ id: UUID)
-    func markGroupDirty(_ id: UUID)
+    func markCategoryDirty(_ id: UUID)
     func markTagDirty(_ id: UUID)
     func markImagesChanged()
     func markProfileDirty()
@@ -46,11 +46,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
 
     // MARK: - Dirty sets (pending push)
     private var dirtyPlaceIds: Set<UUID> = []
-    private var dirtyGroupIds: Set<UUID> = []
+    private var dirtyCategoryIds: Set<UUID> = []
     private var dirtyTagIds: Set<UUID> = []
     // Profile is single-row; a bool suffices.
     private var dirtyProfile = false
-    // Image dirty state lives on SDImage itself (syncedAt == nil OR deletedAt != nil),
+    // Image dirty state lives on PlaceImageRecord itself (syncedAt == nil OR deletedAt != nil),
     // so no in-memory set is needed.
 
     // Single-flight push guard: coalesces bursts of mark*Dirty into one push.
@@ -66,46 +66,57 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     // MARK: - Pending change accounting
     var pendingChangeCount: Int {
         dirtyPlaceIds.count
-        + dirtyGroupIds.count
+        + dirtyCategoryIds.count
         + dirtyTagIds.count
         + (dirtyProfile ? 1 : 0)
-        + (pendingPush ? 1 : 0)   // If pendingPush we do not want pendingChangeCount to bo 0
-                                  // *WARNING* FIXME: pendingChangeCount is not reflecting the quantity of items being pushed in this case
+        + (pendingPush ? 1 : 0)
+        // A push batch drains its dirty set (e.g. dirtyPlaceIds.removeAll() in
+        // pushDirtyPlaces) before the network calls for that batch actually
+        // complete, so the counts above can read 0 while a push is still mid-flight
+        // (e.g. mid bulk import). pushTask stays non-nil for that whole span —
+        // without this, sign-out's "any pending sync?" guard could pass and wipe
+        // local data still being uploaded.
+        + (pushTask != nil ? 1 : 0)
     }
 
     // MARK: - Dependencies
     private let localPlaceRepo: any PlaceRepository
-    private let localGroupRepo: any GroupRepository
+    private let localCategoryRepo: any CategoryRepository
     private let localTagRepo: any TagRepository
-    private let localImageRepo: any ImageRepository
+    private let localImageRepo: any PlaceImageRepository
     private let localProfileRepo: any ProfileRepository
     private let remotePlaceRepo: any RemotePlaceRepository
-    private let remoteGroupRepo: any RemoteGroupRepository
+    private let remoteCategoryRepo: any RemoteCategoryRepository
     private let remoteTagRepo: any RemoteTagRepository
-    private let remoteImageRepo: any RemoteImageRepository
+    private let remoteImageRepo: any RemotePlaceImageRepository
     private let remoteProfileRepo: any RemoteProfileRepository
     private let reachability: any ReachabilityServiceProtocol
+    /// Set by AppContainer right after both are constructed — can't be a
+    /// constructor param: AddressBackfillService writes through the
+    /// syncing-decorated PlaceRepository, which itself needs this SyncService
+    /// instance, so injecting it here would be circular.
+    var addressBackfillService: (any AddressBackfillServiceProtocol)?
     private let userDefaults: UserDefaults
 
     init(localPlaceRepo: any PlaceRepository,
-         localGroupRepo: any GroupRepository,
+         localCategoryRepo: any CategoryRepository,
          localTagRepo: any TagRepository,
-         localImageRepo: any ImageRepository,
+         localImageRepo: any PlaceImageRepository,
          localProfileRepo: any ProfileRepository,
          remotePlaceRepo: any RemotePlaceRepository,
-         remoteGroupRepo: any RemoteGroupRepository,
+         remoteCategoryRepo: any RemoteCategoryRepository,
          remoteTagRepo: any RemoteTagRepository,
-         remoteImageRepo: any RemoteImageRepository,
+         remoteImageRepo: any RemotePlaceImageRepository,
          remoteProfileRepo: any RemoteProfileRepository,
          reachability: any ReachabilityServiceProtocol,
          userDefaults: UserDefaults = .standard) {
         self.localPlaceRepo = localPlaceRepo
-        self.localGroupRepo = localGroupRepo
+        self.localCategoryRepo = localCategoryRepo
         self.localTagRepo = localTagRepo
         self.localImageRepo = localImageRepo
         self.localProfileRepo = localProfileRepo
         self.remotePlaceRepo = remotePlaceRepo
-        self.remoteGroupRepo = remoteGroupRepo
+        self.remoteCategoryRepo = remoteCategoryRepo
         self.remoteTagRepo = remoteTagRepo
         self.remoteImageRepo = remoteImageRepo
         self.remoteProfileRepo = remoteProfileRepo
@@ -125,7 +136,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         syncStatus = SyncStatus()
         // Reset pending operations
         dirtyPlaceIds.removeAll()
-        dirtyGroupIds.removeAll()
+        dirtyCategoryIds.removeAll()
         dirtyTagIds.removeAll()
         dirtyProfile = false
     }
@@ -136,9 +147,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         schedulePush()
     }
 
-    func markGroupDirty(_ id: UUID) {
-        Log.debug("Mark group dirty \(id)")
-        dirtyGroupIds.insert(id)
+    func markCategoryDirty(_ id: UUID) {
+        Log.debug("Mark category dirty \(id)")
+        dirtyCategoryIds.insert(id)
         schedulePush()
     }
 
@@ -148,7 +159,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         schedulePush()
     }
 
-    /// Images carry their own dirty state on SDImage — this just nudges a push attempt.
+    /// Images carry their own dirty state on PlaceImageRecord — this just nudges a push attempt.
     func markImagesChanged() {
         schedulePush()
     }
@@ -211,12 +222,12 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     private func push() async {
         // Push order matters because of Postgres FK constraints:
         //   - images.place_id references places.id → places must exist remotely before image rows
-        // Profile is independent of everything else; tags/groups have no FK from places
+        // Profile is independent of everything else; tags/categories have no FK from places
         // (places.tag_ids[] and group_id are unconstrained), but we still push them
         // before places for symmetry with pull.
         await pushDirtyProfile()
         await pushDirtyTags()
-        await pushDirtyGroups()
+        await pushDirtyCategories()
         await pushDirtyPlaces()
         await pushDirtyImages()
         await pushDeletedImages()
@@ -258,20 +269,20 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         }
     }
 
-    private func pushDirtyGroups() async {
-        let ids = dirtyGroupIds
-        dirtyGroupIds.removeAll()
+    private func pushDirtyCategories() async {
+        let ids = dirtyCategoryIds
+        dirtyCategoryIds.removeAll()
         for id in ids {
             do {
-                let group = try await localGroupRepo.fetch(id)
-                try await remoteGroupRepo.upsert(group)
-                Log.debug("Remote upsert GROUP \(group.name)")
+                let category = try await localCategoryRepo.fetch(id)
+                try await remoteCategoryRepo.upsert(category)
+                Log.debug("Remote upsert GROUP \(category.name)")
             } catch DataError.notFound(_) {
-                Log.debug("SyncService: dropping dirty group \(id) — no longer exists locally")
+                Log.debug("SyncService: dropping dirty category \(id) — no longer exists locally")
             } catch {
-                dirtyGroupIds.insert(id)
+                dirtyCategoryIds.insert(id)
                 assertNoBug(error)
-                Log.error("SyncService: push group \(id) failed: \(error)")
+                Log.error("SyncService: push category \(id) failed: \(error)")
             }
         }
     }
@@ -335,26 +346,59 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
 
     private func pull() async {
         let since = syncStatus.lastSyncedAt ?? .distantPast
+        // A first-ever pull starts from an empty local store, so there's items to tombstone
+        // skip soft-deleted rows entirely.
+        // Next pulls must still see them to propagate deletions
+        let isFirstSync = since == .distantPast
         do {
             Log.debug("PULL since \(since) ...")
             let profile = try await remoteProfileRepo.fetch(updatedAfter: since)
-            let places  = try await remotePlaceRepo.fetch(updatedAfter: since)
-            let groups  = try await remoteGroupRepo.fetch(updatedAfter: since)
-            let tags    = try await remoteTagRepo.fetch(updatedAfter: since)
-            Log.debug(" > PULLED \(places.count) places")
+            let places  = try await remotePlaceRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
+            let categories  = try await remoteCategoryRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
+            let tags    = try await remoteTagRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
+            Log.debug(" > PULLED \(places.count) places, \(categories.count) categories, \(tags.count) tags")
 
             // Pull order matters because of local linkage:
             //   - Profile has no relationship to other tables; can be applied first.
             //   - PlaceRepositoryImpl resolves tag_ids / group_id by looking them up in SwiftData,
-            //     so tags and groups must be upserted locally before places.
-            //   - SDImage.place is a SwiftData relationship → places must exist locally before
+            //     so tags and categories must be upserted locally before places.
+            //   - PlaceImageRecord.place is a SwiftData relationship → places must exist locally before
             //     images are inserted.
+            //
+            // Each row is upserted independently: one bad/unresolvable row (e.g. a
+            // place referencing a tag id that failed to link) shouldn't block every
+            // other row in the batch — log it and move on to the next one.
             if let profile { try await localProfileRepo.upsert(profile) }
-            for tag   in tags   { try await localTagRepo.upsert(tag, shouldSave: true) }
-            for group in groups { try await localGroupRepo.upsert(group, shouldSave: true) }
-            for place in places { try await localPlaceRepo.upsert(place, shouldSave: true) }
+            for tag in tags {
+                do {
+                    try await localTagRepo.upsert(tag, shouldSave: true)
+                } catch {
+                    assertNoBug(error)
+                    Log.error("SyncService: pull upsert failed for tag \(tag.id) (\(tag.name)): \(error)")
+                }
+            }
+            for category in categories {
+                do {
+                    try await localCategoryRepo.upsert(category, shouldSave: true)
+                } catch {
+                    assertNoBug(error)
+                    Log.error("SyncService: pull upsert failed for category \(category.id) (\(category.name)): \(error)")
+                }
+            }
+            for place in places {
+                do {
+                    try await localPlaceRepo.upsert(place, shouldSave: true)
+                    // A place synced down without an address (e.g. created offline on
+                    // another device) gets backfilled here rather than waiting for it
+                    // to be displayed.
+                    addressBackfillService?.backfillIfNeeded(place)
+                } catch {
+                    assertNoBug(error)
+                    Log.error("SyncService: pull upsert failed for place \(place.id) (\(place.name)): \(error)")
+                }
+            }
 
-            // lazy ImageLoader: this doesn't download bytes anymore, only inserts metadata stubs.
+            // lazy PlaceImageLoader: this doesn't download bytes anymore, only inserts metadata stubs.
             await pullImages(since: since)
 
             syncStatus.lastSyncedAt = Date()

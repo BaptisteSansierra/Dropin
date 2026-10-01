@@ -47,7 +47,7 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func signUp(email: String, password: String) async throws {
-        let response = try await client.auth.signUp(email: email, password: password)
+        let response = try await client.auth.signUp(email: email, password: password, redirectTo: DropinApp.strings.emailConfirmedURL)
         // When the Supabase project requires email confirmation, `session` is
         // nil (only `user` is returned) — don't mark the user as
         // authenticated until they've confirmed and actually signed in.
@@ -78,7 +78,7 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func resetPassword(email: String) async throws {
-        try await client.auth.resetPasswordForEmail(email)
+        try await client.auth.resetPasswordForEmail(email, redirectTo: DropinApp.strings.resetPasswordURL)
         Log.info("Password reset link requested for \(email)")
     }
 
@@ -93,16 +93,16 @@ final class AuthService: AuthServiceProtocol {
             session = nil
         }
         do {
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                group.addTask {
+            try await withThrowingTaskGroup(of: Void.self) { category in
+                category.addTask {
                     try await self.client.auth.signOut()
                 }
-                group.addTask {
+                category.addTask {
                     try await Task.sleep(for: .seconds(3))
                     throw SignOutTimeout()
                 }
-                try await group.next() // first complete win
-                group.cancelAll()
+                try await category.next() // first complete win
+                category.cancelAll()
             }
             Log.info("Remote signOut completed")
         } catch is SignOutTimeout {

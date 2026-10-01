@@ -146,11 +146,11 @@ struct LEGACY_PlaceRectAnnotationView: View {
 struct MockPlaceRectAnnotationView: View {
     var mock: MockContainer
     @State var size: CGFloat = 150
-    @State var place1: PlaceUI
-    @State var place2: PlaceUI
-    @State var place3: PlaceUI
-    @State var place4: PlaceUI
-    @State var place5: PlaceUI
+    @State var place1: PlaceUIModel
+    @State var place2: PlaceUIModel
+    @State var place3: PlaceUIModel
+    @State var place4: PlaceUIModel
+    @State var place5: PlaceUIModel
 
     var body: some View {
         VStack {
@@ -168,14 +168,14 @@ struct MockPlaceRectAnnotationView: View {
                 VStack {
                     Text("New").font(.caption)
                     PlaceRectAnnotationView(color: place5.groupColor,
-                                            icon: place5.group?.icon,
+                                            icon: place5.category?.icon,
                                             iconExtra: place5.icon,
                                             size: size)
                 }
                 VStack {
                     Text("Legacy").font(.caption)
                     LEGACY_PlaceRectAnnotationView(color: place5.groupColor,
-                                                   icon: place5.group?.icon,
+                                                   icon: place5.category?.icon,
                                                    iconExtra: place5.icon,
                                                    size: size)
                 }
@@ -192,19 +192,19 @@ struct MockPlaceRectAnnotationView: View {
     var contentView: some View {
         VStack(spacing: 30) {
             PlaceRectAnnotationView(color: place1.groupColor,
-                                    icon: place1.group?.icon,
+                                    icon: place1.category?.icon,
                                     iconExtra: place1.icon)
             PlaceRectAnnotationView(color: place2.groupColor,
-                                    icon: place2.group?.icon,
+                                    icon: place2.category?.icon,
                                     iconExtra: place2.icon)
             PlaceRectAnnotationView(color: place3.groupColor,
-                                    icon: place3.group?.icon,
+                                    icon: place3.category?.icon,
                                     iconExtra: place3.icon)
             PlaceRectAnnotationView(color: place4.groupColor,
-                                    icon: place4.group?.icon,
+                                    icon: place4.category?.icon,
                                     iconExtra: place4.icon)
             PlaceRectAnnotationView(color: place5.groupColor,
-                                    icon: place5.group?.icon,
+                                    icon: place5.category?.icon,
                                     iconExtra: place5.icon)
         }
     }
@@ -212,21 +212,21 @@ struct MockPlaceRectAnnotationView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        let group1 = mock.getGroupUI(0)
-        let group2 = mock.getGroupUI(1)
+        let group1 = mock.getCategoryUIModel(0)
+        let group2 = mock.getCategoryUIModel(1)
 
-        let place = mock.getPlaceUI()
+        let place = mock.getPlaceUIModel()
         self.place1 = place
         self.place2 = place.copy()
         self.place3 = place.copy()
         self.place4 = place.copy()
         self.place5 = place.copy()
 
-        self.place1.group = nil
-        self.place2.group = group1
-        self.place3.group = group2
-        self.place4.group = nil
-        self.place5.group = group2
+        self.place1.category = nil
+        self.place2.category = group1
+        self.place3.category = group2
+        self.place4.category = nil
+        self.place5.category = group2
 
         self.place2.icon = .sf("duffle.bag")
         self.place3.icon = nil

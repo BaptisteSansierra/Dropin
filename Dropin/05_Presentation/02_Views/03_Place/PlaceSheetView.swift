@@ -12,19 +12,32 @@ struct PlaceSheetView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: PlaceSheetViewModel
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @Binding private var currentDetent: PresentationDetent
     @Environment(\.dismiss) private var dismiss
     @Namespace private var menuNamespace
     
     private var menuGeomId = "menuGeomId"
-    
+    private var mapAction: (() -> Void)?
+    private let headerActionsViewHeight: CGFloat = 55
+    private var shareErrorPresented: Binding<Bool> {
+        Binding(get: {
+            viewModel.shareErrorMsg != nil
+        }, set: { v in
+            if !v {
+                viewModel.shareErrorMsg = nil
+            }
+        })
+    }
+
     // MARK: - init
     init(viewModel: PlaceSheetViewModel,
-         place: Binding<PlaceUI>,
+         place: Binding<PlaceUIModel>,
+         mapAction: (() -> Void)?,
          detent: Binding<PresentationDetent>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
+        self.mapAction = mapAction
         self._currentDetent = detent
         
         // local ContactFieldKit config override
@@ -34,14 +47,14 @@ struct PlaceSheetView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            if let group = place.group {
-                groupLayerView(group)
+            if let category = place.category {
+                groupLayerView(category)
             }
             ZStack {
                 Color.surface1
                 placeContentView
             }
-            .if( place.group != nil , action: { view in
+            .if( place.category != nil , action: { view in
                 view
                     .cornerRadius(20)
                     .padding(.top, 55)
@@ -81,28 +94,25 @@ struct PlaceSheetView: View {
             )
         }
         .sheet(item: $viewModel.shareURL) { shareURL in
-            ShareSheet(url: shareURL.url)
+            ShareSheet(url: shareURL.url, message: viewModel.shareMessage, subject: viewModel.shareSubject)
         }
-        .alertOk(isPresented: Binding(get: {
-            viewModel.shareError != nil
-        }, set: { v in
-            if !v { viewModel.shareError = nil }
-        }),
+        .alertOk(isPresented: shareErrorPresented,
                  title: "place_sheet.share.error.title",
-                 body: LocalizedStringKey(viewModel.shareError ?? ""))
+                 body: LocalizedStringKey(viewModel.shareErrorMsg ?? "")
+                 )
     }
     
     // MARK: - Subviews
     @ViewBuilder
-    private func groupLayerView(_ group: GroupUI) -> some View {
+    private func groupLayerView(_ category: CategoryUIModel) -> some View {
         place.groupColor
             .ignoresSafeArea()
         VStack {
             HStack(spacing: 0) {
-                IconView(icon: group.icon)
+                IconView(icon: category.icon)
                     .sizeBody()
                     .foregroundStyle(place.groupColor.isDark() ? .backgroundPrimary : .textPrimary)
-                Text(group.name)
+                Text(category.name)
                     .font(.bodySemibold)
                     .foregroundStyle(place.groupColor.isDark() ? .backgroundPrimary : .textPrimary)
                     .padding(.horizontal)
@@ -123,7 +133,7 @@ struct PlaceSheetView: View {
                     subHeaderView
                     //.padding(.top, 25)
                     headerActionsView
-                        .frame(height: 55)
+                        .frame(height: headerActionsViewHeight)
                         .padding(.top, 15)
                     menuView
                         .frame(height:45)
@@ -149,8 +159,9 @@ struct PlaceSheetView: View {
                 .frame(alignment: .leading)
                 .padding(.leading, place.icon == nil ? 15 : 8)
             Spacer()
+            // Edit button
             Button {
-                viewModel.pushPlaceEditView(placeRef: PlaceUIRef(place: place))
+                viewModel.pushPlaceEditView(placeRef: PlaceUIModelRef(place: place))
                 dismiss()
             } label: {
                 ZStack {
@@ -162,6 +173,22 @@ struct PlaceSheetView: View {
                 }
                 .padding(.trailing, 10)
             }
+            #if false
+            // Share button
+            Button {
+                share()
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(.backgroundSecondary)
+                        .frame(width: 35, height: 35)
+                    Image(systemName: "square.and.arrow.up")
+                        .textStyle(.body)
+                }
+                .padding(.trailing)
+            }
+            #endif
+            // Close button
             Button {
                 dismiss()
             } label: {
@@ -226,53 +253,103 @@ struct PlaceSheetView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
+
+    private func directionsButton(_ nbButtons: Int) -> some View {
+        Button {
+            viewModel.showingNavigationDialog.toggle()
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.dropinPrimary)
+                    .frame(height: 55)
+                if nbButtons <= 4 {
+                    HStack(alignment: .center, spacing: 0) {
+                        Image(systemName: "arrow.trianglehead.turn.up.right.diamond.fill")
+                            .font(.body)
+                            .foregroundStyle(.surface1)
+                            .padding(.trailing, 10)
+                        Text("common.directions")
+                            .font(.body)
+                            .foregroundStyle(.surface1)
+                    }
+                } else {
+                    VStack(spacing: 0) {
+                        Image(systemName: "arrow.trianglehead.turn.up.right.diamond.fill")
+                            .font(.body)
+                            .foregroundStyle(.surface1)
+                    }
+                    .frame(maxHeight: .infinity)
+                    .padding(.bottom, 15)
+                    VStack(spacing: 0) {
+                        Spacer()
+                        Text("common.directions")
+                            .font(.caption2)
+                            .foregroundStyle(.surface1)
+                            .padding(.bottom, 8)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .confirmationDialog("common.navigate",
+                            isPresented: $viewModel.showingNavigationDialog,
+                            actions: {
+            Button("navigate_link_google") {
+                viewModel.routeThrowGoogle(place: place)
+            }
+            Button("navigate_link_apple") {
+                viewModel.routeThrowApple(place: place)
+            }
+            Button("navigate_link_waze") {
+                viewModel.routeThrowWaze(place: place)
+            }
+        })
+    }
     
+    private func nbActions() -> Int {
+        var count = 2 // directions + share buttons are always visible
+        if place.phone.count > 0 { count += 1 }
+        if place.url.count > 0 { count += 1 }
+        if let _ = mapAction { count += 1 }
+        return count
+    }
+
     private var headerActionsView: some View {
-        GeometryReader { proxy in
-            let hPadding: CGFloat = 15
+        HStack(spacing: 0) {
             let spacing: CGFloat = 10
-            //let btWidth: CGFloat = proxy.size.width
-            let btWidth: CGFloat = (proxy.size.width - hPadding * 2 - spacing * 3) / 4
-            //let btWidth: CGFloat = (proxy.size.width - 15 - spacing * 3) / 4
-            HStack(spacing: 0) {
-                squareButton(systemImage: "arrow.trianglehead.turn.up.right.diamond.fill",
-                             label: "common.directions",
-                             width: btWidth,
-                             action: { viewModel.showingNavigationDialog.toggle() })
-                .padding(.leading, 15)
-                .confirmationDialog("common.navigate",
-                                    isPresented: $viewModel.showingNavigationDialog,
-                                    actions: {
-                    Button("navigate_link_google") {
-                        viewModel.routeThrowGoogle(place: place)
-                    }
-                    Button("navigate_link_apple") {
-                        viewModel.routeThrowApple(place: place)
-                    }
-                    Button("navigate_link_waze") {
-                        viewModel.routeThrowWaze(place: place)
-                    }
-                })
+            let nbButtons: Int = nbActions()
+            directionsButton(nbButtons)
+                .padding(.horizontal, spacing)
+            if place.phone.count > 0 {
                 squareButton(systemImage: "phone",
                              label: "common.call",
-                             width: btWidth,
-                             disabled: place.phone.count == 0,
+                             height: headerActionsViewHeight,
+                             width: headerActionsViewHeight + 10,
                              action: call)
-                .disabled(place.phone.count == 0)
-                .padding(.leading, spacing)
+                .padding(.trailing, spacing)
+            }
+            if place.url.count > 0 {
                 squareButton(systemImage: "globe.europe.africa.fill",
                              label: "common.website",
-                             width: btWidth,
-                             disabled: place.url.count == 0,
+                             height: headerActionsViewHeight,
+                             width: headerActionsViewHeight + 10,
                              action: openWebLink)
-                .padding(.leading, spacing)
-                squareButton(systemImage: "square.and.arrow.up",
-                             label: "common.share",
-                             width: btWidth,
-                             disabled: viewModel.isSharing,
-                             action: share)
-                .padding(.leading, spacing)
+                .padding(.trailing, spacing)
             }
+            if let mapAction = mapAction {
+                squareButton(systemImage: "map",
+                             label: "common.map",
+                             height: headerActionsViewHeight,
+                             width: headerActionsViewHeight + 10,
+                             action: mapAction)
+                .padding(.trailing, spacing)
+            }
+            squareButton(systemImage: "square.and.arrow.up",
+                         label: "common.share",
+                         height: headerActionsViewHeight,
+                         width: headerActionsViewHeight + 10,
+                         action: share)
+            .padding(.trailing, spacing)
         }
     }
     
@@ -451,21 +528,21 @@ struct PlaceSheetView: View {
     
     private func squareButton(systemImage: String,
                               label: LocalizedStringKey,
+                              height: CGFloat,
                               width: CGFloat,
-                              disabled: Bool = false,
                               action: @escaping () -> Void ) -> some View {
         Button {
             action()
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(disabled ? .disabled : .dropinPrimary)
+                    .fill(.backgroundPrimary)
                     .frame(width: width,
-                           height: 55)
+                           height: height)
                 VStack(spacing: 0) {
                     Image(systemName: systemImage)
                         .font(.body)
-                        .foregroundStyle(.backgroundPrimary)
+                        .foregroundStyle(.dropinPrimary)
                 }
                 .frame(maxHeight: .infinity)
                 .padding(.bottom, 15)
@@ -473,14 +550,14 @@ struct PlaceSheetView: View {
                     Spacer()
                     Text(label)
                         .font(.caption2)
-                        .foregroundStyle(.backgroundPrimary)
+                        .foregroundStyle(.dropinPrimary)
                         .padding(.bottom, 8)
                 }
             }
             .frame(width: width,
-                   height: 55)
+                   height: height)
         }
-        .disabled(disabled)
+        .frame(width: width)
     }
     
     // MARK: private methods
@@ -525,7 +602,7 @@ struct PlaceSheetView: View {
     }
     
     private func edit() {
-        viewModel.pushPlaceEditView(placeRef: PlaceUIRef(place: place))
+        viewModel.pushPlaceEditView(placeRef: PlaceUIModelRef(place: place))
         dismiss()
     }
 
@@ -541,7 +618,7 @@ struct PlaceSheetView: View {
 struct MockPlaceDetailSheetView: View {
     var mock: MockContainer
     var index: Int
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var detailSheetDetent: PresentationDetent = .medium
     @State var presentedSheet: Bool = false
     
@@ -555,6 +632,7 @@ struct MockPlaceDetailSheetView: View {
         .sheet(isPresented: $presentedSheet) {
             
             mock.appContainer.createPlaceSheetView(place: $place,
+                                                   mapAction: { print("go do some stuff") },
                                                    detent: $detailSheetDetent)
                 .presentationDetents([.medium, .large], selection: $detailSheetDetent)
                 .presentationCornerRadius(20)
@@ -566,8 +644,8 @@ struct MockPlaceDetailSheetView: View {
         self.index = index
         let mock = MockContainer()
         self.mock = mock
-        //self.place = mock.getPlaceUI(index)
-        self.place = mock.getNoAddressPlaceUI()
+        //self.place = mock.getPlaceUIModel(index)
+        self.place = mock.getNoAddressPlaceUIModel()
     }
 }
 

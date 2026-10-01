@@ -11,12 +11,12 @@ import Foundation
 struct DeleteLibrary {
     private let generalRepository: GeneralRepository
     private let placeRepository: PlaceRepository
-    private let groupRepository: GroupRepository
+    private let groupRepository: CategoryRepository
     private let tagRepository: TagRepository
 
     init(generalRepository: GeneralRepository,
          placeRepository: PlaceRepository,
-         groupRepository: GroupRepository,
+         groupRepository: CategoryRepository,
          tagRepository: TagRepository) {
         self.generalRepository = generalRepository
         self.placeRepository = placeRepository
@@ -27,7 +27,7 @@ struct DeleteLibrary {
     func callAsFunction() async throws {
         let deleteAt = Date.now
         let upsertPlace = UpsertPlace(repository: placeRepository)
-        let upsertGroup = UpsertGroup(repository: groupRepository)
+        let upsertCategory = UpsertCategory(repository: groupRepository)
         let upsertTag = UpsertTag(repository: tagRepository)
         let saveContext = SaveContext(repository: generalRepository)
 
@@ -36,8 +36,8 @@ struct DeleteLibrary {
             for tag in try await tagRepository.fetch() {
                 try await upsertTag(tag.deleted(deletedAt: deleteAt), shouldSave: false)
             }
-            for group in try await groupRepository.fetch() {
-                try await upsertGroup(group.deleted(deletedAt: deleteAt), shouldSave: false)
+            for category in try await groupRepository.fetch() {
+                try await upsertCategory(category.deleted(deletedAt: deleteAt), shouldSave: false)
             }
             for place in try await placeRepository.fetch() {
                 try await upsertPlace(place.deleted(deletedAt: deleteAt), shouldSave: false)

@@ -9,7 +9,7 @@ import SwiftUI
 
 enum SideMenuContext {
     case main
-    case groups
+    case categories
     case tags
     case settings
     case about
@@ -71,8 +71,8 @@ enum SideMenuContext {
         return appContainer.createPlacesView(showingSideMenu: bindedShowingSideMenu)
     }
 
-    func createGroupListView() -> GroupListView {
-        return appContainer.createGroupListView(showingSideMenu: bindedShowingSideMenu)
+    func createCategoryListView() -> CategoryListView {
+        return appContainer.createCategoryListView(showingSideMenu: bindedShowingSideMenu)
     }
 
     func createTagListView() -> TagListView {

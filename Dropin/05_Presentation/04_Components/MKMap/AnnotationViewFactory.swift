@@ -135,9 +135,9 @@ struct AnnotationViewFactory {
                                                          for: placeAnnotation) as? MKMarkerAnnotationView
             ?? MKMarkerAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
-        view.markerTintColor = UIColor(placeAnnotation.place.group?.color ?? .gray)
-        if let group = placeAnnotation.place.group {
-            view.glyphImage = UIImage(icon: group.icon)
+        view.markerTintColor = UIColor(placeAnnotation.place.category?.color ?? .gray)
+        if let category = placeAnnotation.place.category {
+            view.glyphImage = UIImage(icon: category.icon)
         }
         view.canShowCallout = true
         if mapSettings.clustering {
@@ -149,18 +149,16 @@ struct AnnotationViewFactory {
     // Create a regular place (promoted overlay, or the base annotation when clustering is on)
     private func createPlaceView(for placeAnnotation: any MKPlaceAnnotationRepresentable,
                                  on mapView: MKMapView) -> MKAnnotationView {
-        // DEBUG: swapped to a plain UIKit ring (no UIHostingController) to test
-        // whether the hosting-controller layer is the cause of pin/map decorrelation.
         let identifier = Identifiers.promotedPlace
         let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
                                                          for: placeAnnotation) as? PlaceAnnotationView
             ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
         view.annotation = placeAnnotation
         view.displayPriority = displayAllPins ? .required : .defaultHigh
-        view.collisionMode = .circle
+        view.collisionMode = DropinApp.map.usePinPromotionLogic ? .circle : .rectangle
         view.alpha = pinsOpacity
         view.configure(color: placeAnnotation.color,
-                       icon: placeAnnotation.place.group?.icon,
+                       icon: placeAnnotation.place.category?.icon,
                        iconExtra: placeAnnotation.place.icon,
                        pinStyle: mapSettings.pinStyle,
                        size: mapSettings.pinSize,

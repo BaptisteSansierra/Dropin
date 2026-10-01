@@ -11,12 +11,12 @@ import Foundation
 struct ExportService {
 
     private let fetchPlaces: FetchPlaces
-    private let fetchGroups: FetchGroups
+    private let fetchCategories: FetchCategories
     private let fetchTags: FetchTags
     
-    init(fetchPlaces: FetchPlaces, fetchGroups: FetchGroups, fetchTags: FetchTags) {
+    init(fetchPlaces: FetchPlaces, fetchCategories: FetchCategories, fetchTags: FetchTags) {
         self.fetchPlaces = fetchPlaces
-        self.fetchGroups = fetchGroups
+        self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
     }
     
@@ -30,16 +30,16 @@ struct ExportService {
     func execute() async throws -> URL {
         async let placesTask = fetchPlaces()
             .filter { $0.isActive }
-        async let groupsTask = fetchGroups()
+        async let groupsTask = fetchCategories()
             .filter { $0.isActive }
         async let tagsTask = fetchTags()
             .filter { $0.isActive }
 
-        let (places, groups, tags) = try await (placesTask, groupsTask, tagsTask)
+        let (places, categories, tags) = try await (placesTask, groupsTask, tagsTask)
 
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: places,
-                                       groups: groups,
+                                       categories: categories,
                                        tags: tags)
         let data = try encode(dropinExport)
         let url = exportURL(for: dropinExport)

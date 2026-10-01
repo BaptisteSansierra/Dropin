@@ -17,7 +17,7 @@ struct DeleteTag {
         self.repository = repository
     }
     
-    func callAsFunction(_ tag: TagEntity) async throws {
+    func callAsFunction(_ tag: Tag) async throws {
         if try await !repository.exists(tag) {
             throw DomainError.Tag.notFound
         }

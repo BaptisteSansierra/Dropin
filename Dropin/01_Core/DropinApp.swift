@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import CoreLocation
+import MapKit
 import ContactFieldKit
 
 // Note:
@@ -32,13 +33,13 @@ struct DropinApp: App {
     init() {
         // Create database, wire app
         do {
-            let modelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self, SDImage.self, SDProfile.self)
+            let modelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
             if false {
                 do {
-                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<SDPlace>())
+                    let places = try modelContainer.mainContext.fetch(FetchDescriptor<PlaceRecord>())
                     if places.count == 0 {
                         Log.info("Empty database, mock populating")
                         try AppContainer.insertMockData(modelContext: modelContainer.mainContext)
@@ -198,6 +199,11 @@ extension DropinApp {
         static let developer = "Baptiste Sansierra"
         static let exportExtension = "dropin"
         static let exportUTTypeId = "com.dropin.export"
+        // redirectTo/emailRedirectTo targets for Supabase auth emails.
+        // Web pages for now; will move to the dropin:// scheme (registered in
+        // Info.plist's CFBundleURLTypes) once in-app handling is implemented.
+        static let resetPasswordURL = URL(string: "https://dropin.lat/reset-password.html")!
+        static let emailConfirmedURL = URL(string: "https://dropin.lat/email-confirmed.html")!
     }
     struct defaults {
         static let minimumPasswordLength: Int = 8
@@ -207,6 +213,15 @@ extension DropinApp {
         // static let mapPinDropAltitude: Double = 40_000 // legacy: altitude-based collision drop, superseded by maxDisplayPin
         static let maxDisplayPin: Int = 30 // max number of full (SwiftUI) pins shown at once; remaining visible places render as dots
         static let declutterRefreshDebounce: Double = 0.2 // seconds of no camera movement before pin/dot + label state is refreshed
+        static let usePinPromotionLogic = false
+        // When set, the map always launches on this region instead of centering on the user. Used for app screenshots
+        static let hardStartRegion: MKCoordinateRegion? = nil
+        /* Lisbon center : used for screenshots generation
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 38.71108482247233, longitude: -9.137567732050831),
+            span: MKCoordinateSpan(latitudeDelta: 0.02649615024206753, longitudeDelta: 0.020133175667885084)
+        )
+         */
     }
     struct ui {
         static let mainTabBarHeight: CGFloat = 80

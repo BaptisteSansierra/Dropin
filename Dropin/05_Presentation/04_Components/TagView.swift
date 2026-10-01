@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// SDTag UI representation: colored rounded rect text 
+/// TagRecord UI representation: colored rounded rect text 
 struct TagView: View {
 
     enum Style {
@@ -28,11 +28,12 @@ struct TagView: View {
     init(name: String, color: Color, style: Style = .plain) {
         self.name = name
         self.color = color
+        let lightColor: Color = .surface1
+        let darkColor: Color = .surface1
+        let lightAlphaBgColor: Color = .clear
+        let darkAlphaBgColor: Color = .clear
+        /*
         let luminance = color.luminance()
-        var lightColor: Color = .backgroundPrimary
-        var darkColor: Color = .backgroundPrimary
-        var lightAlphaBgColor: Color = .clear
-        var darkAlphaBgColor: Color = .clear
         if luminance > 0.7 {
             let lerp = (luminance - 0.7) * 10 / 3
             //print("LUMI:\(luminance) +> LERP:\(lerp)")
@@ -46,6 +47,7 @@ struct TagView: View {
             darkColor = .lerp(from: darkColor, to: .init(rgba: "BBBBBB"), lerp)
             darkAlphaBgColor = .lerp(from: darkAlphaBgColor, to: .backgroundPrimaryL, lerp)
         }
+         */
         self.alphaBgColor = Color(light: lightAlphaBgColor, dark: darkAlphaBgColor)
         self.textColor = Color(light: lightColor, dark: darkColor)
         self.style = style

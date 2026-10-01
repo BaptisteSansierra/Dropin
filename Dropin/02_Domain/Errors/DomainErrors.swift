@@ -21,7 +21,7 @@ enum DomainError: Error {
         case invalidColor
         case notFound
     }
-    enum Group: Error {
+    enum Category: Error {
         case alreadyExists
         case missingName
         //case undefinedMarker  // fixed by making Icon an enum

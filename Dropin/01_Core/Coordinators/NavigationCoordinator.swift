@@ -17,5 +17,5 @@ protocol NavigationCoordinator {
 
 @MainActor
 protocol PlaceNavigationCoordinator: NavigationCoordinator {
-    func pushPlaceEditView(placeRef: PlaceUIRef)
+    func pushPlaceEditView(placeRef: PlaceUIModelRef)
 }

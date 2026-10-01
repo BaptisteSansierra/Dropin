@@ -20,6 +20,15 @@ final class OutlinedLabel: UIView {
     var textColor: UIColor = .label {
         didSet { label.textColor = textColor }
     }
+    
+    var numberOfLines: Int = 1 {
+        didSet {
+            label.numberOfLines = numberOfLines
+            outlineLabels.forEach { outlineLabel in
+                outlineLabel.numberOfLines = numberOfLines
+            }
+        }
+    }
 
     var outlineColor: UIColor = .white {
         didSet { outlineLabels.forEach { $0.textColor = outlineColor } }
@@ -48,11 +57,11 @@ final class OutlinedLabel: UIView {
 
     private func setup() {
         outlineLabels.forEach { outlineLabel in
-            outlineLabel.numberOfLines = 1
+            outlineLabel.numberOfLines = numberOfLines
             outlineLabel.isAccessibilityElement = false
             addSubview(outlineLabel)
         }
-        label.numberOfLines = 1
+        label.numberOfLines = numberOfLines
         addSubview(label)
         syncFont()
         syncAlignment()

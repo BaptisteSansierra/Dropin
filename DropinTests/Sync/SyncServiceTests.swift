@@ -13,24 +13,24 @@ struct SyncServiceTests {
     // MARK: - helpers
 
     private func makeSUT(localPlaceRepo: MockPlaceRepository = MockPlaceRepository(),
-                         localGroupRepo: MockGroupRepository = MockGroupRepository(),
+                         localCategoryRepo: MockCategoryRepository = MockCategoryRepository(),
                          localTagRepo: MockTagRepository = MockTagRepository(),
                          localImageRepo: MockImageRepository = MockImageRepository(),
                          localProfileRepo: MockProfileRepository = MockProfileRepository(),
                          remotePlaceRepo: MockRemotePlaceRepository = MockRemotePlaceRepository(),
-                         remoteGroupRepo: MockRemoteGroupRepository = MockRemoteGroupRepository(),
+                         remoteCategoryRepo: MockRemoteCategoryRepository = MockRemoteCategoryRepository(),
                          remoteTagRepo: MockRemoteTagRepository = MockRemoteTagRepository(),
                          remoteImageRepo: MockRemoteImageRepository = MockRemoteImageRepository(),
                          remoteProfileRepo: MockRemoteProfileRepository = MockRemoteProfileRepository(),
                          isOnline: Bool = true) -> SyncService {
         let freshDefaults = UserDefaults(suiteName: UUID().uuidString)!
         return SyncService(localPlaceRepo: localPlaceRepo,
-                           localGroupRepo: localGroupRepo,
+                           localCategoryRepo: localCategoryRepo,
                            localTagRepo: localTagRepo,
                            localImageRepo: localImageRepo,
                            localProfileRepo: localProfileRepo,
                            remotePlaceRepo: remotePlaceRepo,
-                           remoteGroupRepo: remoteGroupRepo,
+                           remoteCategoryRepo: remoteCategoryRepo,
                            remoteTagRepo: remoteTagRepo,
                            remoteImageRepo: remoteImageRepo,
                            remoteProfileRepo: remoteProfileRepo,
@@ -41,7 +41,7 @@ struct SyncServiceTests {
     // MARK: - push
 
     @Test func syncAllPushesDirtyPlace() async throws {
-        let place = PlaceEntity(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
         let localRepo = MockPlaceRepository(initialPlaces: [place])
         let remoteRepo = MockRemotePlaceRepository()
         let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
@@ -52,20 +52,20 @@ struct SyncServiceTests {
         #expect(remoteRepo.upsertedPlaces.map(\.id).contains(place.id))
     }
 
-    @Test func syncAllPushesDirtyGroup() async throws {
-        let group = GroupEntity(name: "Test Group", color: "FF0000", icon: .sf("tag"))
-        let localRepo = MockGroupRepository(initialGroups: [group])
-        let remoteRepo = MockRemoteGroupRepository()
-        let sut = makeSUT(localGroupRepo: localRepo, remoteGroupRepo: remoteRepo)
+    @Test func syncAllPushesDirtyCategory() async throws {
+        let category = Dropin.Category(name: "Test Group", color: "FF0000", icon: .sf("tag"))
+        let localRepo = MockCategoryRepository(initialCategories: [category])
+        let remoteRepo = MockRemoteCategoryRepository()
+        let sut = makeSUT(localCategoryRepo: localRepo, remoteCategoryRepo: remoteRepo)
 
-        sut.markGroupDirty(group.id)
+        sut.markCategoryDirty(category.id)
         await sut.syncAll()
 
-        #expect(remoteRepo.upsertedGroups.map(\.id).contains(group.id))
+        #expect(remoteRepo.upsertedCategories.map(\.id).contains(category.id))
     }
 
     @Test func syncAllPushesDirtyTag() async throws {
-        let tag = TagEntity(name: "Test Tag", color: "0000FF")
+        let tag = Dropin.Tag(name: "Test Dropin.Tag", color: "0000FF")
         let localRepo = MockTagRepository(initialTags: [tag])
         let remoteRepo = MockRemoteTagRepository()
         let sut = makeSUT(localTagRepo: localRepo, remoteTagRepo: remoteRepo)
@@ -77,7 +77,7 @@ struct SyncServiceTests {
     }
 
     @Test func syncAllOfflineDoesNotPush() async throws {
-        let place = PlaceEntity(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
         let localRepo = MockPlaceRepository(initialPlaces: [place])
         let remoteRepo = MockRemotePlaceRepository()
         let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo, isOnline: false)
@@ -89,7 +89,7 @@ struct SyncServiceTests {
     }
 
     @Test func pushFailureKeepsItemInDirtySet() async throws {
-        let place = PlaceEntity(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
         let localRepo = MockPlaceRepository(initialPlaces: [place])
         let remoteRepo = MockRemotePlaceRepository()
         remoteRepo.shouldThrowOnUpsert = true
@@ -108,7 +108,7 @@ struct SyncServiceTests {
     // MARK: - pull
 
     @Test func syncAllPullsRemoteChangesToLocal() async throws {
-        let remotePlace = PlaceEntity(id: UUID(), name: "Remote Place", coordinates: .london, address: "London")
+        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London")
         let localRepo = MockPlaceRepository()
         let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
         let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
@@ -120,8 +120,8 @@ struct SyncServiceTests {
     }
 
     @Test func syncAllPullPropagatesTombstone() async throws {
-        let place = PlaceEntity(id: UUID(), name: "To Delete", coordinates: .london, address: "")
-        let tombstone = PlaceEntity(id: place.id,
+        let place = Place(id: UUID(), name: "To Delete", coordinates: .london, address: "")
+        let tombstone = Place(id: place.id,
                                     name: place.name,
                                     coordinates: place.coordinates,
                                     address: place.address,
@@ -137,7 +137,7 @@ struct SyncServiceTests {
     }
 
     @Test func syncAllPullIsIdempotent() async throws {
-        let remotePlace = PlaceEntity(id: UUID(), name: "Place", coordinates: .london, address: "")
+        let remotePlace = Place(id: UUID(), name: "Place", coordinates: .london, address: "")
         let localRepo = MockPlaceRepository()
         let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
         let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)

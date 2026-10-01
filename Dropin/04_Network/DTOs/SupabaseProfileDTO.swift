@@ -35,7 +35,7 @@ struct SupabaseProfileDTO: Codable {
         try c.encode(updatedAt,   forKey: .updatedAt)
     }
 
-    init(from profile: ProfileEntity) {
+    init(from profile: Profile) {
         self.id          = profile.id
         self.email       = profile.email
         self.displayName = profile.displayName
@@ -44,8 +44,8 @@ struct SupabaseProfileDTO: Codable {
         self.updatedAt   = profile.updatedAt
     }
 
-    func toDomain() -> ProfileEntity {
-        ProfileEntity(id: id,
+    func toDomain() -> Profile {
+        Profile(id: id,
                       email: email,
                       displayName: displayName,
                       plan: UserPlan(rawValue: plan) ?? .free,

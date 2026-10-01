@@ -16,20 +16,20 @@ import CoreLocation
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let createPlace: CreatePlace
     @ObservationIgnored private let getTag: FetchTag
-    @ObservationIgnored private let getGroup: FetchGroup
+    @ObservationIgnored private let getCategory: FetchCategory
     @ObservationIgnored private let addPlaceImage: AddPlaceImage
 
     init(_ appContainer: AppContainer,
          coordinator: PlaceCoordinator,
          createPlace: CreatePlace,
          getTag: FetchTag,
-         getGroup: FetchGroup,
+         getCategory: FetchCategory,
          addPlaceImage: AddPlaceImage) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.createPlace = createPlace
         self.getTag = getTag
-        self.getGroup = getGroup
+        self.getCategory = getCategory
         self.addPlaceImage = addPlaceImage
     }
 
@@ -43,14 +43,14 @@ import CoreLocation
     }
 
     // MARK: UI Childs
-    func body(place: Binding<PlaceUI>, showMissingName: Binding<Bool>) -> some View {
+    func body(place: Binding<PlaceUIModel>, showMissingName: Binding<Bool>) -> some View {
         return appContainer.createPlaceEditContentView(place: place,
                                                        mode: .creation,
                                                        showMissingName: showMissingName)
     }
 
     // MARK: Use cases
-    func save(place: PlaceUI) async throws {
+    func save(place: PlaceUIModel) async throws {
         let placeEntity = PlaceMapper.toDomain(place)
         try await createPlace(placeEntity)
         for img in place.images where img.dbId == nil {
@@ -59,8 +59,8 @@ import CoreLocation
         }
     }
 
-    func retrieveTags(tagIds: [UUID]) async -> [TagUI] {
-        var tags = [TagUI]()
+    func retrieveTags(tagIds: [UUID]) async -> [TagUIModel] {
+        var tags = [TagUIModel]()
         for tagId in tagIds {
             do {
                 let tagEntity = try await getTag(id: tagId)
@@ -72,12 +72,12 @@ import CoreLocation
         return tags
     }
 
-    func retrieveGroup(groupId: UUID) async -> GroupUI? {
+    func retrieveCategory(categoryId: UUID) async -> CategoryUIModel? {
         do {
-            let groupEntity = try await getGroup(id: groupId)
-            return GroupMapper.toUI(groupEntity)
+            let categoryEntity = try await getCategory(id: categoryId)
+            return CategoryMapper.toUI(categoryEntity)
         } catch {
-            assertionFailure("couldn't retrieve tag with id \(groupId)")
+            assertionFailure("couldn't retrieve tag with id \(categoryId)")
         }
         return nil
     }

@@ -10,9 +10,9 @@ import SwiftUI
 @MainActor
 @Observable class TagSelectorViewModel {
     
-    var placeTags = [TagUI]()
-    var remainingTags = [TagUI]()
-    var tags = [TagUI]()
+    var placeTags = [TagUIModel]()
+    var remainingTags = [TagUIModel]()
+    var tags = [TagUIModel]()
     
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchTags: FetchTags
@@ -26,7 +26,7 @@ import SwiftUI
         self.createTags = createTags
     }
     
-    func updateData(_ place: PlaceUI) {
+    func updateData(_ place: PlaceUIModel) {
         placeTags = place.tags
         remainingTags = tags.filter { tag in !place.tags.contains(where: { $0.id == tag.id }) }
         placeTags.sort(by: { $0.name < $1.name && $0.createdAt < $1.createdAt })
@@ -34,8 +34,8 @@ import SwiftUI
     }
     
     // MARK: Uses cases
-    func createTag(name: String, color: String) async throws -> TagUI {
-        let domainTag = TagEntity(name: name, color: color)
+    func createTag(name: String, color: String) async throws -> TagUIModel {
+        let domainTag = Tag(name: name, color: color)
         try await createTags(domainTag)
         let tagUI = TagMapper.toUI(domainTag)
         tags.append(tagUI)

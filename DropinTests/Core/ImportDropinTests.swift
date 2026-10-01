@@ -17,37 +17,37 @@ struct ImportDropinTests {
 
     private let localGeneralRepo: MockGeneralRepository = MockGeneralRepository()
     private let localPlaceRepo: MockPlaceRepository = MockPlaceRepository()
-    private let localGroupRepo: MockGroupRepository = MockGroupRepository()
+    private let localCategoryRepo: MockCategoryRepository = MockCategoryRepository()
     private let localTagRepo: MockTagRepository = MockTagRepository()
 
     private func importService() -> ImportDropinService {
         ImportDropinService(saveContext: SaveContext(repository: localGeneralRepo),
                             rollbackContext: RollbackContext(repository: localGeneralRepo),
                             fetchPlaces: FetchPlaces(repository: localPlaceRepo),
-                            fetchGroups: FetchGroups(repository: localGroupRepo),
+                            fetchCategories: FetchCategories(repository: localCategoryRepo),
                             fetchTags: FetchTags(repository: localTagRepo),
                             upsertPlace: UpsertPlace(repository: localPlaceRepo),
-                            upsertGroup: UpsertGroup(repository: localGroupRepo),
+                            upsertCategory: UpsertCategory(repository: localCategoryRepo),
                             upsertTag: UpsertTag(repository: localTagRepo))
     }
     
     ///
     /// Test ImportDropinService simple import:
-    /// one place with a group + one tag
+    /// one place with a category + one tag
     ///
     @Test func importDropinServiceBase() async throws {
-        let g1 = GroupEntity(name: "group1", color: String.randomColor(), icon: Icon.mock)
-        let t1 = TagEntity(name: "tag1", color: String.randomColor())
-        let p1 = PlaceEntity(id: UUID(),
+        let g1 = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock)
+        let t1 = Dropin.Tag(name: "tag1", color: String.randomColor())
+        let p1 = Place(id: UUID(),
                              name: "place1",
                              coordinates: CLLocationCoordinate2D.barcelona,
                              address: "xxx",
                              tags: [t1],
-                             group: g1)
+                             category: g1)
         
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1],
-                                       groups: [g1],
+                                       categories: [g1],
                                        tags: [t1])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -57,30 +57,30 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 1)    // Check created groups counter
+            #expect(createdCategoriesCount == 1)// Check created categories counter
             #expect(createdTagsCount == 1)      // Check created tags counter
         }
-        let groups = try await localGroupRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
         let tags = try await localTagRepo.fetch()
-        // Check we have 1 group on disk
-        #expect(groups.count == 1)
+        // Check we have 1 category on disk
+        #expect(categories.count == 1)
         // Check we have 1 tag on disk
         #expect(tags.count == 1)
         let places = try await localPlaceRepo.fetch()
         // Check we have 1 place on disk
         #expect(places.count == 1)
-        // Check place has a group
-        guard let extractedGroup = places[0].group else {
-            Issue.record("no group")
+        // Check place has a category
+        guard let extractedCategory = places[0].category else {
+            Issue.record("no category")
             return
         }
         // Check place has 1 tag
         #expect(places[0].tags.count == 1)
-        // Check place group uuid matches imported group
-        #expect(extractedGroup.id == g1.id)
+        // Check place category uuid matches imported category
+        #expect(extractedCategory.id == g1.id)
         // Check place tag uuid matches imported tag
         #expect(places[0].tags[0].id == t1.id)
     }
@@ -91,12 +91,12 @@ struct ImportDropinTests {
     ///
     @Test func importDropinServiceDuplicatedTags() async throws {
         // Fill the local database
-        let t1Local = TagEntity(name: "tag1", color: String.randomColor())
+        let t1Local = Dropin.Tag(name: "tag1", color: String.randomColor())
         try await UpsertTag(repository: localTagRepo)(t1Local)
         
         // Create the import
-        let t1Import = TagEntity(name: "tag1", color: String.randomColor())
-        let p1 = PlaceEntity(id: UUID(),
+        let t1Import = Dropin.Tag(name: "tag1", color: String.randomColor())
+        let p1 = Place(id: UUID(),
                              name: "place1",
                              coordinates: CLLocationCoordinate2D.barcelona,
                              address: "xxx",
@@ -104,7 +104,7 @@ struct ImportDropinTests {
         
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1],
-                                       groups: [],
+                                       categories: [],
                                        tags: [t1Import])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -114,16 +114,16 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 0)      // Check created tags counter
         }
-        let groups = try await localGroupRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
         let tags = try await localTagRepo.fetch()
-        // Check we have no groups on disk
-        #expect(groups.count == 0)
+        // Check we have no categories on disk
+        #expect(categories.count == 0)
         // Check we have 1 tag on disk
         #expect(tags.count == 1)
         let places = try await localPlaceRepo.fetch()
@@ -141,13 +141,13 @@ struct ImportDropinTests {
     ///
     @Test func importDropinServiceDuplicatedDeletedTags() async throws {
         // Fill the local database
-        var t1Local = TagEntity(name: "tag1", color: String.randomColor())
-        let t1Import = TagEntity(name: "tag1", color: String.randomColor())
+        var t1Local = Dropin.Tag(name: "tag1", color: String.randomColor())
+        let t1Import = Dropin.Tag(name: "tag1", color: String.randomColor())
         t1Local = t1Local.deleted(deletedAt: Date())
         try await UpsertTag(repository: localTagRepo)(t1Local)
         
         // Create the import
-        let p1 = PlaceEntity(id: UUID(),
+        let p1 = Place(id: UUID(),
                              name: "place1",
                              coordinates: CLLocationCoordinate2D.barcelona,
                              address: "xxx",
@@ -155,7 +155,7 @@ struct ImportDropinTests {
         
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1],
-                                       groups: [],
+                                       categories: [],
                                        tags: [t1Import])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -165,10 +165,10 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)   // Check created places counter
             #expect(duplicatePlacesCount == 0) // Check duplicated places counter
-            #expect(createdGroupsCount == 0)   // Check created groups counter
+            #expect(createdCategoriesCount == 0)   // Check created categories counter
             #expect(createdTagsCount == 1)     // Check created tags counter
         }
         let tags = try await localTagRepo.fetch()
@@ -177,9 +177,9 @@ struct ImportDropinTests {
         let places = try await localPlaceRepo.fetch()
         // Check we have 1 place on disk
         #expect(places.count == 1)
-        // Check the created place is linked to new created group
+        // Check the created place is linked to new created category
         #expect(places[0].tags[0].id == t1Import.id)
-        // Check the 2 groups deletedAt property
+        // Check the 2 categories deletedAt property
         guard let testT1Local = tags.first(where: { $0.id == t1Local.id }) else {
             Issue.record("t1Local not found")
             return
@@ -193,25 +193,25 @@ struct ImportDropinTests {
     }
 
     ///
-    /// Test ImportDropinService does not duplicate groups
-    ///  if a group is found on disk with same name, it should be used instead of imported group
+    /// Test ImportDropinService does not duplicate categories
+    ///  if a category is found on disk with same name, it should be used instead of imported category
     ///
-    @Test func importDropinServiceDuplicatedGroups() async throws {
+    @Test func importDropinServiceDuplicatedCategories() async throws {
         // Fill the local database
-        let g1Local = GroupEntity(name: "group1", color: String.randomColor(), icon: Icon.mock)
-        try await UpsertGroup(repository: localGroupRepo)(g1Local)
+        let g1Local = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock)
+        try await UpsertCategory(repository: localCategoryRepo)(g1Local)
         
         // Create the import
-        let g1Import = GroupEntity(name: "group1", color: String.randomColor(), icon: Icon.mock)
-        let p1 = PlaceEntity(id: UUID(),
+        let g1Import = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock)
+        let p1 = Place(id: UUID(),
                              name: "place1",
                              coordinates: CLLocationCoordinate2D.barcelona,
                              address: "xxx",
-                             group: g1Import)
+                             category: g1Import)
         
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1],
-                                       groups: [g1Import],
+                                       categories: [g1Import],
                                        tags: [])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -221,51 +221,51 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 0)      // Check created tags counter
         }
-        let groups = try await localGroupRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
         let tags = try await localTagRepo.fetch()
-        // Check we have 1 group on disk
-        #expect(groups.count == 1)
+        // Check we have 1 category on disk
+        #expect(categories.count == 1)
         // Check we have no tags on disk
         #expect(tags.count == 0)
         let places = try await localPlaceRepo.fetch()
         // Check we have 1 place on disk
         #expect(places.count == 1)
-        // Check place has a group
-        guard let extractedGroup = places[0].group else {
-            Issue.record("no group")
+        // Check place has a category
+        guard let extractedCategory = places[0].category else {
+            Issue.record("no category")
             return
         }
-        // Check place's group id
-        #expect(extractedGroup.id == g1Local.id)
+        // Check place's category id
+        #expect(extractedCategory.id == g1Local.id)
     }
 
     ///
-    /// Test ImportDropinService duplicates soft deleted groups
-    ///  if a group is found on disk with same name, but is soft deleted, the duplicate should be ignored and the import should create the group
+    /// Test ImportDropinService duplicates soft deleted categories
+    ///  if a category is found on disk with same name, but is soft deleted, the duplicate should be ignored and the import should create the category
     ///
-    @Test func importDropinServiceDuplicatedDeletedGroups() async throws {
+    @Test func importDropinServiceDuplicatedDeletedCategories() async throws {
         // Fill the local database
-        var g1Local = GroupEntity(name: "group1", color: String.randomColor(), icon: Icon.mock)
+        var g1Local = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock)
         g1Local = g1Local.deleted(deletedAt: Date())
-        try await UpsertGroup(repository: localGroupRepo)(g1Local)
+        try await UpsertCategory(repository: localCategoryRepo)(g1Local)
         
         // Create the import
-        let g1Import = GroupEntity(name: "group1", color: String.randomColor(), icon: Icon.mock)
-        let p1 = PlaceEntity(id: UUID(),
+        let g1Import = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock)
+        let p1 = Place(id: UUID(),
                              name: "place1",
                              coordinates: CLLocationCoordinate2D.barcelona,
                              address: "xxx",
-                             group: g1Import)
+                             category: g1Import)
         
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1],
-                                       groups: [g1Import],
+                                       categories: [g1Import],
                                        tags: [])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -275,33 +275,33 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 1)    // Check created groups counter
+            #expect(createdCategoriesCount == 1)    // Check created categories counter
             #expect(createdTagsCount == 0)      // Check created tags counter
         }
-        let groups = try await localGroupRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
         let tags = try await localTagRepo.fetch()
-        // Check we 2 groups on disk
-        #expect(groups.count == 2)
+        // Check we 2 categories on disk
+        #expect(categories.count == 2)
         // Check we have no tags on disk
         #expect(tags.count == 0)
         let places = try await localPlaceRepo.fetch()
         // Check we have 1 place on disk
         #expect(places.count == 1)
-        guard let extractedGroup = places[0].group else {
-            Issue.record("no group")
+        guard let extractedCategory = places[0].category else {
+            Issue.record("no category")
             return
         }
-        // Check the place is linked to new created group
-        #expect(extractedGroup.id == g1Import.id)
-        // Check the 2 groups deletedAt property
-        guard let testG1Local = groups.first(where: { $0.id == g1Local.id }) else {
+        // Check the place is linked to new created category
+        #expect(extractedCategory.id == g1Import.id)
+        // Check the 2 categories deletedAt property
+        guard let testG1Local = categories.first(where: { $0.id == g1Local.id }) else {
             Issue.record("g1Local not found")
             return
         }
-        guard let testG1Imported = groups.first(where: { $0.id == g1Import.id }) else {
+        guard let testG1Imported = categories.first(where: { $0.id == g1Import.id }) else {
             Issue.record("g1Imported not found")
             return
         }
@@ -315,14 +315,14 @@ struct ImportDropinTests {
     ///
     @Test func importDropinServiceDuplicatedPlaces() async throws {
         // Fill the local database
-        let p1Local = PlaceEntity(id: UUID(),
+        let p1Local = Place(id: UUID(),
                                   name: "place1",
                                   coordinates: CLLocationCoordinate2D.barcelona,
                                   address: "xxx")
         try await UpsertPlace(repository: localPlaceRepo)(p1Local)
         
         // Create the import
-        let p1Import = PlaceEntity(id: UUID(),
+        let p1Import = Place(id: UUID(),
                                    name: "plAcE1",   // Insert a case difference, case should be ignored when comparing names
                                    coordinates: CLLocationCoordinate2D.barcelona.offset(x: 0.000135),  // ~15 meters offset
                                    address: "xxx")
@@ -330,7 +330,7 @@ struct ImportDropinTests {
 
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1Import],
-                                       groups: [],
+                                       categories: [],
                                        tags: [])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -340,10 +340,10 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 0)    // Check created places counter
             #expect(duplicatePlacesCount == 1)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 0)      // Check created tags counter
         }
         let places = try await localPlaceRepo.fetch()
@@ -359,7 +359,7 @@ struct ImportDropinTests {
     ///
     @Test func importDropinServiceDuplicatedDeletedPlaces() async throws {
         // Fill the local database
-        var p1Local = PlaceEntity(id: UUID(),
+        var p1Local = Place(id: UUID(),
                                   name: "place1",
                                   coordinates: CLLocationCoordinate2D.barcelona,
                                   address: "xxx")
@@ -367,7 +367,7 @@ struct ImportDropinTests {
         try await UpsertPlace(repository: localPlaceRepo)(p1Local)
         
         // Create the import
-        let p1Import = PlaceEntity(id: UUID(),
+        let p1Import = Place(id: UUID(),
                                    name: "plAcE1",   // Insert a case difference, case should be ignored when comparing names
                                    coordinates: CLLocationCoordinate2D.barcelona.offset(x: 0.000135),  // ~15 meters offset
                                    address: "xxx")
@@ -375,7 +375,7 @@ struct ImportDropinTests {
 
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [p1Import],
-                                       groups: [],
+                                       categories: [],
                                        tags: [])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -385,10 +385,10 @@ struct ImportDropinTests {
             #expect(placesCount == 1)    // Check found places count counter
         } progress: { _ in
         } canceled: {
-        } completion: { createdPlacesCount, duplicatePlacesCount, createdGroupsCount, createdTagsCount in
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 0)  // Check duplicated places counter
-            #expect(createdGroupsCount == 0)    // Check created groups counter
+            #expect(createdCategoriesCount == 0)    // Check created categories counter
             #expect(createdTagsCount == 0)      // Check created tags counter
         }
         let places = try await localPlaceRepo.fetch()
@@ -418,7 +418,7 @@ struct ImportDropinTests {
         // Create the import
         let dropinExport = DropinInOut(exportedAt: Date(),
                                        places: [],
-                                       groups: [],
+                                       categories: [],
                                        tags: [])
         let data = try ExportService.encoder.encode(dropinExport)
 
@@ -466,7 +466,7 @@ struct ImportDropinTests {
     ///
     @Test func importDropinServiceUnsupported() async throws {
         let json = """
-        { "version": 5678, "exportedAt": "2026-01-01T00:00:00Z", "groups": [], "tags": [], "places": [] }
+        { "version": 5678, "exportedAt": "2026-01-01T00:00:00Z", "categories": [], "tags": [], "places": [] }
         """
         let data = Data(json.utf8)
         let importDropinService = importService()
@@ -508,21 +508,21 @@ struct ImportDropinTests {
         #expect(export.exportedAt < Date())  // Check not distant future
         
         // Assert counts
-        #expect(export.groups.count == 7)
+        #expect(export.categories.count == 7)
         #expect(export.tags.count == 9)
         #expect(export.places.count == 17)
         
         // Assert relationships are coherent
         let tagIds = Set(export.tags.map({ $0.id }))
-        let groupIds = Set(export.groups.map(\.id))
+        let groupIds = Set(export.categories.map(\.id))
         
         for place in export.places {
             // Every tagId on a place references a known tag
             let placeTagIds = place.tags.map({ $0.id })
             #expect(placeTagIds.allSatisfy { tagIds.contains($0) })
-            // Every groupId on a place references a known group
-            if let groupId = place.group?.id {
-                #expect(groupIds.contains(groupId))
+            // Every categoryId on a place references a known category
+            if let categoryId = place.category?.id {
+                #expect(groupIds.contains(categoryId))
             }
         }
     }

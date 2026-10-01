@@ -25,7 +25,7 @@ struct TagMapView: View {
 
 struct MockTagMapView: View {
     var mock: MockContainer
-    @State private var tag: TagUI
+    @State private var tag: TagUIModel
 
     var body: some View {
         mock.appContainer.createTagMapView(tagId: tag.id)
@@ -34,7 +34,7 @@ struct MockTagMapView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.tag = mock.getTagUI(1)
+        self.tag = mock.getTagUIModel(1)
     }
 }
 

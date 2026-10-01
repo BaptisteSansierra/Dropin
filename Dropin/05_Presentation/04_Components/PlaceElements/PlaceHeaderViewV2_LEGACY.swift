@@ -14,7 +14,7 @@ struct PlaceHeaderViewV2: View {
     // MARK: - State & Bindings
     /// show/hide the copied to clipboard alert
     @State private var showingAddressToClipboard: Bool = false
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @Binding private var showingMarkerList: Bool
     @Environment(AppSettings.self) private var appSettings
 
@@ -23,7 +23,7 @@ struct PlaceHeaderViewV2: View {
     private var isNameFocused: FocusState<Bool>.Binding
 
     // MARK: - init
-    init(place: Binding<PlaceUI>,
+    init(place: Binding<PlaceUIModel>,
          showingMarkerList: Binding<Bool>,
          editEnabled: Bool,
          isNameFocused: FocusState<Bool>.Binding) {
@@ -42,7 +42,7 @@ struct PlaceHeaderViewV2: View {
                     switch appSettings.mapSettings.pinStyle {
                         case .rect:
                             PlaceRectAnnotationView(color: place.groupColor,
-                                                icon: place.group?.icon,
+                                                icon: place.category?.icon,
                                                 iconExtra: place.icon)
                             .padding()
                             IcoButton(systemImage: "ellipsis",
@@ -52,7 +52,7 @@ struct PlaceHeaderViewV2: View {
                                 .opacity(editEnabled ? 1 : 0)
                         case .rounded:
                             PlacePinAnnotationView(color: place.groupColor,
-                                                   icon: place.group?.icon,
+                                                   icon: place.category?.icon,
                                                    iconExtra: place.icon,
                                                    size: 40,
                                                    shadow: false)
@@ -106,7 +106,7 @@ struct PlaceHeaderViewV2: View {
 #if DEBUG
 struct MockPlaceHeaderViewV2: View {
     var mock: MockContainer
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var showingMarkerList: Bool = true
     @FocusState var isNameFocused
 
@@ -120,7 +120,7 @@ struct MockPlaceHeaderViewV2: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(1)
+        self.place = mock.getPlaceUIModel(1)
     }
 }
 

@@ -15,7 +15,7 @@ struct PlaceTagsView: View {
     }
     
     // MARK: - States & Bindings
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @Binding private var showingTagsSelector: Bool
 
     // MARK: - private vars
@@ -23,7 +23,7 @@ struct PlaceTagsView: View {
     private var presentationMode: PresentationMode
 
     // MARK: - init
-    init(place: Binding<PlaceUI>,
+    init(place: Binding<PlaceUIModel>,
          showingTagsSelector: Binding<Bool>,
          editEnabled: Bool,
          presentationMode: PresentationMode = .inline) {
@@ -115,10 +115,10 @@ struct PlaceTagsView: View {
 #if DEBUG
 struct MockPlaceTagsView: View {
     var mock: MockContainer
-    @State var place: PlaceUI
-    @State var place1: PlaceUI
-    @State var place2: PlaceUI
-    @State var place3: PlaceUI
+    @State var place: PlaceUIModel
+    @State var place1: PlaceUIModel
+    @State var place2: PlaceUIModel
+    @State var place3: PlaceUIModel
     @State var showingTagsSelector: Bool = true
 
     var body: some View {
@@ -192,10 +192,10 @@ struct MockPlaceTagsView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(4)
-        self.place1 = mock.getPlaceUI(5)
-        self.place2 = mock.getPlaceUI(6)
-        self.place3 = mock.getPlaceUI(7)
+        self.place = mock.getPlaceUIModel(4)
+        self.place1 = mock.getPlaceUIModel(5)
+        self.place2 = mock.getPlaceUIModel(6)
+        self.place3 = mock.getPlaceUIModel(7)
     }
 }
 

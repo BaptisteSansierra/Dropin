@@ -49,7 +49,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                                            positionAtLaunch: .region(region: .abbeyRoad
                                             .offset(lat: -0.001)),
                                            displayAllPins: true)
-        static let browse = Configuration(positionAtLaunch: .none)  // group/tag map ??
+        static let browse = Configuration(positionAtLaunch: .none)  // category/tag map ??
     }
     
     struct InteractionStatus {
@@ -65,7 +65,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
 
     private let config: Configuration
     private let mapController: MapController
-    private let places: [PlaceUI]
+    private let places: [PlaceUIModel]
     private let draftCoordinate: CLLocationCoordinate2D?
     private let bottomInset: CGFloat
     private let mapReloadGen: Int
@@ -74,13 +74,11 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     private let onMapCameraUpdate: MapCameraUpdateHandler?
     private let interactionStatus: (() -> InteractionStatus)
     private let isActiveTab: Bool
-    /// Filter pins to avoid overpopulation
-    private let usePinPromotionLogic = true
 
     // MARK: Init
     init(config: Configuration,
          mapController: MapController,
-         places: [PlaceUI],
+         places: [PlaceUIModel],
          draftCoordinate: CLLocationCoordinate2D? = nil,
          selectedPlaceId: Binding<UUID?>,
          onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
@@ -186,15 +184,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         if context.coordinator.lastReloadGen != mapReloadGen || shouldReloadAnnotation {
             context.coordinator.lastReloadGen = mapReloadGen
             reloadDotAnnotations(mapView)
-            if usePinPromotionLogic {
-                // Full wipe just tore down any promoted annotations too — reset the
-                // bookkeeping so refreshPinSelection treats everyone as needing to be
-                // re-added rather than skipping because the id set happens to match.
-                context.coordinator.resetPromotedTracking()
-                // Deferred a run-loop turn: mapView.annotations(in:) isn't guaranteed to
-                // reflect annotations added earlier in this same call stack, so calling
-                // refreshPinSelection synchronously here can race and see an empty
-                // visible set — silently promoting nothing.
+            if DropinApp.map.usePinPromotionLogic {
                 DispatchQueue.main.async { [weak mapView] in
                     guard let mapView else { return }
                     context.coordinator.refreshPinSelection(mapView)
@@ -211,7 +201,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         if activeIds != context.coordinator.lastActiveIds {
             context.coordinator.lastActiveIds = activeIds
             updateDotAnnotations(mapView)
-            if usePinPromotionLogic {
+            if DropinApp.map.usePinPromotionLogic {
                 // Same deferral as above - avoids racing mapView.annotations(in:).
                 DispatchQueue.main.async { [weak mapView] in
                     guard let mapView else { return }
@@ -538,7 +528,8 @@ extension PlacesMKMapVCR {
 
         /// No-cluster-mode only. When clustering is on, MapKit handles density  natively and every place is a plain full pin
         /// so there's nothing to promote/demote here.
-        func resetPromotedTracking() {
+        func resetPromotedTracking(_ mapView: MKMapView) {
+            mapView.removeAnnotations(mapView.annotations.compactMap { $0 as? MKPlacePromotedAnnotation })
             promotedIds = []
         }
 
@@ -555,15 +546,46 @@ extension PlacesMKMapVCR {
         // TODO: or just rely on MAPKit collision test and create a pin for everyone
         func refreshPinSelection(_ mapView: MKMapView) {
             guard !mapSettings.clustering else {
-                resetPromotedTracking()
+                resetPromotedTracking(mapView)
                 return
             }
 
             // Get the list of visible places in this rect
             let visible = mapView.annotations(in: mapView.visibleMapRect)
                 .compactMap { $0 as? MKPlaceDotAnnotation }
-            var candidates: [UUID: PlaceUI] = [:]
+                .filter { lastActiveIds.contains($0.id) }
+            var candidates: [UUID: PlaceUIModel] = [:]
             for dot in visible { candidates[dot.id] = dot.place }
+
+            // Drop promoted pins whose place isn't a candidate at all anymore (filtered out/deleted/scrolled out)
+            // the cap-based demotion below only ever considers ids that ARE still candidates, so a candidate that disappears
+            // entirely is never routed to removeAnnotations without this.
+            let staleIds = promotedIds.subtracting(candidates.keys)
+            if !staleIds.isEmpty {
+                mapView.removeAnnotations(mapView.annotations
+                    .compactMap { $0 as? MKPlacePromotedAnnotation }
+                    .filter { staleIds.contains($0.id) })
+                promotedIds.subtract(staleIds)
+            }
+
+            // Refresh already-promoted annotations whose place actually changed (e.g. an edited name)
+            let currentPromoted = mapView.annotations.compactMap { $0 as? MKPlacePromotedAnnotation }
+            var staleToRemove: [MKPlacePromotedAnnotation] = []
+            var freshReplacements: [MKPlacePromotedAnnotation] = []
+            for promoted in currentPromoted {
+                guard let freshPlace = candidates[promoted.id] else { continue }
+                let fresh = MKPlacePromotedAnnotation(place: freshPlace)
+                if !fresh.isEqual(promoted) {
+                    staleToRemove.append(promoted)
+                    freshReplacements.append(fresh)
+                }
+            }
+            if !staleToRemove.isEmpty {
+                mapView.removeAnnotations(staleToRemove)
+            }
+            if !freshReplacements.isEmpty {
+                mapView.addAnnotations(freshReplacements)
+            }
 
             // Sort the list so that higher position = higher chance to get promoted
             let sorted = candidates.sorted {
@@ -827,7 +849,7 @@ class PlacesMKMapVC: UIViewController {
 #if DEBUG
 
 struct MockPlacesMKMapVCR: View {
-    @State var places: [PlaceUI]
+    @State var places: [PlaceUIModel]
     @State var settings: AppSettings
     @State var clustering: Bool = true
     @State var selectedPlaceId: UUID?
@@ -902,12 +924,12 @@ struct MockPlacesMKMapVCR: View {
     init() {
         //let mock = MockContainer()
         //self.mock = mock
-        let place1 = PlaceUI(coordinates: .barcelona)
-        place1.group = GroupUI(color: "AE271A")
-        let place2 = PlaceUI(coordinates: .barcelona.offset(x: 0.01))
-        let place3 = PlaceUI(coordinates: .barcelona.offset(y: 0.01))
-        let place4 = PlaceUI(coordinates: .barcelona.offset(x: 0.02, y: -0.02))
-        let place5 = PlaceUI(coordinates: .barcelona.offset(x: 0.0201, y: -0.0201))
+        let place1 = PlaceUIModel(coordinates: .barcelona)
+        place1.category = CategoryUIModel(color: "AE271A")
+        let place2 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.01))
+        let place3 = PlaceUIModel(coordinates: .barcelona.offset(y: 0.01))
+        let place4 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.02, y: -0.02))
+        let place5 = PlaceUIModel(coordinates: .barcelona.offset(x: 0.0201, y: -0.0201))
         self.places = [place1, place2, place3, place4, place5]
         
         settings = AppSettings()

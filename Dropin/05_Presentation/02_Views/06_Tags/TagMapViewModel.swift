@@ -1,5 +1,5 @@
 //
-//  GroupMapViewModel.swift
+//  CategoryMapViewModel.swift
 //  Dropin
 //
 //  Created by baptiste sansierra on 10/6/26.
@@ -32,7 +32,7 @@ import SwiftUI
         return GenericMapView(viewModel: vm)
     }
 
-//    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+//    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
 //        return appContainer.createPlaceSheetView(place: place, detent: detent)
 //    }
 }

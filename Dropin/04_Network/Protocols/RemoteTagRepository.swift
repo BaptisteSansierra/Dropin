@@ -5,6 +5,7 @@
 import Foundation
 
 protocol RemoteTagRepository: Sendable {
-    func upsert(_ tag: TagEntity) async throws
-    func fetch(updatedAfter date: Date) async throws -> [TagEntity]
+    func upsert(_ tag: Tag) async throws
+    /// `excludeDeleted`: skip soft-deleted rows. Only safe on a first-ever pull
+    func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Tag]
 }

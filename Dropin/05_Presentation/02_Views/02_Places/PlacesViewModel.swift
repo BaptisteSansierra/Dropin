@@ -14,20 +14,20 @@ import CoreLocation
     
     // MARK: - Observed properties
     var coordinator: PlaceCoordinator
-    var places: [PlaceUI] = [PlaceUI]()
+    var places: [PlaceUIModel] = [PlaceUIModel]()
     /*private(set)*/ var mapReloadGen: Int = 0    // bumps after each significant reload
 
     var syncStatus: SyncStatus
     var reachabilityService: ReachabilityService
 
     /// Places filtered with `currentFilter`
-    var filteredPlaces: [PlaceUI] {
+    var filteredPlaces: [PlaceUIModel] {
         guard let filter = currentFilter else { return places }
         return filter.apply(places)
     }
 
     /// Places filtered with `currentFilter` ans sorted with `sortPolicy`
-    var sortedPlaces: [PlaceUI] {
+    var sortedPlaces: [PlaceUIModel] {
         sortPolicy.apply(filteredPlaces, userPosition: locationManager.lastKnownLocation)
     }
     
@@ -53,12 +53,15 @@ import CoreLocation
     var detailSheetDetent: PresentationDetent = .medium
 
     var navBarHeight: CGFloat = 0
+    
+    /// Selected tab: 0=map, 1=list
     var selectedTab: Int = 0
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
     @ObservationIgnored private var fetchPlaces: FetchPlaces
+    @ObservationIgnored private var placeSources: [Place] = [Place]()
 
     // MARK: init
     init(_ appContainer: AppContainer,
@@ -117,11 +120,18 @@ import CoreLocation
         return appContainer.createPlacesListView(places: sortedPlaces, selectedPlaceId: bindingSelectedPlaceId)
     }
 
-    func createPlaceSheetView(place: Binding<PlaceUI>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
-        return appContainer.createPlaceSheetView(place: place, detent: detent)
+    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+        // Display the "Show on map" button only if view is presented from list
+        let mapAction = {
+            self.selectedTab = 0
+            self.selectedPlaceId = place.id
+        }
+        return appContainer.createPlaceSheetView(place: place,
+                                                 mapAction: selectedTab == 1 ? mapAction : nil,
+                                                 detent: detent)
     }
 
-    func createPlaceEditView(place: PlaceUI) -> PlaceEditView {
+    func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
         return appContainer.createPlaceEditView(place: place)
     }
 
@@ -129,7 +139,7 @@ import CoreLocation
         return appContainer.createLookupPlacesView()
     }
     
-    func createLookupPlacesView(place: Binding<PlaceUI>) -> LookupPlacesView {
+    func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
         return appContainer.createLookupPlacesView(place: place)
     }
 
@@ -138,13 +148,13 @@ import CoreLocation
                                name: String,
                                marker: String?,
                                tags: [UUID],
-                               group: UUID?) -> PlaceCreateView {
+                               category: UUID?) -> PlaceCreateView {
         return appContainer.createPlaceCreateView(coordinates: coordinates,
                                                   address: address,
                                                   name: name,
                                                   marker: marker,
                                                   tags: tags,
-                                                  group: group)
+                                                  category: category)
     }
     
     func createPlaceFilterView() -> PlaceFilterView {
@@ -158,18 +168,21 @@ import CoreLocation
 
     // MARK: Use cases
     func loadPlaces() async throws {
-        let newPlaces = try await fetchPlaces().map { PlaceMapper.toUI($0) }
-
-        // loadPlaces() gets called from several independent triggers (view appear,
-        // sync completion, place edit/create) that can fire in a tight cluster —
-        // unconditionally bumping mapReloadGen on every call forced a full
-        // annotation wipe-and-recreate each time, even when nothing had changed.
-        let oldSignature = Set(places.map { "\($0.id)-\($0.updatedAt)" })
+        let newPlaces = try await fetchPlaces()
+        let newPlacesUI = newPlaces.map { PlaceMapper.toUI($0) }
+        
+        // loadPlaces() gets called from several independent triggers (view appear, sync completion, place edit/create)
+        // that could be costly to update pins each time. Only do it if necessary
+        let oldSignature = Set(placeSources.map { "\($0.id)-\($0.updatedAt)" })
         let newSignature = Set(newPlaces.map { "\($0.id)-\($0.updatedAt)" })
 
-        places = newPlaces
-        if oldSignature != newSignature {
-            updateMapAnnotations()
+        guard oldSignature != newSignature else {
+            // NOTE: an update on category or tags color/icon would not be detected here
+            // Not an issue at the moment as it's not editable from the place section currently
+            return
         }
+        places = newPlacesUI
+        updateMapAnnotations()
+        placeSources = newPlaces
     }
 }

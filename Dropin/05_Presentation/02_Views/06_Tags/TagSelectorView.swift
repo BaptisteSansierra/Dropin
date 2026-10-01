@@ -13,7 +13,7 @@ struct TagSelectorView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: TagSelectorViewModel
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @State private var createdTagName: String = ""
     @State private var createdTagColor: Color
     @State private var isShowingNameWarn = false
@@ -22,7 +22,7 @@ struct TagSelectorView: View {
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Init
-    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUI>) {
+    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUIModel>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
         _createdTagColor = State(initialValue: Color.random())
@@ -70,7 +70,7 @@ struct TagSelectorView: View {
                     try await viewModel.loadTags()
                     viewModel.updateData(place)
                 } catch {
-                    assertionFailure("Couldn't load groups")
+                    assertionFailure("Couldn't load categories")
                 }
             }
         }
@@ -136,12 +136,12 @@ struct TagSelectorView: View {
         }
     }
 
-    private func addTag(_ tag: TagUI) {
+    private func addTag(_ tag: TagUIModel) {
         place.tags.append(tag)
         viewModel.updateData(place)
     }
 
-    private func removeTag(_ tag: TagUI) {
+    private func removeTag(_ tag: TagUIModel) {
         guard let index = place.tags.firstIndex(where: { $0.id == tag.id }) else {
             assertionFailure("Couldn't remove tag \(tag.name) from selection")
             return
@@ -176,7 +176,7 @@ struct TagSelectorView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: TagSelectorViewModel
-    @Binding private var place: PlaceUI
+    @Binding private var place: PlaceUIModel
     @State private var createdTagName: String = ""
     @State private var createdTagColor: Color
     @State private var isShowingNameWarn = false
@@ -185,7 +185,7 @@ struct TagSelectorView: View {
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Init
-    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUI>) {
+    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUIModel>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
         _createdTagColor = State(initialValue: Color.random())
@@ -207,7 +207,7 @@ struct TagSelectorView: View {
                     try await viewModel.loadTags()
                     viewModel.updateData(place)
                 } catch {
-                    assertionFailure("Couldn't load groups")
+                    assertionFailure("Couldn't load categories")
                 }
             }
         }
@@ -316,12 +316,12 @@ struct TagSelectorView: View {
         }
     }
 
-    private func addTag(_ tag: TagUI) {
+    private func addTag(_ tag: TagUIModel) {
         place.tags.append(tag)
         viewModel.updateData(place)
     }
 
-    private func removeTag(_ tag: TagUI) {
+    private func removeTag(_ tag: TagUIModel) {
         guard let index = place.tags.firstIndex(where: { $0.id == tag.id }) else {
             assertionFailure("Couldn't remove tag \(tag.name) from selection")
             return
@@ -336,7 +336,7 @@ struct TagSelectorView: View {
 #if DEBUG
 struct MockTagSelectorView: View {
     var mock: MockContainer
-    @State var place: PlaceUI
+    @State var place: PlaceUIModel
     @State var present: Bool = false
 
     var body: some View {
@@ -354,7 +354,7 @@ struct MockTagSelectorView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.place = mock.getPlaceUI(1)
+        self.place = mock.getPlaceUIModel(1)
     }
 }
 

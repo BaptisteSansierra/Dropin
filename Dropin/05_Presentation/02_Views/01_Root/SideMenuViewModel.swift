@@ -21,7 +21,7 @@ import SwiftUI
         self.showingProfile = showingProfile
     }
 
-    var profile: ProfileEntity? { profileService.profile }
+    var profile: Profile? { profileService.profile }
     var displayName: String? { profile?.displayName }
     var email: String? { profile?.email }
 

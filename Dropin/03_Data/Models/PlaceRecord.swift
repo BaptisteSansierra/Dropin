@@ -1,0 +1,178 @@
+//
+//  PlaceRecord.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 22/7/25.
+//
+
+import Foundation
+import SwiftData
+
+@Model
+final class PlaceRecord {
+    var identifier: UUID
+    var name: String
+    var latitude: Double
+    var longitude: Double
+    var address: String?
+    var address2: String?
+    @Relationship(deleteRule: .nullify, inverse: \TagRecord.places) var tags: [TagRecord]
+    @Relationship(deleteRule: .nullify, inverse: \CategoryRecord.places) var category: CategoryRecord?
+    @Relationship(deleteRule: .cascade, inverse: \PlaceImageRecord.place) var images: [PlaceImageRecord]
+    var icon: Icon? = nil
+    // Metadata
+    var rating: Float? = nil
+    var phone: [String]
+    var email: [String]
+    var url: [String]
+    var notes: String?
+    // Dates
+    var createdAt: Date     // Set at creation
+    var updatedAt: Date     // Set on every mutation; drives dirty detection
+    var syncedAt: Date?     // Set on successful push; nil = never synced
+    var deletedAt: Date?    // Soft delete
+
+    init(identifier: UUID,
+         name: String,
+         latitude: Double,
+         longitude: Double,
+         address: String? = nil,
+         address2: String? = nil,
+         tags: [TagRecord] = [],
+         category: CategoryRecord? = nil,
+         images: [PlaceImageRecord] = [],
+         icon: Icon? = nil,
+         rating: Float? = nil,
+         phone: [String] = [],
+         email: [String] = [],
+         url: [String] = [],
+         notes: String? = nil) {
+        self.identifier = identifier
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+        self.address = address
+        self.address2 = address2
+        self.tags = tags
+        self.category = category
+        self.images = images
+        self.icon = icon
+        self.rating = rating
+        self.phone = phone
+        self.email = email
+        self.url = url
+        self.notes = notes
+        let now = Date()
+        self.createdAt = now
+        self.updatedAt = now
+        self.syncedAt = nil
+        self.deletedAt = nil
+    }
+}
+
+#if DEBUG
+
+import ContactFieldKit
+
+extension PlaceRecord {  // Mock extension
+    
+    static func mockPlaces() -> [PlaceRecord] {
+        let l1 = PlaceRecord(identifier: UUID(),
+                         name: "La Chitarra",
+                         latitude: 41.40622777528736,
+                         longitude: 2.1595467749244204,
+                         address: "Carrer de Joan Blanques, 56, \nGràcia, \n08024 Barcelona",
+                         tags: [],
+                         category: nil,
+                         icon: .sf("carrot.fill"))
+
+        let l2 = PlaceRecord(identifier: UUID(),
+                         name: "Les Tres a la Cuina",
+                         latitude: 41.40522138362398,
+                         longitude: 2.1598304185317847,
+                         // Apple
+                         //latitude: 41.405341,
+                         //longitude: 2.159652,
+                         address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
+                         tags: [],
+                         category: nil,
+                         phone: [ContactItem(value: "931054947", label: ContactLabel(kind: .phone, label: .mobile)).rawValue,
+                                 ContactItem(value: "633029920", label: ContactLabel(kind: .phone, label: .home)).rawValue],
+                         email: [ContactItem(value: "tres.a.la@cuina.es", label: ContactLabel(kind: .email, label: .work)).rawValue],
+                         url: [ContactItem(value: "http://lestresalacuina.com", label: ContactLabel(kind: .url, label: .url)).rawValue],
+                         notes: "Don't forget your tupper")
+        
+        let l3 = PlaceRecord(identifier: UUID(),
+                         name: "Chiringuito Karamba",
+                        latitude: 41.44511384541266,
+                        longitude: 2.2495646936392317,
+                        address: "Carrer d'Eduard Maristany, 21, 08912 Badalona, Barcelona",
+                        tags: [],
+                        category: nil)
+
+        let l4 = PlaceRecord(identifier: UUID(),
+                         name: "Continental Bar",
+                         latitude: 41.40626764285292,
+                         longitude: 2.156492157860694,
+                         address: "Carrer de la Providència, 30, /nGràcia, /n08024 Barcelona",
+                         tags: [],
+                         category: nil)
+
+        let l5 = PlaceRecord(identifier: UUID(),
+                         name: "Bagdad café",
+                         latitude: 33.321589923265904,
+                         longitude: 44.416811639303546,
+                         address: "Rasafi Street,\nBaghdad,\nBaghdad Governorate, Irak",
+                         tags: [],
+                         category: nil,
+                         icon: .sf("pianokeys"))
+
+        let l6 = PlaceRecord(identifier: UUID(),
+                         name: "El Col·leccionista",
+                         latitude: 41.40602900686343,
+                         longitude: 2.160639939265184,
+                         address: "Carrer del Torrent de les Flors, 46, Gràcia, 08024 Barcelona",
+                         tags: [],
+                         category: nil,
+                         icon: .sf("figure.socialdance"))
+
+        let l7 = PlaceRecord(identifier: UUID(),
+                         name: "Molsa Biosí",
+                         latitude: 41.403067387301924,
+                         longitude: 2.158858952034207,
+                         address: "Carrer de Ramón y Cajal, 42, Gràcia, 08012 Barcelona",
+                         tags: [],
+                         category: nil,
+                         icon: .sf("carrot"))
+
+        let l8 = PlaceRecord(identifier: UUID(),
+                         name: "Sincronia Yoga",
+                         latitude: 41.40068001375675,
+                         longitude: 2.155838283307449,
+                         address: "Carrer de Pere Serafí, 7, Gràcia, 08012 Barcelona",
+                         tags: [],
+                         category: nil,
+                         icon: .sf("swirl.circle.righthalf.filled.inverse"))
+
+        let l9 = PlaceRecord(identifier: UUID(),
+                         name: "Be Laundry Joanic",
+                         latitude: 41.399426209480154,
+                         longitude: 2.154584065083631,
+                         address: "Carrer de l'escorial, 20\n08024 Barcelona Barcelona\nSpain",
+                         tags: [],
+                         category: nil,
+                         icon: .sf("basket"))
+
+        let l10 = PlaceRecord(identifier: UUID(),
+                         name: "Place without address",
+                         latitude: 42.399426209480154,
+                         longitude: 2.21545083631,
+                         address: nil,
+                         tags: [],
+                         category: nil,
+                         icon: .sf("basket"))
+
+        return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10]
+    }
+}
+#endif

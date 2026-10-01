@@ -16,16 +16,19 @@ struct SideMenuItemView: View {
     // MARK: - private properties
     private var label: LocalizedStringKey
     private var systemImage: String
+    private var selectedSystemImage: String
     private var context: SideMenuContext
         
     // MARK: - init
     init(label: LocalizedStringKey,
          systemImage: String,
+         selectedSystemImage: String,
          context: SideMenuContext,
          showingSideMenu: Binding<Bool>,
          currentSideMenuContext: Binding<SideMenuContext>) {
         self.label = label
         self.systemImage = systemImage
+        self.selectedSystemImage = selectedSystemImage
         self.context = context
         self._showingSideMenu = showingSideMenu
         self._currentSideMenuContext = currentSideMenuContext
@@ -72,7 +75,7 @@ struct SideMenuItemView: View {
                     .strokeBorder(.pink, style: StrokeStyle(lineWidth: 2))
                     .frame(width: 90, height: 44)
                     .opacity(0)
-                Image(systemName: systemImage)
+                Image(systemName: context == currentSideMenuContext ? selectedSystemImage : systemImage)
                     .font(.bodyLight)
                     //.font(context == currentSideMenuContext ? .bodyMedium : .bodyLight)
                     .foregroundStyle(context == currentSideMenuContext ? .dropinPrimary : .textPrimary)
@@ -92,6 +95,7 @@ struct MockSideMenuItemView: View {
 
     @State var name: LocalizedStringKey
     @State var systemImage: String
+    @State var selectedSystemImage: String
     @State var sideMenuContext: SideMenuContext
     @Binding var showingSideMenu: Bool
     @Binding var currentSideMenuContext: SideMenuContext
@@ -99,6 +103,7 @@ struct MockSideMenuItemView: View {
     var body: some View {
         SideMenuItemView(label: name,
                          systemImage: systemImage,
+                         selectedSystemImage: selectedSystemImage,
                          context: sideMenuContext,
                          showingSideMenu: $showingSideMenu,
                          currentSideMenuContext: $currentSideMenuContext)
@@ -106,11 +111,13 @@ struct MockSideMenuItemView: View {
 
     init(name: LocalizedStringKey,
          systemImage: String,
+         selectedSystemImage: String,
          sideMenuContext: SideMenuContext,
          showingSideMenu: Binding<Bool>,
          currentSideMenuContext: Binding<SideMenuContext>) {
         self.name = name
         self.systemImage = systemImage
+        self.selectedSystemImage = selectedSystemImage
         self.sideMenuContext = sideMenuContext
         self._showingSideMenu = showingSideMenu
         self._currentSideMenuContext = currentSideMenuContext
@@ -126,20 +133,23 @@ struct MockSideMenuItemView: View {
             .ignoresSafeArea()
         VStack {
             MockSideMenuItemView(name: "Polenta",
-                                 systemImage: "cursorarrow.rays",
+                                 systemImage: "skateboard",
+                                 selectedSystemImage: "skateboard.fill",
                                  sideMenuContext: .main,
                                  showingSideMenu: $showingSideMenu,
                                  currentSideMenuContext: $currentSideMenuContext)
             .frame(height: 60)
             MockSideMenuItemView(name: "Pomelo",
-                                 systemImage: "warninglight",
+                                 systemImage: "firewall",
+                                 selectedSystemImage: "firewall.fill",
                                  sideMenuContext: .tags,
                                  showingSideMenu: $showingSideMenu,
                                  currentSideMenuContext: $currentSideMenuContext)
             .frame(height: 60)
             MockSideMenuItemView(name: "Porcherie",
-                                 systemImage: "eraser",
-                                 sideMenuContext: .groups,
+                                 systemImage: "printer",
+                                 selectedSystemImage: "printer.fill",
+                                 sideMenuContext: .categories,
                                  showingSideMenu: $showingSideMenu,
                                  currentSideMenuContext: $currentSideMenuContext)
             .frame(height: 60)

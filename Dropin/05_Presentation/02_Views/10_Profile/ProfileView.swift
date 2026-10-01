@@ -172,9 +172,13 @@ struct ProfileView: View {
             HStack {
                 Text(label)
                     .textStyle(.body)
-                Spacer()
+                    .lineLimit(1)
+                Spacer(minLength: 12)
                 Text(value)
                     .textStyle(.body, color: .textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.3)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 if showChevron {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .semibold))

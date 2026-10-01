@@ -20,7 +20,7 @@ struct PlaceAnnotationView: View {
     @State private var wobblePulse: Int = 0
 
     // MARK: private properties
-    private let place: PlaceUI?
+    private let place: PlaceUIModel?
     private let isSelected: Bool
     private let pinStyle: PinStyle
     private let pinSize: CGFloat
@@ -91,14 +91,14 @@ struct PlaceAnnotationView: View {
                         // PlaceRectAnnotationView draws its own arrow internally and its
                         // total height already equals `size` — no external composition needed.
                         PlaceRectAnnotationView(color: place.groupColor,
-                                                icon: place.group?.icon,
+                                                icon: place.category?.icon,
                                                 iconExtra: place.icon,
                                                 size: pinSize)
                             .frame(width: pinSize,
                                    height: pinSize)
                     case .rounded:
                         PlacePinAnnotationView(color: place.groupColor,
-                                               icon: place.group?.icon,
+                                               icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                size: pinSize)
                             .frame(width: pinSize,
@@ -169,11 +169,11 @@ struct MockPlaceAnnotationView: View {
     var pinStyle = PinStyle.rounded
     var pinSize: CGFloat = 36
     @State var size: CGFloat = 150
-    @State var place1: PlaceUI
-    @State var place2: PlaceUI
-    @State var place3: PlaceUI
-    @State var place4: PlaceUI
-    @State var place5: PlaceUI
+    @State var place1: PlaceUIModel
+    @State var place2: PlaceUIModel
+    @State var place3: PlaceUIModel
+    @State var place4: PlaceUIModel
+    @State var place5: PlaceUIModel
 
     var body: some View {
         VStack(spacing: 0) {
@@ -219,7 +219,7 @@ struct MockPlaceAnnotationView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        let places = mock.getAllPlaceUI()
+        let places = mock.getAllPlaceUIModel()
         self.place1 = places[0]
         self.place2 = places[1]
         self.place3 = places[2]

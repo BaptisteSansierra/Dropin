@@ -9,11 +9,11 @@ import MapKit
 @MainActor
 protocol MKPlaceAnnotationRepresentable: MKAnnotation {
     var id: UUID { get }
-    var place: PlaceUI { get }
-    init(place: PlaceUI)
+    var place: PlaceUIModel { get }
+    init(place: PlaceUIModel)
 }
 
 @MainActor
 extension MKPlaceAnnotationRepresentable {
-    var color: UIColor { UIColor(place.group?.color ?? .gray) }
+    var color: UIColor { UIColor(place.category?.color ?? .gray) }
 }

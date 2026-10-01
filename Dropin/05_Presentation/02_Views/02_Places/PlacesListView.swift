@@ -16,14 +16,14 @@ struct PlacesListView: View {
     @Environment(AppSettings.self) private var appSettings
 
     // MARK: - Properties
-    private var places: [PlaceUI]
-    private var activePlaces: [PlaceUI] {
+    private var places: [PlaceUIModel]
+    private var activePlaces: [PlaceUIModel] {
         places.filter { $0.isActive }
     }
 
     // MARK: - Init
     init(viewModel: PlacesListViewModel,
-         places: [PlaceUI],
+         places: [PlaceUIModel],
          selectedPlaceId: Binding<UUID?>) {
         self.viewModel = viewModel
         self.places = places
@@ -71,10 +71,10 @@ struct PlacesListView: View {
         }
     }
 
-    private func placeRowView(_ place: PlaceUI) -> some View {
+    private func placeRowView(_ place: PlaceUIModel) -> some View {
         placeRowContentView(place)
             .contextMenu(menuItems: {
-                Button(action: {showOnMap(place.id)}) {
+                Button(action: { showOnMap(place.id) }) {
                     Text("common.show_on_map")
                 }
             }, preview: {
@@ -84,13 +84,17 @@ struct PlacesListView: View {
             })
             //.background(.backgroundPrimary)
             //.padding(.bottom, 20)
-            .id(place.changeToken)  // Force the update after edit
+            // changeToken alone collides for two places with identical content
+            // (e.g. duplicate imports with the same name/coords/tags/etc.) — pair
+            // it with the place's own stable id so it stays globally unique while
+            // still changing (forcing the refresh) whenever the content does.
+            .id("\(place.id)-\(place.changeToken)")  // Force the update after edit
             .onTapGesture {
                 selectedPlaceId = place.id
             }
     }
     
-    private func placeRowContentView(_ place: PlaceUI) -> some View {
+    private func placeRowContentView(_ place: PlaceUIModel) -> some View {
         PlaceRowView(place: place, locationManager: viewModel.locationManager)
 //            .padding(EdgeInsets(top: 15,
 //                                leading: 10,
@@ -108,7 +112,7 @@ struct PlacesListView: View {
 #if DEBUG
 struct MockPlacesListView: View {
     var mock: MockContainer
-    @State var places: [PlaceUI]
+    @State var places: [PlaceUIModel]
     @State var selectedPlaceId: UUID?
 
     var body: some View {
@@ -118,7 +122,7 @@ struct MockPlacesListView: View {
     init() {
         let mock = MockContainer()
         self.mock = mock
-        self.places = mock.getAllPlaceUI()
+        self.places = mock.getAllPlaceUIModel()
     }
 }
 

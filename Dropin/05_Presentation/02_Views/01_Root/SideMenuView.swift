@@ -126,16 +126,18 @@ struct SideMenuView: View {
         VStack(spacing: 0) {
             let rowHeight: CGFloat = 50
             SideMenuItemView(label: "common.places",
-                             systemImage: "globe.europe.africa.fill",
+                             systemImage: "globe.europe.africa",
+                             selectedSystemImage: "globe.europe.africa.fill",
                              context: .main,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
             
-            SideMenuItemView(label: "common.groups",
-                             systemImage: "folder",
-                             context: .groups,
+            SideMenuItemView(label: "common.categories",
+                             systemImage: "square.grid.2x2",
+                             selectedSystemImage: "square.grid.2x2.fill",
+                             context: .categories,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
             .frame(height: rowHeight)
@@ -143,6 +145,7 @@ struct SideMenuView: View {
             
             SideMenuItemView(label: "common.tags",
                              systemImage: "tag",
+                             selectedSystemImage: "tag.fill",
                              context: .tags,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
@@ -175,6 +178,7 @@ struct SideMenuView: View {
             
             SideMenuItemView(label: "common.settings",
                              systemImage: "slider.horizontal.3",
+                             selectedSystemImage: "slider.horizontal.3",
                              context: .settings,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
@@ -182,6 +186,7 @@ struct SideMenuView: View {
             .padding(.bottom, 0)
             SideMenuItemView(label: "common.about",
                              systemImage: "info.circle",
+                             selectedSystemImage: "info.circle.fill",
                              context: .about,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)

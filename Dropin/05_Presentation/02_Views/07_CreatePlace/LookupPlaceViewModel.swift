@@ -41,7 +41,7 @@ import MapKit
                                             name: lookupResolvedItem.name ?? "",
                                             marker: nil,
                                             tags: [],
-                                            group: nil)
+                                            category: nil)
     }
 */
     

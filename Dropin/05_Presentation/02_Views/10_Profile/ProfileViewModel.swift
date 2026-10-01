@@ -42,7 +42,7 @@ import Foundation
     }
 
     // MARK: - Read-only fields surfaced to the view
-    var profile: ProfileEntity? { profileService.profile }
+    var profile: Profile? { profileService.profile }
     var displayName: String { profile?.displayName ?? "" }
     var email: String? { profile?.email }
     var plan: UserPlan? { profile?.plan }
