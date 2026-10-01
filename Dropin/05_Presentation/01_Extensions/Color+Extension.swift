@@ -52,7 +52,7 @@ extension Color {
         }
     }
     
-    static func random(range: ClosedRange<CGFloat> = CGFloat(0.25)...CGFloat(0.8)) -> Color {
+    static func random(range: ClosedRange<CGFloat> = CGFloat(0.25)...CGFloat(0.75)) -> Color {
         return Color(red: CGFloat.random(in: range),
                      green: CGFloat.random(in: range),
                      blue: CGFloat.random(in: range))

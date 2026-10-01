@@ -97,6 +97,7 @@ struct TagSelectorView: View {
     private var createTagView: some View {
         HStack(spacing: 10) {
             // Color picker
+            /*
             ZStack {
                 ColorPicker(String(""), selection: $createdTagColor, supportsOpacity: false)
                     .labelsHidden()
@@ -107,6 +108,14 @@ struct TagSelectorView: View {
             }
             .frame(width: 38, height: 38)
             .background(.surface1, in: RoundedRectangle(cornerRadius: 10))
+            .overlay {
+                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
+            }*/
+            VStack {
+                SpectrumColorPicker(color: $createdTagColor)
+                    .frame(width: 27, height: 27)
+            }
+            .frame(width: 38, height: 38)
             .overlay {
                 RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
             }

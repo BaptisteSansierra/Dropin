@@ -179,18 +179,11 @@ struct CategorySelectorView: View {
     private var createCategoryView: some View {
         HStack(spacing: 10) {
             // Color picker
-            ZStack {
-                ColorPicker(String(""),
-                            selection: $createdCategoryColor,
-                            supportsOpacity: false)
-                    .labelsHidden()
-                Circle()
-                    .frame(width: 15, height: 15)
-                    .foregroundStyle(createdCategoryColor)
-                    .allowsHitTesting(false)
+            VStack {
+                SpectrumColorPicker(color: $createdCategoryColor)
+                    .frame(width: 27, height: 27)
             }
             .frame(width: 38, height: 38)
-            .background(.surface1, in: RoundedRectangle(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
             }

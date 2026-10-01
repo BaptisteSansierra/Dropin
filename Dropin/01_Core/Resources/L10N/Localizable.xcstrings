@@ -19,6 +19,12 @@
     "%lld%%" : {
 
     },
+    "0" : {
+
+    },
+    "1" : {
+
+    },
     "about.data_yours.body" : {
       "localizations" : {
         "en" : {
@@ -2655,6 +2661,22 @@
         }
       }
     },
+    "common.randomize" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Randomize"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aléatoire"
+          }
+        }
+      }
+    },
     "common.rating" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2718,6 +2740,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Signaler un problème"
+          }
+        }
+      }
+    },
+    "common.saturation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saturation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saturation"
           }
         }
       }

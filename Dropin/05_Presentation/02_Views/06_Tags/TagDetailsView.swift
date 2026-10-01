@@ -139,6 +139,7 @@ struct TagDetailsView: View {
                         .frame(width: 100)
                         .padding(.leading, 30)
                     Spacer()
+                    /*
                     ColorPicker(String(""), selection: $viewModel.tagColor, supportsOpacity: false)
                         .labelsHidden()
                         .padding(.leading, 40)
@@ -147,6 +148,17 @@ struct TagDetailsView: View {
                             viewModel.tag.color = viewModel.tagColor
                             updateTag()
                         }
+                     */
+                    SpectrumColorPicker(color: $viewModel.tagColor, didEnd: {
+                        // Update storage
+                        updateTag()
+                    })
+                    .frame(width: 30, height: 30)
+                    .padding(.horizontal, 30)
+                    .onChange(of: viewModel.tagColor) { oldValue, newValue in
+                        // Update local color
+                        viewModel.tag.color = viewModel.tagColor
+                    }
                 }
             }
         }

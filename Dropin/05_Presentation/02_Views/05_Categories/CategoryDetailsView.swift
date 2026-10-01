@@ -152,13 +152,16 @@ struct CategoryDetailsView: View {
                         .frame(width: 100)
                         .padding(.leading, 30)
                     Spacer()
-                    ColorPicker(String(""), selection: $viewModel.groupColor, supportsOpacity: false)
-                        .labelsHidden()
-                        .padding(.horizontal, 30)
-                        .onChange(of: viewModel.groupColor) { oldValue, newValue in
-                            viewModel.category.color = viewModel.groupColor
-                            updateCategory()
-                        }
+                    SpectrumColorPicker(color: $viewModel.groupColor, didEnd: {
+                        // Update storage
+                        updateCategory()
+                    })
+                    .frame(width: 30, height: 30)
+                    .padding(.horizontal, 30)
+                    .onChange(of: viewModel.groupColor) { oldValue, newValue in
+                        // Update local category
+                        viewModel.category.color = viewModel.groupColor
+                    }
                 }
             }
         }
