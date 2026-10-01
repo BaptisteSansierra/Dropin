@@ -28,12 +28,12 @@ struct TagView: View {
     init(name: String, color: Color, style: Style = .plain) {
         self.name = name
         self.color = color
-        let luminance = color.luminance()
-        var lightColor: Color = .surface1
-        var darkColor: Color = .surface1
-        var lightAlphaBgColor: Color = .clear
-        var darkAlphaBgColor: Color = .clear
+        let lightColor: Color = .surface1
+        let darkColor: Color = .surface1
+        let lightAlphaBgColor: Color = .clear
+        let darkAlphaBgColor: Color = .clear
         /*
+        let luminance = color.luminance()
         if luminance > 0.7 {
             let lerp = (luminance - 0.7) * 10 / 3
             //print("LUMI:\(luminance) +> LERP:\(lerp)")

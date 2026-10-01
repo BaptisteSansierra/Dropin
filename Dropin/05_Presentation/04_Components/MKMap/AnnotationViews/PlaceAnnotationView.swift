@@ -109,20 +109,15 @@ class PlaceAnnotationView: MKAnnotationView {
         let foldLabelIntoBounds = !DropinApp.map.usePinPromotionLogic && hasTitle
         var totalWidth = size
         var totalHeight = size
-        var labelCenter = CGPoint.zero
         var labelFrame = CGRect.zero
 
         let gap: CGFloat = 4
         let labelSize = hasTitle ? fittedSize : .zero
         if foldLabelIntoBounds {
-
             totalWidth = max(size, labelSize.width)
             totalHeight = size + gap + labelSize.height
         }
         if hasTitle {
-            labelCenter = CGPoint(x: totalWidth * 0.5,
-                                  y: size + gap + labelSize.height / 2)
-         
             labelFrame = CGRect(x: totalWidth * 0.5 - labelSize.width * 0.5,
                                 y: size + gap,
                                 width: labelSize.width,
