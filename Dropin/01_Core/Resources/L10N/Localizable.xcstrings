@@ -4245,22 +4245,126 @@
         }
       }
     },
-    "placeholder.address_missing" : {
-      "comment" : "Shown in place of the address when it hasn't been fetched yet (e.g. offline)",
+    "place_sheet.share.email_subject" : {
+      "comment" : "Email subject when sharing a place: 1=sender display name, 2=place name",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Address will be added automatically"
+            "value" : "%1$@ shared a place with you: %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’adresse sera ajoutée automatiquement"
+            "value" : "%1$@ a partagé un lieu avec vous : %2$@"
           }
         }
       }
+    },
+    "place_sheet.share.error" : {
+      "comment" : "Body of the alert shown when creating a share link fails",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't create a share link for this place. Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de créer un lien de partage pour ce lieu. Réessayez."
+          }
+        }
+      }
+    },
+    "place_sheet.share.error.connection" : {
+      "comment" : "Body of the alert shown when creating a share link fails because the device is offline",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection. Check your connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de connexion internet. Vérifiez votre connexion et réessayez."
+          }
+        }
+      }
+    },
+    "place_sheet.share.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share failed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec du partage"
+          }
+        }
+      }
+    },
+    "place_sheet.share.error.url.%d" : {
+      "comment" : "Body of the alert shown when creating a share link fails with a specific URL error code",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't create the share link (error %d). Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de créer le lien de partage (erreur %d). Réessayez."
+          }
+        }
+      }
+    },
+    "place_sheet.share.message" : {
+      "comment" : "Share sheet message body: %@ = sender display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ shared a place with you on Dropin"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a partagé un lieu avec vous sur Dropin"
+          }
+        }
+      }
+    },
+    "place_sheet.share.sender_fallback" : {
+      "comment" : "Share sheet sender name fallback when the user has no display name set",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelqu'un"
+          }
+        }
+      }
+    },
+    "placeholder.address_missing" : {
+
     },
     "placeholder.address2" : {
       "comment" : "Field : Address line 2",

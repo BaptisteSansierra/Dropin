@@ -36,21 +36,29 @@ import CoreLocation
     var urlScale: CGFloat = 1
     var thumbnails: [(id: UUID, state: ImageLoadState)] = []
     var selectedImageIndex: Int? = nil
+    var isSharing: Bool = false
+    var shareURL: IdentifiableURL? = nil
+    var shareMessage: String = ""
+    var shareSubject: String = ""
+    var shareErrorMsg: String? = nil
 
     @ObservationIgnored private var coordinator: any PlaceNavigationCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var locationManager: LocationManager
+    @ObservationIgnored private var shareService: any ShareServiceProtocol
     @ObservationIgnored private var getPlaceThumbnails: GetPlaceThumbnails
     @ObservationIgnored private var getPlaceImage: GetPlaceImage
 
     init(_ appContainer: AppContainer,
          coordinator: any PlaceNavigationCoordinator,
          locationManager: LocationManager,
+         shareService: any ShareServiceProtocol,
          getPlaceThumbnails: GetPlaceThumbnails,
          getPlaceImage: GetPlaceImage) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
+        self.shareService = shareService
         self.getPlaceThumbnails = getPlaceThumbnails
         self.getPlaceImage = getPlaceImage
     }
@@ -103,6 +111,35 @@ import CoreLocation
         UIApplication.shared.open(url)
     }
     
+    func share(place: PlaceUIModel) async {
+        shareErrorMsg = nil
+        isSharing = true
+        defer { isSharing = false }
+        do {
+            let url = try await shareService.shareURL(placeId: place.id)
+            let senderName = appContainer.currentDisplayName?.isEmpty == false
+                ? appContainer.currentDisplayName!
+                : String(localized: "place_sheet.share.sender_fallback")
+            shareMessage = String(format: NSLocalizedString("place_sheet.share.message", comment: ""), senderName)
+            shareSubject = String(format: NSLocalizedString("place_sheet.share.email_subject", comment: ""), senderName, place.name)
+            shareURL = IdentifiableURL(url: url)
+        } catch {
+            Log.error("PlaceSheetViewModel: share failed for place \(place.id): \(error)")
+            if let urlError =  error as? URLError {
+                switch urlError.code {
+                    case .notConnectedToInternet:
+                        shareErrorMsg = "place_sheet.share.error.connection"
+                    default:
+                        // shareErrorMsg is wrapped in LocalizedStringKey(_:) by the view, which needs
+                        // the literal catalog key "place_sheet.share.error.url.%d" (with the code substituted via %d)
+                        shareErrorMsg = String(format: NSLocalizedString("place_sheet.share.error.url.%d", comment: ""), urlError.code.rawValue)
+                }
+            } else {
+                shareErrorMsg = "place_sheet.share.error"
+            }
+        }
+    }
+
     func copyAddressToClipboard(place: PlaceUIModel) {
         guard let address = place.address else { return }
         UIPasteboard.general.string = address

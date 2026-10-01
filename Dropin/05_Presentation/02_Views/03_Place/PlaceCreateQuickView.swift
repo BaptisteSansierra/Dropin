@@ -32,7 +32,7 @@ struct PlaceCreateQuickView: View {
                 .ignoresSafeArea()
             VStack(spacing: 0) {
                 PlaceHeaderView(place: $place,
-                                  isNameFocused: $isNameFocused)
+                                isNameFocused: $isNameFocused)
                 .padding(.bottom)
                 .padding(.top, 30)
                 
@@ -198,8 +198,7 @@ struct PlaceCreateQuickView: View {
             self.place.address = address
         } catch is CancellationError {
         } catch {
-            // Place address keeps being nil, it will be fetched later (when online)
-            //self.place.address = String(localized: "common.na")
+            // Keep nil address, it will be fetched later (when online)
         }
     }
     

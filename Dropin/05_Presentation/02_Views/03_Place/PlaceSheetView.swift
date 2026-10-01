@@ -20,6 +20,15 @@ struct PlaceSheetView: View {
     private var menuGeomId = "menuGeomId"
     private var mapAction: (() -> Void)?
     private let headerActionsViewHeight: CGFloat = 55
+    private var shareErrorPresented: Binding<Bool> {
+        Binding(get: {
+            viewModel.shareErrorMsg != nil
+        }, set: { v in
+            if !v {
+                viewModel.shareErrorMsg = nil
+            }
+        })
+    }
 
     // MARK: - init
     init(viewModel: PlaceSheetViewModel,
@@ -84,6 +93,13 @@ struct PlaceSheetView: View {
                 onDismiss: { viewModel.selectedImageIndex = nil }
             )
         }
+        .sheet(item: $viewModel.shareURL) { shareURL in
+            ShareSheet(url: shareURL.url, message: viewModel.shareMessage, subject: viewModel.shareSubject)
+        }
+        .alertOk(isPresented: shareErrorPresented,
+                 title: "place_sheet.share.error.title",
+                 body: LocalizedStringKey(viewModel.shareErrorMsg ?? "")
+                 )
     }
     
     // MARK: - Subviews
@@ -591,8 +607,9 @@ struct PlaceSheetView: View {
     }
 
     private func share() {
-        //toBeImplemented.toggle()
-        Log.warning("TO BE IMPLEMENTED")
+        Task {
+            await viewModel.share(place: place)
+        }
     }
 }
 

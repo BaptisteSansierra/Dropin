@@ -39,6 +39,7 @@ final class AppContainer {
     private let authStatus: AuthStatus
     private let profileService: any ProfileServiceProtocol
     private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
+    private let shareService: any ShareServiceProtocol
     // Map memory
     private(set) var lastMapRegion: MKCoordinateRegion?
     /// Display name entered on the Sign up form, stashed here (rather than sent  straight to `profileService.setDisplayName`) as there's no define `Profile` at this point
@@ -71,6 +72,7 @@ final class AppContainer {
         self.supabaseService = supabaseService
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
+        self.shareService = ShareService(client: supabaseService.client, auth: authService)
         // Local repos (raw — used by SyncService for push)
         let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext)
         let localCategoryRepo = CategoryRepositoryImpl(modelContext: modelContext)
@@ -142,6 +144,7 @@ final class AppContainer {
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
         self.syncService = syncService
+        self.shareService = StubShareService()
         // Repos — no syncing wrapper needed (stub would no-op anyway)
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext)
@@ -161,6 +164,9 @@ final class AppContainer {
     func syncAll() async {
         await syncService.syncAll()
     }
+
+    /// Current user's display name, e.g. for the share-sheet message's sender attribution.
+    var currentDisplayName: String? { profileService.profile?.displayName }
 
     func loadProfile() async {
         await profileService.load()
@@ -385,6 +391,7 @@ final class AppContainer {
         let vm = PlaceSheetViewModel(self,
                                      coordinator: currentPlaceCoordinator(),
                                      locationManager: locationManager,
+                                     shareService: shareService,
                                      getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                      getPlaceImage: GetPlaceImage(loader: imageLoader))
         return PlaceSheetView(viewModel: vm,
