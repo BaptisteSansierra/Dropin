@@ -29,7 +29,7 @@ struct MapIcoButton: View {
         if #available(iOS 26.0, *) {
             Button { action() } label: {
                 Image(systemName: systemImage)
-                    .font(.system(size: 17, weight: .semibold))
+                    .textStyle(.body, color: .dropinPrimary)
                     .frame(width: 24, height: 24)
             }
             .buttonStyle(.glass)
