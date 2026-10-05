@@ -242,8 +242,8 @@ extension DropinApp {
     struct userDefaultsKeys {
         static let pinStyle = "settings.map.pinStyle"
         static let pinSize = "settings.map.pinSize"
-        static let hidePOI = "settings.map.hidePOI"
-        static let satellite = "settings.map.satellite"
+        static let mapType = "settings.map.mapType"
+        static let poiConfig = "settings.map.poiConfig"
         static let clustering = "settings.map.clustering"
         static let lastSyncedAt = "service.sync.last"
     }

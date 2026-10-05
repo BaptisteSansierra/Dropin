@@ -83,7 +83,7 @@ struct PlacesMapView: View {
         })
         // Overlays
         .overlay {
-            MapSettingsOverlay(settingsShown: $viewModel.mapConfig.settingsShown)
+            MapSettingsOverlay()
                 .padding(.top, navBarHeight)
         }
         .overlay {
@@ -199,9 +199,7 @@ struct PlacesMapView: View {
                 Spacer()
                 if let locauthorized = viewModel.locationManager.authorized, locauthorized {
                     if let _ = viewModel.locationManager.lastKnownLocation {
-                        MapIcoButton(systemImage: "location.fill",
-                                     offset: CGPoint(x: -1, y: 1),
-                                     imageFrame: CGSize(width: 15, height: 15)) {
+                        MapIcoButton(systemImage: "location.fill") {
                             viewModel.centerOnUser()
                         }
                         .padding(EdgeInsets(top: 15,
@@ -211,8 +209,6 @@ struct PlacesMapView: View {
                     }
                 } else {
                     MapIcoButton(systemImage: "exclamationmark.triangle",
-                                 offset: CGPoint(x: 0, y: -1),
-                                 imageFrame: CGSize(width: 15, height: 15),
                                  color: .warning) {
                         viewModel.showAuthLocAlert.toggle()
                     }

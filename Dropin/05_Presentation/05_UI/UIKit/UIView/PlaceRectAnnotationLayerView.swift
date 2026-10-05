@@ -8,18 +8,9 @@
 import UIKit
 import SwiftUI
 
-/// UIKit port of `PlaceRectAnnotationView` (SwiftUI) — a nested-ring rounded
-/// rect (outer border in `color`, two fainter inset rings) over `backgroundPrimary`,
-/// an icon or `PlaceholderPinLayer` fallback, a `PlaceIconLayerView` badge for
-/// `iconExtra`, and a `BellCurveLayer` tail below.
-///
-/// The inner two rings are stroke-only (no fill) rather than each re-filling
-/// `backgroundPrimary` like the SwiftUI original's `RoundedRectangle...fill(...)`
-/// chain — since they're nested inside the outer ring's already-`backgroundPrimary`
-/// fill, an extra fill on top would be visually redundant.
-///
-/// Named `LayerView` for the same reason as `MapPinLayerView` — a class/struct
-/// pair can't share a top-level name in the same module.
+/// Place annotation view for 'Rect' mode
+/// a nested-ring rounded rect (outer border in `color`, two fainter inset rings) over `backgroundPrimary`,
+/// an icon or `PlaceholderPinLayer` fallback, a `PlaceIconLayerView` badge for `iconExtra`, and a `BellCurveLayer` tail below.
 final class PlaceRectAnnotationLayerView: UIView {
 
     private static let borderWidth: CGFloat = 3

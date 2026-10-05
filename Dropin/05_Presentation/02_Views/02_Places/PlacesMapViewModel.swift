@@ -303,10 +303,6 @@ extension PlacesMapViewModel {
 
     @Observable class MapConfig {
 
-        // MARK: - Published properties
-        /// `settingsShown` show/hide the settings menu in the main map
-        var settingsShown: Bool = false
-
         // MARK: - Non-observed camera state (written by map delegate — must NOT trigger SwiftUI re-renders)
         @ObservationIgnored public var currentCamera: MKMapCamera = .init()
         @ObservationIgnored public var currentRegion: MKCoordinateRegion = .zero

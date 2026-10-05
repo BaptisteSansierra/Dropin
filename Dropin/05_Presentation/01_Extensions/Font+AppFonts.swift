@@ -48,8 +48,10 @@ extension Font {
     
     // Footnote
     static let footnoteBold = Font.system(size: 13, weight: .bold)
+    static let footnoteSemibold = Font.system(size: 13, weight: .semibold)
+    static let footnoteMedium = Font.system(size: 13, weight: .medium)
     static let footnoteRegular = Font.system(size: 13, weight: .regular)
-    
+
     // Caption
     static let captionMedium = Font.system(size: 12, weight: .medium)
     static let captionSemibold = Font.system(size: 12, weight: .semibold)

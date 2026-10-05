@@ -7,10 +7,8 @@
 
 import SwiftUI
 
-/// Hosts `PlaceRectAnnotationLayerView` (UIKit) — the production rect style now
-/// renders via the UIKit port. `LEGACY_PlaceRectAnnotationView` below is the
-/// original SwiftUI implementation, kept (unused in production) for
-/// side-by-side comparison in `MockPlaceRectAnnotationView`'s preview.
+/// Hosts `PlaceRectAnnotationLayerView` (UIKit) the production rect style now enders via the UIKit port.
+/// `PlaceRectAnnotationView` is used in views as an annotation preview, *NOT* used in Maps
 struct PlaceRectAnnotationView: View {
 
     private var color: Color
@@ -50,8 +48,8 @@ private struct PlaceRectAnnotationLayerViewRepresentable: UIViewRepresentable {
     }
 }
 
-/// Original SwiftUI implementation — not used in production anymore, kept for
-/// comparison against the UIKit-hosted `PlaceRectAnnotationView` above.
+#if DEBUG
+/// Legacy SwiftUI implementation
 struct LEGACY_PlaceRectAnnotationView: View {
 
 //    static func heightFor(width: CGFloat) -> CGFloat {
@@ -142,7 +140,6 @@ struct LEGACY_PlaceRectAnnotationView: View {
     }
 }
 
-#if DEBUG
 struct MockPlaceRectAnnotationView: View {
     var mock: MockContainer
     @State var size: CGFloat = 150

@@ -7,12 +7,9 @@
 
 import UIKit
 
-/// UIKit port of `PlacePinAnnotationView` (SwiftUI) — `MapPinLayerView` with a
-/// `PlaceIconLayerView` badge overlaid at the top right for `iconExtra`.
+/// Place annotation view for 'Pin' mode
+/// `MapPinLayerView` with a `PlaceIconLayerView` badge overlaid at the top right for `iconExtra`.
 /// Reusable outside the map, same as the SwiftUI original (see `MockPlacePinAnnotationView`).
-///
-/// Named `LayerView` for the same reason as `MapPinLayerView` — a class/struct
-/// pair can't share a top-level name in the same module.
 final class PlacePinAnnotationLayerView: UIView {
 
     private let pinView = MapPinLayerView()

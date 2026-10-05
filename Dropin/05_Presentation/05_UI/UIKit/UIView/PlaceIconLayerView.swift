@@ -8,10 +8,7 @@
 import UIKit
 import SwiftUI
 
-/// UIKit port of `PlaceIconView` (SwiftUI) — a circle-in-circle badge (`textPrimary`
-/// outer, `backgroundPrimary` inner, 2pt smaller) with a centered icon. Shared by
-/// `PlacePinAnnotationLayerView` and `PlaceRectAnnotationLayerView` for their
-/// `iconExtra` badge, same as the SwiftUI originals both compose `PlaceIconView`.
+/// Represents a place icon
 final class PlaceIconLayerView: UIView {
 
     private let outer = CAShapeLayer()
@@ -75,11 +72,12 @@ final class PlaceIconLayerView: UIView {
 
     private func updateColors() {
         let textPrimary = resolvedColor(Color.textPrimary)
+        let borderColor = resolvedColor(Color.fieldBorder)
 
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         outer.fillColor = textPrimary.cgColor
-        inner.fillColor = resolvedColor(Color.backgroundPrimary).cgColor
+        inner.fillColor = resolvedColor(Color.surface1).cgColor
         outer.shadowColor = textPrimary.withAlphaComponent(0.5).cgColor
         outer.shadowOpacity = shadow ? 1 : 0
         outer.shadowRadius = 3
@@ -91,3 +89,27 @@ final class PlaceIconLayerView: UIView {
         UIColor(color).resolvedColor(with: traitCollection)
     }
 }
+
+#if DEBUG
+
+private struct PlaceIconLayerViewViewRepresentable: UIViewRepresentable {
+    func makeUIView(context: Context) -> PlaceIconLayerView {
+        PlaceIconLayerView()
+    }
+
+    func updateUIView(_ uiView: PlaceIconLayerView, context: Context) {
+        uiView.configure(icon: Icon.sf("tag"), shadow: true)
+    }
+}
+
+#Preview {
+    ZStack {
+        MapPinView()
+            .frame(width: 36, height: 36)
+        PlaceIconLayerViewViewRepresentable()
+            .frame(width: 20, height: 20)
+            .offset(x: 18, y: -18)
+    }
+}
+
+#endif

@@ -2314,6 +2314,58 @@
         }
       }
     },
+    "common.map_type.hybrid" : {
+      "comment" : "Map type picker option",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hybrid"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hybride"
+          }
+        }
+      }
+    },
+    "common.map_type.satellite" : {
+      "comment" : "Map type picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satellite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satellite"
+          }
+        }
+      }
+    },
+    "common.map_type.standard" : {
+      "comment" : "Map type picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        }
+      }
+    },
     "common.na" : {
       "localizations" : {
         "en" : {
@@ -2640,6 +2692,159 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "+  Choisir"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.culture" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Culture"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Culture"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.food_drink" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food & Drink"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restauration"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.health" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Santé"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.leisure_sport" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leisure & Sport"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loisirs & Sport"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.lodging" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lodging"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hébergement"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.nature" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nature"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nature"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.services" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.shopping" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shopping"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shopping"
+          }
+        }
+      }
+    },
+    "common.poi_bundle.transport" : {
+      "comment" : "POI bundle picker option",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport"
           }
         }
       }
@@ -3990,6 +4195,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher les points d'intérêt"
+          }
+        }
+      }
+    },
+    "map.settings.poi" : {
+      "comment" : "Map settings sheet: points-of-interest section title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points of Interest"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points d'intérêt"
+          }
+        }
+      }
+    },
+    "map.settings.style" : {
+      "comment" : "Map settings sheet: map style section title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map style"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Style de carte"
+          }
+        }
+      }
+    },
+    "map.settings.title" : {
+      "comment" : "Map settings sheet title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map options"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de la carte"
           }
         }
       }
@@ -5658,6 +5914,9 @@
           }
         }
       }
+    },
+    "Shown on the map to help you find your way. Your places always stay visible." : {
+
     },
     "tag_list_view.num_places_%lld" : {
       "localizations" : {

@@ -140,22 +140,18 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //
         // Map style
         //
-        if mapStyleHasChanged(mapView,
-                              satellite: appSettings.mapSettings.satellite,
-                              hidePointsOfInterest: appSettings.mapSettings.hidePOI) {
-            applyMapStyle(to: mapView,
-                          satellite: appSettings.mapSettings.satellite,
-                          hidePointsOfInterest: appSettings.mapSettings.hidePOI)
+        if !appSettings.mapSettings.diffAffectsMapConfig(mapView.preferredConfiguration) {
+            mapView.preferredConfiguration = appSettings.mapSettings.mapConfig()
         } else {
             //print("2 no-op map style")
         }
-        
+
         //
         // Check if settings were updated
         //
         var shouldReloadAnnotation = false
         if context.coordinator.mapSettings != appSettings.mapSettings {
-            let affectsAnns = appSettings.mapSettings.isDiffAffectsAnnotations(context.coordinator.mapSettings)
+            let affectsAnns = appSettings.mapSettings.diffAffectsAnnotations(context.coordinator.mapSettings)
             context.coordinator.updateSettings(appSettings.mapSettings)
             if affectsAnns { shouldReloadAnnotation = true }
         } else {
@@ -260,40 +256,6 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     }
     
     // MARK: private methods
-    private func mapStyleHasChanged(_ mapView: MKMapView, satellite: Bool, hidePointsOfInterest: Bool) -> Bool {
-        if mapView.mapType == .standard && satellite {
-            return true
-        }
-        if mapView.mapType == .hybrid && !satellite {
-            return true
-        }
-        if let poiFilter = mapView.pointOfInterestFilter {
-            if hidePointsOfInterest && poiFilter.includes(.airport) {
-                return true
-            }
-            if !hidePointsOfInterest && !poiFilter.includes(.airport) {
-                return true
-            }
-        } else {
-            return true
-        }
-        return false
-    }
-    
-    private func applyMapStyle(to mapView: MKMapView, satellite: Bool, hidePointsOfInterest: Bool) {
-        // Map type
-        mapView.mapType = satellite ? .hybrid : .standard
-        
-        // Points of interest filter
-        if hidePointsOfInterest {
-            mapView.pointOfInterestFilter = MKPointOfInterestFilter(including: [.publicTransport])
-        } else {
-            mapView.pointOfInterestFilter = .includingAll
-        }
-        // Traffic
-        //mapView.showsTraffic = false
-    }
-
     private func reloadDotAnnotations(_ mapView: MKMapView) {
         reloadPlaceAnnotations(mapView, as: MKPlaceDotAnnotation.self)
     }
@@ -933,7 +895,7 @@ struct MockPlacesMKMapVCR: View {
         self.places = [place1, place2, place3, place4, place5]
         
         settings = AppSettings()
-        settings.mapSettings.satellite = false
+        settings.mapSettings.mapType = .hybrid
         settings.mapSettings.pinStyle = .rounded
     }
 }

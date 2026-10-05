@@ -127,12 +127,10 @@ struct LookupPlaceView: View {
                     VStack(spacing: 0){
                         Spacer()
                         MapIcoButton(systemImage: "plus",
-                                     imageFrame: CGSize(width: 15, height: 15),
                                      color: viewModel.cameraDistance < 125 ? .disabled : .dropinPrimary,
                                      action: { viewModel.zoomIn() })
                             .padding(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10))
                         MapIcoButton(systemImage: "minus",
-                                     imageFrame: CGSize(width: 15, height: 15),
                                      color: viewModel.cameraDistance >= 32_768_000 ? .disabled : .dropinPrimary,
                                      action: { viewModel.zoomOut() })
                             .padding(EdgeInsets(top: 0, leading: 10, bottom: 15, trailing: 10))

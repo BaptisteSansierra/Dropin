@@ -7,10 +7,8 @@
 
 import SwiftUI
 
-/// Hosts `PlacePinAnnotationLayerView` (UIKit) — the production pin style now
-/// renders via the UIKit port. `LEGACY_PlacePinAnnotationView` below is the
-/// original SwiftUI implementation, kept (unused in production) for
-/// side-by-side comparison in `MockPlacePinAnnotationView`'s preview.
+/// Hosts `PlacePinAnnotationLayerView` (UIKit), the production pin style now renders via the UIKit port.
+/// `PlacePinAnnotationView` is used in views as an annotation preview, *NOT* used in Maps
 struct PlacePinAnnotationView: View {
 
     private var color: Color
@@ -55,8 +53,8 @@ private struct PlacePinAnnotationLayerViewRepresentable: UIViewRepresentable {
     }
 }
 
-/// Original SwiftUI implementation — not used in production anymore, kept for
-/// comparison against the UIKit-hosted `PlacePinAnnotationView` above.
+#if DEBUG
+/// Legacy SwiftUI implementation
 struct LEGACY_PlacePinAnnotationView: View {
 
     // MARK: - private vars
@@ -101,7 +99,6 @@ struct LEGACY_PlacePinAnnotationView: View {
     }
 }
 
-#if DEBUG
 struct MockPlacePinAnnotationView: View {
     var mock: MockContainer
     @State var size: CGFloat = 150

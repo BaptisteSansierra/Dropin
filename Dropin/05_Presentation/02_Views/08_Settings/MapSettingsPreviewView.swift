@@ -224,7 +224,7 @@ struct MOCKMapSettingsPreviewView: View {
                 MapSettingsPreviewView(mapEditMode: $mapEditMode)
                     .environment(settings)
                     .onAppear {
-                        settings.mapSettings.satellite = false
+                        settings.mapSettings.mapType = .standard
                         settings.mapSettings.clustering = false
                     }
                     .frame(height: 280)

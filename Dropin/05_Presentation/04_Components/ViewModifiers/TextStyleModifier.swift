@@ -12,19 +12,29 @@ import SwiftUI
 ///
 
 enum TextStyle: String, CaseIterable {
-    case title
-    case title2
+    
+    // TODO: The mixe scale/semantic makes it fuzzy, to be improved somehow...
+    
+    // Scale tokens
+    case title                     // 28
+    case title2                    // 22
     case title2Semibold
-    case authTitle
-    case body
+    case body                      // 17
     case bodySemibold
+    case bodyBold
     case bodyWarning
     case bodyError
     case bodyInfo
-    case subheadline
+    case subheadline               // 15
     case subheadlineSemibold
-    case caption
-    case caption2
+    case footnote                  // 13
+    case footnoteSemibold
+    case footnoteMedium
+    case caption                   // 12
+    case caption2                  // 11
+    
+    // Semantic tokens
+    case authTitle
     case placeholder
     case fieldPlaceholder
     case link
@@ -90,6 +100,8 @@ enum TextStyle: String, CaseIterable {
                 (Font.bodyRegular, nil, nil, nil)
             case .bodySemibold:
                 (Font.bodySemibold, nil, nil, nil)
+            case .bodyBold:
+                (Font.bodyBold, nil, nil, nil)
             case .bodyWarning:
                 (Font.bodyBold, Color.warning, nil, nil)
             case .bodyError:
@@ -100,6 +112,12 @@ enum TextStyle: String, CaseIterable {
                 (Font.subheadlineRegular, nil, nil, nil)
             case .subheadlineSemibold:
                 (Font.subheadlineSemibold, nil, nil, nil)
+            case .footnote:
+                (Font.footnoteRegular, nil, nil, nil)
+            case .footnoteSemibold:
+                (Font.footnoteSemibold, nil, nil, nil)
+            case .footnoteMedium:
+                (Font.footnoteMedium, nil, nil, nil)
             case .caption:
                 (Font.captionRegular, nil, nil, nil)
             case .caption2:
