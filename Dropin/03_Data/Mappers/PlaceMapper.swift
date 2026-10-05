@@ -35,6 +35,10 @@ public enum PlaceMapper {
                                 email: sdPlace.email,
                                 url: sdPlace.url,
                                 notes: sdPlace.notes,
+                                applePlaceID: sdPlace.applePlaceID,
+                                applePhone: sdPlace.applePhone,
+                                appleURL: sdPlace.appleURL,
+                                appleFetchedAt: sdPlace.appleFetchedAt,
                                 createdAt: sdPlace.createdAt,
                                 updatedAt: sdPlace.updatedAt,
                                 deletedAt: sdPlace.deletedAt)
@@ -56,7 +60,11 @@ public enum PlaceMapper {
                          phone: place.phone,
                          email: place.email,
                          url: place.url,
-                         notes: place.notes)
+                         notes: place.notes,
+                         applePlaceID: place.applePlaceID,
+                         applePhone: place.applePhone,
+                         appleURL: place.appleURL,
+                         appleFetchedAt: place.appleFetchedAt)
         // PlaceRecord.init always stamps fresh dates ("now") and nil deletedAt.
         // Overwrite with the domain values so server-originated timestamps
         // (and soft-delete markers) are preserved across pulls.

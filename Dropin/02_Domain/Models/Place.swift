@@ -24,6 +24,13 @@ struct Place: Hashable, Sendable {
     let email: [String]
     let url: [String]
     let notes: String?
+    // Apple POI linking: set when this place was created from an Apple Maps point of interest; nil otherwise.
+    // applePhone/appleURL are Apple's, locally cached, read-only for user
+    // appleFetchedAt drives the refresh trigger
+    let applePlaceID: String?
+    let applePhone: String?
+    let appleURL: String?
+    let appleFetchedAt: Date?
     // Dates
     var createdAt: Date     // Set at creation
     var updatedAt: Date     // Set on every mutation; drives dirty detection
@@ -44,6 +51,10 @@ struct Place: Hashable, Sendable {
          email: [String],
          url: [String],
          notes: String?,
+         applePlaceID: String? = nil,
+         applePhone: String? = nil,
+         appleURL: String? = nil,
+         appleFetchedAt: Date? = nil,
          createdAt: Date,
          updatedAt: Date,
          deletedAt: Date?) {
@@ -61,6 +72,10 @@ struct Place: Hashable, Sendable {
         self.email = email
         self.url = url
         self.notes = notes
+        self.applePlaceID = applePlaceID
+        self.applePhone = applePhone
+        self.appleURL = appleURL
+        self.appleFetchedAt = appleFetchedAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
@@ -90,6 +105,10 @@ struct Place: Hashable, Sendable {
         self.url = []
         self.notes = notes
         self.images = []
+        self.applePlaceID = nil
+        self.applePhone = nil
+        self.appleURL = nil
+        self.appleFetchedAt = nil
         
         let now = Date()
         self.createdAt = now
@@ -139,6 +158,10 @@ struct Place: Hashable, Sendable {
                    email: email,
                    url: url,
                    notes: notes,
+                   applePlaceID: applePlaceID,
+                   applePhone: applePhone,
+                   appleURL: appleURL,
+                   appleFetchedAt: appleFetchedAt,
                    createdAt: createdAt,
                    updatedAt: updatedAt,
                    deletedAt: deletedAt)

@@ -26,6 +26,10 @@ final class PlaceRecord {
     var email: [String]
     var url: [String]
     var notes: String?
+    var applePlaceID: String? = nil
+    var applePhone: String? = nil
+    var appleURL: String? = nil
+    var appleFetchedAt: Date? = nil
     // Dates
     var createdAt: Date     // Set at creation
     var updatedAt: Date     // Set on every mutation; drives dirty detection
@@ -46,7 +50,11 @@ final class PlaceRecord {
          phone: [String] = [],
          email: [String] = [],
          url: [String] = [],
-         notes: String? = nil) {
+         notes: String? = nil,
+         applePlaceID: String? = nil,
+         applePhone: String? = nil,
+         appleURL: String? = nil,
+         appleFetchedAt: Date? = nil) {
         self.identifier = identifier
         self.name = name
         self.latitude = latitude
@@ -62,6 +70,10 @@ final class PlaceRecord {
         self.email = email
         self.url = url
         self.notes = notes
+        self.applePlaceID = applePlaceID
+        self.applePhone = applePhone
+        self.appleURL = appleURL
+        self.appleFetchedAt = appleFetchedAt
         let now = Date()
         self.createdAt = now
         self.updatedAt = now

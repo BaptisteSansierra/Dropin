@@ -45,6 +45,10 @@ extension PlaceMapper {
                               email: emails,
                               url: urls,
                               notes: place.notes,
+                              applePlaceID: place.applePlaceID,
+                              applePhone: place.applePhone,
+                              appleURL: place.appleURL,
+                              appleFetchedAt: place.appleFetchedAt,
                               createdAt: place.createdAt,
                               updatedAt: place.updatedAt,
                               deletedAt: place.deletedAt)
@@ -80,6 +84,10 @@ extension PlaceMapper {
                                 email: placeUI.email.map { $0.rawValue },
                                 url: placeUI.url.map { $0.rawValue },
                                 notes: placeUI.notes,
+                                applePlaceID: placeUI.applePlaceID,
+                                applePhone: placeUI.applePhone,
+                                appleURL: placeUI.appleURL,
+                                appleFetchedAt: placeUI.appleFetchedAt,
                                 createdAt: placeUI.createdAt,
                                 updatedAt: placeUI.updatedAt,
                                 deletedAt: placeUI.deletedAt)

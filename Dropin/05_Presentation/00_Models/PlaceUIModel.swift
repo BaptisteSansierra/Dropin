@@ -57,6 +57,10 @@ struct PlaceImageUIModel: Identifiable {
     var email: [ContactItem] = []
     var url: [ContactItem] = []
     var notes: String? = nil
+    var applePlaceID: String? = nil
+    var applePhone: String? = nil
+    var appleURL: String? = nil
+    var appleFetchedAt: Date? = nil
     var createdAt: Date
     var updatedAt: Date
     var deletedAt: Date? = nil
@@ -90,6 +94,10 @@ struct PlaceImageUIModel: Identifiable {
         hasher.combine(email.map(\.rawValue))
         hasher.combine(url.map(\.rawValue))
         hasher.combine(notes)
+        hasher.combine(applePlaceID)
+        hasher.combine(applePhone)
+        hasher.combine(appleURL)
+        hasher.combine(appleFetchedAt)
         return hasher.finalize()
     }
     
@@ -107,6 +115,10 @@ struct PlaceImageUIModel: Identifiable {
          email: [ContactItem] = [],
          url: [ContactItem] = [],
          notes: String? = nil,
+         applePlaceID: String? = nil,
+         applePhone: String? = nil,
+         appleURL: String? = nil,
+         appleFetchedAt: Date? = nil,
          createdAt: Date,
          updatedAt: Date,
          deletedAt: Date? = nil) {
@@ -124,6 +136,10 @@ struct PlaceImageUIModel: Identifiable {
         self.email = email
         self.url = url
         self.notes = notes
+        self.applePlaceID = applePlaceID
+        self.applePhone = applePhone
+        self.appleURL = appleURL
+        self.appleFetchedAt = appleFetchedAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
@@ -152,6 +168,10 @@ struct PlaceImageUIModel: Identifiable {
                        email: email,
                        url: url,
                        notes: notes,
+                       applePlaceID: applePlaceID,
+                       applePhone: applePhone,
+                       appleURL: appleURL,
+                       appleFetchedAt: appleFetchedAt,
                        createdAt: createdAt,
                        updatedAt: updatedAt,
                        deletedAt: deletedAt)
@@ -171,6 +191,10 @@ struct PlaceImageUIModel: Identifiable {
         email       = other.email
         url         = other.url
         notes       = other.notes
+        applePlaceID   = other.applePlaceID
+        applePhone     = other.applePhone
+        appleURL       = other.appleURL
+        appleFetchedAt = other.appleFetchedAt
         updatedAt   = Date()
     }
     
@@ -188,6 +212,10 @@ struct PlaceImageUIModel: Identifiable {
         guard email == other.email else { return false }
         guard url == other.url else { return false }
         guard notes == other.notes else { return false }
+        guard applePlaceID == other.applePlaceID else { return false }
+        guard applePhone == other.applePhone else { return false }
+        guard appleURL == other.appleURL else { return false }
+        guard appleFetchedAt == other.appleFetchedAt else { return false }
         let selfDbIds = Set(images.compactMap(\.dbId))
         let otherDbIds = Set(other.images.compactMap(\.dbId))
         let hasPending = images.contains { $0.dbId == nil }
