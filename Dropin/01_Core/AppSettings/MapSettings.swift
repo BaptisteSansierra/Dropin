@@ -49,10 +49,10 @@ struct MapSettings: Equatable {
     
     func diffAffectsMapConfig(_ config: MKMapConfiguration) -> Bool {
         if config.mapType != mapType {
-            return false
+            return true
         }
         // POI filter only exists on standard/hybrid configurations
-        guard mapType != .satellite else { return true }
+        guard mapType != .satellite else { return false }
 
         let pois = Array(POIBundle.list(for: Set(poiConfig)))
         let newFilter = MKPointOfInterestFilter(including: pois)
@@ -64,9 +64,9 @@ struct MapSettings: Equatable {
             case .hybrid:
                 currentFilter = (config as? MKHybridMapConfiguration)?.pointOfInterestFilter
             case .satellite:
-                return true
+                return false
         }
-        return currentFilter == newFilter
+        return currentFilter != newFilter
     }
     
     func mapConfig() -> MKMapConfiguration {
