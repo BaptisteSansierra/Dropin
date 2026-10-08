@@ -10,18 +10,32 @@ import CoreLocation
 import SwiftUI
 import MapKit
 
+
+struct IdentifiablePOI: Identifiable {
+    let id = UUID()
+    let annotation: MKMapFeatureAnnotation
+}
+
 @MainActor
 @Observable class PlacesMapViewModel {
 
     // MARK: - Observed Properties
     private(set) var coordinator: PlaceCoordinator
-    // Used for creating a new place
-    var draftPlace: PlaceUIModel? = nil
+
+    /// A draft place created from an Apple POI may have an Apple category, used to suggest a category
+    var draftPlacePoiCategory: MKPointOfInterestCategory? = nil
+    /// A draft place created from an Apple POI may have a color, used to suggest a category
+    var draftPlacePoiColor: Color? = nil
+
     // Alerts toggles
     var showAuthLocAlert = false
     var showQuickCreateSheet = false
-    // Map settings
-    var mapConfig: MapConfig
+    var quickCreateResult: PlaceCreateQuickView.Result = .none
+
+    var selectedApplePOI: MKMapFeatureAnnotation?
+    var selectedIdfApplePOI: IdentifiablePOI?
+    var presentApplePOI = false
+    
     
 //    // Used to communicate from ViewModel to ViewRepresentable
 //    var mapActionBus: MapActionBus
@@ -59,6 +73,7 @@ import MapKit
     @ObservationIgnored var locationManager: LocationManager
     @ObservationIgnored private var addressPickingTask: Task<Void, Never>? = nil
     @ObservationIgnored var mapController: MapController
+    @ObservationIgnored private var mapCamera: MapCamera
 
     // MARK: init
     init(_ appContainer: AppContainer,
@@ -67,7 +82,7 @@ import MapKit
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
-        self.mapConfig = MapConfig()
+        self.mapCamera = MapCamera()
         //self.mapActionBus = MapActionBus(locationManager: locationManager)
         self.mapController = MapController()
     }
@@ -78,16 +93,45 @@ import MapKit
     }
     
     // MARK: - UI child
-    func createPlaceCreateQuickView() -> PlaceCreateQuickView {
-        guard let draftPlace = draftPlace else {
-            fatalError("temporary place undefined")
+    func createPlaceCreateQuickView(_ draftPlace: Binding<PlaceUIModel?>) -> PlaceCreateQuickView {
+        guard let draftPlace = draftPlace.wrappedValue else {
+            fatalError("draft place undefined")
         }
-        return appContainer.createPlaceCreateQuickView(place: draftPlace)
+        quickCreateResult = .none
+        let quickCreateResultBinding = Binding {
+            self.quickCreateResult
+        } set: { value in
+            self.quickCreateResult = value
+        }
+        return appContainer.createPlaceCreateQuickView(place: draftPlace,
+                                                       result: quickCreateResultBinding,
+                                                       poiCategory: draftPlacePoiCategory,
+                                                       poiColor: draftPlacePoiColor)
     }
 
+    func createApplePOISheetView(draftPlace: Binding<PlaceUIModel?>) -> ApplePOISheetView {
+        guard let selectedApplePOI = selectedApplePOI else {
+            fatalError("selectedApplePOI undefined for ApplePOISheetView")
+        }
+        let poiCategoryBinding = Binding {
+            self.draftPlacePoiCategory
+        } set: { v in
+            self.draftPlacePoiCategory = v
+        }
+        let poiColorBinding = Binding {
+            self.draftPlacePoiColor
+        } set: { v in
+            self.draftPlacePoiColor = v
+        }
+        return appContainer.createApplePOISheetView(applePOIAnnotation: selectedApplePOI,
+                                                    draftPlace: draftPlace,
+                                                    draftPlacePoiCategory: poiCategoryBinding,
+                                                    draftPlacePoiColor: poiColorBinding)
+    }
+    
     // MARK: - callbacks
-    func onLongPress(coords: CLLocationCoordinate2D) {
-        preparePlaceFromCoords(coords: coords)
+    func onLongPress(coords: CLLocationCoordinate2D, draftPlace: Binding<PlaceUIModel?>) {
+        preparePlaceFromCoords(coords: coords, draftPlace: draftPlace)
         //viewModel.mapActionBus.performAction(.updateData)
         
         // Show the creation sheet
@@ -103,8 +147,8 @@ import MapKit
                         rect: MKMapRect) {
         
         // Update camera
-        mapConfig.currentCamera = camera
-        mapConfig.currentRegion = region
+        mapCamera.currentCamera = camera
+        mapCamera.currentRegion = region
         
         #if false
         // Can be used to define a specific region in order to fill DropinApp.map.hardStartRegion
@@ -112,7 +156,7 @@ import MapKit
         print("MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: \(region.center.latitude), longitude: \(region.center.longitude)), span: MKCoordinateSpan(latitudeDelta: \(region.span.latitudeDelta), longitudeDelta: \(region.span.longitudeDelta))")
         #endif
         
-        mapConfig.currentRect = rect
+        mapCamera.currentRect = rect
         appContainer.rememberMapRegion(region)
 
         // Update picker position if needed
@@ -139,22 +183,29 @@ import MapKit
                                animated: true)
     }
     
-    func preparePlaceFromCoords(coords: CLLocationCoordinate2D) {
+    func preparePlaceFromCoords(coords: CLLocationCoordinate2D, draftPlace: Binding<PlaceUIModel?>) {
         let createdPlace = PlaceUIModel(coordinates: coords)
-        draftPlace = createdPlace
+        draftPlace.wrappedValue = createdPlace
     }
 
     func preparePlaceFromAddress(coords: CLLocationCoordinate2D,
-                                 address: String?) {
+                                 address: String?,
+                                 draftPlace: Binding<PlaceUIModel?>){
         let createdPlace = PlaceUIModel(coordinates: coords)
         if let address = address {
             createdPlace.address = address
         }
-        draftPlace = createdPlace
+        draftPlace.wrappedValue = createdPlace
     }
 
-    func discardDraftPlace() {
-        draftPlace = nil
+    func discardApplePOISuggestions() {
+        draftPlacePoiCategory = nil
+        draftPlacePoiColor = nil
+    }
+
+    func discardDraftPlace(_ draftPlace: Binding<PlaceUIModel?>) {
+        draftPlace.wrappedValue = nil
+        discardApplePOISuggestions()
     }
     
     func coordinatesPickerUpdate(_ newCoords: CLLocationCoordinate2D) {
@@ -177,6 +228,10 @@ import MapKit
          */
     }
     
+    func prepareApplePOI(_ poiAnnotation: MKMapFeatureAnnotation) {
+        presentApplePOI = true
+    }
+    
     // MARK: - private
 //    private func reset() {
 //        draftPlace = nil
@@ -184,7 +239,7 @@ import MapKit
 //    }
     
     private func updatePlacePickerPositions() {
-        updatePlacePickerPositions(coords: mapConfig.currentCamera.centerCoordinate)
+        updatePlacePickerPositions(coords: mapCamera.currentCamera.centerCoordinate)
     }
 
     private func updatePlacePickerPositions(coords: CLLocationCoordinate2D) {
@@ -301,7 +356,7 @@ extension PlacesMapViewModel {
 // MARK: - MapConfig
 extension PlacesMapViewModel {
 
-    @Observable class MapConfig {
+    @Observable fileprivate class MapCamera {
 
         // MARK: - Non-observed camera state (written by map delegate — must NOT trigger SwiftUI re-renders)
         @ObservationIgnored public var currentCamera: MKMapCamera = .init()

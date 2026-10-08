@@ -9,6 +9,11 @@ import Foundation
 
 extension String {
     
+    var nonEmpty: String? {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     func initials() -> String {
         let elements = self.split(separator: " ")
         return elements.reduce("") { partialResult, substring in

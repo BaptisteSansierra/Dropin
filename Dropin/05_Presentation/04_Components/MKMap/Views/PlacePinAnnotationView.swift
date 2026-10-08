@@ -124,14 +124,14 @@ struct MockPlacePinAnnotationView: View {
             HStack(spacing: 30) {
                 VStack {
                     Text("New").font(.caption)
-                    PlacePinAnnotationView(color: place5.groupColor,
+                    PlacePinAnnotationView(color: place5.categoryColor,
                                            icon: place5.category?.icon,
                                            iconExtra: place5.icon,
                                            size: size)
                 }
                 VStack {
                     Text("Legacy").font(.caption)
-                    LEGACY_PlacePinAnnotationView(color: place5.groupColor,
+                    LEGACY_PlacePinAnnotationView(color: place5.categoryColor,
                                                   icon: place5.category?.icon,
                                                   iconExtra: place5.icon,
                                                   size: size)
@@ -139,13 +139,13 @@ struct MockPlacePinAnnotationView: View {
             }
             HStack(spacing: 30) {
                 VStack {
-                    PlacePinAnnotationView(color: place6.groupColor,
+                    PlacePinAnnotationView(color: place6.categoryColor,
                                            icon: place6.category?.icon,
                                            iconExtra: place6.icon,
                                            size: size)
                 }
                 VStack {
-                    LEGACY_PlacePinAnnotationView(color: place6.groupColor,
+                    LEGACY_PlacePinAnnotationView(color: place6.categoryColor,
                                                   icon: place6.category?.icon,
                                                   iconExtra: place6.icon,
                                                   size: size)
@@ -166,22 +166,22 @@ struct MockPlacePinAnnotationView: View {
     var contentView: some View {
         VStack(spacing: 30) {
             HStack(spacing: 10) {
-                PlacePinAnnotationView(color: place1.groupColor,
+                PlacePinAnnotationView(color: place1.categoryColor,
                                        icon: place1.category?.icon,
                                        iconExtra: place1.icon,
                                        size: 50)
-                PlacePinAnnotationView(color: place2.groupColor,
+                PlacePinAnnotationView(color: place2.categoryColor,
                                        icon: place2.category?.icon,
                                        iconExtra: place2.icon,
                                        size: 50)
             }
 
             HStack(spacing: 10) {
-                PlacePinAnnotationView(color: place3.groupColor,
+                PlacePinAnnotationView(color: place3.categoryColor,
                                        icon: place3.category?.icon,
                                        iconExtra: place3.icon,
                                        size: 50)
-                PlacePinAnnotationView(color: place4.groupColor,
+                PlacePinAnnotationView(color: place4.categoryColor,
                                        icon: place4.category?.icon,
                                        iconExtra: place4.icon,
                                        size: 50)

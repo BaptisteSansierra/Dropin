@@ -146,21 +146,21 @@ struct CategoryDetailsView: View {
                     .padding(.horizontal)
                 HStack() {
                     RoundedRectangle(cornerSize: 8)
-                        .fill(viewModel.groupColor)
+                        .fill(viewModel.categoryColor)
                         .stroke(.fieldBorder)
                         .frame(height: 25)
                         .frame(width: 100)
                         .padding(.leading, 30)
                     Spacer()
-                    SpectrumColorPicker(color: $viewModel.groupColor, didEnd: {
+                    SpectrumColorPicker(color: $viewModel.categoryColor, didEnd: {
                         // Update storage
                         updateCategory()
                     })
                     .frame(width: 30, height: 30)
                     .padding(.horizontal, 30)
-                    .onChange(of: viewModel.groupColor) { oldValue, newValue in
+                    .onChange(of: viewModel.categoryColor) { oldValue, newValue in
                         // Update local category
-                        viewModel.category.color = viewModel.groupColor
+                        viewModel.category.color = viewModel.categoryColor
                     }
                 }
             }

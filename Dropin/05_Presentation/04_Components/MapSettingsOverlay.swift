@@ -129,6 +129,7 @@ import MapKit
                            mapController: MapController(),
                            places: [],
                            selectedPlaceId: .constant(nil),
+                           selectedApplePOI: .constant(nil),
                            onLongPress: { _ in },
                            onMapCameraUpdate: { _, _, _ in },
                            interactionStatus: { return .all },

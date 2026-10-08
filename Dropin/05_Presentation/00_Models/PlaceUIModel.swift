@@ -58,14 +58,14 @@ struct PlaceImageUIModel: Identifiable {
     var url: [ContactItem] = []
     var notes: String? = nil
     var applePlaceID: String? = nil
-    var applePhone: String? = nil
-    var appleURL: String? = nil
-    var appleFetchedAt: Date? = nil
+    // Set when Apple returns a placemarkNotFound error. Once set, aka the POI was likely
+    // deleted on Apple's side, the updates are skipped.
+    var appleNotFoundAt: Date? = nil
     var createdAt: Date
     var updatedAt: Date
     var deletedAt: Date? = nil
     
-    var groupColor: Color {
+    var categoryColor: Color {
         guard let category = self.category else { return .dropinPrimary }
         return category.color
     }
@@ -95,9 +95,7 @@ struct PlaceImageUIModel: Identifiable {
         hasher.combine(url.map(\.rawValue))
         hasher.combine(notes)
         hasher.combine(applePlaceID)
-        hasher.combine(applePhone)
-        hasher.combine(appleURL)
-        hasher.combine(appleFetchedAt)
+        hasher.combine(appleNotFoundAt)
         return hasher.finalize()
     }
     
@@ -116,9 +114,7 @@ struct PlaceImageUIModel: Identifiable {
          url: [ContactItem] = [],
          notes: String? = nil,
          applePlaceID: String? = nil,
-         applePhone: String? = nil,
-         appleURL: String? = nil,
-         appleFetchedAt: Date? = nil,
+         appleNotFoundAt: Date? = nil,
          createdAt: Date,
          updatedAt: Date,
          deletedAt: Date? = nil) {
@@ -137,14 +133,13 @@ struct PlaceImageUIModel: Identifiable {
         self.url = url
         self.notes = notes
         self.applePlaceID = applePlaceID
-        self.applePhone = applePhone
-        self.appleURL = appleURL
-        self.appleFetchedAt = appleFetchedAt
+        self.appleNotFoundAt = appleNotFoundAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
 
+    // Used for draft place from point on map
     init(coordinates: CLLocationCoordinate2D) {
         id = UUID()
         self.coordinates = coordinates
@@ -152,50 +147,76 @@ struct PlaceImageUIModel: Identifiable {
         createdAt = now
         updatedAt = now
     }
-    
+
+    // Used for draft place from POI
+    init(name: String?,
+         coordinates: CLLocationCoordinate2D,
+         address: String?,
+         applePlaceID: String) {
+        id = UUID()
+        self.name = name ?? ""
+        self.coordinates = coordinates
+        self.address = address
+        self.applePlaceID = applePlaceID
+        let now = Date()
+        createdAt = now
+        updatedAt = now
+    }
+    init(name: String?,
+         coordinates: CLLocationCoordinate2D,
+         address: String?,
+         phone: [ContactItem] = [],
+         url: [ContactItem] = [] ) {
+        id = UUID()
+        self.name = name ?? ""
+        self.coordinates = coordinates
+        self.address = address
+        self.phone = phone
+        self.url = url
+        let now = Date()
+        createdAt = now
+        updatedAt = now
+    }
+
     func copy() -> PlaceUIModel {
         return PlaceUIModel(id: id,
-                       name: name,
-                       coordinates: coordinates,
-                       address: address,
-                       address2: address2,
-                       tags: tags,
-                       category: category,
-                       images: images,
-                       icon: icon,
-                       rating: rating,
-                       phone: phone,
-                       email: email,
-                       url: url,
-                       notes: notes,
-                       applePlaceID: applePlaceID,
-                       applePhone: applePhone,
-                       appleURL: appleURL,
-                       appleFetchedAt: appleFetchedAt,
-                       createdAt: createdAt,
-                       updatedAt: updatedAt,
-                       deletedAt: deletedAt)
+                            name: name,
+                            coordinates: coordinates,
+                            address: address,
+                            address2: address2,
+                            tags: tags,
+                            category: category,
+                            images: images,
+                            icon: icon,
+                            rating: rating,
+                            phone: phone,
+                            email: email,
+                            url: url,
+                            notes: notes,
+                            applePlaceID: applePlaceID,
+                            appleNotFoundAt: appleNotFoundAt,
+                            createdAt: createdAt,
+                            updatedAt: updatedAt,
+                            deletedAt: deletedAt)
     }
-    
+
     func update(from other: PlaceUIModel) {
-        name        = other.name
-        coordinates = other.coordinates
-        address     = other.address
-        address2    = other.address2
-        tags        = other.tags
-        category    = other.category
-        images      = other.images
-        icon        = other.icon
-        rating      = other.rating
-        phone       = other.phone
-        email       = other.email
-        url         = other.url
-        notes       = other.notes
+        name           = other.name
+        coordinates    = other.coordinates
+        address        = other.address
+        address2       = other.address2
+        tags           = other.tags
+        category       = other.category
+        images         = other.images
+        icon           = other.icon
+        rating         = other.rating
+        phone          = other.phone
+        email          = other.email
+        url            = other.url
+        notes          = other.notes
         applePlaceID   = other.applePlaceID
-        applePhone     = other.applePhone
-        appleURL       = other.appleURL
-        appleFetchedAt = other.appleFetchedAt
-        updatedAt   = Date()
+        appleNotFoundAt = other.appleNotFoundAt
+        updatedAt      = Date()
     }
     
     func isContentEqual(_ other: PlaceUIModel) -> Bool {
@@ -213,9 +234,7 @@ struct PlaceImageUIModel: Identifiable {
         guard url == other.url else { return false }
         guard notes == other.notes else { return false }
         guard applePlaceID == other.applePlaceID else { return false }
-        guard applePhone == other.applePhone else { return false }
-        guard appleURL == other.appleURL else { return false }
-        guard appleFetchedAt == other.appleFetchedAt else { return false }
+        guard appleNotFoundAt == other.appleNotFoundAt else { return false }
         let selfDbIds = Set(images.compactMap(\.dbId))
         let otherDbIds = Set(other.images.compactMap(\.dbId))
         let hasPending = images.contains { $0.dbId == nil }

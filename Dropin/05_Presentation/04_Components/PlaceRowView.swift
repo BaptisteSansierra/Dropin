@@ -35,13 +35,13 @@ struct PlaceRowView: View {
             HStack(alignment: .top, spacing: 0) {
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
-                        PlaceRectAnnotationView(color: place.groupColor,
+                        PlaceRectAnnotationView(color: place.categoryColor,
                                                 icon: place.category?.icon,
                                                 iconExtra: place.icon)
                         .padding(.trailing)
                         .padding(.top, place.icon == nil ? 0 : 10)
                     case .rounded:
-                        PlacePinAnnotationView(color: place.groupColor,
+                        PlacePinAnnotationView(color: place.categoryColor,
                                                icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                shadow: false)

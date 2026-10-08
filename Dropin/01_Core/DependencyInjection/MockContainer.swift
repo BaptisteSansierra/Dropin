@@ -19,7 +19,7 @@ final class MockContainer {
 
     let locationManager: LocationManager = LocationManager()
     let addressLookupService: AddressLookupService
-    let reachabilityService: ReachabilityService = ReachabilityService()
+    let reachabilityService: any ReachabilityServiceProtocol = StubReachabilityService()
     let profileService: StubProfileService = StubProfileService()
 
     init() {
@@ -47,6 +47,10 @@ final class MockContainer {
         } catch {
             fatalError("couldn't create mock data \(error)")
         }
+    }
+    
+    func updateReachability(_ v: Bool) {
+        (reachabilityService as? StubReachabilityService)?.isConnected = v
     }
     
     func loadProfile() {

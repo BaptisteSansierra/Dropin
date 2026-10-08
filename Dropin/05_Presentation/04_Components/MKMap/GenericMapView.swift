@@ -56,6 +56,7 @@ struct GenericMapView: View {
                        mapController: viewModel.mapController,
                        places: viewModel.places,
                        selectedPlaceId: $viewModel.selectedPlaceId,
+                       selectedApplePOI: .constant(nil),
                        onLongPress: nil,
                        onMapCameraUpdate: nil,
                        interactionStatus: { .all })

@@ -90,14 +90,14 @@ struct PlaceAnnotationView: View {
                     case .rect:
                         // PlaceRectAnnotationView draws its own arrow internally and its
                         // total height already equals `size` — no external composition needed.
-                        PlaceRectAnnotationView(color: place.groupColor,
+                        PlaceRectAnnotationView(color: place.categoryColor,
                                                 icon: place.category?.icon,
                                                 iconExtra: place.icon,
                                                 size: pinSize)
                             .frame(width: pinSize,
                                    height: pinSize)
                     case .rounded:
-                        PlacePinAnnotationView(color: place.groupColor,
+                        PlacePinAnnotationView(color: place.categoryColor,
                                                icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                size: pinSize)

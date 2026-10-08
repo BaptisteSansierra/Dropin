@@ -41,7 +41,7 @@ struct PlaceHeaderViewV2: View {
                 ZStack(alignment: .topLeading) {
                     switch appSettings.mapSettings.pinStyle {
                         case .rect:
-                            PlaceRectAnnotationView(color: place.groupColor,
+                            PlaceRectAnnotationView(color: place.categoryColor,
                                                 icon: place.category?.icon,
                                                 iconExtra: place.icon)
                             .padding()
@@ -51,7 +51,7 @@ struct PlaceHeaderViewV2: View {
                                 .padding(0)
                                 .opacity(editEnabled ? 1 : 0)
                         case .rounded:
-                            PlacePinAnnotationView(color: place.groupColor,
+                            PlacePinAnnotationView(color: place.categoryColor,
                                                    icon: place.category?.icon,
                                                    iconExtra: place.icon,
                                                    size: 40,

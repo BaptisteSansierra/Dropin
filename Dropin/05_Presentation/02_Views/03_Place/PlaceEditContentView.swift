@@ -188,12 +188,12 @@ struct PlaceEditContentView: View {
                 Spacer()
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
-                        PlaceRectAnnotationView(color: place.groupColor,
+                        PlaceRectAnnotationView(color: place.categoryColor,
                                                 icon: place.category?.icon,
                                                 iconExtra: place.icon,
                                                 size: annotationSize)
                     case .rounded:
-                        PlacePinAnnotationView(color: place.groupColor,
+                        PlacePinAnnotationView(color: place.categoryColor,
                                                icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                size: annotationSize,
@@ -249,6 +249,8 @@ struct PlaceEditContentView: View {
                     .padding(.top, cardVSpacing)
                 urlCardView
                     .padding(.top, cardVSpacing)
+                applePOICardView
+                    .padding(.top, cardVSpacing)
                 noteCardView
                     //.padding(.top, viewModel.mode == .edit ? 50 : 30)
                     .padding(.top, cardVSpacing)
@@ -259,6 +261,9 @@ struct PlaceEditContentView: View {
             }
             .padding(.bottom, 50)
             .padding(.horizontal, 20)
+        }
+        .task {
+            await viewModel.fetchAppleDataIfNeeded(for: place)
         }
         .safeAreaInset(edge: .bottom) {
             Color.clear
@@ -273,6 +278,7 @@ struct PlaceEditContentView: View {
                                          headerAction: (() -> Void)? = nil,
                                          actionTitle: LocalizedStringKey? = nil,
                                          action: (() -> Void)? = nil,
+                                         contentHPadding: CGFloat = 15,
                                          @ViewBuilder content: () -> Content) -> some View {
 
         VStack(alignment: .leading, spacing: 0) {
@@ -307,7 +313,7 @@ struct PlaceEditContentView: View {
                     content()
                 }
             }
-            .padding(.horizontal, 15)
+            .padding(.horizontal, contentHPadding)
             .clipShape(cardShape)
             .background { cardBackgroundView.clipped() }
         }
@@ -989,9 +995,203 @@ extension PlaceEditContentView {
     }
 }
 
+// MARK: - Apple POI
+extension PlaceEditContentView {
+    @ViewBuilder
+    private var applePOICardView: some View {
+        if let _ = place.applePlaceID {
+            cardView(title: "common.from_apple_maps", contentHPadding: 0) {
+                if let applePOIError = viewModel.applePOIError {
+                    poiErrorView(applePOIError)
+                } else if viewModel.applePOILoading {
+                    poiLoadingView
+                } else {
+                    if viewModel.applePhoneNumber != nil || viewModel.appleURL != nil {
+                        poiResultView
+                    } else {
+                        poiEmptyView
+                    }
+                }
+            }
+            .onChange(of: viewModel.reachabilityService.isConnected, { oldValue, newValue in
+                guard newValue == true else {
+                    // Not connected, nothing to update
+                    return
+                }
+                // If fetching poi data ended with a connectivity error, retry
+                if let poiError = viewModel.applePOIError, poiError == .notConnected {
+                    Task {
+                        await viewModel.fetchAppleDataIfNeeded(for: place)
+                    }
+                }
+            })
+            .confirmationDialog(
+                "place_edit_content_view.poi.unlink.title",
+                isPresented: $viewModel.isUnlinkConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button("common.unlink") {
+                    viewModel.unlinkPOI(place)
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("place_edit_content_view.poi.unlink.body")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func poiErrorView(_ error: ApplePOIError) -> some View {
+        switch error {
+            case .notConnected:
+                poiErrorContentView(systemImage: "wifi.slash",
+                                    title: "common.not_connected",
+                                    body: "place_edit_content_view.poi.not_connected_desc")
+            case .notFound, .corrupted:
+                VStack(spacing: 0) {
+                    if error == .corrupted {
+                        poiErrorContentView(systemImage: "exclamationmark.triangle",
+                                            title: "place_edit_content_view.poi.invalid_id.title",
+                                            body: "place_edit_content_view.poi.invalid_id.body")
+                    } else {
+                        poiErrorContentView(systemImage: poiNotFoundImage(),
+                                            title: poiNotFoundTitle(),
+                                            body: poiNotFoundBody())
+                    }
+                    Rectangle()
+                        .fill(.fieldBorder)
+                        .frame(height: 1)
+                    HStack {
+                        TextButton(text: "common.unlink", preSystemImage: "personalhotspot.slash") {
+                            viewModel.isUnlinkConfirmationPresented.toggle()
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 11)
+                }
+            case .mkUnknown(let code):
+                poiErrorContentView(systemImage: "exclamationmark.triangle",
+                                    title: "place_edit_content_view.poi.not_found_new.title",
+                                    body: "place_edit_content_view.poi.mk_unknown.body.\(code)")
+            case .unknown(let error):
+                poiErrorContentView(systemImage: "exclamationmark.triangle",
+                                    title: "place_edit_content_view.poi.not_found_new.title",
+                                    body: "place_edit_content_view.poi.unknown.body.\(error.localizedDescription)")
+        }
+    }
+    
+    private func poiErrorContentView(systemImage: String,
+                                     title: LocalizedStringKey,
+                                     body: LocalizedStringKey) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            Image(systemName: systemImage)
+                .textStyle(.body)
+                .frame(width: 50)
+            VStack(spacing: 0) {
+                Text(title)
+                    .textStyle(.footnoteSemibold)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 5)
+                    .padding(.trailing)
+                Text(body)
+                    .textStyle(.footnote, color: .textSecondary)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.trailing)
+            }
+        }
+        .padding(.vertical)
+    }
+    
+    private func poiFetchedView<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        VStack(spacing: 0) {
+            content()
+            Rectangle()
+                .fill(.fieldBorder)
+                .frame(height: 1)
+            HStack {
+                Image(systemName: "map")
+                    .textStyle(.footnote, color: .textSecondary)
+                    .padding(.leading)
+                Text("apple_poi.desc")
+                    .textStyle(.footnote, color: .textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(height: 40)
+            .background(Color.backgroundPrimary)
+        }
+    }
+
+    private var poiEmptyView: some View {
+        poiFetchedView {
+            Text("place_edit_content_view.poi.empty")
+                .textStyle(.footnote, color: .textSecondary)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical)
+        }
+    }
+
+    private var poiLoadingView: some View {
+        poiFetchedView {
+            DropinLoader(style: .inline, size: .small, caption: "common.loading.susp")
+                .padding()
+        }
+    }
+    
+    private var poiResultView: some View {
+        poiFetchedView {
+            ApplePOIViewFactory.dataCardContentView(phoneNumber: viewModel.applePhoneNumber,
+                                                    url: viewModel.appleURL)
+        }
+    }
+    
+    private func poiNotFoundTitle() -> LocalizedStringKey {
+        guard let notFoundDate = place.appleNotFoundAt else {
+            return "place_edit_content_view.poi.not_found_new.title"
+        }
+        let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
+        let isOlderThan30Days = notFoundDate < thirtyDaysAgo
+        if isOlderThan30Days {
+            return "place_edit_content_view.poi.not_found_old.title"
+        } else {
+            return "place_edit_content_view.poi.not_found_new.title"
+        }
+    }
+    
+    private func poiNotFoundBody() -> LocalizedStringKey {
+        guard let notFoundDate = place.appleNotFoundAt else {
+            return "place_edit_content_view.poi.not_found_new.body"
+        }
+        let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
+        let isOlderThan30Days = notFoundDate < thirtyDaysAgo
+        if isOlderThan30Days {
+            return "place_edit_content_view.poi.not_found_old.body"
+        } else {
+            return "place_edit_content_view.poi.not_found_new.body"
+        }
+    }
+    
+    private func poiNotFoundImage() -> String {
+        guard let notFoundDate = place.appleNotFoundAt else {
+            return "exclamationmark.icloud"
+        }
+        let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
+        let isOlderThan30Days = notFoundDate < thirtyDaysAgo
+        if isOlderThan30Days {
+            return "mappin.slash"
+        } else {
+            return "exclamationmark.icloud"
+        }
+    }
+}
+
 // MARK: - NOTES Card
 extension PlaceEditContentView {
-    
     private var noteCardView: some View {
         cardView(title: "common.notes") {
             TextField("common.notes",
@@ -1022,6 +1222,16 @@ struct MockPlaceEditContentView: View {
         mock.appContainer.createPlaceEditContentView(place: $place,
                                                      mode: .edit,
                                                      showMissingName: $showMissingName)
+        .task {
+            // In case we're testing '.notConnected'
+            // reconnect after a few seconds so we can also test the retry works
+            Task {
+                try await Task.sleep(for: .seconds(5))
+                print("CONNECT TO THE WORLD NOW!")
+                StubApplePOIService.behaviour = .fakeData
+                mock.updateReachability(true)
+            }
+        }
     }
     
     init(_ index: Int) {
@@ -1096,6 +1306,39 @@ struct MockPlaceEditContentView: View {
                              category: nil,
                              icon: nil)
             self.place = PlaceMapper.toUI(PlaceMapper.toDomain(p))
+            
+            // Define an applePlaceID so StubApplePOIService will be called
+            // and applePhone/appleURL filled
+            self.place.applePlaceID = "wert-edrf-thgd"    // fake ID
+            //self.place.applePlaceID = "IFDEE26634A4EFE23" // existing Apple ID
+
+            // Testing POI status
+            if true {
+                // Not connected error
+                mock.updateReachability(false)
+                StubApplePOIService.behaviour = .throwError(.notConnected)
+                // Connection is restored by '.task' after a few seconds
+            } else if false {
+                // Not found by apple
+                StubApplePOIService.behaviour = .throwError(.notFound)
+                // since less than limit
+                self.place.appleNotFoundAt = Date()
+                // since more than limit
+                self.place.appleNotFoundAt = Calendar.current.date(byAdding: .day, value: -32, to: Date())!
+            } else if false {
+                StubApplePOIService.behaviour = .throwError(.corrupted)
+            } else if false {
+                StubApplePOIService.behaviour = .throwError(.mkUnknown(1))
+            } else if false {
+                StubApplePOIService.behaviour = .throwError(.unknown(URLError(.notConnectedToInternet)))
+            } else if false {
+                StubApplePOIService.behaviour = .onlyPhone
+            } else if false {
+                StubApplePOIService.behaviour = .onlyUrl
+            } else if true {
+                StubApplePOIService.behaviour = .fakeNoData
+            }
+            
         } else {
             self.place = mock.getPlaceUIModel(index)
         }
@@ -1115,13 +1358,7 @@ struct MockPlaceEditContentView: View {
     }
     .environment(AppSettings())
     .environment(RootView.ActionBus())
+    .environment(\.locale, Locale(identifier: "fr_FR"))
 }
-//#Preview {
-//    NavigationStack {
-//        MockPlaceEditContentView(5)
-//    }
-//    .environment(AppSettings())
-//    .environment(RootView.ActionBus())
-//}
 
 #endif

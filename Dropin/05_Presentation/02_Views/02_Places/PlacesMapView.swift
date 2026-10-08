@@ -18,6 +18,8 @@ struct PlacesMapView: View {
     /// True if parent is presenting something over the view (sidebar / menu / ...) => should hide sheetOverlays
     @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
+    @Binding private var draftPlace: PlaceUIModel?
+
     @Environment(RootView.ActionBus.self) private var actionBus
     @Environment(AppSettings.self) private var appSettings
 
@@ -31,6 +33,7 @@ struct PlacesMapView: View {
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
          places: [PlaceUIModel],
+         draftPlace: Binding<PlaceUIModel?>,
          selectedPlaceId: Binding<UUID?>,
          isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>,
@@ -39,6 +42,7 @@ struct PlacesMapView: View {
          isActiveTab: Bool = true) {
         self.viewModel = viewModel
         self.places = places
+        self._draftPlace = draftPlace
         self._selectedPlaceId = selectedPlaceId
         self._isParentPresenting = isParentPresenting
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
@@ -58,9 +62,10 @@ struct PlacesMapView: View {
                 PlacesMKMapVCR(config: viewModel.launchConfig,
                                mapController: viewModel.mapController,
                                places: places,
-                               draftCoordinate: viewModel.draftPlace?.coordinates,
+                               draftCoordinate: draftPlace?.coordinates,
                                selectedPlaceId: $selectedPlaceId,
-                               onLongPress: viewModel.onLongPress,
+                               selectedApplePOI: $viewModel.selectedApplePOI,
+                               onLongPress: onLongPress,
                                onMapCameraUpdate: viewModel.onCameraUpdate,
                                interactionStatus: viewModel.interactionStatus,
                                mapReloadGen: mapReloadGen,
@@ -81,6 +86,28 @@ struct PlacesMapView: View {
             isParentPresenting.toggle()
             viewModel.pickingAddress = false
         })
+        .onChange(of: viewModel.selectedApplePOI, { oldValue, newValue in
+            // Wrap the Apple annotation to an identifiable object
+            guard let poi = newValue else {
+                viewModel.selectedIdfApplePOI = nil
+                return
+            }
+            viewModel.selectedIdfApplePOI = IdentifiablePOI(annotation: poi)
+        })
+        .sheet(item: $viewModel.selectedIdfApplePOI,
+               onDismiss: {
+                   viewModel.selectedApplePOI = nil
+                   if let _ = draftPlace {
+                       // If a draft place was created, present the quick creation sheet
+                       viewModel.showQuickCreateSheet = true
+                   }
+               }, content: { selectedApplePOI in
+                   viewModel.createApplePOISheetView(draftPlace: $draftPlace)
+                       .presentationDetents([.medium])
+                       .presentationDragIndicator(.visible)
+                       .presentationBackground(.surface1)
+               })
+
         // Overlays
         .overlay {
             MapSettingsOverlay()
@@ -91,11 +118,21 @@ struct PlacesMapView: View {
         }
         // Sheets
         .sheet(isPresented: $viewModel.showQuickCreateSheet, onDismiss: {
-            viewModel.discardDraftPlace()
-            // Load the possible created place
-            actionBus.send(.reloadMainPlaces)
+            switch viewModel.quickCreateResult {
+                case .moreOptions:
+                    // user asked for more creation options, we keep the draft to present it in detailed view
+                    // Data coming from Apple POI are already consumed, they can be reset
+                    viewModel.discardApplePOISuggestions()
+                case .saved:
+                    // reload places and discard draft
+                    actionBus.send(.reloadMainPlaces)
+                    viewModel.discardDraftPlace($draftPlace)
+                case .none:
+                    // sheet was swiped down, discard draft
+                    viewModel.discardDraftPlace($draftPlace)
+            }
         }, content: {
-            viewModel.createPlaceCreateQuickView()
+            viewModel.createPlaceCreateQuickView($draftPlace)
                 .presentationDetents([PlaceCreateQuickView.sheetHeight])
                 .presentationDragIndicator(.visible)
         })
@@ -251,7 +288,7 @@ struct PlacesMapView: View {
     }
 
     private func prepareCreatePlaceFromCoords(_ coordinates: CLLocationCoordinate2D) {
-        viewModel.preparePlaceFromCoords(coords: coordinates)
+        viewModel.preparePlaceFromCoords(coords: coordinates, draftPlace: $draftPlace)
         // Show the creation sheet
         viewModel.showQuickCreateSheet.toggle()
         // Center map on new place
@@ -268,7 +305,8 @@ struct PlacesMapView: View {
 
     private func onAddressPickerComplete(_ coordinates: CLLocationCoordinate2D) {
         viewModel.preparePlaceFromAddress(coords: coordinates,
-                                          address: viewModel.pickedAddress)
+                                          address: viewModel.pickedAddress,
+                                          draftPlace: $draftPlace)
         // Reset picked address
         viewModel.pickedAddress = nil
         // Hide sheet
@@ -278,6 +316,10 @@ struct PlacesMapView: View {
             // Show the creation sheet
             viewModel.showQuickCreateSheet.toggle()
         }
+    }
+    
+    private func onLongPress(coords: CLLocationCoordinate2D) -> Void {
+        viewModel.onLongPress(coords: coords, draftPlace: $draftPlace)
     }
 }
 
@@ -291,6 +333,7 @@ struct MockPlacesMapView: View {
 
     var body: some View {
         mock.appContainer.createPlacesMapView(places: places,
+                                              draftPlace: .constant(nil),
                                               selectedPlaceId: $selectedPlaceId,
                                               isParentPresenting: $isParentPresenting,
                                               showingCreatePlaceMenu: $showingCreatePlaceMenu,

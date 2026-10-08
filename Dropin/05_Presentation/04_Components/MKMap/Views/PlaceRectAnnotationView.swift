@@ -164,14 +164,14 @@ struct MockPlaceRectAnnotationView: View {
             HStack(spacing: 30) {
                 VStack {
                     Text("New").font(.caption)
-                    PlaceRectAnnotationView(color: place5.groupColor,
+                    PlaceRectAnnotationView(color: place5.categoryColor,
                                             icon: place5.category?.icon,
                                             iconExtra: place5.icon,
                                             size: size)
                 }
                 VStack {
                     Text("Legacy").font(.caption)
-                    LEGACY_PlaceRectAnnotationView(color: place5.groupColor,
+                    LEGACY_PlaceRectAnnotationView(color: place5.categoryColor,
                                                    icon: place5.category?.icon,
                                                    iconExtra: place5.icon,
                                                    size: size)
@@ -188,19 +188,19 @@ struct MockPlaceRectAnnotationView: View {
 
     var contentView: some View {
         VStack(spacing: 30) {
-            PlaceRectAnnotationView(color: place1.groupColor,
+            PlaceRectAnnotationView(color: place1.categoryColor,
                                     icon: place1.category?.icon,
                                     iconExtra: place1.icon)
-            PlaceRectAnnotationView(color: place2.groupColor,
+            PlaceRectAnnotationView(color: place2.categoryColor,
                                     icon: place2.category?.icon,
                                     iconExtra: place2.icon)
-            PlaceRectAnnotationView(color: place3.groupColor,
+            PlaceRectAnnotationView(color: place3.categoryColor,
                                     icon: place3.category?.icon,
                                     iconExtra: place3.icon)
-            PlaceRectAnnotationView(color: place4.groupColor,
+            PlaceRectAnnotationView(color: place4.categoryColor,
                                     icon: place4.category?.icon,
                                     iconExtra: place4.icon)
-            PlaceRectAnnotationView(color: place5.groupColor,
+            PlaceRectAnnotationView(color: place5.categoryColor,
                                     icon: place5.category?.icon,
                                     iconExtra: place5.icon)
         }

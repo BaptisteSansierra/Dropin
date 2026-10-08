@@ -17,8 +17,11 @@ import CoreLocation
     var places: [PlaceUIModel] = [PlaceUIModel]()
     /*private(set)*/ var mapReloadGen: Int = 0    // bumps after each significant reload
 
+    /// A draft place is created before being stored or discarded
+    var draftPlace: PlaceUIModel? = nil
+
     var syncStatus: SyncStatus
-    var reachabilityService: ReachabilityService
+    var reachabilityService: any ReachabilityServiceProtocol
 
     /// Places filtered with `currentFilter`
     var filteredPlaces: [PlaceUIModel] {
@@ -69,7 +72,7 @@ import CoreLocation
          locationManager: LocationManager,
          fetchPlaces: FetchPlaces,
          syncStatus: SyncStatus,
-         reachabilityService: ReachabilityService) {
+         reachabilityService: any ReachabilityServiceProtocol) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
@@ -102,7 +105,14 @@ import CoreLocation
             }, set: { value in
                 self.isPresenting = value
             })
+        let bindingDraftPlace = Binding<PlaceUIModel?>(
+            get: {
+                return self.draftPlace
+            }, set: { value in
+                self.draftPlace = value
+            })
         return appContainer.createPlacesMapView(places: filteredPlaces,
+                                                draftPlace: bindingDraftPlace,
                                                 selectedPlaceId: bindingSelectedPlaceId,
                                                 isParentPresenting: bindingIsPresenting,
                                                 showingCreatePlaceMenu: bindingShowingCreatePlaceMenu,
@@ -143,18 +153,17 @@ import CoreLocation
         return appContainer.createLookupPlacesView(place: place)
     }
 
-    func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
-                               address: String?,
-                               name: String,
-                               marker: String?,
-                               tags: [UUID],
-                               category: UUID?) -> PlaceCreateView {
-        return appContainer.createPlaceCreateView(coordinates: coordinates,
-                                                  address: address,
-                                                  name: name,
-                                                  marker: marker,
-                                                  tags: tags,
-                                                  category: category)
+//    func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
+//                               address: String?,
+//                               name: String,
+//                               marker: String?,
+//                               tags: [UUID],
+//                               category: UUID?) -> PlaceCreateView {
+    func createPlaceCreateView() -> PlaceCreateView {
+        guard let draftPlace = draftPlace else {
+            fatalError("undefined draftPlace")
+        }
+        return appContainer.createPlaceCreateView(place: draftPlace)
     }
     
     func createPlaceFilterView() -> PlaceFilterView {

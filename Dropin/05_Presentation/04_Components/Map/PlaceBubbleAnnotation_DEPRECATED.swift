@@ -24,7 +24,7 @@ struct PlaceBubbleAnnotation: MapContent {
             let size: CGFloat = 40
             PlaceBubbleAnnotationView(sysImage: place.icon,
                                       size: size,
-                                      color: place.groupColor)
+                                      color: place.categoryColor)
                 // Offset the whole thing so the bubble peak is centered where it shoul
                 .offset(x: 0, y: -0.5 * size)
                 .onTapGesture {

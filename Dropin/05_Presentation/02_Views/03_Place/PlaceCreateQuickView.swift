@@ -9,20 +9,30 @@ import SwiftUI
 
 struct PlaceCreateQuickView: View {
     
+    enum Result {
+        case moreOptions
+        case saved
+        case none
+    }
+
     static let sheetHeight: PresentationDetent = .medium
     
     // MARK: - State & Bindings
     @State private var viewModel: PlaceCreateQuickViewModel
     @State private var place: PlaceUIModel
+    @Binding private var result: Result
     @FocusState private var isNameFocused
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Init
-    init(viewModel: PlaceCreateQuickViewModel, place: PlaceUIModel) {
+    init(viewModel: PlaceCreateQuickViewModel,
+         place: PlaceUIModel,
+         result: Binding<Result>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = State(initialValue: place)
+        self._result = result
     }
 
     // MARK: - Body
@@ -48,6 +58,10 @@ struct PlaceCreateQuickView: View {
         .task {
             if place.address == nil {
                 await fetchAddress()
+            }
+            await viewModel.getSuggestedCategory()
+            if let category = viewModel.matchingCategory {
+                place.category = category
             }
         }
         .sheet(isPresented: $viewModel.showingTagsSelector) {
@@ -78,7 +92,6 @@ struct PlaceCreateQuickView: View {
             detailsSeparatorView
             categoriesView
                 .padding(.horizontal, 20)
-                .frame(height: 40)
         }
         .padding(.vertical, 10)
         .background {
@@ -148,19 +161,49 @@ struct PlaceCreateQuickView: View {
                 .frame(height: 40)
         } else {
             emptyCategoryView
-                .frame(height: 40)
         }
     }
     
     private var emptyCategoryView: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "folder")
-                .textStyle(.subheadline, color: .textSecondary)
-                .padding(.trailing)
-            Text("common.category")
-                .textStyle(.subheadline, color: .textSecondary)
-            Spacer()
-            TextButton(text: "common.choose", action: editCategory)
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                Image(systemName: "folder")
+                    .textStyle(.subheadline, color: .textSecondary)
+                    .padding(.trailing)
+                Text("common.category")
+                    .textStyle(.subheadline, color: .textSecondary)
+                Spacer()
+                TextButton(text: "common.choose", action: editCategory)
+            }
+            .frame(height: 40)
+
+            if let suggested = viewModel.suggestedCategoryName, place.category == nil {
+                HStack {
+                    HStack(spacing: 0) {
+                        Image(systemName: "plus")
+                            .textStyle(.footnote, color: .dropinPrimary)
+                            .padding(.trailing, 5)
+                        Text("common.create")
+                            .textStyle(.footnote, color: .dropinPrimary)
+                            .padding(.trailing, 5)
+                        Text("\"\(suggested)\"")
+                            .textStyle(.footnote, color: .dropinPrimary)
+                    }
+                    //.padding(.vertical, 8)
+                    .padding(.horizontal, 10)
+                    .frame(height: 30)
+                    .background {
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(.dropinPrimary.opacity(0.15))
+                            .stroke(.dropinPrimary,
+                                    style: StrokeStyle(dash: [2, 3]))
+                    }
+                    .onTapGesture(perform: createSuggestedCategory)
+                    Spacer()
+                }
+                .padding(.leading, 35)
+                .padding(.vertical, 5)
+            }
         }
     }
     
@@ -206,6 +249,7 @@ struct PlaceCreateQuickView: View {
         Task {
             do {
                 try await viewModel.save(place: place)
+                result = .saved
                 dismiss()
             } catch DomainError.Place.missingName {
                 viewModel.missingName = true
@@ -217,8 +261,17 @@ struct PlaceCreateQuickView: View {
     }
     
     private func moreOptions() {
+        result = .moreOptions
         dismiss()
         viewModel.pushCreatePlaceFullView(place: place)
+    }
+    
+    private func createSuggestedCategory() {
+        guard let suggestedName = viewModel.suggestedCategoryName else { return }
+        let category = Category(name: suggestedName,
+                                color: viewModel.poiColor?.hex ?? String.randomColor(),
+                                icon: viewModel.suggestedCategoryIcon ?? Icon(sf: "question")! )
+        place.category = CategoryMapper.toUI(category)
     }
 }
 
@@ -227,6 +280,7 @@ struct MockPlaceCreateQuickView: View {
     var mock: MockContainer
     @State var place: PlaceUIModel
     @State var present: Bool = false
+    @State var result: PlaceCreateQuickView.Result = .none
 
     var body: some View {
         MainButton(text: "go") {
@@ -234,7 +288,9 @@ struct MockPlaceCreateQuickView: View {
         }
         .padding()
         .sheet(isPresented: $present) {
-            mock.appContainer.createPlaceCreateQuickView(place: place)
+            mock.appContainer.createPlaceCreateQuickView(place: place,
+                                                         result: $result,
+                                                         poiCategory: .amusementPark)
                 .presentationDetents([PlaceCreateQuickView.sheetHeight])
                 .presentationDragIndicator(.visible)
         }

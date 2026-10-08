@@ -72,7 +72,7 @@ final class PlaceIconLayerView: UIView {
 
     private func updateColors() {
         let textPrimary = resolvedColor(Color.textPrimary)
-        let borderColor = resolvedColor(Color.fieldBorder)
+        //let borderColor = resolvedColor(Color.fieldBorder)
 
         CATransaction.begin()
         CATransaction.setDisableActions(true)

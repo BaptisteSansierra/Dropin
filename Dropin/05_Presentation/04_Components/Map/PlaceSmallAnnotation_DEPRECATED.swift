@@ -19,7 +19,7 @@ struct PlaceSmallAnnotation: MapContent {
     // MARK: - Body
     var body: some MapContent {
         Annotation("", coordinate: place.coordinates) {
-            PlaceSmallAnnotationView(color: place.groupColor)
+            PlaceSmallAnnotationView(color: place.categoryColor)
         }
     }
     

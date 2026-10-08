@@ -10,6 +10,9 @@
     "-" : {
 
     },
+    "\"%@\"" : {
+
+    },
     "%@" : {
 
     },
@@ -634,6 +637,315 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réinitialiser la base de données"
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.corrupted.body" : {
+      "comment" : "Alert body shown when Apple Maps doesn't recognize the place's stored identifier",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps didn't recognize this place. This may resolve itself on a later try."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps n'a pas reconnu ce lieu. Cela peut se résoudre lors d'un prochain essai."
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.corrupted.title" : {
+      "comment" : "Alert title shown when Apple Maps doesn't recognize the place's stored identifier",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place not recognized"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieu non reconnu"
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.mk_unknown.body.%d" : {
+      "comment" : "Alert body shown for an unexpected MapKit error, %d is the MapKit error code",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An unexpected error occurred (code %d). Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur inattendue est survenue (code %d). Veuillez réessayer."
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.mk_unknown.title" : {
+      "comment" : "Alert title shown for an unexpected MapKit error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unexpected error"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur inattendue"
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.not_connected.body" : {
+      "comment" : "Alert body shown when fetching Apple Maps place details fails due to connectivity",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your internet connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifiez votre connexion internet et réessayez."
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.not_connected.title" : {
+      "comment" : "Alert title shown when fetching Apple Maps place details fails due to connectivity",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de connexion internet"
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.not_found.body" : {
+      "comment" : "Alert body shown when the place no longer exists on Apple Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place seems to have been removed from Apple Maps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il semble que ce lieu ait été supprimé d'Apple Maps."
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.not_found.title" : {
+      "comment" : "Alert title shown when the place no longer exists on Apple Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No longer on Apple Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus disponible sur Apple Maps"
+          }
+        }
+      }
+    },
+    "apple_poi_fetch.error.unknown.title" : {
+      "comment" : "Alert title shown for an unanticipated error; the body uses the system error's own localized description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue"
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.error.body" : {
+      "comment" : "Apple POI sheet: body shown when fetching the place details fails",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your internet connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifiez votre connexion internet et réessayez."
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.error.title" : {
+      "comment" : "Apple POI sheet: title shown when fetching the place details fails",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load this place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger ce lieu"
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.invalid_place.body" : {
+      "comment" : "Apple POI sheet: alert body when the selected POI can't be turned into a place (e.g. missing Apple identifier)",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Apple Maps place is missing information needed to create a place from it."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce lieu Apple Maps ne contient pas les informations nécessaires pour créer un lieu."
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.invalid_place.title" : {
+      "comment" : "Apple POI sheet: alert title when the selected POI can't be turned into a place",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot create place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de créer le lieu"
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.loading" : {
+      "comment" : "Apple POI sheet: loading state while fetching the place details",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement des détails"
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.no_identifier.body" : {
+      "comment" : "Apple POI sheet: alert body when the selected POI has no Apple identifier to link against",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps doesn't provide a reference for this place. You can still create it, but it won't be linked to Apple Maps details."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps ne fournit pas de référence pour ce lieu. Vous pouvez tout de même le créer, mais il ne sera pas lié aux détails Apple Maps."
+          }
+        }
+      }
+    },
+    "apple_poi_sheet.no_identifier.title" : {
+      "comment" : "Apple POI sheet: alert title when the selected POI has no Apple identifier to link against",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't link to Apple Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lier à Apple Maps"
+          }
+        }
+      }
+    },
+    "apple_poi.desc" : {
+      "comment" : "Apple POI sheet: subtitle indicating the place's details are synced from Apple Maps and not editable",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kept up to date by Apple Maps · Read-only"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tenu à jour par Apple Maps · Lecture seule"
+          }
+        }
+      }
+    },
+    "apple_poi.legacy_desc" : {
+      "comment" : "Apple POI sheet: subtitle shown when the POI is no longer found on Apple Maps, %@ is the last fetch date",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No longer found on Apple Maps. Showing the last known details from %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N'est plus trouvé sur Apple Maps. Affichage des dernières informations connues depuis %@."
           }
         }
       }
@@ -1603,6 +1915,39 @@
         }
       }
     },
+    "common.apple_maps" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps"
+          }
+        }
+      }
+    },
+    "common.apple_maps_details" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Détails Apple Maps"
+          }
+        }
+      }
+    },
     "common.apply" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1882,6 +2227,22 @@
         }
       }
     },
+    "common.copy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier"
+          }
+        }
+      }
+    },
     "common.copy_address" : {
       "localizations" : {
         "en" : {
@@ -1910,6 +2271,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copier les coordonnées"
+          }
+        }
+      }
+    },
+    "common.create" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer"
+          }
+        }
+      }
+    },
+    "common.create_place" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer un lieu"
           }
         }
       }
@@ -2200,6 +2593,22 @@
         }
       }
     },
+    "common.from_apple_maps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From Apple Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depuis Apple Maps"
+          }
+        }
+      }
+    },
     "common.import" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2478,6 +2887,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun lieu apparenté"
+          }
+        }
+      }
+    },
+    "common.not_connected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non connecté"
           }
         }
       }
@@ -3156,6 +3581,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tags"
+          }
+        }
+      }
+    },
+    "common.try_again" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
           }
         }
       }
@@ -4412,6 +4853,210 @@
         }
       }
     },
+    "place_edit_content_view.poi.empty" : {
+      "comment" : "Apple POI section: shown when Apple Maps has no phone or website on file for this place",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps doesn't list a phone or website for this place yet."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps ne renseigne pas encore de téléphone ou de site web pour ce lieu."
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.invalid_id.body" : {
+      "comment" : "Apple POI section: alert body when the place's stored Apple identifier is no longer valid",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place's link to Apple Maps is no longer valid. Your own details aren't affected."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le lien de ce lieu vers Apple Maps n'est plus valide. Vos propres informations ne sont pas affectées."
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.invalid_id.title" : {
+      "comment" : "Apple POI section: alert title when the place's stored Apple identifier is no longer valid",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps link is broken"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le lien Apple Maps est rompu"
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.mk_unknown.body.%llu" : {
+      "comment" : "Apple POI section: alert body for an unexpected MapKit error, %llu is the MapKit error code (UInt, interpolated directly into a LocalizedStringKey)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple may have removed this place. Try again in a few days.\nMKError(%llu)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple a peut-être supprimé ce lieu. Réessayez dans quelques jours.\nMKError(%llu)"
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.not_connected_desc" : {
+      "comment" : "Apple POI section: description shown when offline",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Maps details will load when you’re back online."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les détails Apple Maps se chargeront une fois que vous serez de nouveau en ligne."
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.not_found_new.body" : {
+      "comment" : "Apple POI section: alert body when the place was just confirmed removed from Apple Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple may have removed this place. Try again in a few days."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple a peut-être supprimé ce lieu. Réessayez dans quelques jours."
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.not_found_new.title" : {
+      "comment" : "Apple POI section: alert title when the place was just confirmed removed from Apple Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t load Apple Maps details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger les détails Apple Maps"
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.not_found_old.body" : {
+      "comment" : "Apple POI section: description when the place was already known to be removed from Apple Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place is no longer on Apple Maps. Your own details aren’t affected."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce lieu n’est plus disponible sur Apple Maps. Vos propres informations ne sont pas affectées."
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.not_found_old.title" : {
+      "comment" : "Apple POI section: title when the place was already known to be removed from Apple Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No longer on Apple Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus disponible sur Apple Maps"
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.unknown.body.%@" : {
+      "comment" : "Apple POI section: alert body for an unanticipated error, %@ is the system error's localized description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong.\nError: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue.\nErreur : %@"
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.unlink.body" : {
+      "comment" : "Apple POI section: confirmation dialog body before unlinking a place from its Apple Maps POI",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The place can’t be linked again afterwards."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le lieu ne pourra plus être associé à nouveau par la suite."
+          }
+        }
+      }
+    },
+    "place_edit_content_view.poi.unlink.title" : {
+      "comment" : "Apple POI section: confirmation dialog title before unlinking a place from its Apple Maps POI",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlink from Apple Maps?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dissocier d’Apple Maps ?"
+          }
+        }
+      }
+    },
     "place_edit.annotation_icon_desc" : {
       "comment" : "Place edit screen, helper text under the annotation icon section",
       "extractionState" : "manual",
@@ -4987,6 +5632,1247 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au tag"
+          }
+        }
+      }
+    },
+    "poi_category.airport" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airport"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aéroport"
+          }
+        }
+      }
+    },
+    "poi_category.amusement_park" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amusement Park"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parc d'attractions"
+          }
+        }
+      }
+    },
+    "poi_category.animal_service" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animal Service"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service animalier"
+          }
+        }
+      }
+    },
+    "poi_category.aquarium" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aquarium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aquarium"
+          }
+        }
+      }
+    },
+    "poi_category.atm" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ATM"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distributeur"
+          }
+        }
+      }
+    },
+    "poi_category.automotive_repair" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto Repair"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garage auto"
+          }
+        }
+      }
+    },
+    "poi_category.bakery" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bakery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boulangerie"
+          }
+        }
+      }
+    },
+    "poi_category.bank" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Banque"
+          }
+        }
+      }
+    },
+    "poi_category.baseball" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baseball"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baseball"
+          }
+        }
+      }
+    },
+    "poi_category.basketball" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basketball"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basket-ball"
+          }
+        }
+      }
+    },
+    "poi_category.beach" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beach"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plage"
+          }
+        }
+      }
+    },
+    "poi_category.beauty" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beauty"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beauté"
+          }
+        }
+      }
+    },
+    "poi_category.bowling" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bowling"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bowling"
+          }
+        }
+      }
+    },
+    "poi_category.brewery" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brewery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brasserie"
+          }
+        }
+      }
+    },
+    "poi_category.cafe" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Café"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Café"
+          }
+        }
+      }
+    },
+    "poi_category.campground" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Campground"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camping"
+          }
+        }
+      }
+    },
+    "poi_category.car_rental" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Car Rental"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location de voiture"
+          }
+        }
+      }
+    },
+    "poi_category.castle" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Castle"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Château"
+          }
+        }
+      }
+    },
+    "poi_category.convention_center" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convention Center"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre de congrès"
+          }
+        }
+      }
+    },
+    "poi_category.distillery" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distillery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distillerie"
+          }
+        }
+      }
+    },
+    "poi_category.ev_charger" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EV Charger"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borne de recharge"
+          }
+        }
+      }
+    },
+    "poi_category.fairground" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fairground"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fête foraine"
+          }
+        }
+      }
+    },
+    "poi_category.fire_station" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fire Station"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caserne de pompiers"
+          }
+        }
+      }
+    },
+    "poi_category.fishing" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fishing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pêche"
+          }
+        }
+      }
+    },
+    "poi_category.fitness_center" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fitness Center"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salle de sport"
+          }
+        }
+      }
+    },
+    "poi_category.food_market" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food Market"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marché alimentaire"
+          }
+        }
+      }
+    },
+    "poi_category.fortress" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortress"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forteresse"
+          }
+        }
+      }
+    },
+    "poi_category.gas_station" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gas Station"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Station-service"
+          }
+        }
+      }
+    },
+    "poi_category.go_kart" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go-Kart"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karting"
+          }
+        }
+      }
+    },
+    "poi_category.golf" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Golf"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Golf"
+          }
+        }
+      }
+    },
+    "poi_category.hiking" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Randonnée"
+          }
+        }
+      }
+    },
+    "poi_category.hospital" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hospital"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hôpital"
+          }
+        }
+      }
+    },
+    "poi_category.hotel" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hotel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hôtel"
+          }
+        }
+      }
+    },
+    "poi_category.kayaking" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayaking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayak"
+          }
+        }
+      }
+    },
+    "poi_category.landmark" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Landmark"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Site remarquable"
+          }
+        }
+      }
+    },
+    "poi_category.laundry" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laundry"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laverie"
+          }
+        }
+      }
+    },
+    "poi_category.library" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bibliothèque"
+          }
+        }
+      }
+    },
+    "poi_category.mailbox" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mailbox"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boîte aux lettres"
+          }
+        }
+      }
+    },
+    "poi_category.marina" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marina"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Port de plaisance"
+          }
+        }
+      }
+    },
+    "poi_category.mini_golf" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mini Golf"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mini-golf"
+          }
+        }
+      }
+    },
+    "poi_category.movie_theater" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Movie Theater"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cinéma"
+          }
+        }
+      }
+    },
+    "poi_category.museum" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Museum"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Musée"
+          }
+        }
+      }
+    },
+    "poi_category.music_venue" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music Venue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salle de concert"
+          }
+        }
+      }
+    },
+    "poi_category.national_monument" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "National Monument"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monument national"
+          }
+        }
+      }
+    },
+    "poi_category.national_park" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "National Park"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parc national"
+          }
+        }
+      }
+    },
+    "poi_category.nightlife" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nightlife"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vie nocturne"
+          }
+        }
+      }
+    },
+    "poi_category.park" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Park"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parc"
+          }
+        }
+      }
+    },
+    "poi_category.parking" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parking"
+          }
+        }
+      }
+    },
+    "poi_category.pharmacy" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pharmacy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pharmacie"
+          }
+        }
+      }
+    },
+    "poi_category.planetarium" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planetarium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planétarium"
+          }
+        }
+      }
+    },
+    "poi_category.police" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Police"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Police"
+          }
+        }
+      }
+    },
+    "poi_category.post_office" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Post Office"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bureau de poste"
+          }
+        }
+      }
+    },
+    "poi_category.public_transport" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public Transport"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport en commun"
+          }
+        }
+      }
+    },
+    "poi_category.restaurant" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurant"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurant"
+          }
+        }
+      }
+    },
+    "poi_category.restroom" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restroom"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilettes"
+          }
+        }
+      }
+    },
+    "poi_category.rock_climbing" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rock Climbing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escalade"
+          }
+        }
+      }
+    },
+    "poi_category.rv_park" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RV Park"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camping-car"
+          }
+        }
+      }
+    },
+    "poi_category.school" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "School"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "École"
+          }
+        }
+      }
+    },
+    "poi_category.skate_park" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skate Park"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skatepark"
+          }
+        }
+      }
+    },
+    "poi_category.skating" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skating"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Patinage"
+          }
+        }
+      }
+    },
+    "poi_category.skiing" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skiing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ski"
+          }
+        }
+      }
+    },
+    "poi_category.soccer" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soccer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Football"
+          }
+        }
+      }
+    },
+    "poi_category.spa" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spa"
+          }
+        }
+      }
+    },
+    "poi_category.stadium" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stadium"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stade"
+          }
+        }
+      }
+    },
+    "poi_category.store" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Store"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magasin"
+          }
+        }
+      }
+    },
+    "poi_category.surfing" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surfing"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surf"
+          }
+        }
+      }
+    },
+    "poi_category.swimming" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swimming"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Natation"
+          }
+        }
+      }
+    },
+    "poi_category.tennis" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tennis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tennis"
+          }
+        }
+      }
+    },
+    "poi_category.theater" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theater"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Théâtre"
+          }
+        }
+      }
+    },
+    "poi_category.university" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "University"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Université"
+          }
+        }
+      }
+    },
+    "poi_category.volleyball" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volleyball"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volley-ball"
+          }
+        }
+      }
+    },
+    "poi_category.winery" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Winery"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domaine viticole"
+          }
+        }
+      }
+    },
+    "poi_category.zoo" : {
+      "comment" : "Apple POI category display name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoo"
           }
         }
       }

@@ -23,9 +23,7 @@ struct SupabasePlaceDTO: Codable {
     let notes: String?
     let imageIds: [UUID]
     let applePlaceID: String?
-    let applePhone: String?
-    let appleURL: String?
-    let appleFetchedAt: Date?
+    let appleNotFoundAt: Date?
     let createdAt: Date
     let updatedAt: Date
     let deletedAt: Date?
@@ -48,9 +46,7 @@ struct SupabasePlaceDTO: Codable {
         case notes
         case imageIds  = "image_ids"
         case applePlaceID   = "apple_place_id"
-        case applePhone     = "apple_phone"
-        case appleURL       = "apple_url"
-        case appleFetchedAt = "apple_fetched_at"
+        case appleNotFoundAt = "apple_not_found_at"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
@@ -79,38 +75,34 @@ struct SupabasePlaceDTO: Codable {
         try c.encode(notes,     forKey: .notes)
         try c.encode(imageIds,  forKey: .imageIds)
         try c.encode(applePlaceID,   forKey: .applePlaceID)
-        try c.encode(applePhone,     forKey: .applePhone)
-        try c.encode(appleURL,       forKey: .appleURL)
-        try c.encode(appleFetchedAt, forKey: .appleFetchedAt)
+        try c.encode(appleNotFoundAt, forKey: .appleNotFoundAt)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)
     }
 
     init(from place: Place, userId: UUID) {
-        self.id        = place.id
-        self.userId    = userId
-        self.name      = place.name
-        self.latitude  = place.coordinates.latitude
-        self.longitude = place.coordinates.longitude
-        self.address   = place.address
-        self.address2  = place.address2
-        self.categoryId   = place.category?.id
-        self.tagIds    = place.tags.map(\.id)
-        self.icon      = place.icon?.rawValue
-        self.rating    = place.rating
-        self.phone     = place.phone
-        self.email     = place.email
-        self.url       = place.url
-        self.notes     = place.notes
-        self.imageIds  = place.images
+        self.id             = place.id
+        self.userId         = userId
+        self.name           = place.name
+        self.latitude       = place.coordinates.latitude
+        self.longitude      = place.coordinates.longitude
+        self.address        = place.address
+        self.address2       = place.address2
+        self.categoryId     = place.category?.id
+        self.tagIds         = place.tags.map(\.id)
+        self.icon           = place.icon?.rawValue
+        self.rating         = place.rating
+        self.phone          = place.phone
+        self.email          = place.email
+        self.url            = place.url
+        self.notes          = place.notes
+        self.imageIds       = place.images
         self.applePlaceID   = place.applePlaceID
-        self.applePhone     = place.applePhone
-        self.appleURL       = place.appleURL
-        self.appleFetchedAt = place.appleFetchedAt
-        self.createdAt = place.createdAt
-        self.updatedAt = place.updatedAt
-        self.deletedAt = place.deletedAt
+        self.appleNotFoundAt = place.appleNotFoundAt
+        self.createdAt      = place.createdAt
+        self.updatedAt      = place.updatedAt
+        self.deletedAt      = place.deletedAt
     }
 
     func toDomain() -> Place {
@@ -126,18 +118,24 @@ struct SupabasePlaceDTO: Codable {
             Category(id: id, name: "", color: "000000", icon: .sf(""),
                         createdAt: .distantPast, updatedAt: .distantPast, deletedAt: nil)
         }
-        return Place(
-            id: id, name: name,
-            coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-            address: address, address2: address2,
-            tags: stubTags, category: stubCategory,
-            images: imageIds,
-            icon: icon.flatMap { Icon(rawValue: $0) },
-            rating: rating,
-            phone: phone, email: email, url: url, notes: notes,
-            applePlaceID: applePlaceID, applePhone: applePhone,
-            appleURL: appleURL, appleFetchedAt: appleFetchedAt,
-            createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt
-        )
+        return Place(id: id,
+                     name: name,
+                     coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                     address: address,
+                     address2: address2,
+                     tags: stubTags,
+                     category: stubCategory,
+                     images: imageIds,
+                     icon: icon.flatMap { Icon(rawValue: $0) },
+                     rating: rating,
+                     phone: phone,
+                     email: email,
+                     url: url,
+                     notes: notes,
+                     applePlaceID: applePlaceID,
+                     appleNotFoundAt: appleNotFoundAt,
+                     createdAt: createdAt,
+                     updatedAt: updatedAt,
+                     deletedAt: deletedAt)
     }
 }

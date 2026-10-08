@@ -46,9 +46,7 @@ extension PlaceMapper {
                               url: urls,
                               notes: place.notes,
                               applePlaceID: place.applePlaceID,
-                              applePhone: place.applePhone,
-                              appleURL: place.appleURL,
-                              appleFetchedAt: place.appleFetchedAt,
+                              appleNotFoundAt: place.appleNotFoundAt,
                               createdAt: place.createdAt,
                               updatedAt: place.updatedAt,
                               deletedAt: place.deletedAt)
@@ -85,9 +83,7 @@ extension PlaceMapper {
                                 url: placeUI.url.map { $0.rawValue },
                                 notes: placeUI.notes,
                                 applePlaceID: placeUI.applePlaceID,
-                                applePhone: placeUI.applePhone,
-                                appleURL: placeUI.appleURL,
-                                appleFetchedAt: placeUI.appleFetchedAt,
+                                appleNotFoundAt: placeUI.appleNotFoundAt,
                                 createdAt: placeUI.createdAt,
                                 updatedAt: placeUI.updatedAt,
                                 deletedAt: placeUI.deletedAt)

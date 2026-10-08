@@ -13,6 +13,8 @@ protocol ReachabilityServiceProtocol {
     var isConnected: Bool { get }
 }
 
+// TODO: this shouldn't be MainActor, a background layer may depend of reachability without MainActor dependency
+
 @MainActor
 @Observable final class ReachabilityService: Sendable {
     private(set) var isConnected: Bool = true

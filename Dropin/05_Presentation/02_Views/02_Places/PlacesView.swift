@@ -273,12 +273,13 @@ struct PlacesView: View {
             case .lookupPlacesEditView(let placeId):
                 createLookupPlacesView(placeId: placeId)
             case .placeCreateView(let coordinates, let address, let name, let marker, let tags, let category):
-                viewModel.createPlaceCreateView(coordinates: coordinates,
-                                                address: address,
-                                                name: name,
-                                                marker: marker,
-                                                tags: tags,
-                                                category: category)
+//                viewModel.createPlaceCreateView(coordinates: coordinates,
+//                                                address: address,
+//                                                name: name,
+//                                                marker: marker,
+//                                                tags: tags,
+//                                                category: category)
+                viewModel.createPlaceCreateView()
             // development cases
             case .undefinedDummyView:
                 ZStack {
@@ -297,20 +298,21 @@ struct PlacesView: View {
     }
     
     private func onAppearCallback() {
-        /*
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
             return
         }
         switch lastNavigationSource {
-            case .placeCreateView, .placeEditView:
+            case .placeCreateView:
+                // PlaceCreateView is popped, draft can be reset
+                // add a delay as SwiftUI may still rely on it til the View is effectively deleted
                 Task {
-                    await reloadPlaces()
+                    try await Task.sleep(for: .seconds(0.2))
+                    viewModel.draftPlace = nil
                 }
             default:
                 print("ignore lastNavigationSource = \(lastNavigationSource)")
                 ()
         }
-         */
     }
     
     private func reloadPlaces() async {

@@ -38,12 +38,12 @@ struct PlaceHeaderView: View {
             HStack(alignment: .top) {
                 switch appSettings.mapSettings.pinStyle {
                     case .rect:
-                        PlaceRectAnnotationView(color: place.groupColor,
+                        PlaceRectAnnotationView(color: place.categoryColor,
                                             icon: place.category?.icon,
                                             iconExtra: place.icon)
                         .padding(.trailing)
                     case .rounded:
-                        PlacePinAnnotationView(color: place.groupColor,
+                        PlacePinAnnotationView(color: place.categoryColor,
                                                icon: place.category?.icon,
                                                iconExtra: place.icon,
                                                size: 40,

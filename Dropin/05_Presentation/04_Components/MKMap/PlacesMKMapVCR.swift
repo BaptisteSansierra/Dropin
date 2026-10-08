@@ -62,6 +62,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
     @Environment(AppSettings.self) private var appSettings
 
     @Binding private var selectedPlaceId: UUID?
+    @Binding private var selectedApplePOI: MKMapFeatureAnnotation?
 
     private let config: Configuration
     private let mapController: MapController
@@ -81,6 +82,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
          places: [PlaceUIModel],
          draftCoordinate: CLLocationCoordinate2D? = nil,
          selectedPlaceId: Binding<UUID?>,
+         selectedApplePOI: Binding<MKMapFeatureAnnotation?>,
          onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil,
          onMapCameraUpdate: MapCameraUpdateHandler? = nil,
          interactionStatus: @escaping (() -> InteractionStatus),
@@ -93,6 +95,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         self.places = places
         self.draftCoordinate = draftCoordinate
         self._selectedPlaceId = selectedPlaceId
+        self._selectedApplePOI = selectedApplePOI
         self.onLongPress = onLongPress
         self.onMapCameraUpdate = onMapCameraUpdate
         self.interactionStatus = interactionStatus
@@ -140,7 +143,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //
         // Map style
         //
-        if !appSettings.mapSettings.diffAffectsMapConfig(mapView.preferredConfiguration) {
+
+        if appSettings.mapSettings.diffAffectsMapConfig(mapView.preferredConfiguration) {
             mapView.preferredConfiguration = appSettings.mapSettings.mapConfig()
         } else {
             //print("2 no-op map style")
@@ -250,6 +254,9 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                     onPlaceSelected: { uuid in
                         selectedPlaceId = uuid
                     },
+                    onApplePOISelected: { ann in
+                        selectedApplePOI = ann
+                    },
                     onLongPress: onLongPress,
                     onMapCameraUpdate: onMapCameraUpdate,
                     interactionStatus: interactionStatus)
@@ -339,6 +346,7 @@ extension PlacesMKMapVCR {
         fileprivate var mapSettings: MapSettings
         
         private let onPlaceSelected: ((UUID) -> Void)
+        private let onApplePOISelected: ((MKMapFeatureAnnotation) -> Void)
         private let onLongPress: ((CLLocationCoordinate2D) -> Void)?
         private let onMapCameraUpdate: MapCameraUpdateHandler?
         private let interactionStatus: (() -> InteractionStatus)
@@ -363,6 +371,7 @@ extension PlacesMKMapVCR {
         init(config: Configuration,
              mapSettings: MapSettings,
              onPlaceSelected: @escaping ((UUID) -> Void),
+             onApplePOISelected: @escaping ((MKMapFeatureAnnotation) -> Void),
              onLongPress: ((CLLocationCoordinate2D) -> Void)?,
              onMapCameraUpdate: MapCameraUpdateHandler?,
              interactionStatus: @escaping (() -> InteractionStatus) ) {
@@ -371,6 +380,7 @@ extension PlacesMKMapVCR {
             self.annotationViewFactory = AnnotationViewFactory(mapSettings: mapSettings,
                                                                displayAllPins: config.displayAllPins)
             self.onPlaceSelected = onPlaceSelected
+            self.onApplePOISelected = onApplePOISelected
             self.onLongPress = onLongPress
             self.onMapCameraUpdate = onMapCameraUpdate
             self.interactionStatus = interactionStatus
@@ -652,6 +662,13 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
         annotationViewFactory.view(for: annotation, in: mapView)
     }
     
+    func mapView(_ mapView: MKMapView, didSelect annotation: MKAnnotation) {
+        guard let poiAnnotation = annotation as? MKMapFeatureAnnotation else {
+            return
+        }
+        onApplePOISelected(poiAnnotation)
+    }
+
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard interactionStatus().selectionEnabled else {
             // Cancel the apple cluster default animation asap (another way would be to replace by our own cluster view)
@@ -759,6 +776,7 @@ class PlacesMKMapVC: UIViewController {
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.mapView = MKMapView()
+        self.mapView.selectableMapFeatures = [.pointsOfInterest]
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
@@ -839,7 +857,7 @@ struct MockPlacesMKMapVCR: View {
                                mapController: MapController(),
                                places: places,
                                selectedPlaceId: $selectedPlaceId,
-                               //onPlaceSelected: { uuid in print("SELECTED PLACE \(uuid)") },
+                               selectedApplePOI: .constant(nil),
                                onLongPress: { coords in print("LONG PRESSED \(coords)") },
                                onMapCameraUpdate: onMapCameraUpdate,
                                interactionStatus: { return .all },
@@ -860,7 +878,8 @@ struct MockPlacesMKMapVCR: View {
                                mapController: MapController(),
                                places: places,
                                draftCoordinate: .barcelona.offset(x: 0.02, y: -0.02),
-                               selectedPlaceId: Binding<UUID?>.constant(nil),
+                               selectedPlaceId: .constant(nil),
+                               selectedApplePOI: .constant(nil),
                                interactionStatus: { return .none },
                                mapReloadGen: 0,
                                bottomInset: 0)

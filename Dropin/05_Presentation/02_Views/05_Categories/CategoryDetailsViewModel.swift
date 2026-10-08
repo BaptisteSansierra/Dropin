@@ -14,7 +14,7 @@ import SwiftUI
     var places: [PlaceUIModel] = []
     var selectedPlaceId: UUID? = nil
     var category: CategoryUIModel
-    var groupColor: Color
+    var categoryColor: Color
     var showingRemoveAlert: Bool = false
     var showingMarkerList: Bool = false
 
@@ -39,7 +39,7 @@ import SwiftUI
         self.updateCategory = updateCategory
         self.fetchCategoryPlaces = fetchCategoryPlaces
         self.updatePlace = updatePlace
-        self.groupColor = category.color
+        self.categoryColor = category.color
     }
     
     // MARK: Actions

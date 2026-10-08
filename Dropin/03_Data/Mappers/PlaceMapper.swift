@@ -22,26 +22,24 @@ public enum PlaceMapper {
             }
         }
         let place = Place(id: sdPlace.identifier,
-                                name: sdPlace.name,
-                                coordinates: CLLocationCoordinate2D(latitude: sdPlace.latitude, longitude: sdPlace.longitude),
-                                address: sdPlace.address,
-                                address2: sdPlace.address2,
-                                tags: tags,
-                                category: category,
-                                images: sdPlace.images.map(\.id),
-                                icon: sdPlace.icon,
-                                rating: sdPlace.rating,
-                                phone: sdPlace.phone,
-                                email: sdPlace.email,
-                                url: sdPlace.url,
-                                notes: sdPlace.notes,
-                                applePlaceID: sdPlace.applePlaceID,
-                                applePhone: sdPlace.applePhone,
-                                appleURL: sdPlace.appleURL,
-                                appleFetchedAt: sdPlace.appleFetchedAt,
-                                createdAt: sdPlace.createdAt,
-                                updatedAt: sdPlace.updatedAt,
-                                deletedAt: sdPlace.deletedAt)
+                          name: sdPlace.name,
+                          coordinates: CLLocationCoordinate2D(latitude: sdPlace.latitude, longitude: sdPlace.longitude),
+                          address: sdPlace.address,
+                          address2: sdPlace.address2,
+                          tags: tags,
+                          category: category,
+                          images: sdPlace.images.map(\.id),
+                          icon: sdPlace.icon,
+                          rating: sdPlace.rating,
+                          phone: sdPlace.phone,
+                          email: sdPlace.email,
+                          url: sdPlace.url,
+                          notes: sdPlace.notes,
+                          applePlaceID: sdPlace.applePlaceID,
+                          appleNotFoundAt: sdPlace.appleNotFoundAt,
+                          createdAt: sdPlace.createdAt,
+                          updatedAt: sdPlace.updatedAt,
+                          deletedAt: sdPlace.deletedAt)
         return place
     }
     
@@ -62,9 +60,7 @@ public enum PlaceMapper {
                          url: place.url,
                          notes: place.notes,
                          applePlaceID: place.applePlaceID,
-                         applePhone: place.applePhone,
-                         appleURL: place.appleURL,
-                         appleFetchedAt: place.appleFetchedAt)
+                         appleNotFoundAt: place.appleNotFoundAt)
         // PlaceRecord.init always stamps fresh dates ("now") and nil deletedAt.
         // Overwrite with the domain values so server-originated timestamps
         // (and soft-delete markers) are preserved across pulls.

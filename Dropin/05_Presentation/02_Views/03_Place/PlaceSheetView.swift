@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ContactFieldKit
+import MapKit
 
 struct PlaceSheetView: View {
     
@@ -16,10 +17,17 @@ struct PlaceSheetView: View {
     @Binding private var currentDetent: PresentationDetent
     @Environment(\.dismiss) private var dismiss
     @Namespace private var menuNamespace
-    
+
     private var menuGeomId = "menuGeomId"
     private var mapAction: (() -> Void)?
     private let headerActionsViewHeight: CGFloat = 55
+    private var isPresentingError: Binding<Bool> {
+        Binding {
+            viewModel.presentedPOIError != nil
+        } set: { v in
+            if v == false { viewModel.presentedPOIError = nil }
+        }
+    }
     private var shareErrorPresented: Binding<Bool> {
         Binding(get: {
             viewModel.shareErrorMsg != nil
@@ -28,6 +36,28 @@ struct PlaceSheetView: View {
                 viewModel.shareErrorMsg = nil
             }
         })
+    }
+    private var allPhones: Binding<[ContactItem]> {
+        Binding {
+            var phones = place.phone
+            if let applePhone = viewModel.applePhoneContactItem(place) {
+                phones.append(applePhone)
+            }
+            return phones
+        } set: { _ in
+            // read-only
+        }
+    }
+    private var allUrls: Binding<[ContactItem]> {
+        Binding {
+            var urls = place.url
+            if let appleUrl = viewModel.appleUrlContactItem(place) {
+                urls.append(appleUrl)
+            }
+            return urls
+        } set: { _ in
+            // read-only
+        }
     }
 
     // MARK: - init
@@ -61,6 +91,9 @@ struct PlaceSheetView: View {
                     .shadow(radius: 5)
             })
             .ignoresSafeArea()
+        }
+        .task {
+            await viewModel.fetchAppleDataIfNeeded(for: place)
         }
         .alert(viewModel.openURLAlert?.title ?? "",
                isPresented: Binding(get: {
@@ -98,23 +131,25 @@ struct PlaceSheetView: View {
         }
         .alertOk(isPresented: shareErrorPresented,
                  title: "place_sheet.share.error.title",
-                 body: LocalizedStringKey(viewModel.shareErrorMsg ?? "")
-                 )
+                 body: LocalizedStringKey(viewModel.shareErrorMsg ?? ""))
+        .alertOk(isPresented: isPresentingError,
+                 title: errorTitle(),
+                 body: errorBody())
     }
     
     // MARK: - Subviews
     @ViewBuilder
     private func groupLayerView(_ category: CategoryUIModel) -> some View {
-        place.groupColor
+        place.categoryColor
             .ignoresSafeArea()
         VStack {
             HStack(spacing: 0) {
                 IconView(icon: category.icon)
                     .sizeBody()
-                    .foregroundStyle(place.groupColor.isDark() ? .backgroundPrimary : .textPrimary)
+                    .foregroundStyle(place.categoryColor.isDark() ? .backgroundPrimary : .textPrimary)
                 Text(category.name)
                     .font(.bodySemibold)
-                    .foregroundStyle(place.groupColor.isDark() ? .backgroundPrimary : .textPrimary)
+                    .foregroundStyle(place.categoryColor.isDark() ? .backgroundPrimary : .textPrimary)
                     .padding(.horizontal)
                     .padding(.vertical, 10)
             }
@@ -206,6 +241,17 @@ struct PlaceSheetView: View {
     
     @ViewBuilder
     private var subHeaderView: some View {
+        
+        if let applePlaceID = place.applePlaceID {
+            ApplePOIViewFactory.applePOINativeBtView {
+                presentApplePOIDetails(applePlaceID)
+            }
+            .padding(.leading)
+            .padding(.top, 5)
+            .padding(.bottom, 0)
+            .mapItemDetailSheet(item: $viewModel.presentedMapItem, displaysMap: true)
+        }
+        
         // Rating + Distance
         HStack(alignment: .center, spacing: 0) {
             if let rating = place.rating {
@@ -308,8 +354,8 @@ struct PlaceSheetView: View {
     
     private func nbActions() -> Int {
         var count = 2 // directions + share buttons are always visible
-        if place.phone.count > 0 { count += 1 }
-        if place.url.count > 0 { count += 1 }
+        if phoneItemCount() > 0 { count += 1 }
+        if urlItemCount() > 0 { count += 1 }
         if let _ = mapAction { count += 1 }
         return count
     }
@@ -320,7 +366,7 @@ struct PlaceSheetView: View {
             let nbButtons: Int = nbActions()
             directionsButton(nbButtons)
                 .padding(.horizontal, spacing)
-            if place.phone.count > 0 {
+            if phoneItemCount() > 0 {
                 squareButton(systemImage: "phone",
                              label: "common.call",
                              height: headerActionsViewHeight,
@@ -328,7 +374,7 @@ struct PlaceSheetView: View {
                              action: call)
                 .padding(.trailing, spacing)
             }
-            if place.url.count > 0 {
+            if urlItemCount() > 0 {
                 squareButton(systemImage: "globe.europe.africa.fill",
                              label: "common.website",
                              height: headerActionsViewHeight,
@@ -386,7 +432,7 @@ struct PlaceSheetView: View {
             case .overview:
                 overviewView
             case .contact:
-                if place.phone.count + place.email.count + place.url.count == 0 {
+                if contactItemCount() == 0 {
                     contactPlaceholderView
                 } else {
                     contactView
@@ -506,23 +552,23 @@ struct PlaceSheetView: View {
 
     private var contactView: some View {
         VStack(alignment: .leading, spacing : 0) {
-            ContactItemView(contactItems: $place.phone)
+            ContactItemView(contactItems: allPhones)
                 .padding(.bottom, 20)
                 .scaleEffect(viewModel.phoneScale)
                 .shadow(radius: 1)
-                .opacity($place.phone.count > 0 ? 1 : 0)
+                .opacity(phoneItemCount() > 0 ? 1 : 0)
             
             ContactItemView(contactItems: $place.email)
                 .padding(.bottom, 20)
                 .shadow(radius: 1)
                 //.border(.textPrimary)
-                .opacity($place.email.count > 0 ? 1 : 0)
+                .opacity(place.email.count > 0 ? 1 : 0)
             
-            ContactItemView(contactItems: $place.url)
+            ContactItemView(contactItems: allUrls)
                 .shadow(radius: 1)
                 .scaleEffect(viewModel.urlScale)
                 //.border(.textPrimary)
-                .opacity($place.url.count > 0 ? 1 : 0)
+                .opacity(urlItemCount() > 0 ? 1 : 0)
         }
     }
     
@@ -561,6 +607,18 @@ struct PlaceSheetView: View {
     }
     
     // MARK: private methods
+    private func phoneItemCount() -> Int {
+        viewModel.applePhoneNumber == nil ? 0 : 1 + place.phone.count
+    }
+
+    private func urlItemCount() -> Int {
+        viewModel.appleURL == nil ? 0 : 1 + place.url.count
+    }
+
+    private func contactItemCount() -> Int {
+        phoneItemCount() + place.email.count + urlItemCount()
+    }
+
     private func updateSelectedMenu(_ item: PlaceSheetViewModel.MenuItem) {
         viewModel.selectedMenu = item
         switch item {
@@ -572,7 +630,7 @@ struct PlaceSheetView: View {
     }
     
     private func call() {
-        guard place.phone.count == 1 else {
+        guard phoneItemCount() == 1 else {
             updateSelectedMenu(.contact)
             withAnimation(.easeIn(duration: 0.3).delay(0.2), {
                 viewModel.phoneScale = 1.04
@@ -587,7 +645,7 @@ struct PlaceSheetView: View {
     }
     
     private func openWebLink() {
-        guard place.url.count == 1 else {
+        guard urlItemCount() == 1 else {
             updateSelectedMenu(.contact)
             withAnimation(.easeIn(duration: 0.3).delay(0.2), {
                 viewModel.urlScale = 1.04
@@ -609,6 +667,53 @@ struct PlaceSheetView: View {
     private func share() {
         Task {
             await viewModel.share(place: place)
+        }
+    }
+    
+    private func presentApplePOIDetails(_ applePlaceID: String) {
+        if let mapItem = viewModel.resolvedMapItem {
+            viewModel.presentedMapItem = mapItem
+            return
+        }
+        if let error = viewModel.applePOIError {
+            viewModel.presentedPOIError = error
+        }
+        // probably loading state here, it's supposed to be quick,
+        // it will hardly happen
+        // TODO: present a specific alert anyway
+    }
+    
+    private func errorTitle() -> LocalizedStringKey {
+        guard let error = viewModel.presentedPOIError else { return "" }
+        switch error {
+            case .notFound:
+                return "apple_poi_fetch.error.not_found.title"
+            case .notConnected:
+                return "apple_poi_fetch.error.not_connected.title"
+            case .corrupted:
+                return "apple_poi_fetch.error.corrupted.title"
+            case .mkUnknown:
+                return "apple_poi_fetch.error.mk_unknown.title"
+            case .unknown:
+                return "apple_poi_fetch.error.unknown.title"
+        }
+    }
+
+    private func errorBody() -> LocalizedStringKey {
+        guard let error = viewModel.presentedPOIError else { return "" }
+        switch error {
+            case .notFound:
+                return "apple_poi_fetch.error.not_found.body"
+            case .notConnected:
+                return "apple_poi_fetch.error.not_connected.body"
+            case .corrupted:
+                return "apple_poi_fetch.error.corrupted.body"
+            case .mkUnknown(let code):
+                let format = NSLocalizedString("apple_poi_fetch.error.mk_unknown.body.%d",
+                                               comment: "")
+                return LocalizedStringKey(String(format: format, Int(code)))
+            case .unknown(let underlyingError):
+                return LocalizedStringKey(underlyingError.localizedDescription)
         }
     }
 }
@@ -646,6 +751,10 @@ struct MockPlaceDetailSheetView: View {
         self.mock = mock
         //self.place = mock.getPlaceUIModel(index)
         self.place = mock.getNoAddressPlaceUIModel()
+        
+        // Link to an Apple POI
+        //self.place.applePlaceID = UUID().uuidString
+        self.place.applePlaceID = "IFDEE26634A4EFE23"
     }
 }
 

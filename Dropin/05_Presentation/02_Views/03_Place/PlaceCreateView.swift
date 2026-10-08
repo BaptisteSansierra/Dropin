@@ -23,35 +23,42 @@ struct PlaceCreateView: View {
     private var categoryId: UUID?
 
     // MARK: - Init
+//    init(viewModel: PlaceCreateViewModel,
+//         coordinates: CLLocationCoordinate2D,
+//         address: String?,
+//         name: String,
+//         marker: String?,
+//         tags: [UUID],
+//         category: UUID?) {
+//        self._viewModel = State(initialValue: viewModel)
+//        place = PlaceUIModel(coordinates: coordinates)
+//        place.address = address
+//        place.name = name
+//        if let marker = marker {
+//            place.icon = Icon(rawValue: marker)
+//        }
+//        self.tagIds = tags
+//        self.categoryId = category
+//    }
+
     init(viewModel: PlaceCreateViewModel,
-         coordinates: CLLocationCoordinate2D,
-         address: String?,
-         name: String,
-         marker: String?,
-         tags: [UUID],
-         category: UUID?) {
+         place: PlaceUIModel) {
         self._viewModel = State(initialValue: viewModel)
-        place = PlaceUIModel(coordinates: coordinates)
-        place.address = address
-        place.name = name
-        if let marker = marker {
-            place.icon = Icon(rawValue: marker)
-        }
-        self.tagIds = tags
-        self.categoryId = category
+        self._place = State(initialValue: place)
     }
 
+    
     var body: some View {
         viewModel.body(place: $place, showMissingName: $showMissingName)
             .navigationBarBackButtonHidden(true)
             .toolbar { toolbar }
             .task {
-                if let tagIds = tagIds {
-                    place.tags = await viewModel.retrieveTags(tagIds: tagIds)
-                }
-                if let categoryId = categoryId {
-                    place.category = await viewModel.retrieveCategory(categoryId: categoryId)
-                }
+//                if let tagIds = tagIds {
+//                    place.tags = await viewModel.retrieveTags(tagIds: tagIds)
+//                }
+//                if let categoryId = categoryId {
+//                    place.category = await viewModel.retrieveCategory(categoryId: categoryId)
+//                }
             }
     }
     

@@ -88,6 +88,7 @@ struct MapSettingsPreviewView: View {
                        mapController: MapController(),
                        places: [place, clusterPlace1, clusterPlace2],
                        selectedPlaceId: .constant(nil),
+                       selectedApplePOI: .constant(nil),
                        interactionStatus: { .none },
                        mapReloadGen: mapReloadGen)
 
@@ -105,12 +106,12 @@ struct MapSettingsPreviewView: View {
         Annotation(place.name, coordinate: place.coordinates) {
             switch appSettings.mapSettings.pinStyle {
                 case .rounded:
-                    PlacePinAnnotationView(color: place.groupColor,
+                    PlacePinAnnotationView(color: place.categoryColor,
                                            icon: place.category?.icon,
                                            iconExtra: place.icon,
                                            size: appSettings.mapSettings.pinSize)
                 case .rect:
-                    PlaceRectAnnotationView(color: place.groupColor,
+                    PlaceRectAnnotationView(color: place.categoryColor,
                                             icon: place.category?.icon,
                                             iconExtra: place.icon,
                                             size: appSettings.mapSettings.pinSize)

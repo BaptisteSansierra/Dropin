@@ -27,9 +27,9 @@ final class PlaceRecord {
     var url: [String]
     var notes: String?
     var applePlaceID: String? = nil
-    var applePhone: String? = nil
-    var appleURL: String? = nil
-    var appleFetchedAt: Date? = nil
+    // Set when Apple returns a placemarkNotFound error. Once set, aka the POI was likely
+    // deleted on Apple's side, the updates are skipped.
+    var appleNotFoundAt: Date? = nil
     // Dates
     var createdAt: Date     // Set at creation
     var updatedAt: Date     // Set on every mutation; drives dirty detection
@@ -52,9 +52,7 @@ final class PlaceRecord {
          url: [String] = [],
          notes: String? = nil,
          applePlaceID: String? = nil,
-         applePhone: String? = nil,
-         appleURL: String? = nil,
-         appleFetchedAt: Date? = nil) {
+         appleNotFoundAt: Date? = nil) {
         self.identifier = identifier
         self.name = name
         self.latitude = latitude
@@ -71,9 +69,7 @@ final class PlaceRecord {
         self.url = url
         self.notes = notes
         self.applePlaceID = applePlaceID
-        self.applePhone = applePhone
-        self.appleURL = appleURL
-        self.appleFetchedAt = appleFetchedAt
+        self.appleNotFoundAt = appleNotFoundAt
         let now = Date()
         self.createdAt = now
         self.updatedAt = now

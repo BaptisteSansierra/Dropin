@@ -25,12 +25,10 @@ struct Place: Hashable, Sendable {
     let url: [String]
     let notes: String?
     // Apple POI linking: set when this place was created from an Apple Maps point of interest; nil otherwise.
-    // applePhone/appleURL are Apple's, locally cached, read-only for user
-    // appleFetchedAt drives the refresh trigger
-    let applePlaceID: String?
-    let applePhone: String?
-    let appleURL: String?
-    let appleFetchedAt: Date?
+    var applePlaceID: String?
+    // Set when Apple returns a placemarkNotFound error. Once set, aka the POI was likely
+    // deleted on Apple's side, the updates are skipped.
+    var appleNotFoundAt: Date?
     // Dates
     var createdAt: Date     // Set at creation
     var updatedAt: Date     // Set on every mutation; drives dirty detection
@@ -52,9 +50,7 @@ struct Place: Hashable, Sendable {
          url: [String],
          notes: String?,
          applePlaceID: String? = nil,
-         applePhone: String? = nil,
-         appleURL: String? = nil,
-         appleFetchedAt: Date? = nil,
+         appleNotFoundAt: Date? = nil,
          createdAt: Date,
          updatedAt: Date,
          deletedAt: Date?) {
@@ -73,9 +69,7 @@ struct Place: Hashable, Sendable {
         self.url = url
         self.notes = notes
         self.applePlaceID = applePlaceID
-        self.applePhone = applePhone
-        self.appleURL = appleURL
-        self.appleFetchedAt = appleFetchedAt
+        self.appleNotFoundAt = appleNotFoundAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
@@ -106,10 +100,8 @@ struct Place: Hashable, Sendable {
         self.notes = notes
         self.images = []
         self.applePlaceID = nil
-        self.applePhone = nil
-        self.appleURL = nil
-        self.appleFetchedAt = nil
-        
+        self.appleNotFoundAt = nil
+
         let now = Date()
         self.createdAt = now
         self.updatedAt = now
@@ -141,6 +133,18 @@ struct Place: Hashable, Sendable {
         return copy
     }
 
+    func withAppleNotFoundAt(notFoundAt: Date) -> Place {
+        var copy = self
+        copy.appleNotFoundAt = notFoundAt
+        return copy
+    }
+
+    func withUnlinkedPOI() -> Place {
+        var copy = self
+        copy.applePlaceID = nil
+        return copy
+    }
+
     /// Used by AddressBackfillService once a reverse-geocode lookup resolves an
     /// address for a place that didn't have one yet.
     func withAddress(_ address: String) -> Place {
@@ -159,9 +163,7 @@ struct Place: Hashable, Sendable {
                    url: url,
                    notes: notes,
                    applePlaceID: applePlaceID,
-                   applePhone: applePhone,
-                   appleURL: appleURL,
-                   appleFetchedAt: appleFetchedAt,
+                   appleNotFoundAt: appleNotFoundAt,
                    createdAt: createdAt,
                    updatedAt: updatedAt,
                    deletedAt: deletedAt)

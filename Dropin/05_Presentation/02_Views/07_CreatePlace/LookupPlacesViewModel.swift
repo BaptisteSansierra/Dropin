@@ -14,11 +14,7 @@ struct LookupResolvedItem: Identifiable {
         case poi
     }
     var id: String {
-        if #available(iOS 26.0, *) {
-            "\(mapItem.location.coordinate.latitude)-\(mapItem.location.coordinate.longitude)"
-        } else {
-            "\(mapItem.placemark.coordinate.latitude)-\(mapItem.placemark.coordinate.longitude)"
-        }
+        "\(mapItem.resolvedCoordinates().latitude)-\(mapItem.resolvedCoordinates().latitude)"
     }
     let type: PlaceType
     let mapItem: MKMapItem
@@ -97,7 +93,7 @@ struct LookupResolvedItem: Identifiable {
     private(set) var results: [LookupResult] = []
     private(set) var lookupError: Error?
     private(set) var searching = false
-    private(set) var reachabilityService: ReachabilityService
+    private(set) var reachabilityService: any ReachabilityServiceProtocol
     private var searchTask: Task<Void, Never>?
 
     private(set) var resolving = false
@@ -117,7 +113,7 @@ struct LookupResolvedItem: Identifiable {
          coordinator: PlaceCoordinator,
          addressLookupService: AddressLookupService,
          locationManager: LocationManager,
-         reachabilityService: ReachabilityService,
+         reachabilityService: any ReachabilityServiceProtocol,
          updatePlace: UpdatePlace) {
         self.appContainer = appContainer
         self.coordinator = coordinator
