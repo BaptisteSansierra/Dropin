@@ -276,8 +276,8 @@ struct PlaceEditContentView: View {
     private func cardView<Content: View>(title: LocalizedStringKey,
                                          headerActionTitle: LocalizedStringKey? = nil,
                                          headerAction: (() -> Void)? = nil,
-                                         actionTitle: LocalizedStringKey? = nil,
-                                         action: (() -> Void)? = nil,
+                                         //actionTitle: LocalizedStringKey? = nil,
+                                         //action: (() -> Void)? = nil,
                                          contentHPadding: CGFloat = 15,
                                          @ViewBuilder content: () -> Content) -> some View {
 
@@ -297,6 +297,8 @@ struct PlaceEditContentView: View {
                 }
             }
             .padding(.bottom, 10)
+            
+            /* Inner actions are removed
             ZStack {
                 if let actionTitle = actionTitle {
                     HStack(spacing: 0) {
@@ -312,6 +314,10 @@ struct PlaceEditContentView: View {
                 VStack {
                     content()
                 }
+            }
+             */
+            VStack {
+                content()
             }
             .padding(.horizontal, contentHPadding)
             .clipShape(cardShape)
@@ -336,35 +342,27 @@ struct PlaceEditContentView: View {
             .padding(.top, 5)
     }
 
-
-    // TO MOVE IN EXTENSIONS
-        
-    
     private var deleteButton: some View {
-        HStack() {
-            Spacer()
-            DestructiveButton(text: "common.delete_place",
-                              style: .bordered,
-                              systemImage: "trash",
-                              action: onPressDelete)
-            .padding(.bottom, 15)
-            .alert("alert.delete_place_title_\(place.name)",
-                   isPresented: $showDeleteWarning,
-                   actions: {
-                
-                // TODO: add a 'turn the wheel to delete' popup
-                
-                Button(role: .destructive) {
-                    performDelete()
-                } label: {
-                    Text("common.delete")
-                }
-                Button("common.cancel", role: .cancel) { }
-            }, message: {
-                Text("alert.delete_place_msg")
-            })
-            Spacer()
-        }
+        DestructiveButton(text: "common.delete_place",
+                          style: .bordered,
+                          systemImage: "trash",
+                          action: onPressDelete)
+        .padding(.bottom, 15)
+        .alert("alert.delete_place_title_\(place.name)",
+               isPresented: $showDeleteWarning,
+               actions: {
+            
+            // TODO: add a 'turn the wheel to delete' popup
+            
+            Button(role: .destructive) {
+                performDelete()
+            } label: {
+                Text("common.delete")
+            }
+            Button("common.cancel", role: .cancel) { }
+        }, message: {
+            Text("alert.delete_place_msg")
+        })
     }
     
     // MARK: - Private methods
@@ -530,10 +528,10 @@ extension PlaceEditContentView {
                         .textStyle(.placeholder, color: .textTertiary)
                 }
             }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .confirmationDialog(String(""),
-                                    isPresented: $showEditAddressMenu,
-                                    actions: editAddressActionsView)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .confirmationDialog(String(""),
+                                isPresented: $showEditAddressMenu,
+                                actions: editAddressActionsView)
         }
         .onTapGesture {
             showEditAddressMenu.toggle()
@@ -541,17 +539,28 @@ extension PlaceEditContentView {
         
         inCardDivider
 
-        TextField("placeholder.address2", text: Binding(
-            get: { place.address2 ?? "" },
-            set: { place.address2 = $0 }
-        ))
-            .textStyle(.body)
-            .padding(.top, -5)
-            .background(.clear)
-            .autocorrectionDisabled()
-            .submitLabel(.done)
-            .padding(.top, 10)
-            .padding(.bottom, inCardBottomMargin)
+        ZStack(alignment: .topLeading) {
+            if place.address2 == nil {
+                Text("placeholder.address2")
+                    .textStyle(.cardPlaceholder)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+                    .padding(.top, 5)
+                    .padding(.bottom, inCardBottomMargin)
+                    .allowsHitTesting(false)
+            }
+            TextField("", text: Binding(
+                get: { place.address2 ?? "" },
+                set: { place.address2 = $0 }
+            ), axis: .vertical)
+                .textStyle(.body)
+                .padding(.top, -5)
+                .background(.clear)
+                .autocorrectionDisabled()
+                .submitLabel(.done)
+                .padding(.top, 10)
+                .padding(.bottom, inCardBottomMargin)
+        }
     }
 }
 
@@ -563,7 +572,8 @@ extension PlaceEditContentView {
         Group {
             if let category = place.category {
                 cardView(title: "common.category",
-                         actionTitle: "common.change", action: {
+                         headerActionTitle: "common.change",
+                         headerAction: {
                     showingCategorySelector.toggle()
                 }) {
                     HStack {
@@ -588,7 +598,8 @@ extension PlaceEditContentView {
 
     private var emptyCategoryContentView: some View {
         cardView(title: "common.category",
-                 actionTitle: "common.choose", action: {
+                 headerActionTitle: "common.choose",
+                 headerAction: {
             showingCategorySelector.toggle()
         }) {
             HStack {
@@ -624,7 +635,8 @@ extension PlaceEditContentView {
         
     private var tagCardContentView: some View {
         cardView(title: "common.tags",
-                 headerActionTitle: "common.edit", headerAction: {
+                 headerActionTitle: "common.edit",
+                 headerAction: {
             showingTagSelector.toggle()
         }) {
             PlaceTagsView(place: $place,
@@ -638,7 +650,8 @@ extension PlaceEditContentView {
         
     private var noTagsCardContentView: some View {
         cardView(title: "common.tags",
-                 actionTitle: "common.add", action: {
+                 headerActionTitle: "common.add",
+                 headerAction: {
             showingTagSelector.toggle()
         }) {
             HStack {
@@ -671,8 +684,8 @@ extension PlaceEditContentView {
     
     private func iconCardContentView(_ icon: Icon) -> some View {
         cardView(title: "common.annotation_icon",
-                 actionTitle: "common.change",
-                 action: { showingMarkerList.toggle() }) {
+                 headerActionTitle: "common.change",
+                 headerAction: { showingMarkerList.toggle() }) {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -696,8 +709,8 @@ extension PlaceEditContentView {
 
     private var noIconCardContentView: some View {
         cardView(title: "common.annotation_icon",
-                 actionTitle: "common.choose",
-                 action: { showingMarkerList.toggle() }) {
+                 headerActionTitle: "common.choose",
+                 headerAction: { showingMarkerList.toggle() }) {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -880,8 +893,8 @@ extension PlaceEditContentView {
     
     private var ratingCardView: some View {
         cardView(title: "common.rating",
-                 actionTitle: "common.clear",
-                 action: { place.rating = nil }) {
+                 headerActionTitle: "common.clear",
+                 headerAction: { place.rating = nil }) {
             HStack(alignment: .center, spacing: 0) {
                 StarEditRatingView(rating: Binding<Float>(get: {
                     place.rating ?? 0
@@ -1306,6 +1319,8 @@ struct MockPlaceEditContentView: View {
                              category: nil,
                              icon: nil)
             self.place = PlaceMapper.toUI(PlaceMapper.toDomain(p))
+            
+            //self.place.address2 = "Bat5 Porte3"
             
             // Define an applePlaceID so StubApplePOIService will be called
             // and applePhone/appleURL filled

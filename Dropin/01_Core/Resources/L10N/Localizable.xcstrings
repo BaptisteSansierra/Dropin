@@ -1904,13 +1904,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annotation icon"
+            "value" : "Badge"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Icône d'annotation"
+            "value" : "Badge"
           }
         }
       }
