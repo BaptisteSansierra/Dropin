@@ -280,6 +280,9 @@ struct PlacesView: View {
 //                                                tags: tags,
 //                                                category: category)
                 viewModel.createPlaceCreateView()
+                    .onDisappear {
+                        viewModel.draftPlace = nil
+                    }
             // development cases
             case .undefinedDummyView:
                 ZStack {
@@ -298,21 +301,18 @@ struct PlacesView: View {
     }
     
     private func onAppearCallback() {
+        /*
         guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
             return
         }
         switch lastNavigationSource {
             case .placeCreateView:
-                // PlaceCreateView is popped, draft can be reset
-                // add a delay as SwiftUI may still rely on it til the View is effectively deleted
-                Task {
-                    try await Task.sleep(for: .seconds(0.2))
-                    viewModel.draftPlace = nil
-                }
+                ()
             default:
                 print("ignore lastNavigationSource = \(lastNavigationSource)")
                 ()
         }
+         */
     }
     
     private func reloadPlaces() async {
