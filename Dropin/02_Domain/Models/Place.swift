@@ -26,8 +26,7 @@ struct Place: Hashable, Sendable {
     let notes: String?
     // Apple POI linking: set when this place was created from an Apple Maps point of interest; nil otherwise.
     var applePlaceID: String?
-    // Set when Apple returns a placemarkNotFound error. Once set, aka the POI was likely
-    // deleted on Apple's side, the updates are skipped.
+    // Set when Apple returns a placemarkNotFound error. If set, it probably means the POI was deleted on Apple's side
     var appleNotFoundAt: Date?
     // Dates
     var createdAt: Date     // Set at creation
@@ -133,7 +132,7 @@ struct Place: Hashable, Sendable {
         return copy
     }
 
-    func withAppleNotFoundAt(notFoundAt: Date) -> Place {
+    func withAppleNotFoundAt(notFoundAt: Date?) -> Place {
         var copy = self
         copy.appleNotFoundAt = notFoundAt
         return copy

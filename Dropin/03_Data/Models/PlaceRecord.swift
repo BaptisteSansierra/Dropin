@@ -27,8 +27,7 @@ final class PlaceRecord {
     var url: [String]
     var notes: String?
     var applePlaceID: String? = nil
-    // Set when Apple returns a placemarkNotFound error. Once set, aka the POI was likely
-    // deleted on Apple's side, the updates are skipped.
+    // Set when Apple returns a placemarkNotFound error. If set, it probably means the POI was deleted on Apple's side
     var appleNotFoundAt: Date? = nil
     // Dates
     var createdAt: Date     // Set at creation

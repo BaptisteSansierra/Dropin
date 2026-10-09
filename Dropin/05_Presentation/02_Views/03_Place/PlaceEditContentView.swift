@@ -1313,30 +1313,46 @@ struct MockPlaceEditContentView: View {
             //self.place.applePlaceID = "IFDEE26634A4EFE23" // existing Apple ID
 
             // Testing POI status
-            if true {
+            if false {
                 // Not connected error
                 mock.updateReachability(false)
                 StubApplePOIService.behaviour = .throwError(.notConnected)
                 // Connection is restored by '.task' after a few seconds
+                // Check: the notConnected placeholder is displayed
+                //        After a few secs the data is displayed
             } else if false {
                 // Not found by apple
                 StubApplePOIService.behaviour = .throwError(.notFound)
-                // since less than limit
-                self.place.appleNotFoundAt = Date()
-                // since more than limit
-                self.place.appleNotFoundAt = Calendar.current.date(byAdding: .day, value: -32, to: Date())!
+                if true {
+                    // since less than limit
+                    self.place.appleNotFoundAt = Date()
+                } else {
+                    // since more than limit
+                    self.place.appleNotFoundAt = Calendar.current.date(byAdding: .day, value: -32, to: Date())!
+                }
+                // Check: the relevant message is displayed
             } else if false {
                 StubApplePOIService.behaviour = .throwError(.corrupted)
+                // Check: the relevant error is displayed
             } else if false {
                 StubApplePOIService.behaviour = .throwError(.mkUnknown(1))
+                // Check: the relevant error is displayed
             } else if false {
                 StubApplePOIService.behaviour = .throwError(.unknown(URLError(.notConnectedToInternet)))
+                // Check: the relevant error is displayed
             } else if false {
                 StubApplePOIService.behaviour = .onlyPhone
+                // Check: only the phone is displayed
             } else if false {
                 StubApplePOIService.behaviour = .onlyUrl
-            } else if true {
+                // Check: only the url is displayed
+            } else if false {
                 StubApplePOIService.behaviour = .fakeNoData
+                // Check: the no data placeholder is displayed
+            } else if false {
+                // Simulate the place was not found some times ago
+                self.place.appleNotFoundAt = Calendar.current.date(byAdding: .day, value: -32, to: Date())!
+                // Check: the `unmarkPOINotFound` is called after load
             }
             
         } else {

@@ -410,6 +410,7 @@ final class AppContainer {
                                      getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
                                      getPlaceImage: GetPlaceImage(loader: imageLoader),
                                      markPlacePOINotFound: MarkPlacePOINotFound(repository: placeRepository),
+                                     unmarkPlacePOINotFound: UnmarkPlacePOINotFound(repository: placeRepository),
                                      applePOIService: applePOIService)
         return PlaceSheetView(viewModel: vm,
                               place: place,
@@ -424,6 +425,7 @@ final class AppContainer {
                                            coordinator: placeCoordinator,
                                            reachabilityService: reachabilityService,
                                            markPlacePOINotFound: MarkPlacePOINotFound(repository: placeRepository),
+                                           unmarkPlacePOINotFound: UnmarkPlacePOINotFound(repository: placeRepository),
                                            unlinkPlacePOI: UnlinkPlacePOI(repository: placeRepository),
                                            updatePlace: UpdatePlace(repository: placeRepository),
                                            getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
@@ -442,12 +444,6 @@ final class AppContainer {
         return PlaceEditView(viewModel: vm, place: place)
     }
 
-//    func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
-//                               address: String?,
-//                               name: String,
-//                               marker: String?,
-//                               tags: [UUID],
-//                               category: UUID?) -> PlaceCreateView {
     func createPlaceCreateView(place: PlaceUIModel) -> PlaceCreateView {
         let vm = PlaceCreateViewModel(self,
                                       coordinator: placeCoordinator,
@@ -457,13 +453,6 @@ final class AppContainer {
                                       createTag: CreateTag(repository: tagRepository),
                                       createCategory: CreateCategory(repository: categoryRepository),
                                       addPlaceImage: AddPlaceImage(repository: imageRepository))
-//        return PlaceCreateView(viewModel: vm,
-//                               coordinates: coordinates,
-//                               address: address,
-//                               name: name,
-//                               marker: marker,
-//                               tags: tags,
-//                               category: category)
         return PlaceCreateView(viewModel: vm,
                                place: place)
     }

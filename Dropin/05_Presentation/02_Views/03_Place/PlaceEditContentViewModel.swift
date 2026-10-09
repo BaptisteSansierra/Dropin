@@ -31,6 +31,7 @@ import CoreLocation
     @ObservationIgnored private var coordinator: PlaceCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let markPlacePOINotFound: MarkPlacePOINotFound
+    @ObservationIgnored private let unmarkPlacePOINotFound: UnmarkPlacePOINotFound
     @ObservationIgnored private let unlinkPlacePOI: UnlinkPlacePOI
     @ObservationIgnored private let updatePlace: UpdatePlace
     @ObservationIgnored private let getPlaceThumbnails: GetPlaceThumbnails
@@ -41,6 +42,7 @@ import CoreLocation
          coordinator: PlaceCoordinator,
          reachabilityService: any ReachabilityServiceProtocol,
          markPlacePOINotFound: MarkPlacePOINotFound,
+         unmarkPlacePOINotFound: UnmarkPlacePOINotFound,
          unlinkPlacePOI: UnlinkPlacePOI,
          updatePlace: UpdatePlace,
          getPlaceThumbnails: GetPlaceThumbnails,
@@ -51,6 +53,7 @@ import CoreLocation
         self.coordinator = coordinator
         self.reachabilityService = reachabilityService
         self.markPlacePOINotFound = markPlacePOINotFound
+        self.unmarkPlacePOINotFound = unmarkPlacePOINotFound
         self.unlinkPlacePOI = unlinkPlacePOI
         self.updatePlace = updatePlace
         self.getPlaceThumbnails = getPlaceThumbnails
@@ -135,6 +138,10 @@ import CoreLocation
             let mapItem = try await applePOIService.details(for: appleId)
             applePhoneNumber = mapItem.phoneNumber
             appleURL = mapItem.url
+            if let _ = place.appleNotFoundAt {
+                // This place has been 'notFound' at some point, it seems Apple popped it back
+                unmarkPOINotFound(place)
+            }
         } catch let error as ApplePOIError {
             applePOIError = error
             if error == .notFound {
@@ -164,6 +171,13 @@ import CoreLocation
         Task {
             // Error can be ignored, no useful data to show to the user here
             try? await markPlacePOINotFound(uuid: place.id, date: notFoundAt)
+        }
+    }
+    
+    private func unmarkPOINotFound(_ place: PlaceUIModel) {
+        place.appleNotFoundAt = nil
+        Task {
+            try? await unmarkPlacePOINotFound(uuid: place.id)
         }
     }
 }

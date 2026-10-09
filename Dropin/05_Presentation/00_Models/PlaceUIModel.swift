@@ -58,8 +58,7 @@ struct PlaceImageUIModel: Identifiable {
     var url: [ContactItem] = []
     var notes: String? = nil
     var applePlaceID: String? = nil
-    // Set when Apple returns a placemarkNotFound error. Once set, aka the POI was likely
-    // deleted on Apple's side, the updates are skipped.
+    // Set when Apple returns a placemarkNotFound error. If set, it probably means the POI was deleted on Apple's side
     var appleNotFoundAt: Date? = nil
     var createdAt: Date
     var updatedAt: Date

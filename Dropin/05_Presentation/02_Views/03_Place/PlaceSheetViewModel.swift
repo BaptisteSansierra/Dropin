@@ -59,6 +59,7 @@ import MapKit
     @ObservationIgnored private var getPlaceThumbnails: GetPlaceThumbnails
     @ObservationIgnored private var getPlaceImage: GetPlaceImage
     @ObservationIgnored private let markPlacePOINotFound: MarkPlacePOINotFound
+    @ObservationIgnored private let unmarkPlacePOINotFound: UnmarkPlacePOINotFound
     @ObservationIgnored private let applePOIService: any ApplePOIServiceProtocol
     
     init(_ appContainer: AppContainer,
@@ -68,6 +69,7 @@ import MapKit
          getPlaceThumbnails: GetPlaceThumbnails,
          getPlaceImage: GetPlaceImage,
          markPlacePOINotFound: MarkPlacePOINotFound,
+         unmarkPlacePOINotFound: UnmarkPlacePOINotFound,
          applePOIService: any ApplePOIServiceProtocol) {
         self.appContainer = appContainer
         self.coordinator = coordinator
@@ -76,6 +78,7 @@ import MapKit
         self.getPlaceThumbnails = getPlaceThumbnails
         self.getPlaceImage = getPlaceImage
         self.markPlacePOINotFound = markPlacePOINotFound
+        self.unmarkPlacePOINotFound = unmarkPlacePOINotFound
         self.applePOIService = applePOIService
     }
     
@@ -229,6 +232,10 @@ import MapKit
             resolvedMapItem = mapItem
             applePhoneNumber = mapItem.phoneNumber
             appleURL = mapItem.url
+            if let _ = place.appleNotFoundAt {
+                // This place has been 'notFound' at some point, it seems Apple popped it back
+                unmarkPOINotFound(place)
+            }
         } catch let error as ApplePOIError {
             applePOIError = error
             if error == .notFound {
@@ -254,6 +261,13 @@ import MapKit
             } catch {
                 // This can be ignored, no useful data to show to the user here
             }
+        }
+    }
+    
+    private func unmarkPOINotFound(_ place: PlaceUIModel) {
+        place.appleNotFoundAt = nil
+        Task {
+            try? await unmarkPlacePOINotFound(uuid: place.id)
         }
     }
 }
