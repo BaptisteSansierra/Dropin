@@ -34,18 +34,6 @@ extension MKMapItem {
         return nil
     }
     
-// TODO: remove
-//    func toApplePOIDetails(_ srcId: String? = nil) -> ApplePOIDetails {
-//        // This MapItem was first fetched from a source id (given as parameter)
-//        // If MapItem's identifier is not nil (which should not happen ?), use this id instead of the source
-//        var poiId = srcId
-//        if let appleLatestId = identifier?.rawValue {
-//            // Apple could give a different id from the source in case of POI update (duplicates, ...)
-//            poiId = appleLatestId
-//        }
-//        return ApplePOIDetails(appleId: poiId, phoneNumber: phoneNumber, url: url)
-//    }
-    
     /// fallback when there's no street address. Never persist it as the address.
     func resolvedArea() -> String? {
         if #available(iOS 26.0, *) {

@@ -16,14 +16,18 @@ protocol ApplePOIServiceProtocol: AnyObject {
 
 @MainActor
 final class ApplePOIService: ApplePOIServiceProtocol {
-    
+
+    // MARK: private properties
+    // Keep a cache of fetched items
     private let cache = ApplePOICache()
     private let reachability: any ReachabilityServiceProtocol
 
+    // MARK: init
     init(reachability: any ReachabilityServiceProtocol) {
         self.reachability = reachability
     }
     
+    // MARK: ApplePOIServiceProtocol impl
     func details(for id: String) async throws -> MKMapItem {
         do {
             switch cache.lookup(id) {
@@ -55,6 +59,7 @@ final class ApplePOIService: ApplePOIServiceProtocol {
         }
     }
     
+    // MARK: private methods
     private func mapError(_ error: Error) -> Error {
         if let applePOIError = error as? ApplePOIError {
             return applePOIError
@@ -91,62 +96,4 @@ final class ApplePOIService: ApplePOIServiceProtocol {
         }
         return item
     }
-}
-
-// TODO: cleanup: make it different files
-
-@MainActor
-final class ApplePOICache {
-    private struct Entry {
-        let item: MKMapItem;
-        let date: Date
-    }
-    private var entries: [String: Entry] = [:]
-    private let maxAge: TimeInterval = 3 * 24 * 60 * 60  // Refrash a POI after 3 days old
-
-    enum Lookup {
-        case fresh(MKMapItem)
-        case stale(MKMapItem)
-        case miss
-    }
-
-    func lookup(_ id: String) -> Lookup {
-        guard let e = entries[id] else { return .miss }
-        return Date().timeIntervalSince(e.date) < maxAge ? .fresh(e.item) : .stale(e.item)
-    }
-    
-    func set(_ item: MKMapItem, for id: String) {
-        entries[id] = Entry(item: item, date: Date())
-    }
-}
-
-enum ApplePOIError: Error, Equatable {
-    /// it seems the Apple POI was deleted Apple side
-    case notFound
-    /// server error when requesting apple POI
-    case notConnected
-    /// stored identifier is not recognized by apple... invalid ID ? that shouldn't happen
-    case corrupted
-    // Unexpected MK domain error
-    case mkUnknown(UInt)
-    // Unexpected error
-    case unknown(Error)
-    
-    static func == (lhs: ApplePOIError, rhs: ApplePOIError) -> Bool {
-        switch(lhs, rhs) {
-            case (.notFound, .notFound):
-                return true
-            case (.notConnected, .notConnected):
-                return true
-            case (.corrupted, .corrupted):
-                return true
-            case (.mkUnknown, .mkUnknown):
-                return true
-            case (.unknown, .unknown):
-                return true
-            default:
-                return false
-        }
-    }
-
 }
