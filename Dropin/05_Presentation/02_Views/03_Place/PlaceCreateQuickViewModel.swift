@@ -58,12 +58,7 @@ import MapKit
 
     // MARK: Navigation
     func pushCreatePlaceFullView(place: PlaceUIModel) {
-        coordinator.pushCreatePlaceFullView(coordinates: place.coordinates,
-                                            address: place.address,
-                                            name: place.name,
-                                            marker: place.icon?.rawValue,
-                                            tags: place.tags.map { $0.id },
-                                            category: place.category?.id)
+        coordinator.pushCreatePlaceFullView()
     }
 
     // MARK: UI Childs

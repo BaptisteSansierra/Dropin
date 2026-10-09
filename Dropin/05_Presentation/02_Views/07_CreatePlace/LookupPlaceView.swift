@@ -11,6 +11,10 @@ import Contacts
 struct LookupPlaceView: View {
     
     enum PresentationStatus: Equatable {
+        case cancelled
+        case validated(item: LookupResolvedItem)
+        case pending
+
         static func == (lhs: PresentationStatus, rhs: PresentationStatus) -> Bool {
             switch (lhs, rhs) {
                 case (.cancelled, .cancelled):
@@ -23,10 +27,6 @@ struct LookupPlaceView: View {
                     return false
             }
         }
-        
-        case cancelled
-        case validated(item: LookupResolvedItem)
-        case pending
     }
     
     // MARK: - States & Bindings

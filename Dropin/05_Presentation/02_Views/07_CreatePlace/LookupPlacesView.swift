@@ -12,15 +12,20 @@ struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
+    // editedPlace is provided when (and only when) the user is editing address from an existing place
     @Binding private var editedPlace: PlaceUIModel?
-    
+    // draftPlace is provided when credating a place from scratch
+    // it arrives nil and a place is effectively created if validated by user
+    @Binding private var draftPlace: PlaceUIModel?
+
     private var initialAddress = ""
 
     // MARK: - init
-    init(viewModel: LookupPlacesViewModel) {
+    init(viewModel: LookupPlacesViewModel, draftPlace: Binding<PlaceUIModel?>) {
         viewModel.resultOffset = UIScreen.main.bounds.height
         self.viewModel = viewModel
         self._editedPlace = .constant(nil)
+        self._draftPlace = draftPlace
         #if DEBUG
         initialAddress = "la grange"
         #endif
@@ -35,6 +40,7 @@ struct LookupPlacesView: View {
             guard value != nil else { return }
             place.wrappedValue = value!
         })
+        self._draftPlace = .constant(nil)
         Log.debug("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address ?? "")'")
         self.initialAddress = place.wrappedValue.address ?? ""
     }
@@ -203,7 +209,7 @@ struct LookupPlacesView: View {
             case .validated(let item):
                 hideDetailView()
                 if viewModel.isEditMode() {
-                    // Apply change and pop
+                    // Apply change on the existing place and pop
                     guard let editedPlace = editedPlace else { return }
                     editedPlace.address = item.address
                     editedPlace.coordinates = item.coordinates
@@ -216,20 +222,14 @@ struct LookupPlacesView: View {
                     }
                     viewModel.popToRoot()
                 } else {
+                    // Create a draftPlace and push CreatePlaceFullView
+                    draftPlace = PlaceUIModel(name: item.name,
+                                              coordinates: item.coordinates,
+                                              address: item.address)
                     viewModel.pushCreatePlaceFullView(lookupResolvedItem: item)
                 }
-                /*
-                 Task {
-                 try await Task.sleep(for: .seconds(0.5))
-                 resultOffset = UIScreen.main.bounds.height
-                 resultBgOpacity = 0
-                 viewModel.resolvedPlaceComputed = false
-                 viewModel.resolvedPlace = nil
-                 resultStatus = .pending
-                 }
-                 */
-            default:
-                ()
+            case .pending:
+                () // pending means pending...
         }
     }
     
@@ -250,9 +250,10 @@ struct LookupPlacesView: View {
 
 struct MockLookupPlacesView: View {
     var mock: MockContainer
+    @State var draftPlace: PlaceUIModel?
 
     var body: some View {
-        mock.appContainer.createLookupPlacesView()
+        mock.appContainer.createLookupPlacesView(draftPlace: $draftPlace)
     }
     
     init() {

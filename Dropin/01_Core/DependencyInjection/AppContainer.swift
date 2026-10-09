@@ -511,14 +511,14 @@ final class AppContainer {
         return CategoryMapView(viewModel: vm)
     }
 
-    func createLookupPlacesView() -> LookupPlacesView {
+    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>) -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
                                        coordinator: placeCoordinator,
                                        addressLookupService: addressLookupService,
                                        locationManager: locationManager,
                                        reachabilityService: reachabilityService,
                                        updatePlace: UpdatePlace(repository: placeRepository))
-        return LookupPlacesView(viewModel: vm)
+        return LookupPlacesView(viewModel: vm, draftPlace: draftPlace)
     }
 
     func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
@@ -535,8 +535,8 @@ final class AppContainer {
                                place: Binding<PlaceUIModel?> = .constant(nil),
                                status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
         let vm = LookupPlaceViewModel(self,
-                                      coordinator: placeCoordinator,
-                                      createPlace: CreatePlace(repository: placeRepository),
+                                      //coordinator: placeCoordinator,
+                                      //createPlace: CreatePlace(repository: placeRepository),
                                       lookupResolvedItem: lookupResolvedItem)
         return LookupPlaceView(viewModel: vm, place: place, status: status)
     }

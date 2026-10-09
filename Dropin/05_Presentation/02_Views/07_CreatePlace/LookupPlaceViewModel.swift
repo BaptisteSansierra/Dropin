@@ -19,31 +19,13 @@ import MapKit
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var createPlace: CreatePlace
-    @ObservationIgnored private var coordinator: PlaceCoordinator
 
     // MARK: - init
     init(_ appContainer: AppContainer,
-         coordinator: PlaceCoordinator,
-         createPlace: CreatePlace,
          lookupResolvedItem: LookupResolvedItem) {
         self.appContainer = appContainer
-        self.coordinator = coordinator
-        self.createPlace = createPlace
         self.lookupResolvedItem = lookupResolvedItem
     }
-
-    // MARK: - Navigation
-    /*
-    func pushCreatePlaceFullView(lookupResolvedItem: LookupResolvedItem) {
-        coordinator.pushCreatePlaceFullView(coordinates: lookupResolvedItem.coordinates,
-                                            address: lookupResolvedItem.address,
-                                            name: lookupResolvedItem.name ?? "",
-                                            marker: nil,
-                                            tags: [],
-                                            category: nil)
-    }
-*/
     
     // MARK: - Actions
     func zoomIn() {

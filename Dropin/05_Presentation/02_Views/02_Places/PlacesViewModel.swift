@@ -148,8 +148,8 @@ import CoreLocation
         return appContainer.createPlaceEditView(place: place)
     }
 
-    func createLookupPlacesView() -> LookupPlacesView {
-        return appContainer.createLookupPlacesView()
+    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>) -> LookupPlacesView {
+        return appContainer.createLookupPlacesView(draftPlace: draftPlace)
     }
     
     func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {

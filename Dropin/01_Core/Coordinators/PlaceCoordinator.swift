@@ -52,18 +52,8 @@ import CoreLocation
         push(NavigationItem.lookupPlacesEditView(placeId: placeId))
     }
 
-    func pushCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
-                                 address: String?,
-                                 name: String,
-                                 marker: String?,
-                                 tags: [UUID],
-                                 category: UUID?) {
-        push(NavigationItem.placeCreateView(coordinates: coordinates,
-                                            address: address,
-                                            name: name,
-                                            marker: marker,
-                                            tags: tags,
-                                            category: category))
+    func pushCreatePlaceFullView() {
+        push(NavigationItem.placeCreateView)
     }
 
     func pushUndefinedDummyView() {
@@ -111,12 +101,7 @@ enum NavigationItem: Hashable {
     case placeEditView(placeId: UUID)
     case lookupPlacesView
     case lookupPlacesEditView(placeId: UUID)
-    case placeCreateView(coordinates: CLLocationCoordinate2D,
-                         address: String?,
-                         name: String,
-                         marker: String?,
-                         tags: [UUID],
-                         category: UUID?)
+    case placeCreateView
     //case dropAPin
     
     // development

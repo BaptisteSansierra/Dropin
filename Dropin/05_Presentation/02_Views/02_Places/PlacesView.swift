@@ -292,16 +292,12 @@ struct PlacesView: View {
             case .placeEditView(let placeId):
                 createPlaceEditView(placeId: placeId)
             case .lookupPlacesView:
-                viewModel.createLookupPlacesView()
+                viewModel.createLookupPlacesView(draftPlace: $viewModel.draftPlace)
             case .lookupPlacesEditView(let placeId):
                 createLookupPlacesView(placeId: placeId)
-            case .placeCreateView(let coordinates, let address, let name, let marker, let tags, let category):
-//                viewModel.createPlaceCreateView(coordinates: coordinates,
-//                                                address: address,
-//                                                name: name,
-//                                                marker: marker,
-//                                                tags: tags,
-//                                                category: category)
+            case .placeCreateView:
+                // WARN: Here we expect to have a draftPace defined already
+                //       PlaceCreateView rely on it
                 viewModel.createPlaceCreateView()
                     .onDisappear {
                         viewModel.draftPlace = nil

@@ -129,12 +129,7 @@ struct LookupResolvedItem: Identifiable {
     }
 
     func pushCreatePlaceFullView(lookupResolvedItem: LookupResolvedItem) {
-        coordinator.pushCreatePlaceFullView(coordinates: lookupResolvedItem.coordinates,
-                                            address: lookupResolvedItem.address,
-                                            name: lookupResolvedItem.name ?? "",
-                                            marker: nil,
-                                            tags: [],
-                                            category: nil)
+        coordinator.pushCreatePlaceFullView()
     }
     
     func isEditMode() -> Bool {
