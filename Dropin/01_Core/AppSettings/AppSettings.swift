@@ -26,7 +26,7 @@ import Foundation
             pinSize = store.double(forKey: keys.pinSize).clamped(to: MapSettings.pinSizeRange)
         }
         
-        var mapType = MapSettings.MapType.hybrid
+        var mapType = MapSettings.MapType.standard
         if let stored = store.object(forKey: keys.mapType) as? Int {
             if let mt = MapSettings.MapType(rawValue: stored) {
                 mapType = mt
