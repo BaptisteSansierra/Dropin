@@ -74,6 +74,13 @@ struct PlacesView: View {
             .navigationDestination(for: NavigationItem.self) { navigationItem in
                 resolveDestination(navigationItem: navigationItem)
             }
+            .onAppear(perform: {
+                if !viewModel.locationManager.isAuthorized {
+                    if viewModel.sortPolicy == .distance {
+                        viewModel.sortPolicy = .alphabetically
+                    }
+                }
+            })
             .onChange(of: showingSideMenu) { _, newValue in
                 guard newValue else { return }
                 // Hide sheet overlays if any
@@ -144,6 +151,22 @@ struct PlacesView: View {
                     }
                     .pickerStyle(.inline)
                     .frame(width: 44)
+                }
+                .onChange(of: viewModel.sortPolicy) { oldValue, newValue in
+                    // Do not allow distance filtering if location access is not granted
+                    if !viewModel.locationManager.isAuthorized && newValue == .distance {
+                        viewModel.showAuthLocAlert.toggle()
+                        viewModel.sortPolicy = oldValue
+                    }
+                }
+                .alert("common.loc_auth_missing", isPresented: $viewModel.showAuthLocAlert) {
+                    Button("common.open_settings") {
+                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                        UIApplication.shared.open(url)
+                    }
+                    Button("common.cancel") {}
+                } message: {
+                    Text("common.loc_auth_required")
                 }
             }
         }

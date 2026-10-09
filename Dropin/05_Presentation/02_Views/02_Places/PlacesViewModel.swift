@@ -60,9 +60,12 @@ import CoreLocation
     /// Selected tab: 0=map, 1=list
     var selectedTab: Int = 0
 
+    /// Location access not granted alert toggle
+    var showAuthLocAlert = false
+
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var locationManager: LocationManager
+    @ObservationIgnored var locationManager: LocationManager
     @ObservationIgnored private var fetchPlaces: FetchPlaces
     @ObservationIgnored private var placeSources: [Place] = [Place]()
 

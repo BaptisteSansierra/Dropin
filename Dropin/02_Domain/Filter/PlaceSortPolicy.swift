@@ -5,7 +5,7 @@
 //  Created by baptiste sansierra on 13/4/26.
 //
 
-enum PlaceSortPolicy: Int {
+enum PlaceSortPolicy: Int, Equatable {
     case distance = 0
     case alphabetically = 1
     case createdAt = 2

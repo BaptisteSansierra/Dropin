@@ -183,7 +183,7 @@ struct PlacesMapView: View {
         }
         // Create place from here now
         Button {
-            guard let _ = viewModel.locationManager.authorized else {
+            guard viewModel.locationManager.isAuthorized else {
                 viewModel.showAuthLocAlert.toggle()
                 return
             }
@@ -234,7 +234,7 @@ struct PlacesMapView: View {
             Spacer()
             HStack {
                 Spacer()
-                if let locauthorized = viewModel.locationManager.authorized, locauthorized {
+                if viewModel.locationManager.isAuthorized {
                     if let _ = viewModel.locationManager.lastKnownLocation {
                         MapIcoButton(systemImage: "location.fill") {
                             viewModel.centerOnUser()

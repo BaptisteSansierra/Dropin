@@ -27,7 +27,6 @@ struct PlaceRowView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            
             RoundedRectangle(cornerRadius: 14)
                 .fill(.surface1)
                 .stroke(.fieldBorder)
@@ -54,8 +53,10 @@ struct PlaceRowView: View {
                             .textStyle(.cellTitle)
                             .allowsHitTesting(true)
                         Spacer()
-                        Text(locationManager.distanceStringTo(place.coordinates) ?? "5.5km")
-                            .textStyle(.cellDetail)
+                        if let dist = locationManager.distanceStringTo(place.coordinates) {
+                            Text(dist)
+                                .textStyle(.cellDetail)
+                        }
                     }
                     Text(place.address ?? place.coordinates.formatted())
                         .textStyle(.cellSubtitle)

@@ -19,7 +19,13 @@ enum LocationManagerError: Error {
     
     // MARK: - observed vars
     private(set) var lastKnownLocation: CLLocationCoordinate2D?
-    private(set) var authorized: Bool?
+    private var authorized: Bool?
+    var isAuthorized: Bool {
+        guard let authorized = authorized else {
+            return false
+        }
+        return authorized
+    }
 
     // MARK: - not observed vars
     @ObservationIgnored private var manager = CLLocationManager()

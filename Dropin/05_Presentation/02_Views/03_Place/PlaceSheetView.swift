@@ -253,27 +253,30 @@ struct PlaceSheetView: View {
         }
         
         // Rating + Distance
-        HStack(alignment: .center, spacing: 0) {
-            if let rating = place.rating {
-                StarRatingView(rating: rating)
-            //} else {
-            //    StarRatingView()
+        let dist = viewModel.distanceStringTo(place.coordinates)
+        if place.rating != nil || dist != nil {
+            HStack(alignment: .center, spacing: 0) {
+                if let rating = place.rating {
+                    StarRatingView(rating: rating)
+                    //} else {
+                    //    StarRatingView()
+                }
+                if let _ = place.rating,
+                   let _ = viewModel.distanceStringTo(place.coordinates) {
+                    Text(verbatim: "·")
+                        .padding(.horizontal, 5)
+                        .font(.caption2)
+                }
+                if let dist = dist {
+                    Text(dist)
+                        .font(.caption2)
+                }
+                Spacer()
             }
-            if let rating = place.rating,
-               let dist = viewModel.distanceStringTo(place.coordinates) {
-                Text(verbatim: "·")
-                    .padding(.horizontal, 5)
-                    .font(.caption2)
-            }
-            if let dist = viewModel.distanceStringTo(place.coordinates) {
-                Text(dist)
-                    .font(.caption2)
-            }
-            Spacer()
+            .padding(.leading)
+            .padding(.top, 10)
+            .frame(maxWidth: .infinity)
         }
-        .padding(.leading)
-        .padding(.top, 10)
-        .frame(maxWidth: .infinity)
         
         // Address
         Text(place.address ?? place.coordinates.formatted())
