@@ -55,7 +55,7 @@ struct CategoryDetailsView: View {
             do {
                 try await viewModel.fetchPlaces()
             } catch {
-                // TODO: error
+                // TODO: handle error
             }
         }
         .ignoresSafeArea(edges: .bottom)

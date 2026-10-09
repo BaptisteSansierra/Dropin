@@ -129,7 +129,7 @@ extension LocationManager {
         let location = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
         let geocoder = CLGeocoder()
         geocoder.cancelGeocode() // Cancel pending requests
-        // TODO: reverseGeocodeLocation is deprecated code
+        // TODO: reverseGeocodeLocation is deprecated code, to be replaced
         geocoder.reverseGeocodeLocation(location, completionHandler: { placemarks, error in
             if let error = error {
                 Log.error("couldn't get address from coords \(coords): \(error.localizedDescription)")

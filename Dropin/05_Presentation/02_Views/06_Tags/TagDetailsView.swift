@@ -54,7 +54,7 @@ struct TagDetailsView: View {
             do {
                 try await viewModel.fetchPlace()
             } catch {
-                // TODO: error
+                // TODO: handle error
             }
         }
         .toolbar {

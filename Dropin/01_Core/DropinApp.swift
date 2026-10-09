@@ -98,8 +98,11 @@ struct DropinApp: App {
                     await appContainer.restoreSession()
 
 #if false
-                    // Enable to generate new AppIcons + logo assets
-                    // TODO: this should be moved outside the app in a specific target
+                    // *** Dropin Icons generator ***
+                    //
+                    // Make it true, it will generate and save the Dropin icons & Logo assets
+                    //
+                    // FIXME: this should be moved outside the app in a specific target
                     
                     // Generate
                     IcoRenderer(variant: .logo)

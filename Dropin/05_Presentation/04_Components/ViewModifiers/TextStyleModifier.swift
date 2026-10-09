@@ -13,7 +13,7 @@ import SwiftUI
 
 enum TextStyle: String, CaseIterable {
     
-    // TODO: The mixe scale/semantic makes it fuzzy, to be improved somehow...
+    // TODO: The mix scale/semantic makes it fuzzy, to be improved somehow...
     
     // Scale tokens
     case title                     // 28

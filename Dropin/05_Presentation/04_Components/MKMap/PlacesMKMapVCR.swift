@@ -715,54 +715,6 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
                               mapView.visibleMapRect)
         }
         scheduleDeclutterRefresh(mapView)
-        
-        // TODO: REMOVE
-        // checkLiveDecorrelation(mapView)
-    }
-
-    /// Fires on every continuous camera-change callback (i.e. mid-gesture, not
-    /// debounced) — logs only when a visible annotation view's actual center
-    /// diverges from where its coordinate + centerOffset says it should be
-    /// *right now*, to catch a transient glitch during a live drag/pinch that a
-    /// delayed, post-settle sample would never see.
-    private func checkLiveDecorrelation(_ mapView: MKMapView) {
-        for raw in mapView.annotations(in: mapView.visibleMapRect) {
-            guard let annotation = raw as? MKAnnotation,
-                  let view = mapView.view(for: annotation),
-                  !view.isHidden else { continue }
-            let projected = mapView.convert(annotation.coordinate, toPointTo: mapView)
-            let expectedCenter = CGPoint(x: projected.x + view.centerOffset.x,
-                                         y: projected.y + view.centerOffset.y)
-            let dx = view.center.x - expectedCenter.x
-            let dy = view.center.y - expectedCenter.y
-            let distance = (dx * dx + dy * dy).squareRoot()
-
-            // `view.center`/`.layer.position` is the CALayer *model* value — it updates
-            // synchronously the instant MapKit sets it, regardless of what's actually
-            // composited on screen. `layer.presentation()` is the value Core Animation
-            // is currently rendering mid-animation. If MapKit smooths annotation-view
-            // movement with an implicit/explicit position animation during a gesture,
-            // the two diverge — and every prior check here, reading only the model
-            // value, would be structurally blind to that gap.
-            let presentationPosition = view.layer.presentation()?.position
-            let presentationDistance = presentationPosition.map { p -> CGFloat in
-                let pdx = p.x - view.layer.position.x
-                let pdy = p.y - view.layer.position.y
-                return (pdx * pdx + pdy * pdy).squareRoot()
-            }
-
-            guard distance > 2 || (presentationDistance ?? 0) > 2 else { continue }
-
-            let name: String
-            if let dot = annotation as? MKPlaceDotAnnotation {
-                name = "DOT:'\(dot.place.name)'"
-            } else if let pin = annotation as? MKPlacePromotedAnnotation {
-                name = "PIN:'\(pin.place.name)'"
-            } else {
-                continue
-            }
-            Log.debug("[live] MISMATCH \(name) actual=\(view.center) expected=\(expectedCenter) diff=\(distance) presentation=\(String(describing: presentationPosition)) modelVsPresentationDiff=\(String(describing: presentationDistance))")
-        }
     }
 }
 

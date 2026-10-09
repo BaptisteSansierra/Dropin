@@ -66,9 +66,9 @@ extension ShapeStyle where Self == Color {
                                                  dark: Color(rgba: "#453D30")) }
     static var overlayAlphaLayer: Color { textTertiary.opacity(0.25) }
 
+    // TODO: should rename separator or borderSubtle
     static var fieldBorder: Color { Color(light: Color(rgba: "#E6DCCB"),
                                           dark: Color(rgba: "#38312A")) }
-    // TODO: should rename separator or borderSubtle
     
     
     // fields, cards, sheets — the top surface, almost white, it pops on paper

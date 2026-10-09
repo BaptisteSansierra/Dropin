@@ -83,7 +83,6 @@ struct MapSettingsPreviewView: View {
     // MARK: subviews
     @ViewBuilder
     var mapView: some View {
-
         PlacesMKMapVCR(config: .preview,
                        mapController: MapController(),
                        places: [place, clusterPlace1, clusterPlace2],
@@ -91,18 +90,9 @@ struct MapSettingsPreviewView: View {
                        selectedApplePOI: .constant(nil),
                        interactionStatus: { .none },
                        mapReloadGen: mapReloadGen)
-
-        /*
-            Map(initialPosition: position, interactionModes: []) {
-                annotation(place)
-                annotation(clusterPlace1)
-                annotation(clusterPlace2)
-            }
-         */
     }
     
     private func annotation(_ place: PlaceUIModel) -> some MapContent {
-        // TODO: FIX MAP behaviour, no cluster should display them all
         Annotation(place.name, coordinate: place.coordinates) {
             switch appSettings.mapSettings.pinStyle {
                 case .rounded:

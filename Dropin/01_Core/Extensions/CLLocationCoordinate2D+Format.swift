@@ -34,7 +34,18 @@ extension CLLocationCoordinate2D {
         self.init(latitude: lat, longitude: lon)
     }
     
-    /*  TODO: implement both sides conversions
+    func formatted() -> String {
+        let latStr = latitude.formatted(.number
+                                            .precision(.fractionLength(0...6))
+                                            .locale(Locale(identifier: "en_US_POSIX")))
+        let lonStr = longitude.formatted(.number
+                                             .precision(.fractionLength(0...6))
+                                             .locale(Locale(identifier: "en_US_POSIX")))
+        return "\(latStr),\(lonStr)"
+    }
+
+    // NOTE: toDMS is unused, do we want to implement more coordinates expression mode ?
+    /*
     enum Format {
         case dd
         case dms
@@ -47,18 +58,6 @@ extension CLLocationCoordinate2D {
         case dm(String, String, String, String, String, String)
     }
      */
-
-    func formatted() -> String {
-        let latStr = latitude.formatted(.number
-                                            .precision(.fractionLength(0...6))
-                                            .locale(Locale(identifier: "en_US_POSIX")))
-        let lonStr = longitude.formatted(.number
-                                             .precision(.fractionLength(0...6))
-                                             .locale(Locale(identifier: "en_US_POSIX")))
-        return "\(latStr),\(lonStr)"
-    }
-
-    
     private func toDMS(_ coordinate: CLLocationCoordinate2D) -> (String, String) {
         func convert(_ value: Double, positive: String, negative: String) -> String {
             let direction = value >= 0 ? positive : negative

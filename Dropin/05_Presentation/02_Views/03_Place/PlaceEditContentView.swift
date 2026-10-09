@@ -10,9 +10,6 @@ import ContactFieldKit
 import NoFlyZone
 import UIKit
 
-// TODO: TextFields' placeholders style should match other placeholders (cardPlaceholder)
-
-
 struct PlaceEditContentView: View {
     
     // MARK: - States & Bindings
@@ -496,15 +493,25 @@ extension PlaceEditContentView {
                 .padding(.top, inCardTopMargin)
                 .padding(.bottom, cardSubtitleBottomMarginToTf)
 
-            TextField("common.name", text: $place.name)
-                .textStyle(.body)
-                .background(.clear)
-                .autocorrectionDisabled()
-                .submitLabel(.done)
-                .focused($isNameFocused)
-                .onSubmit {
-                    //updateCategory()
+            ZStack(alignment: .topLeading) {
+                if place.name.isEmpty {
+                    Text("common.name")
+                        .textStyle(.cardPlaceholder)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 3)
+                        .allowsHitTesting(false)
                 }
+                TextField("", text: $place.name)
+                    .textStyle(.body)
+                    .background(.clear)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .focused($isNameFocused)
+                    .onSubmit {
+                        //updateCategory()
+                    }
+            }
+
             inCardDivider
             addressView
         }
@@ -1207,16 +1214,26 @@ extension PlaceEditContentView {
 extension PlaceEditContentView {
     private var noteCardView: some View {
         cardView(title: "common.notes") {
-            TextField("common.notes",
-                      text: Binding<String>(get: {
-                place.notes ?? ""
-            }, set: { value in
-                place.notes = value
-            }), axis: .vertical)
-            .lineLimit(4...10)
-            .multilineTextAlignment(.leading)
-            .padding(.vertical)
-            .frame(minHeight: 100, alignment: .top)
+            
+            ZStack(alignment: .topLeading) {
+                if place.notes == nil || place.notes!.isEmpty {
+                    Text("common.notes")
+                        .textStyle(.cardPlaceholder)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 15)
+                        .allowsHitTesting(false)
+                }
+                TextField("",
+                          text: Binding<String>(get: {
+                    place.notes ?? ""
+                }, set: { value in
+                    place.notes = value
+                }), axis: .vertical)
+                .lineLimit(4...10)
+                .multilineTextAlignment(.leading)
+                .padding(.vertical)
+                .frame(minHeight: 100, alignment: .top)
+            }
         }
     }
 }

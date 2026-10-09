@@ -14,21 +14,15 @@ struct PlaceHeaderView: View {
     /// show/hide the copied to clipboard alert
     @State private var showingAddressToClipboard: Bool = false
     @Binding private var place: PlaceUIModel
-    //@Binding private var showingMarkerList: Bool
     @Environment(AppSettings.self) private var appSettings
 
     // MARK: - private properties
-    //private var editEnabled: Bool
     private var isNameFocused: FocusState<Bool>.Binding
 
     // MARK: - init
     init(place: Binding<PlaceUIModel>,
-         //showingMarkerList: Binding<Bool>,
-         //editEnabled: Bool,
          isNameFocused: FocusState<Bool>.Binding) {
         self._place = place
-        //self._showingMarkerList = showingMarkerList
-        //self.editEnabled = editEnabled
         self.isNameFocused = isNameFocused
     }
     
@@ -75,10 +69,6 @@ struct PlaceHeaderView: View {
                         })
                 }
             }
-//            .padding(EdgeInsets(top: 15,
-//                                leading: 15,
-//                                bottom: 0,
-//                                trailing: 15))
         }
         .alertOk(isPresented: $showingAddressToClipboard,
                  title: "alert.address_copied_title",

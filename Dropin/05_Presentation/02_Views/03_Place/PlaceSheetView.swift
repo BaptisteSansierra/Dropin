@@ -256,13 +256,16 @@ struct PlaceSheetView: View {
         HStack(alignment: .center, spacing: 0) {
             if let rating = place.rating {
                 StarRatingView(rating: rating)
-            } else {
-                StarRatingView()
+            //} else {
+            //    StarRatingView()
             }
-            if let dist = viewModel.distanceStringTo(place.coordinates) {
+            if let rating = place.rating,
+               let dist = viewModel.distanceStringTo(place.coordinates) {
                 Text(verbatim: "·")
                     .padding(.horizontal, 5)
                     .font(.caption2)
+            }
+            if let dist = viewModel.distanceStringTo(place.coordinates) {
                 Text(dist)
                     .font(.caption2)
             }

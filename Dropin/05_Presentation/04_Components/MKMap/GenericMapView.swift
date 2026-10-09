@@ -52,7 +52,7 @@ struct GenericMapView: View {
     }
     
     var body: some View {
-        PlacesMKMapVCR(config: .interactive, // .browse,
+        PlacesMKMapVCR(config: .interactive,
                        mapController: viewModel.mapController,
                        places: viewModel.places,
                        selectedPlaceId: $viewModel.selectedPlaceId,
@@ -74,17 +74,6 @@ struct GenericMapView: View {
                 }
             }
         }
-
-        /*
-         // TODO: onChange of lastSync => reload places
-         IS IT NEEDED ?
-         
-        .onChange(of: viewModel.syncStatus.lastSyncedAt) {
-            Task {
-                await reloadPlaces()
-            }
-        }
-         */
         
         // Selected place sheet
         .sheet(item: $viewModel.selectedPlaceId,
