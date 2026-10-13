@@ -102,5 +102,6 @@ struct MockPlaceAnnotation: View {
 
 #Preview {
     MockPlaceAnnotation()
+        .environment(AppSettings())
 }
 #endif

@@ -292,9 +292,18 @@ struct PlacesView: View {
             case .placeEditView(let placeId):
                 createPlaceEditView(placeId: placeId)
             case .lookupPlacesView:
-                viewModel.createLookupPlacesView(draftPlace: $viewModel.draftPlace)
+                viewModel.createLookupPlacesView(draftPlace: $viewModel.draftPlace,
+                                                 draftPlacePoiCategory: $viewModel.draftPlacePoiCategory,
+                                                 draftPlacePoiColor: $viewModel.draftPlacePoiColor)
+                
             case .lookupPlacesEditView(let placeId):
                 createLookupPlacesView(placeId: placeId)
+                    .onDisappear {
+                        Task {
+                            try await viewModel.loadPlaces()
+                        }
+                    }
+
             case .placeCreateView:
                 // WARN: Here we expect to have a draftPace defined already
                 //       PlaceCreateView rely on it
@@ -320,18 +329,21 @@ struct PlacesView: View {
     }
     
     private func onAppearCallback() {
-        /*
-        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
-            return
-        }
-        switch lastNavigationSource {
-            case .placeCreateView:
-                ()
-            default:
-                print("ignore lastNavigationSource = \(lastNavigationSource)")
-                ()
-        }
-         */
+//        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
+//            return
+//        }
+//        switch lastNavigationSource {
+//            case .lookupPlacesView:
+//                if viewModel.draftPlace == nil {
+//                    // Back from lookup with no draft => an address may have been edited
+//                    Task {
+//                        await reloadPlaces()
+//                    }
+//                }
+//            default:
+//                print("ignore lastNavigationSource = \(lastNavigationSource)")
+//                ()
+//        }
     }
     
     private func reloadPlaces() async {

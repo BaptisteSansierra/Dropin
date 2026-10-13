@@ -8,68 +8,6 @@
 import SwiftUI
 import MapKit
 
-struct LookupResolvedItem: Identifiable {
-    enum PlaceType {
-        case address
-        case poi
-    }
-    var id: String {
-        "\(mapItem.resolvedCoordinates().latitude)-\(mapItem.resolvedCoordinates().latitude)"
-    }
-    let type: PlaceType
-    let mapItem: MKMapItem
-    let address: String
-    let coordinates: CLLocationCoordinate2D
-    let distance: String?
-    // POI specific
-    let name: String?
-    let pointOfInterestCategory: MKPointOfInterestCategory?
-    let icon: Icon?
-
-    init(mapItem: MKMapItem,
-         address: String,
-         coordinates: CLLocationCoordinate2D,
-         distance: String?,
-         name: String?) {
-        self.type = .address
-        self.mapItem = mapItem
-        self.address = address
-        self.coordinates = coordinates
-        self.distance = distance
-        if let name = name {
-            if self.address.contains(name) {
-                // name is the address, skip it
-                self.name = nil
-            } else {
-                self.name = name
-            }
-        } else {
-            self.name = nil
-        }
-        self.pointOfInterestCategory = nil
-        self.icon = nil
-    }
-
-    init(mapItem: MKMapItem,
-         address: String,
-         coordinates: CLLocationCoordinate2D,
-         distance: String?,
-         name: String?,
-         pointOfInterestCategory: MKPointOfInterestCategory?,
-         icon: Icon?) {
-        self.type = .poi
-        self.mapItem = mapItem
-        self.address = address
-        self.coordinates = coordinates
-        self.distance = distance
-        self.name = name
-        self.pointOfInterestCategory = pointOfInterestCategory
-        self.icon = icon
-    }
-}
-
-// TODO: Use different cell style for POI vs. Adress (cf. AddressLookupService todos)
-
 @MainActor
 @Observable class LookupPlacesViewModel {
     
@@ -80,7 +18,7 @@ struct LookupResolvedItem: Identifiable {
     
     // MARK: Properties
     var resultOffset: CGFloat = 0
-    var resultStatus: LookupPlaceView.PresentationStatus = .pending
+    var resultStatus: LookupPlaceSheetView.PresentationStatus = .pending
     var resultBgOpacity: CGFloat = 0
 
     var query: String = "" {
@@ -128,21 +66,8 @@ struct LookupResolvedItem: Identifiable {
         coordinator.popToRoot()
     }
 
-    func pushCreatePlaceFullView(lookupResolvedItem: LookupResolvedItem) {
-        coordinator.pushCreatePlaceFullView()
-    }
-    
     func isEditMode() -> Bool {
         coordinator.path.contains(.placeEditView)
-    }
-
-    // MARK: - UI child
-    func createLookupPlaceView(_ lookupResolvedItem: LookupResolvedItem,
-                               place: Binding<PlaceUIModel?>,
-                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
-        return appContainer.createLookupPlaceView(lookupResolvedItem: lookupResolvedItem,
-                                                  place: place,
-                                                  status: status)
     }
     
     // MARK: Use cases
@@ -171,7 +96,7 @@ struct LookupResolvedItem: Identifiable {
                 let error = ViewError.noResultFound
                 throw error
             }
-            resolvedPlace = try resolvedPlaceFromMapItem(item)
+            resolvedPlace = try resolvedPlaceFromMapItem(item, isPOI: lookupResult.isPOI)
             resolvedPlaceComputed = true
             
             resolving = false
@@ -208,7 +133,7 @@ struct LookupResolvedItem: Identifiable {
         }
     }
     
-    private func resolvedPlaceFromMapItem(_ item: MKMapItem) throws -> LookupResolvedItem {
+    private func resolvedPlaceFromMapItem(_ item: MKMapItem, isPOI: Bool) throws -> LookupResolvedItem {
         // Get address
         guard let address = item.resolvedAddress() else {
             throw ViewError.noAddress
@@ -218,19 +143,10 @@ struct LookupResolvedItem: Identifiable {
         let distance = locationManager.distanceStringTo(coordinates)
         
         // Return resolved item
-        guard let poi = item.pointOfInterestCategory else {
-            return LookupResolvedItem(mapItem: item,
-                                      address: address,
-                                      coordinates: coordinates,
-                                      distance: distance,
-                                      name: item.name)
-        }
         return LookupResolvedItem(mapItem: item,
+                                  isPOI: isPOI,
                                   address: address,
                                   coordinates: coordinates,
-                                  distance: distance,
-                                  name: item.name,
-                                  pointOfInterestCategory: poi,
-                                  icon: item.icon())
+                                  distance: distance)
     }
 }

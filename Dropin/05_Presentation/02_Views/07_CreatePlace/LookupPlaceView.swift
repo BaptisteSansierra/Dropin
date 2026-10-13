@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 27/12/25.
 //
 
+#if false  // LEGACY
+
 import SwiftUI
 import Contacts
 
@@ -147,7 +149,7 @@ struct LookupPlaceView: View {
                     Circle()
                         .fill(.dropinPrimary)
                         .frame(width: 30, height: 30)
-                    if let icon = item.icon {
+                    if let icon = item.mapItem.pointOfInterestCategory?.icon {
                         IconView(icon: icon)
                             .sizeCaption2()
                             .foregroundStyle(.backgroundPrimary)
@@ -195,47 +197,46 @@ struct LookupPlaceView: View {
     }
     
     // MARK: - private methods
-    private func relocatedPlace(_ place: PlaceUIModel, _ lookupResolvedItem: LookupResolvedItem) -> PlaceUIModel {
+    private func relocatedPlace(_ place: PlaceUIModel,
+                                _ lookupResolvedItem: LookupResolvedItem) -> PlaceUIModel {
         let relocated = place.copy()
         relocated.coordinates = lookupResolvedItem.coordinates
         return relocated
     }
     
     private func textResolvingName(for item: LookupResolvedItem) -> Text {
-        switch item.type {
-            case .address:
-                if let name = item.name {
-                    return Text(verbatim: name)
-                } else {
-                    return Text("common.new_place")
-                }
-            case .poi:
-                if let name = item.name {
-                    return Text(verbatim: name)
-                } else {
-                    assertionFailure("undefined name for POI")
-                    return Text("common.new_place")
-                }
+        if item.isPOI {
+            if let name = item.mapItem.name {
+                return Text(verbatim: name)
+            } else {
+                assertionFailure("undefined name for POI")
+                return Text("common.new_place")
+            }
+        } else {
+            if let name = item.mapItem.name {
+                return Text(verbatim: name)
+            } else {
+                return Text("common.new_place")
+            }
         }
     }
     
     private func markerResolvingName(for item: LookupResolvedItem) -> some MapContent {
-        switch item.type {
-            case .address:
+        if item.isPOI {
+            if let name = item.mapItem.name {
+                return Marker(name,
+                              systemImage: item.mapItem.icon().name,
+                              coordinate: item.coordinates)
+            } else {
+                assertionFailure("undefined name for POI")
                 return Marker("common.new_place",
                               systemImage: item.mapItem.icon().name,
                               coordinate: item.coordinates)
-            case .poi:
-                if let name = item.name {
-                    return Marker(name,
-                                  systemImage: item.mapItem.icon().name,
-                                  coordinate: item.coordinates)
-                } else {
-                    assertionFailure("undefined name for POI")
-                    return Marker("common.new_place",
-                                  systemImage: item.mapItem.icon().name,
-                                  coordinate: item.coordinates)
-                }
+            }
+        } else {
+            return Marker("common.new_place",
+                          systemImage: item.mapItem.icon().name,
+                          coordinate: item.coordinates)
         }
     }
     
@@ -302,21 +303,11 @@ struct MockLookupPlaceView: View {
                         throw error
                     }
                     // Return resolved item
-                    if let poi = item.pointOfInterestCategory {
-                        lookupResolvedItem = LookupResolvedItem(mapItem: item,
-                                                                address: item.resolvedAddress() ?? "N/A",
-                                                                coordinates: item.resolvedCoordinates(),
-                                                                distance: "N/A",
-                                                                name: item.name,
-                                                                pointOfInterestCategory: poi,
-                                                                icon: item.icon())
-                    } else {
-                        lookupResolvedItem = LookupResolvedItem(mapItem: item,
-                                                                address: item.resolvedAddress() ?? "N/A",
-                                                                coordinates: item.resolvedCoordinates(),
-                                                                distance: "N/A",
-                                                                name: item.name)
-                    }
+                    lookupResolvedItem = LookupResolvedItem(mapItem: item,
+                                                            isPOI: true,
+                                                            address: item.resolvedAddress() ?? "N/A",
+                                                            coordinates: item.resolvedCoordinates(),
+                                                            distance: "N/A")
                 } catch {
                     lookupError = error
                 }
@@ -337,5 +328,7 @@ struct MockLookupPlaceView: View {
         }
     }
 }
+
+#endif
 
 #endif

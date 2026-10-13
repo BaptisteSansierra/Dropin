@@ -5,6 +5,8 @@
 //  Created by baptiste sansierra on 27/12/25.
 //
 
+#if false // LEGACY
+
 import Foundation
 import SwiftUI
 import MapKit
@@ -45,3 +47,5 @@ import MapKit
                                    distance: cameraDistance))
     }
 }
+
+#endif

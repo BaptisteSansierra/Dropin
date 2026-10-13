@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import CoreLocation
+import MapKit
 
 @MainActor
 @Observable class PlacesViewModel {
@@ -19,6 +20,10 @@ import CoreLocation
 
     /// A draft place is created before being stored or discarded
     var draftPlace: PlaceUIModel? = nil
+    /// A draft place created from an Apple POI may have an Apple category, used to suggest a category
+    var draftPlacePoiCategory: MKPointOfInterestCategory? = nil
+    /// A draft place created from an Apple POI may have a color, used to suggest a category
+    var draftPlacePoiColor: Color? = nil
 
     var syncStatus: SyncStatus
     var reachabilityService: any ReachabilityServiceProtocol
@@ -114,8 +119,23 @@ import CoreLocation
             }, set: { value in
                 self.draftPlace = value
             })
-        return appContainer.createPlacesMapView(places: filteredPlaces,
+        let bindingDraftPlacePoiCategory = Binding<MKPointOfInterestCategory?>(
+            get: {
+                return self.draftPlacePoiCategory
+            }, set: { value in
+                self.draftPlacePoiCategory = value
+            })
+        let bindingDraftPlacePoiColor = Binding<Color?>(
+            get: {
+                return self.draftPlacePoiColor
+            }, set: { value in
+                self.draftPlacePoiColor = value
+            })
+        
+        return appContainer.createPlacesMapView(places: { self.filteredPlaces },
                                                 draftPlace: bindingDraftPlace,
+                                                draftPlacePoiCategory: bindingDraftPlacePoiCategory,
+                                                draftPlacePoiColor: bindingDraftPlacePoiColor,
                                                 selectedPlaceId: bindingSelectedPlaceId,
                                                 isParentPresenting: bindingIsPresenting,
                                                 showingCreatePlaceMenu: bindingShowingCreatePlaceMenu,
@@ -148,8 +168,12 @@ import CoreLocation
         return appContainer.createPlaceEditView(place: place)
     }
 
-    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>) -> LookupPlacesView {
-        return appContainer.createLookupPlacesView(draftPlace: draftPlace)
+    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>,
+                                draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                                draftPlacePoiColor: Binding<Color?>) -> LookupPlacesView {
+        return appContainer.createLookupPlacesView(draftPlace: draftPlace,
+                                                   draftPlacePoiCategory: draftPlacePoiCategory,
+                                                   draftPlacePoiColor: draftPlacePoiColor)
     }
     
     func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {

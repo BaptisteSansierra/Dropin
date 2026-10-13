@@ -22,15 +22,17 @@ struct IdentifiablePOI: Identifiable {
     // MARK: - Observed Properties
     private(set) var coordinator: PlaceCoordinator
 
-    /// A draft place created from an Apple POI may have an Apple category, used to suggest a category
-    var draftPlacePoiCategory: MKPointOfInterestCategory? = nil
-    /// A draft place created from an Apple POI may have a color, used to suggest a category
-    var draftPlacePoiColor: Color? = nil
-
     // Alerts toggles
     var showAuthLocAlert = false
     var showQuickCreateSheet = false
     var quickCreateResult: PlaceCreateQuickView.Result = .none
+
+    // Set when the draft place matches an existing place (same name+coords, or same applePlaceID)
+    var isPresentingDuplicatingPlace = false
+    var duplicatingPlace: PlaceUIModel?
+    // Set when the draft place sits within 3m of a different existing place
+    var isPresentingOverlapingPlace = false
+    var overlapingPlace: PlaceUIModel?
 
     var selectedApplePOI: MKMapFeatureAnnotation?
     var selectedIdfApplePOI: IdentifiablePOI?
@@ -93,7 +95,9 @@ struct IdentifiablePOI: Identifiable {
     }
     
     // MARK: - UI child
-    func createPlaceCreateQuickView(_ draftPlace: Binding<PlaceUIModel?>) -> PlaceCreateQuickView {
+    func createPlaceCreateQuickView(draftPlace: Binding<PlaceUIModel?>,
+                                    draftPlacePoiCategory: MKPointOfInterestCategory?,
+                                    draftPlacePoiColor: Color?) -> PlaceCreateQuickView {
         guard let draftPlace = draftPlace.wrappedValue else {
             fatalError("draft place undefined")
         }
@@ -109,37 +113,55 @@ struct IdentifiablePOI: Identifiable {
                                                        poiColor: draftPlacePoiColor)
     }
 
-    func createApplePOISheetView(draftPlace: Binding<PlaceUIModel?>) -> ApplePOISheetView {
+    func createApplePOISheetView(draftPlace: Binding<PlaceUIModel?>,
+                                 draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                                 draftPlacePoiColor: Binding<Color?>) -> ApplePOISheetView {
         guard let selectedApplePOI = selectedApplePOI else {
             fatalError("selectedApplePOI undefined for ApplePOISheetView")
         }
-        let poiCategoryBinding = Binding {
-            self.draftPlacePoiCategory
-        } set: { v in
-            self.draftPlacePoiCategory = v
-        }
-        let poiColorBinding = Binding {
-            self.draftPlacePoiColor
-        } set: { v in
-            self.draftPlacePoiColor = v
-        }
         return appContainer.createApplePOISheetView(applePOIAnnotation: selectedApplePOI,
                                                     draftPlace: draftPlace,
-                                                    draftPlacePoiCategory: poiCategoryBinding,
-                                                    draftPlacePoiColor: poiColorBinding)
+                                                    draftPlacePoiCategory: draftPlacePoiCategory,
+                                                    draftPlacePoiColor: draftPlacePoiColor)
     }
     
     // MARK: - callbacks
-    func onLongPress(coords: CLLocationCoordinate2D, draftPlace: Binding<PlaceUIModel?>) {
+    func onLongPress(coords: CLLocationCoordinate2D,
+                     draftPlace: Binding<PlaceUIModel?>,
+                     places: [PlaceUIModel]) {
         preparePlaceFromCoords(coords: coords, draftPlace: draftPlace)
         //viewModel.mapActionBus.performAction(.updateData)
         
         // Show the creation sheet
-        showQuickCreateSheet.toggle()
+        presentQuickCreateSheet(draftPlace: draftPlace, places: places)
         
         // Center map on new place
         //mapController.centerOn(coords)
         //centerOn(mapView, coords: coordinates, animated: true, sheetHeight: 400)
+    }
+    
+    func presentQuickCreateSheet(draftPlace: Binding<PlaceUIModel?>, places: [PlaceUIModel]) {
+        guard let draftPlaceValue = draftPlace.wrappedValue else {
+            //Log.debug("presentQuickCreateSheet called without draftPlace")
+            return
+        }
+        // Check the place isn't the same
+        // From address lookup, user could try to create a place he already has
+        // In that case we will select and center on it
+        if let duplicate = draftDuplicate(draftPlaceValue, places: places) {
+            duplicatingPlace = duplicate
+            draftPlace.wrappedValue = nil
+            isPresentingDuplicatingPlace = true
+            return
+        }
+        // Check also there's not already a different place at this same position
+        if let overlapping = draftOverlap(draftPlaceValue, places: places) {
+            overlapingPlace = overlapping
+            draftPlace.wrappedValue = nil
+            isPresentingOverlapingPlace = true
+            return
+        }
+        showQuickCreateSheet = true
     }
     
     func onCameraUpdate(camera: MKMapCamera,
@@ -197,16 +219,6 @@ struct IdentifiablePOI: Identifiable {
         }
         draftPlace.wrappedValue = createdPlace
     }
-
-    func discardApplePOISuggestions() {
-        draftPlacePoiCategory = nil
-        draftPlacePoiColor = nil
-    }
-
-    func discardDraftPlace(_ draftPlace: Binding<PlaceUIModel?>) {
-        draftPlace.wrappedValue = nil
-        discardApplePOISuggestions()
-    }
     
     func coordinatesPickerUpdate(_ newCoords: CLLocationCoordinate2D) {
         
@@ -233,11 +245,33 @@ struct IdentifiablePOI: Identifiable {
     }
     
     // MARK: - private
-//    private func reset() {
-//        draftPlace = nil
-//        //mapActionBus.performAction(.updateData)
-//    }
-    
+    private func draftDuplicate(_ draftPlace: PlaceUIModel, places: [PlaceUIModel]) -> PlaceUIModel? {
+        let draftDomainPlace = PlaceMapper.toDomain(draftPlace)
+        return places
+            .filter {
+                guard $0.isActive else { return false }
+                if draftDomainPlace.isIdentical(name: $0.name, coords: $0.coordinates) {
+                    return true
+                }
+                if draftDomainPlace.applePlaceID != nil && draftDomainPlace.applePlaceID == $0.applePlaceID {
+                    return true
+                }
+                return false
+            }
+            .first
+    }
+
+    private func draftOverlap(_ draftPlace: PlaceUIModel, places: [PlaceUIModel]) -> PlaceUIModel? {
+        let draftDomainPlace = PlaceMapper.toDomain(draftPlace)
+        return places
+            .filter {
+                guard $0.isActive else { return false }
+                // Do not allow overlap if distance is lower than 3 meters
+                return draftDomainPlace.coordinates.distance(to: $0.coordinates) <= 3
+            }
+            .first
+    }
+
     private func updatePlacePickerPositions() {
         updatePlacePickerPositions(coords: mapCamera.currentCamera.centerCoordinate)
     }

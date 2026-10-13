@@ -17,15 +17,22 @@ struct LookupPlacesView: View {
     // draftPlace is provided when credating a place from scratch
     // it arrives nil and a place is effectively created if validated by user
     @Binding private var draftPlace: PlaceUIModel?
+    @Binding private var draftPlacePoiCategory: MKPointOfInterestCategory?
+    @Binding private var draftPlacePoiColor: Color?
 
     private var initialAddress = ""
 
     // MARK: - init
-    init(viewModel: LookupPlacesViewModel, draftPlace: Binding<PlaceUIModel?>) {
+    init(viewModel: LookupPlacesViewModel,
+         draftPlace: Binding<PlaceUIModel?>,
+         draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+         draftPlacePoiColor: Binding<Color?>) {
         viewModel.resultOffset = UIScreen.main.bounds.height
         self.viewModel = viewModel
         self._editedPlace = .constant(nil)
         self._draftPlace = draftPlace
+        self._draftPlacePoiCategory = draftPlacePoiCategory
+        self._draftPlacePoiColor = draftPlacePoiColor
         #if DEBUG
         initialAddress = "la grange"
         #endif
@@ -41,6 +48,8 @@ struct LookupPlacesView: View {
             place.wrappedValue = value!
         })
         self._draftPlace = .constant(nil)
+        self._draftPlacePoiCategory = .constant(nil)
+        self._draftPlacePoiColor = .constant(nil)
         Log.debug("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address ?? "")'")
         self.initialAddress = place.wrappedValue.address ?? ""
     }
@@ -53,8 +62,7 @@ struct LookupPlacesView: View {
                 SearchTextFieldView(text: $viewModel.query,
                                     placeholder: "Search a name or an address")
                 .padding(.horizontal)
-                .padding(.bottom, 20)
-                Divider()
+                .padding(.bottom, 10)
                 if viewModel.reachabilityService.isConnected {
                     if let _ = viewModel.lookupError {
                         errorView
@@ -75,34 +83,11 @@ struct LookupPlacesView: View {
                 }
                 Spacer()
             }
-            if let resolvedPlace = $viewModel.resolvedPlace.wrappedValue {
-                
-//                Rectangle()
-//                    .fill(.regularMaterial)
-//                    .opacity(viewModel.resultBgOpacity)
-//                    .ignoresSafeArea()
-
-                Color.overlayAlphaLayer
-                    .opacity(viewModel.resultBgOpacity)
-                    .ignoresSafeArea()
-                
-                viewModel.createLookupPlaceView(resolvedPlace,
-                                                place: $editedPlace,
-                                                status: $viewModel.resultStatus)
-                    .offset(x: 0, y: viewModel.resultOffset)
-            }
         }
         .navigationTitle(viewModel.isEditMode() ? "common.edit_address" : "common.save_new_place")
         .navigationBarTitleDisplayMode(.inline)
-// Use Apple default ?
-//        .searchable(text: $searchText,
-//                    placement: .navigationBarDrawer,
-//                    prompt: "Do your math")
         .task {
             viewModel.query = initialAddress
-        }
-        .onChange(of: viewModel.resultStatus) { _, newValue in
-            completeLookup(newValue)
         }
         .onChange(of: viewModel.resolvedPlaceComputed) { oldValue, newValue in
             guard !oldValue && newValue else { return }
@@ -118,6 +103,18 @@ struct LookupPlacesView: View {
             } else {
                 viewModel.resetResults()
             }
+        }
+        .sheet(item: $viewModel.resolvedPlace) {
+            if viewModel.resultStatus == .pending {
+                viewModel.resultStatus = .cancelled
+            }
+            completeLookup(viewModel.resultStatus)
+        } content: { resolvedPlace in
+            LookupPlaceSheetView(lookupResolvedItem: resolvedPlace,
+                                 place: $editedPlace,
+                                 status: $viewModel.resultStatus)
+            .presentationBackground(.surface1)
+            .presentationDetents([.medium])
         }
     }
     
@@ -141,21 +138,29 @@ struct LookupPlacesView: View {
 
     private var resultsView: some View {
         ZStack {
-            HStack {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(viewModel.results, id: \.id) { item in
-                            Button {
-                                presentDetails(item)
-                            } label: {
-                                itemCell(item)
-                            }
-                            Divider()
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(viewModel.results.enumerated()), id: \.element.id) { idx, item in
+                        Button {
+                            presentDetails(item)
+                        } label: {
+                            itemCell(item)
+                        }
+                        if idx != viewModel.results.count - 1 {
+                            Rectangle()
+                                .fill(.fieldBorder)
+                                .frame(height: 1)
+                                .frame(maxWidth: .infinity)
+                                //.padding(.leading, 70)
                         }
                     }
                 }
-
+                .background {
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(.surface1)
+                }
             }
+            .padding(.horizontal)
             if viewModel.searching {
                 loadingView
             }
@@ -178,23 +183,56 @@ struct LookupPlacesView: View {
     }
     
     private func itemCell(_ item: LookupResult) -> some View {
-        VStack(spacing: 0) {
-            Text(item.localSearchCompletion.title)
-                .textStyle(.cellTitle)
+        HStack(spacing: 0) {
+            ZStack(alignment: .center) {
+                Circle()
+                    .fill(item.isPOI ? .dropinPrimary : .backgroundPrimary)
+                    .frame(width: 35, height: 35)
+                Image(systemName: item.isPOI ? "storefront.fill" : "mappin")
+                    .foregroundStyle(item.isPOI ? .surface1 : .textTertiary)
+                    .font(.footnote)
+            }
+            .padding(.trailing)
+            VStack(spacing: 0) {
+                Text(highlighted(item.localSearchCompletion.title,
+                                 ranges: item.localSearchCompletion.titleHighlightRanges,
+                                 font: TextStyle.cellTitle.font,
+                                 color: .textPrimary))
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 15)
-            Text(item.localSearchCompletion.subtitle)
-                .textStyle(.cellSubtitle)
+                Text(highlighted(item.localSearchCompletion.subtitle,
+                                 ranges: item.localSearchCompletion.subtitleHighlightRanges,
+                                 font: TextStyle.cellSubtitle.font,
+                                 color: .textSecondary))
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 4)
                 .padding(.bottom, 15)
+            }
         }
         .padding(.horizontal)
     }
     
     // MARK: - private methods
+    func highlighted(_ text: String,
+                     ranges: [NSValue],
+                     font: Font,
+                     color: Color) -> AttributedString {
+        var attr = AttributedString(text)
+        attr.font = font.weight(.regular)
+        attr.foregroundColor = color
+        for value in ranges {
+            guard let r = Range(value.rangeValue, in: text),
+                  let ar = Range(r, in: attr) else {
+                continue
+            }
+            attr[ar].font = font.weight(.semibold)
+            attr[ar].foregroundColor = color
+        }
+        return attr
+    }
+    
     private func presentDetails(_ lookupResult: LookupResult) {
         UIApplication.dismissKeyboard()
         Task {
@@ -202,7 +240,7 @@ struct LookupPlacesView: View {
         }
     }
     
-    private func completeLookup(_ status: LookupPlaceView.PresentationStatus) {
+    private func completeLookup(_ status: LookupPlaceSheetView.PresentationStatus) {
         switch status {
             case .cancelled:
                 hideDetailView()
@@ -223,10 +261,25 @@ struct LookupPlacesView: View {
                     viewModel.popToRoot()
                 } else {
                     // Create a draftPlace and push CreatePlaceFullView
-                    draftPlace = PlaceUIModel(name: item.name,
-                                              coordinates: item.coordinates,
-                                              address: item.address)
-                    viewModel.pushCreatePlaceFullView(lookupResolvedItem: item)
+                    if let mapItemID = item.mapItem.identifier {
+                        draftPlace = PlaceUIModel(name: item.mapItem.name,
+                                                  coordinates: item.coordinates,
+                                                  address: item.address,
+                                                  applePlaceID: mapItemID.rawValue)
+                        if let poiCategory = item.mapItem.pointOfInterestCategory {
+                            draftPlacePoiCategory = poiCategory
+                            if let tint = poiCategory.tint {
+                                draftPlacePoiColor = tint
+                            } else {
+                                draftPlacePoiColor = Color.random()
+                            }
+                        }
+                    } else {
+                        draftPlace = PlaceUIModel(name: item.mapItem.name,
+                                                  coordinates: item.coordinates,
+                                                  address: item.address)
+                    }
+                    viewModel.popToRoot()
                 }
             case .pending:
                 () // pending means pending...
@@ -243,7 +296,6 @@ struct LookupPlacesView: View {
             viewModel.resultStatus = .pending
         }
     }
-
 }
 
 #if DEBUG
@@ -251,9 +303,13 @@ struct LookupPlacesView: View {
 struct MockLookupPlacesView: View {
     var mock: MockContainer
     @State var draftPlace: PlaceUIModel?
+    @State var draftPlacePOI: MKPointOfInterestCategory?
+    @State var draftPlaceColor: Color?
 
     var body: some View {
-        mock.appContainer.createLookupPlacesView(draftPlace: $draftPlace)
+        mock.appContainer.createLookupPlacesView(draftPlace: $draftPlace,
+                                                 draftPlacePoiCategory: $draftPlacePOI,
+                                                 draftPlacePoiColor: $draftPlaceColor)
     }
     
     init() {

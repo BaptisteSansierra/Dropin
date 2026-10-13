@@ -4,6 +4,7 @@
 //
 
 import MapKit
+import SwiftUI
 
 extension MKPointOfInterestCategory {
 
@@ -187,6 +188,72 @@ extension MKPointOfInterestCategory {
             default:
                 // Future OS adds a category before this file is updated.
                 return .sf("mappin")
+        }
+    }
+
+    /// Apple Maps' own tint color for this category, reverse engineered from Apple POI's color
+    /// `nil` for categories we haven't discovered yet.
+    /// Entries marked "guess" below aren't directly sampled, they're inferred from other type, that could be wrong...
+    var tint: Color? {
+        switch self {
+            case .hotel:            return Color(rgba: "AE6DFF")
+            case .restaurant:       return Color(rgba: "FF961D")
+            case .cafe:             return Color(rgba: "FF961D")
+            case .bakery:           return Color(rgba: "FF961D")
+            case .university:       return Color(rgba: "B56F40")
+            case .school:           return Color(rgba: "B56F40")
+            case .library:          return Color(rgba: "B56F40")
+            case .hospital:         return Color(rgba: "FF4B4F")
+            case .pharmacy:         return Color(rgba: "FF4B4F")
+            case .publicTransport:  return Color(rgba: "2B8AEF")
+            case .airport:          return Color(rgba: "2B8AEF")
+            case .store:            return Color(rgba: "FFAB00")
+            case .foodMarket:       return Color(rgba: "FFAB00")
+            case .landmark:         return Color(rgba: "6E79FF")
+            case .castle:           return Color(rgba: "6E79FF")
+            case .fortress:         return Color(rgba: "6E79FF")  // guess: historic structure, grouped with castle/landmark
+            case .nationalMonument: return Color(rgba: "6E79FF")  // guess: historic structure, grouped with castle/landmark
+            case .parking:          return Color(rgba: "2083EF")
+            case .gasStation:       return Color(rgba: "2083EF")
+            case .fitnessCenter:    return Color(rgba: "00BBFD")
+            case .marina:           return Color(rgba: "00BBFD")
+            case .beach:            return Color(rgba: "00BBFD")
+            case .surfing:          return Color(rgba: "00BBFD")
+            case .swimming:         return Color(rgba: "00BBFD")
+            case .fishing:          return Color(rgba: "00BBFD")
+            case .kayaking:         return Color(rgba: "00BBFD")  // guess: water activity, grouped with marina/beach/surfing/swimming/fishing
+            case .theater:          return Color(rgba: "FF6FAE")
+            case .nightlife:        return Color(rgba: "FF6FAE")
+            case .planetarium:      return Color(rgba: "FF6FAE")
+            case .aquarium:         return Color(rgba: "FF6FAE")
+            case .amusementPark:    return Color(rgba: "FF6FAE")
+            case .fairground:       return Color(rgba: "FF6FAE")
+            case .museum:           return Color(rgba: "FF6FAE")
+            case .movieTheater:     return Color(rgba: "FF6FAE")
+            case .zoo:              return Color(rgba: "FF6FAE")
+            case .bank:             return Color(rgba: "9E9D9A")
+            case .automotiveRepair: return Color(rgba: "9E9D9A")
+            case .park:             return Color(rgba: "20B803")
+            case .soccer:           return Color(rgba: "20B803")
+            case .volleyball:       return Color(rgba: "20B803")
+            case .stadium:          return Color(rgba: "20B803")
+            case .hiking:           return Color(rgba: "20B803")
+            case .baseball:         return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .basketball:       return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .golf:             return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .miniGolf:         return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .tennis:           return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .skiing:           return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .skating:          return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .skatePark:        return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .rockClimbing:     return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .goKart:           return Color(rgba: "20B803")  // guess: land sport, grouped with soccer/volleyball/stadium
+            case .campground:       return Color(rgba: "20B803")  // guess: outdoor/nature, grouped with park/hiking
+            case .rvPark:           return Color(rgba: "20B803")  // guess: outdoor/nature, grouped with park/hiking
+            case .nationalPark:     return Color(rgba: "20B803")  // guess: outdoor/nature, grouped with park/hiking
+            case .evCharger:        return Color(rgba: "00C363")
+            default:
+                return nil
         }
     }
 }

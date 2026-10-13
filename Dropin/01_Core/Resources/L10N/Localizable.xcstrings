@@ -4538,6 +4538,40 @@
         }
       }
     },
+    "lookup.action.address" : {
+      "comment" : "Lookup result row action: use this result as a plain address, not linked to a place/POI",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use this address"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser cette adresse"
+          }
+        }
+      }
+    },
+    "lookup.action.place" : {
+      "comment" : "Lookup result row action: use this result as a place/POI",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use this place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser ce lieu"
+          }
+        }
+      }
+    },
     "lookup.searching" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5632,6 +5666,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au tag"
+          }
+        }
+      }
+    },
+    "places_map_view.create_place_error.title" : {
+      "comment" : "Alert title shown when a draft place can't be created (duplicate name or position overlap)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot create the place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de créer le lieu"
+          }
+        }
+      }
+    },
+    "places_map_view.duplicate_place.body.%@" : {
+      "comment" : "Alert body shown when the draft place matches an existing place's name/coordinates or Apple identifier, %@ is the existing place's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There's already a place named %@ here."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il y a déjà un lieu nommé %@ ici."
+          }
+        }
+      }
+    },
+    "places_map_view.overlap_place.body.%@" : {
+      "comment" : "Alert body shown when the draft place sits within 3m of a different existing place, %@ is the existing place's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This would overlap the place %@ at this same position."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela chevaucherait le lieu %@ à cette même position."
           }
         }
       }

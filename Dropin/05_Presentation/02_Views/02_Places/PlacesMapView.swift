@@ -19,12 +19,14 @@ struct PlacesMapView: View {
     @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
     @Binding private var draftPlace: PlaceUIModel?
+    @Binding private var draftPlacePoiCategory: MKPointOfInterestCategory?
+    @Binding private var draftPlacePoiColor: Color?
 
     @Environment(RootView.ActionBus.self) private var actionBus
     @Environment(AppSettings.self) private var appSettings
 
     // MARK: - Properties
-    private var places: [PlaceUIModel]
+    private var places: () -> [PlaceUIModel]
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
     private var navBarHeight: CGFloat
     private var mapReloadGen: Int
@@ -32,8 +34,10 @@ struct PlacesMapView: View {
 
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
-         places: [PlaceUIModel],
+         places: @escaping () -> [PlaceUIModel],
          draftPlace: Binding<PlaceUIModel?>,
+         draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+         draftPlacePoiColor: Binding<Color?>,
          selectedPlaceId: Binding<UUID?>,
          isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>,
@@ -43,6 +47,8 @@ struct PlacesMapView: View {
         self.viewModel = viewModel
         self.places = places
         self._draftPlace = draftPlace
+        self._draftPlacePoiCategory = draftPlacePoiCategory
+        self._draftPlacePoiColor = draftPlacePoiColor
         self._selectedPlaceId = selectedPlaceId
         self._isParentPresenting = isParentPresenting
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
@@ -61,7 +67,7 @@ struct PlacesMapView: View {
                 // Map with bottom inset for card
                 PlacesMKMapVCR(config: viewModel.launchConfig,
                                mapController: viewModel.mapController,
-                               places: places,
+                               places: places(),
                                draftCoordinate: draftPlace?.coordinates,
                                selectedPlaceId: $selectedPlaceId,
                                selectedApplePOI: $viewModel.selectedApplePOI,
@@ -80,6 +86,9 @@ struct PlacesMapView: View {
                 }
             }
         }
+        .onAppear {
+            onAppearCallback()
+        }
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .onChange(of: isParentPresenting, { oldValue, newValue in
             guard isParentPresenting else { return }
@@ -94,20 +103,6 @@ struct PlacesMapView: View {
             }
             viewModel.selectedIdfApplePOI = IdentifiablePOI(annotation: poi)
         })
-        .sheet(item: $viewModel.selectedIdfApplePOI,
-               onDismiss: {
-                   viewModel.selectedApplePOI = nil
-                   if let _ = draftPlace {
-                       // If a draft place was created, present the quick creation sheet
-                       viewModel.showQuickCreateSheet = true
-                   }
-               }, content: { selectedApplePOI in
-                   viewModel.createApplePOISheetView(draftPlace: $draftPlace)
-                       .presentationDetents([.medium])
-                       .presentationDragIndicator(.visible)
-                       .presentationBackground(.surface1)
-               })
-
         // Overlays
         .overlay {
             MapSettingsOverlay()
@@ -117,25 +112,50 @@ struct PlacesMapView: View {
             zoomOnUserOverlay
         }
         // Sheets
+        .sheet(item: $viewModel.selectedIdfApplePOI,
+               onDismiss: {
+                   viewModel.selectedApplePOI = nil
+                   if let _ = draftPlace {
+                       // If a draft place was created, present the quick creation sheet
+                       viewModel.presentQuickCreateSheet(draftPlace: $draftPlace, places: places())
+                   }
+               }, content: { selectedApplePOI in
+                   viewModel.createApplePOISheetView(draftPlace: $draftPlace,
+                                                     draftPlacePoiCategory: $draftPlacePoiCategory,
+                                                     draftPlacePoiColor: $draftPlacePoiColor)
+                       .presentationDetents([.medium])
+                       .presentationDragIndicator(.visible)
+                       .presentationBackground(.surface1)
+               })
         .sheet(isPresented: $viewModel.showQuickCreateSheet, onDismiss: {
             switch viewModel.quickCreateResult {
                 case .moreOptions:
                     // user asked for more creation options, we keep the draft to present it in detailed view
                     // Data coming from Apple POI are already consumed, they can be reset
-                    viewModel.discardApplePOISuggestions()
+                    discardApplePOISuggestions()
                 case .saved:
                     // reload places and discard draft
                     actionBus.send(.reloadMainPlaces)
-                    viewModel.discardDraftPlace($draftPlace)
+                    discardDraftPlace()
                 case .none:
                     // sheet was swiped down, discard draft
-                    viewModel.discardDraftPlace($draftPlace)
+                    discardDraftPlace()
             }
         }, content: {
-            viewModel.createPlaceCreateQuickView($draftPlace)
+            viewModel.createPlaceCreateQuickView(draftPlace: $draftPlace,
+                                                 draftPlacePoiCategory: draftPlacePoiCategory,
+                                                 draftPlacePoiColor: draftPlacePoiColor)
                 .presentationDetents([PlaceCreateQuickView.sheetHeight])
                 .presentationDragIndicator(.visible)
         })
+        .alertOk(isPresented: $viewModel.isPresentingDuplicatingPlace,
+                 title: "places_map_view.create_place_error.title",
+                 body: LocalizedStringKey(String(format: NSLocalizedString("places_map_view.duplicate_place.body.%@", comment: ""),
+                                                 viewModel.duplicatingPlace?.name ?? "")))
+        .alertOk(isPresented: $viewModel.isPresentingOverlapingPlace,
+                 title: "places_map_view.create_place_error.title",
+                 body: LocalizedStringKey(String(format: NSLocalizedString("places_map_view.overlap_place.body.%@", comment: ""),
+                                                 viewModel.overlapingPlace?.name ?? "")))
         .sheetOverlay(isPresented: $viewModel.pickingAddress) {
             return AddressPickerView(editCoords: viewModel.pickingAddressWithCoords,
                                      coords: $viewModel.addressPickerCoords,
@@ -290,7 +310,7 @@ struct PlacesMapView: View {
     private func prepareCreatePlaceFromCoords(_ coordinates: CLLocationCoordinate2D) {
         viewModel.preparePlaceFromCoords(coords: coordinates, draftPlace: $draftPlace)
         // Show the creation sheet
-        viewModel.showQuickCreateSheet.toggle()
+        viewModel.presentQuickCreateSheet(draftPlace: $draftPlace, places: places())
         // Center map on new place
         viewModel.centerOn(coordinates)
     }
@@ -314,12 +334,38 @@ struct PlacesMapView: View {
         Task {
             try? await Task.sleep(for: .seconds(0.35))
             // Show the creation sheet
-            viewModel.showQuickCreateSheet.toggle()
+            viewModel.presentQuickCreateSheet(draftPlace: $draftPlace, places: places())
         }
     }
     
     private func onLongPress(coords: CLLocationCoordinate2D) -> Void {
-        viewModel.onLongPress(coords: coords, draftPlace: $draftPlace)
+        viewModel.onLongPress(coords: coords, draftPlace: $draftPlace, places: places())
+    }
+    
+    private func discardApplePOISuggestions() {
+        draftPlacePoiCategory = nil
+        draftPlacePoiColor = nil
+    }
+
+    private func discardDraftPlace() {
+        draftPlace = nil
+        discardApplePOISuggestions()
+    }
+    
+    private func onAppearCallback() {
+        guard let lastNavigationSource = viewModel.coordinator.lastNavigationSource else {
+            return
+        }
+        switch lastNavigationSource {
+            case .lookupPlacesView:
+                if let _ = draftPlace {
+                    // If a draft place was created during lookup, present the quick creation sheet
+                    viewModel.presentQuickCreateSheet(draftPlace: $draftPlace, places: places())
+                }
+            default:
+                print("ignore lastNavigationSource = \(lastNavigationSource)")
+                ()
+        }
     }
 }
 
@@ -332,8 +378,10 @@ struct MockPlacesMapView: View {
     @State var showingCreatePlaceMenu: Bool = false
 
     var body: some View {
-        mock.appContainer.createPlacesMapView(places: places,
+        mock.appContainer.createPlacesMapView(places: { places },
                                               draftPlace: .constant(nil),
+                                              draftPlacePoiCategory: .constant(nil),
+                                              draftPlacePoiColor: .constant(nil),
                                               selectedPlaceId: $selectedPlaceId,
                                               isParentPresenting: $isParentPresenting,
                                               showingCreatePlaceMenu: $showingCreatePlaceMenu,

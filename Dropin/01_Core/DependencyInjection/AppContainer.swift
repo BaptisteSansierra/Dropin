@@ -339,8 +339,10 @@ final class AppContainer {
         return PlacesView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
-    func createPlacesMapView(places: [PlaceUIModel],
+    func createPlacesMapView(places: @escaping () -> [PlaceUIModel],
                              draftPlace: Binding<PlaceUIModel?>,
+                             draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                             draftPlacePoiColor: Binding<Color?>,
                              selectedPlaceId: Binding<UUID?>,
                              isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>,
@@ -353,6 +355,8 @@ final class AppContainer {
         return PlacesMapView(viewModel: vm,
                              places: places,
                              draftPlace: draftPlace,
+                             draftPlacePoiCategory: draftPlacePoiCategory,
+                             draftPlacePoiColor: draftPlacePoiColor,
                              selectedPlaceId: selectedPlaceId,
                              isParentPresenting: isParentPresenting,
                              showingCreatePlaceMenu: showingCreatePlaceMenu,
@@ -511,14 +515,19 @@ final class AppContainer {
         return CategoryMapView(viewModel: vm)
     }
 
-    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>) -> LookupPlacesView {
+    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>,
+                                draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                                draftPlacePoiColor: Binding<Color?>) -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
                                        coordinator: placeCoordinator,
                                        addressLookupService: addressLookupService,
                                        locationManager: locationManager,
                                        reachabilityService: reachabilityService,
                                        updatePlace: UpdatePlace(repository: placeRepository))
-        return LookupPlacesView(viewModel: vm, draftPlace: draftPlace)
+        return LookupPlacesView(viewModel: vm,
+                                draftPlace: draftPlace,
+                                draftPlacePoiCategory: draftPlacePoiCategory,
+                                draftPlacePoiColor: draftPlacePoiColor)
     }
 
     func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
@@ -529,16 +538,6 @@ final class AppContainer {
                                        reachabilityService: reachabilityService,
                                        updatePlace: UpdatePlace(repository: placeRepository))
         return LookupPlacesView(viewModel: vm, place: place)
-    }
-
-    func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem,
-                               place: Binding<PlaceUIModel?> = .constant(nil),
-                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
-        let vm = LookupPlaceViewModel(self,
-                                      //coordinator: placeCoordinator,
-                                      //createPlace: CreatePlace(repository: placeRepository),
-                                      lookupResolvedItem: lookupResolvedItem)
-        return LookupPlaceView(viewModel: vm, place: place, status: status)
     }
     
     func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {

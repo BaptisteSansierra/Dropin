@@ -40,7 +40,7 @@ struct SearchTextFieldView: View {
     // MARK: - subviews
     private var backgroundView: some View {
         RoundedRectangle(cornerRadius: 15)
-            .fill(Color(uiColor: UIColor.secondarySystemFill))
+            .fill(.surface1)
             .frame(height: height)
             .onTapGesture {
                 textFocused = true
@@ -90,10 +90,13 @@ struct SearchTextFieldView: View {
 #Preview {
     @Previewable @State var text: String = ""
     NavigationStack {
-        VStack {
-            SearchTextFieldView(text: $text, placeholder: "preview placeholder")
-                .padding()
-            Spacer()
+        ZStack {
+            Color.backgroundPrimary.ignoresSafeArea()
+            VStack {
+                SearchTextFieldView(text: $text, placeholder: "preview placeholder")
+                    .padding()
+                Spacer()
+            }
         }
         .navigationTitle("SearchTextFieldView")
         .navigationBarTitleDisplayMode(.inline)

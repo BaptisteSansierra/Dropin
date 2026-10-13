@@ -43,6 +43,21 @@ struct ApplePOISheetView: View {
     private var contentView: some View {
         if let mapItem = viewModel.mapItem {
             resultView(mapItem)
+                .onAppear {
+                    // Reverse engineer Apple's pointOfInterestCategory's colors
+                    // Print color when undefined internally
+                    var msg = "[----- POI:"
+                    if let poiCategory = mapItem.pointOfInterestCategory {
+                        msg = "\(msg) CATEGORY:\(poiCategory)"
+                    }
+                    if let poiColor = viewModel.applePOIAnnotation.iconStyle?.backgroundColor {
+                        msg = "\(msg) COLOR:\(Color(uiColor: poiColor).hex)"
+                    }
+                    msg = "\(msg) -----]"
+                    if mapItem.pointOfInterestCategory?.tint == nil {
+                        Log.debug(msg)
+                    }
+                }
         } else if let error = viewModel.error {
             errorView(error)
         } else {
