@@ -224,10 +224,12 @@ struct PlaceCreateQuickView: View {
 
     // MARK: - Actions
     private func editTags() {
+        isNameFocused = false
         viewModel.showingTagsSelector.toggle()
     }
     
     private func editCategory() {
+        isNameFocused = false
         viewModel.showingCategorySelector.toggle()
     }
 
