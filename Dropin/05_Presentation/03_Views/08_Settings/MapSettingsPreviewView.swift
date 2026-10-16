@@ -242,6 +242,9 @@ struct MOCKMapSettingsPreviewView: View {
                 )
             }
         }
+        .task {
+//            settings.mapSettings.clustering = true
+        }
     }
 }
 

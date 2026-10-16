@@ -22,7 +22,8 @@ struct App_SyncService {
                          remoteTagRepo: MockRemoteTagRepository = MockRemoteTagRepository(),
                          remoteImageRepo: MockRemoteImageRepository = MockRemoteImageRepository(),
                          remoteProfileRepo: MockRemoteProfileRepository = MockRemoteProfileRepository(),
-                         isOnline: Bool = true) -> SyncService {
+                         isOnline: Bool = true,
+                         reachability: MockReachabilityService? = nil) -> SyncService {
         let freshDefaults = UserDefaults(suiteName: UUID().uuidString)!
         return SyncService(localPlaceRepo: localPlaceRepo,
                            localCategoryRepo: localCategoryRepo,
@@ -34,7 +35,7 @@ struct App_SyncService {
                            remoteTagRepo: remoteTagRepo,
                            remoteImageRepo: remoteImageRepo,
                            remoteProfileRepo: remoteProfileRepo,
-                           reachability: MockReachabilityService(isConnected: isOnline),
+                           reachability: reachability ?? MockReachabilityService(isConnected: isOnline),
                            userDefaults: freshDefaults)
     }
 
@@ -181,5 +182,47 @@ struct App_SyncService {
         await sut.syncAll()
 
         #expect(sut.syncStatus.lastSyncedAt == nil)
+    }
+
+    // MARK: - reachability
+    // SyncService registers itself as a ReachabilityListener, these go through the
+    // mock's `isConnected` setter, not a direct reachabilityDidChange call, so they exercise
+    // the same listener-notification path a real reconnection would.
+
+    @Test func reachabilityRestoredTriggersPull() async throws {
+        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London")
+        let localRepo = MockPlaceRepository()
+        let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
+        let reachability = MockReachabilityService(isConnected: false)
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo, reachability: reachability)
+
+        reachability.isConnected = true
+        await sut.pendingReachabilityTask?.value
+
+        let fetched = try await localRepo.fetch(remotePlace.id)
+        #expect(fetched.name == remotePlace.name)
+    }
+
+    @Test func reachabilityRestoredPushesChangesQueuedWhileOffline() async throws {
+        let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let localRepo = MockPlaceRepository(initialPlaces: [place])
+        let remoteRepo = MockRemotePlaceRepository()
+        let reachability = MockReachabilityService(isConnected: false)
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo, reachability: reachability)
+        sut.markPlaceDirty(place.id)   // queued while offline: push no-ops until reconnection
+
+        reachability.isConnected = true
+        await sut.pendingReachabilityTask?.value
+
+        #expect(remoteRepo.upsertedPlaces.map(\.id).contains(place.id))
+    }
+
+    @Test func reachabilityLostDoesNotTriggerSync() async throws {
+        let reachability = MockReachabilityService(isConnected: true)
+        let sut = makeSUT(reachability: reachability)
+
+        reachability.isConnected = false
+
+        #expect(sut.pendingReachabilityTask == nil)
     }
 }

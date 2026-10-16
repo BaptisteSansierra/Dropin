@@ -16,10 +16,6 @@ struct SettingsView: View {
     
     // MARK: - private properties
     private var rowHeight: CGFloat = 55
-    // Foe settings map, provide a specific AppSettings: standard map + no POIs
-    private var localAppSettings: AppSettings {
-        AppSettings(forcedMapType: .standard, forcedPoiConfig: Set<POIBundle>())
-    }
     
     // MARK: - init
     init(viewModel: SettingsViewModel, showingSideMenu: Binding<Bool>) {
@@ -92,7 +88,6 @@ struct SettingsView: View {
                         bottomTrailingRadius: 0,
                         topTrailingRadius: 16
                     ))
-                    .environment(localAppSettings)
                 
                 // Pin style row
                 settingsRow(icon: "mappin",

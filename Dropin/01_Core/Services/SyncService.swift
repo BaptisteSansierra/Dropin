@@ -39,7 +39,7 @@ protocol SyncServicePausableProtocol: AnyObject {
 }
 
 @MainActor
-final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
+final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, ReachabilityListener {
 
     // MARK: - Observable state
     private(set) var syncStatus: SyncStatus
@@ -126,6 +126,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
         if let lastSync = userDefaults.object(forKey: DropinApp.userDefaultsKeys.lastSyncedAt) as? Date {
             self.syncStatus.lastSyncedAt = lastSync
         }
+        reachability.addListener(self)
     }
 
     // MARK: - SyncServiceProtocol
@@ -189,6 +190,15 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol {
             schedulePush()   // one flush for everything that accumulated
         }
         return try await body()
+    }
+
+    // MARK: - ReachabilityListener
+    /// Exposed only so tests can await the fire-and-forget sync this triggers, deterministically.
+    @ObservationIgnored private(set) var pendingReachabilityTask: Task<Void, Never>?
+
+    func reachabilityDidChange(isConnected: Bool) {
+        guard isConnected else { return }
+        pendingReachabilityTask = Task { await self.syncAll() }
     }
 
     // MARK: - Private

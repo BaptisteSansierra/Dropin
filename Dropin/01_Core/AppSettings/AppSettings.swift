@@ -12,14 +12,11 @@ import Foundation
     
     var mapSettings: MapSettings { didSet { store() } }
 
-    convenience init(forcedMapType: MapSettings.MapType, forcedPoiConfig: Set<POIBundle>) {
-        self.init()
-        mapSettings.mapType = forcedMapType
-        mapSettings.poiConfig = forcedPoiConfig
-    }
-
-    
     init() {
+        mapSettings = Self.loadPersistedMapSettings()
+    }
+    
+    static private func loadPersistedMapSettings() -> MapSettings {
         let store = UserDefaults.standard
         let keys = DropinApp.userDefaultsKeys.self
 
@@ -52,11 +49,11 @@ import Foundation
             clustering = store.bool(forKey: keys.clustering)
         }
 
-        mapSettings = MapSettings(pinStyle: pinStyle,
-                                  pinSize: pinSize,
-                                  mapType: mapType,
-                                  poiConfig: Set(poiConfig),
-                                  clustering: clustering)
+        return MapSettings(pinStyle: pinStyle,
+                           pinSize: pinSize,
+                           mapType: mapType,
+                           poiConfig: Set(poiConfig),
+                           clustering: clustering)
     }
     
     func equals(_ other: AppSettings) -> Bool {

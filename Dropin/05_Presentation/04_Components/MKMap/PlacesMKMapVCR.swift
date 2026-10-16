@@ -41,6 +41,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         // PlaceAnnotationView collides by default (displayPriority = .defaultHigh)
         // force .required so every pin shows, regardless of density.
         var displayAllPins = false
+        // Used for preview
+        var simplifiedMap = false
 
         static let interactive = Configuration()                 // main map
         static let preview = Configuration(scrollEnabled: false,
@@ -48,7 +50,8 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
                                            showsUserLocation: false,
                                            positionAtLaunch: .region(region: .abbeyRoad
                                             .offset(lat: -0.001)),
-                                           displayAllPins: true)
+                                           displayAllPins: true,
+                                           simplifiedMap: true)
         static let browse = Configuration(positionAtLaunch: .none)  // category/tag map ??
     }
     
@@ -143,8 +146,11 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         //
         // Map style
         //
-
-        if appSettings.mapSettings.diffAffectsMapConfig(mapView.preferredConfiguration) {
+        if config.simplifiedMap {
+            let cfg = MKStandardMapConfiguration()
+            cfg.pointOfInterestFilter = MKPointOfInterestFilter(including: [])
+            mapView.preferredConfiguration = cfg
+        } else if appSettings.mapSettings.diffAffectsMapConfig(mapView.preferredConfiguration) {
             mapView.preferredConfiguration = appSettings.mapSettings.mapConfig()
         } else {
             //print("2 no-op map style")
