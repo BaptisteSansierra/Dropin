@@ -76,21 +76,18 @@ struct AnnotationViewFactory {
             guard let placeAnnotation = annotation as? MKPlaceAnnotationRepresentable else { return nil }
             return createPlaceAppleMarkerView(for: placeAnnotation, on: mapView)
         }
-
-        // Promoted overlay: always a full pin.
-        if let promoted = annotation as? MKPlacePromotedAnnotation {
-            return createPlaceView(for: promoted, on: mapView)
+        
+        // Full pins
+        if let pinAnnotation = annotation as? MKPlacePromotedAnnotation {
+            return createPlaceView(for: pinAnnotation, on: mapView)
         }
 
-        // Base place annotation: a full pin when clustering owns density,
-        // otherwise a dot (the promoted overlay handles full-detail display).
-        guard let dotAnnotation = annotation as? MKPlaceDotAnnotation else {
-            return nil
+        // Dots
+        if let dotAnnotation = annotation as? MKPlaceDotAnnotation, !mapSettings.clustering {
+            return createDotView(for: dotAnnotation, on: mapView)
         }
-        guard !mapSettings.clustering else {
-            return createPlaceView(for: dotAnnotation, on: mapView)
-        }
-        return createDotView(for: dotAnnotation, on: mapView)
+
+        return nil
     }
 
 
@@ -180,6 +177,7 @@ struct AnnotationViewFactory {
         view.annotation = placeAnnotation
         view.configure(color: placeAnnotation.color)
         view.alpha = pinsOpacity
+        view.clusteringIdentifier = nil
         return view
     }
 

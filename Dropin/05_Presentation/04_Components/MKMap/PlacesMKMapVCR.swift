@@ -188,6 +188,7 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
 
         // Reload all annotations (places were reloaded from )
         if context.coordinator.lastReloadGen != mapReloadGen || shouldReloadAnnotation {
+            
             context.coordinator.lastReloadGen = mapReloadGen
             reloadDotAnnotations(mapView)
             if DropinApp.map.usePinPromotionLogic {
@@ -224,15 +225,9 @@ struct PlacesMKMapVCR: UIViewControllerRepresentable {
         // Update selection
         //
         if isActiveTab, mapView.selectedAnnotations.count == 0, let selectedPlaceId {
-            // Select (triggers didSelect → zoom+center) — only while this map is the visible tab.
-            // Prefer the promoted (full pin) annotation if one exists; fall back to
-            // the dot otherwise (e.g. clustering mode, or a place not currently
-            // promoted) — both conform to MKPlaceAnnotationRepresentable.
+            // Select (triggers didSelect → zoom+center) only while this map is the visible tab.
             let match: MKAnnotation? = mapView.annotations
                 .compactMap({ $0 as? MKPlacePromotedAnnotation })
-                .first(where: { $0.id == selectedPlaceId })
-                ?? mapView.annotations
-                .compactMap({ $0 as? MKPlaceDotAnnotation })
                 .first(where: { $0.id == selectedPlaceId })
             if let match {
                 mapView.selectAnnotation(match, animated: true)
@@ -720,7 +715,9 @@ extension PlacesMKMapVCR.Coordinator: MKMapViewDelegate {
                               mapView.region,
                               mapView.visibleMapRect)
         }
+        #if false // no benefits found at the moment
         scheduleDeclutterRefresh(mapView)
+        #endif
     }
 }
 
