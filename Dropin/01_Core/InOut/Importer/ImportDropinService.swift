@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 actor ImportDropinService: ImportServiceProtocol {
-    
+
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
     private let fetchPlaces: FetchPlaces
@@ -18,7 +18,7 @@ actor ImportDropinService: ImportServiceProtocol {
     private let upsertPlace: UpsertPlace
     private let upsertCategory: UpsertCategory
     private let upsertTag: UpsertTag
-    
+
     private var existingHardPlaces: [Place] = []  // contains all the non-deleted existing places on disk
     private var existingCategories: [Category] = []      // contains all the existsing categories on disk
     private var existingTags: [Tag] = []          // contains all the existsing tags on disk
@@ -26,7 +26,7 @@ actor ImportDropinService: ImportServiceProtocol {
     private var duplicatePlacesCount: Int = 0
     private var createdTagsCount: Int = 0
     private var createdCategoriesCount: Int = 0
-    
+
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
@@ -45,41 +45,19 @@ actor ImportDropinService: ImportServiceProtocol {
         self.upsertTag = upsertTag
     }
 
-    func execute(_ url: URL,
-                 onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
-                 progress: @MainActor @Sendable (Int) -> Void,
-                 canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
+    // MARK: - Phase 1: read (parse only, writes nothing)
+    func read(_ url: URL) async throws -> DropinInOut {
         // Handle the security scoping since the file lives outside sandbox
         let accessed = url.startAccessingSecurityScopedResource()
         defer {
             if accessed { url.stopAccessingSecurityScopedResource() }
         }
-        // Read file
         let data = try Data(contentsOf: url)
-        try await execute(data,
-                          onPlacesCountResolved: onPlacesCountResolved,
-                          progress: progress,
-                          canceled: canceled,
-                          completion: completion)
+        return try await read(data)
     }
-    
-    func execute(_ data: Data,
-                 onPlacesCountResolved: @MainActor @Sendable (Int) -> Void,
-                 progress: @MainActor @Sendable (Int) -> Void,
-                 canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
 
-        // Fetch existing
-        existingHardPlaces = try await fetchPlaces()
-            .filter { $0.isActive }
-        existingCategories = try await fetchCategories()
-        existingTags = try await fetchTags()
-
-        guard !Task.isCancelled else { await cancel(canceled); return }
-        
-        // Decode data
-        var export: DropinInOut
+    func read(_ data: Data) async throws -> DropinInOut {
+        let export: DropinInOut
         do {
             export = try decode(data)
         } catch let error as ImportError {
@@ -91,17 +69,29 @@ actor ImportDropinService: ImportServiceProtocol {
         guard export.places.count + export.tags.count + export.categories.count > 0 else {
             throw ImportError.emptyFile
         }
-        
+        return export
+    }
+
+    // MARK: - Phase 2: import (writes)
+    func `import`(_ export: DropinInOut,
+                 progress: @MainActor @Sendable (Int) -> Void,
+                 canceled: @MainActor @Sendable () -> Void,
+                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
+        // Fetch existing
+        existingHardPlaces = try await fetchPlaces()
+            .filter { $0.isActive }
+        existingCategories = try await fetchCategories()
+        existingTags = try await fetchTags()
+
         guard !Task.isCancelled else { await cancel(canceled); return }
-        await onPlacesCountResolved(export.places.count)
-        
+
         // Create items
         do {
             try await createLocalItems(export, progress: progress)
         } catch is CancellationError {
             await cancel(canceled);
         }
-        
+
         // Persist items and complete
         guard !Task.isCancelled else { return }
         try await saveContext()
@@ -125,7 +115,7 @@ actor ImportDropinService: ImportServiceProtocol {
     }
 
     private func createLocalItems(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
-        
+
         var replacedTags = [Tag: Tag]()
         var replacedCategories = [Category: Category]()
 
@@ -150,7 +140,7 @@ actor ImportDropinService: ImportServiceProtocol {
                 createdTagsCount += 1
             }
         }
-        
+
         // Replace category and tags in places
         var updatedPlaces: [Place] = []
         for place in export.places {
@@ -185,7 +175,7 @@ actor ImportDropinService: ImportServiceProtocol {
             await progress(upsertCount)
         }
     }
-    
+
     private func processPlace(_ place: Place) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
@@ -194,15 +184,15 @@ actor ImportDropinService: ImportServiceProtocol {
             //       The existing place is NOT updated with the imported place attributed
             return
         }
-        
+
         // Created place is added to existing places array so we ensure there's no duplicates in the file
         existingHardPlaces.append(place)
-        
+
         // Add to database
         try await upsertPlace(place, shouldSave: false)
         createdPlacesCount += 1
     }
-    
+
     private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Place? {
         for place in existingHardPlaces {
             if place.isIdentical(name: name, coords: coordinates) && place.isActive {
@@ -212,7 +202,7 @@ actor ImportDropinService: ImportServiceProtocol {
         }
         return nil
     }
-    
+
     private func cancel(_ canceled: @MainActor @Sendable () -> Void) async {
         Log.info("DROPIN import canceled")
         await rollbackContext()

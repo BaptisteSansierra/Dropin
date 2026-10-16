@@ -10,6 +10,9 @@
     "-" : {
 
     },
+    "·" : {
+
+    },
     "\"%@\"" : {
 
     },
@@ -4362,22 +4365,6 @@
         }
       }
     },
-    "import.error.mapstr_marker_exists_%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The category %@ already exists, please select a new category name for your Mapstr import"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La catégorie %@ existe déjà, veuillez choisir un nouveau nom de catégorie pour votre import Mapstr"
-          }
-        }
-      }
-    },
     "import.error.title" : {
       "localizations" : {
         "en" : {
@@ -4721,6 +4708,517 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Options de la carte"
+          }
+        }
+      }
+    },
+    "mapstr_categories.conflicts_%lld" : {
+      "comment" : "Mapstr categories screen: conflict note, %lld is the number of places with more than one checked tag",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "**%lld place** has more than one of these. It gets the highest one as its category, the others stay as tags."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "**%lld places** have more than one of these. Each gets the highest one as its category, the others stay as tags."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "**%lld lieu** en a plus d'un parmi ceux-ci. Il prend le plus prioritaire comme catégorie, les autres restent des tags."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "**%lld lieux** en ont plus d'un parmi ceux-ci. Chacun prend le plus prioritaire comme catégorie, les autres restent des tags."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mapstr_categories.conflicts.review" : {
+      "comment" : "Mapstr categories screen: trailing link on the conflict note, pushes MapstrConflictsView",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review ›"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir ›"
+          }
+        }
+      }
+    },
+    "mapstr_categories.empty" : {
+      "comment" : "Mapstr categories screen: empty state for the BECOME CATEGORIES section",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check tags below to turn them into categories."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cochez des tags ci-dessous pour les transformer en catégories."
+          }
+        }
+      }
+    },
+    "mapstr_categories.import_%lld" : {
+      "comment" : "Mapstr categories screen: main import button, %lld is the total number of places to import",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Import %lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Import %lld places"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Importer %lld lieu"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Importer %lld lieux"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mapstr_categories.intro" : {
+      "comment" : "Mapstr categories screen: intro text",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapstr has no categories. Pick the tags that should become categories so your pins get their own colors."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapstr n'a pas de catégories. Choisissez les tags qui doivent devenir des catégories pour donner leur propre couleur à vos épingles."
+          }
+        }
+      }
+    },
+    "mapstr_categories.row.existing_%@" : {
+      "comment" : "Mapstr categories screen: subtitle for a checked tag that matched an existing category, %@ is the category name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Existing \"%@\""
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Existante « %@ »"
+          }
+        }
+      }
+    },
+    "mapstr_categories.row.new_default" : {
+      "comment" : "Mapstr categories screen: subtitle for a checked tag with no suggested icon",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New · default icon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvelle · icône par défaut"
+          }
+        }
+      }
+    },
+    "mapstr_categories.row.new_suggested" : {
+      "comment" : "Mapstr categories screen: subtitle for a checked tag with a suggested icon",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New · icon suggested"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvelle · icône suggérée"
+          }
+        }
+      }
+    },
+    "mapstr_categories.section.categories" : {
+      "comment" : "Mapstr categories screen: BECOME CATEGORIES section header",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Become categories"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deviennent des catégories"
+          }
+        }
+      }
+    },
+    "mapstr_categories.section.categories.hint" : {
+      "comment" : "Mapstr categories screen: BECOME CATEGORIES section trailing hint",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to set priority"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glisser pour définir la priorité"
+          }
+        }
+      }
+    },
+    "mapstr_categories.section.tags" : {
+      "comment" : "Mapstr categories screen: STAY TAGS section header label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restent des tags"
+          }
+        }
+      }
+    },
+    "mapstr_categories.section.tags_%lld" : {
+      "comment" : "Mapstr categories screen: STAY TAGS section header, %lld is the number of tags staying as tags",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tags"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tags"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mapstr_categories.title" : {
+      "comment" : "Mapstr categories screen: nav bar title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categories"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catégories"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.category" : {
+      "comment" : "Mapstr conflicts screen: card label for the winning (category) tag",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catégorie"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.combinations_%lld" : {
+      "comment" : "Mapstr conflicts screen: summary header, number of distinct tag combinations",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld combination"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld combinations"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld combinaison"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld combinaisons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.empty" : {
+      "comment" : "Mapstr conflicts screen: empty state once all conflicts are resolved",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No conflicts left"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus aucun conflit"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.intro" : {
+      "comment" : "Mapstr conflicts screen: intro text",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These places have more than one of your new categories. Each gets the higher one; the other stays as a tag. Swapping changes the order for every place."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces lieux ont plusieurs de vos nouvelles catégories. Chacun garde la plus prioritaire, l'autre reste un tag. Échanger change l'ordre pour tous les lieux."
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.more_%lld" : {
+      "comment" : "Mapstr conflicts screen: trailing chip when a card has more than 3 places, %lld is the remaining count",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld more"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld de plus"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.places_%lld" : {
+      "comment" : "Mapstr conflicts screen: place count, used both in the summary header and per card",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld place"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld places"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieu"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lieux"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.set_category" : {
+      "comment" : "Mapstr conflicts screen: Menu title for 3+ tag groups, picks which tag becomes the category",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set category"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définir la catégorie"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.stays_tag" : {
+      "comment" : "Mapstr conflicts screen: card label for the losing tag(s)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stays a tag"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reste un tag"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.swap" : {
+      "comment" : "Mapstr conflicts screen: button on a 2-tag card, flips winner and loser",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échanger"
+          }
+        }
+      }
+    },
+    "mapstr_conflicts.title" : {
+      "comment" : "Mapstr conflicts screen: nav bar title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflicts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflits"
           }
         }
       }
@@ -7647,154 +8145,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.category_footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All imported places will be categorized under it so you can find them easily"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tous les lieux importés seront classés dans celle-ci pour les retrouver facilement"
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.category_placeholder" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Category name"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom de la catégorie"
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.category_section" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import category"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Catégorie d'import"
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.name_updated_body" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A category with that name already exists, so we adjusted it to keep category names unique. Feel free to edit it before continuing."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une catégorie portant ce nom existe déjà, nous l'avons donc ajustée pour garder des noms uniques. N'hésitez pas à la modifier avant de continuer."
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.name_updated_title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name updated"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom mis à jour"
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.tag_footer" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All imported places will be tagged with this label so you can find them easily."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tous les lieux importés seront tagués avec ce label pour les retrouver facilement."
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.tag_placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tag name"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom du tag"
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.tag_section" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import tag"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tag d'import"
-          }
-        }
-      }
-    },
-    "settings.mapstr_import.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import from Mapstr"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importer depuis Mapstr"
           }
         }
       }

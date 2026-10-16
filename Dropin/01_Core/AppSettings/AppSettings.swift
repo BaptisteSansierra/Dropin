@@ -6,13 +6,19 @@
 //
 
 import Foundation
-//import MapKit
- 
+
 @MainActor
 @Observable class AppSettings {
     
     var mapSettings: MapSettings { didSet { store() } }
 
+    convenience init(forcedMapType: MapSettings.MapType, forcedPoiConfig: Set<POIBundle>) {
+        self.init()
+        mapSettings.mapType = forcedMapType
+        mapSettings.poiConfig = forcedPoiConfig
+    }
+
+    
     init() {
         let store = UserDefaults.standard
         let keys = DropinApp.userDefaultsKeys.self

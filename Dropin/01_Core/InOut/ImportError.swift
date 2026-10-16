@@ -16,7 +16,6 @@ enum ImportError: Error, Equatable, Sendable {
     case corrupted(String)              // JSON decoder failed
     case emptyFile                      // The file contains no places
     case canceled                       // User canceled the import (This one is never thrown but set in ImportStatus)
-    case markerExists(String)           // The import marker already exists
     case unexpectedError(Error)         // Error comes from elsewhere
 
     var localizedDescription: String {
@@ -33,8 +32,6 @@ enum ImportError: Error, Equatable, Sendable {
                 String(localized: "import.error.empty_file")
             case .canceled:
                 String(localized: "import.error.canceled")
-            case .markerExists(let markerName):
-                String(localized: "import.error.mapstr_marker_exists_\(markerName)")
             case .unexpectedError(let error):
                 String(localized: "import.error.unexpected_\(error.localizedDescription)")
         }
@@ -53,8 +50,6 @@ enum ImportError: Error, Equatable, Sendable {
             case (.emptyFile, .emptyFile):
                 return true
             case (.canceled, .canceled):
-                return true
-            case (.markerExists, .markerExists):
                 return true
             case (.unexpectedError, .unexpectedError):
                 return true

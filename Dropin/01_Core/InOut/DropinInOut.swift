@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DropinInOut: Codable {
+struct DropinInOut: Codable, Sendable {
 
     private let CURRENT_VERSION: Int = 1
 

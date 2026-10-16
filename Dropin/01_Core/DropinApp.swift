@@ -92,6 +92,12 @@ struct DropinApp: App {
     // MARK: - Body
     var body: some Scene {
         WindowGroup {
+
+            #if false
+            MockMapstrCategoriesView()
+                .environment(AppSettings())
+            #else
+
             rootContent
                 .task {
                     appContainer.startLocationManager()
@@ -135,6 +141,8 @@ struct DropinApp: App {
                     }
                 }
                 .environment(appSettings)
+            
+            #endif
         }
     }
 

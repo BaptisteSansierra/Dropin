@@ -10,6 +10,10 @@ final class MockRemotePlaceRepository: RemotePlaceRepository, @unchecked Sendabl
     var placesToReturn: [Place]
     var shouldThrowOnUpsert = false
 
+    init() {
+        self.placesToReturn = []
+    }
+
     init(placesToReturn: [Place] = []) {
         self.placesToReturn = placesToReturn
     }

@@ -569,8 +569,11 @@ final class AppContainer {
         return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
-    func createMapstrImportConfigViewModel(baseName: String) -> MapstrImportConfigViewModel {
-        MapstrImportConfigViewModel(baseName: baseName, fetchCategories: FetchCategories(repository: categoryRepository))
+    func createMapstrCategoriesView(plan: MapstrImportPlan,
+                                    onImport: @escaping (CategoryMapping) -> Void) -> MapstrCategoriesView {
+        let vm = MapstrCategoriesViewModel(plan: plan,
+                                           fetchCategories: FetchCategories(repository: categoryRepository))
+        return MapstrCategoriesView(viewModel: vm, onImport: onImport)
     }
 
     // MARK: - about views
