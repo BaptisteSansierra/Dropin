@@ -5877,7 +5877,20 @@
       }
     },
     "placeholder.address_missing" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address will be fetched when you're back online"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'adresse sera récupérée dès que vous serez de nouveau en ligne"
+          }
+        }
+      }
     },
     "placeholder.address2" : {
       "comment" : "Field : Address line 2",
