@@ -8,15 +8,11 @@
 import SwiftUI
 import SwiftData
 
-#if true // NEW IMPLEMENTATION
 struct TagSelectorView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: TagSelectorViewModel
     @Binding private var place: PlaceUIModel
-    @State private var createdTagName: String = ""
-    @State private var createdTagColor: Color
-    @State private var isShowingNameWarn = false
 
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
@@ -25,7 +21,6 @@ struct TagSelectorView: View {
     init(viewModel: TagSelectorViewModel, place: Binding<PlaceUIModel>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
-        _createdTagColor = State(initialValue: Color.random())
     }
 
     // MARK: - Body
@@ -61,7 +56,9 @@ struct TagSelectorView: View {
                 .padding(.bottom, 12)
             }
 
-            createTagView
+            TagCreateView(existing: viewModel.tags.map({ $0.name }),
+                          onCreate: createTag)
+
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
         .task {
@@ -94,57 +91,6 @@ struct TagSelectorView: View {
         }
     }
 
-    private var createTagView: some View {
-        HStack(spacing: 10) {
-            // Color picker
-            /*
-            ZStack {
-                ColorPicker(String(""), selection: $createdTagColor, supportsOpacity: false)
-                    .labelsHidden()
-                Circle()
-                    .frame(width: 15, height: 15)
-                    .foregroundStyle(createdTagColor)
-                    .allowsHitTesting(false)
-            }
-            .frame(width: 38, height: 38)
-            .background(.surface1, in: RoundedRectangle(cornerRadius: 10))
-            .overlay {
-                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
-            }*/
-            VStack {
-                SpectrumColorPicker(color: $createdTagColor)
-                    .frame(width: 27, height: 27)
-            }
-            .frame(width: 38, height: 38)
-            .overlay {
-                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
-            }
-
-            // Tag name
-            TextField("tag_selector.new", text: $createdTagName)
-                .textStyle(.body)
-                .autocorrectionDisabled()
-                .overlay {
-                    if isShowingNameWarn {
-                        ZStack(alignment: .leading) {
-                            Rectangle().fill(.surface2)
-                            Text("placeholder.tag_name")
-                                .textStyle(.bodyError)
-                        }
-                    }
-                }
-            
-            MainSmallButton(text: "common.add", action: createTag)
-                .disabled(createdTagName.isEmpty)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(.surface2)
-        .overlay(alignment: .top) {
-            Rectangle().fill(.fieldBorder).frame(height: 1)
-        }
-    }
-
     private func addTag(_ tag: TagUIModel) {
         place.tags.append(tag)
         viewModel.updateData(place)
@@ -159,188 +105,14 @@ struct TagSelectorView: View {
         viewModel.updateData(place)
     }
     
-    private func createTag() {
-        guard !createdTagName.isEmpty else {
-            withAnimation(.linear(duration: 0.5)) {
-                isShowingNameWarn.toggle()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation(.linear(duration: 0.5)) {
-                        isShowingNameWarn.toggle()
-                    }
-                }
-            }
-            return
-        }
+    private func createTag(name: String, color: String) {
         Task {
-            let newTag = try await viewModel.createTag(name: createdTagName, color: createdTagColor.hex)
+            let newTag = try await viewModel.createTag(name: name,
+                                                       color: color)
             addTag(newTag)
-            createdTagName = ""
-            createdTagColor = Color.random()
         }
     }
 }
-
-#else // OLD IMPLEMENTATION
-struct TagSelectorView: View {
-
-    // MARK: - State & Bindings
-    @State private var viewModel: TagSelectorViewModel
-    @Binding private var place: PlaceUIModel
-    @State private var createdTagName: String = ""
-    @State private var createdTagColor: Color
-    @State private var isShowingNameWarn = false
-
-    // MARK: - Dependencies
-    @Environment(\.dismiss) private var dismiss
-
-    // MARK: - Init
-    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUIModel>) {
-        self._viewModel = State(initialValue: viewModel)
-        self._place = place
-        _createdTagColor = State(initialValue: Color.random())
-    }
-
-    // MARK: - Body
-    var body: some View {
-        VStack {
-            headerView
-            ScrollView {
-                selectedView
-                remainingView
-                createTagView
-            }
-        }
-        .task {
-            Task {
-                do {
-                    try await viewModel.loadTags()
-                    viewModel.updateData(place)
-                } catch {
-                    assertionFailure("Couldn't load categories")
-                }
-            }
-        }
-    }
-
-    // MARK: - Subviews
-    private var headerView: some View {
-        Group {
-            HStack {
-                Text("tag_selector.title")
-                    .textStyle(.body)
-                    .padding()
-            }
-            Divider()
-        }
-    }
-
-    private var selectedView: some View {
-        Group {
-            let hasTags = viewModel.placeTags.count > 0
-            Text(hasTags ? "tag_selector.selected" : "placeholder.no_tags")
-                .textStyle(.placeholder)
-                .padding()
-
-            if hasTags {
-                FlowLayout(alignment: .leading) {
-                    ForEach(viewModel.placeTags) { tag in
-                        TagView(name: tag.name, color: tag.color)
-                            .onTapGesture {
-                                Task {
-                                    removeTag(tag)
-                                }
-                            }
-                    }
-                }
-                .padding([.bottom, .leading, .trailing])
-            }
-            Divider()
-        }
-    }
-
-    private var remainingView: some View {
-        Group {
-            if viewModel.remainingTags.count > 0 {
-                FlowLayout(alignment: .leading) {
-                    ForEach(viewModel.remainingTags) { tag in
-                        TagView(name: tag.name, color: tag.color)
-                            .onTapGesture {
-                                Task {
-                                    addTag(tag)
-                                }
-                            }
-                    }
-                }
-                .padding()
-                Divider()
-            }
-        }
-    }
-
-    private var createTagView: some View {
-        HStack() {
-            // Color picker
-            ZStack {
-                ColorPicker(String(""), selection: $createdTagColor, supportsOpacity: false)
-                    .labelsHidden()
-                    .padding()
-                Circle()
-                    .frame(width: 15, height: 15)
-                    .foregroundStyle(createdTagColor)
-            }
-            // Tag name
-            TextField("tag_selector.new", text: $createdTagName)
-                .textStyle(.body)
-                .autocorrectionDisabled()
-                .overlay {
-                    if isShowingNameWarn {
-                        ZStack(alignment: .leading) {
-                            Rectangle().fill(.backgroundPrimary)
-                            Text("placeholder.tag_name")
-                                .textStyle(.bodyError)
-                        }
-                    }
-                }
-            Spacer()
-            IcoButton(systemImage: "plus") {
-                guard !createdTagName.isEmpty else {
-                    withAnimation(.linear(duration: 0.5)) {
-                        isShowingNameWarn.toggle()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            withAnimation(.linear(duration: 0.5)) {
-                                isShowingNameWarn.toggle()
-                            }
-                        }
-                    }
-                    return
-                }
-                Task {
-                    let newTag = try await viewModel.createTag(name: createdTagName, color: createdTagColor.hex)
-                    addTag(newTag)
-                    createdTagName = ""
-                    createdTagColor = Color.random()
-                }
-            }
-            .padding(.trailing, 15)
-        }
-    }
-
-    private func addTag(_ tag: TagUIModel) {
-        place.tags.append(tag)
-        viewModel.updateData(place)
-    }
-
-    private func removeTag(_ tag: TagUIModel) {
-        guard let index = place.tags.firstIndex(where: { $0.id == tag.id }) else {
-            assertionFailure("Couldn't remove tag \(tag.name) from selection")
-            return
-        }
-        place.tags.remove(at: index)
-        viewModel.updateData(place)
-    }
-}
-#endif
-
 
 #if DEBUG
 struct MockTagSelectorView: View {

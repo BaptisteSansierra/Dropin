@@ -311,7 +311,7 @@ struct CategoryCreateView: View {
 
 #Preview {
     @Previewable @State var createTrigger = false
-    var ex = ["111", "222"]
+    let ex = ["111", "222"]
     VStack {
         CategoryCreateView(displayMode: .inline, existing: ex) { _, _, _ in }
             .padding()

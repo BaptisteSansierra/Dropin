@@ -15,19 +15,23 @@ import SwiftUI
     var tags: [TagUIModel] = []
     var showingRemoveAlert: Bool = false
     var tagToRemove: TagUIModel? = nil
+    var presentCreateSheet: Bool = false
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchTagsWithCount: FetchTagsWithCount
+    @ObservationIgnored private var createTag: CreateTag
     @ObservationIgnored private var updateTag: UpdateTag
 
     init(_ appContainer: AppContainer,
          coordinator: TagCoordinator,
          fetchTagsWithCount: FetchTagsWithCount,
+         createTag: CreateTag,
          updateTag: UpdateTag,
          syncStatus: SyncStatus) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.fetchTagsWithCount = fetchTagsWithCount
+        self.createTag = createTag
         self.updateTag = updateTag
         self.syncStatus = syncStatus
     }
@@ -66,6 +70,11 @@ import SwiftUI
         tags = items
     }
     
+    func createTag(name: String, color: String) async throws {
+        let tag = Tag(name: name, color: color)
+        try await createTag(tag)
+    }
+
     private func updateTag(_ tag: TagUIModel) async throws {
         try await updateTag(TagMapper.toDomain(tag))
     }

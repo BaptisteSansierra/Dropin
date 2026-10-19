@@ -111,7 +111,7 @@ struct CategoryListView: View {
             CategoryCreateSheetView(existing: viewModel.categories.map({ $0.name }),
                                     onCreate: createCategory)
             .presentationBackground(.backgroundPrimary)
-            .presentationDetents([.height(280)])
+            .presentationDetents([.height(CategoryCreateSheetView.sheetHeight)])
             .presentationDragIndicator(.visible)
         }
     }

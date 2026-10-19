@@ -465,6 +465,7 @@ final class AppContainer {
         let vm = TagListViewModel(self,
                                   coordinator: tagCoordinator,
                                   fetchTagsWithCount: FetchTagsWithCount(repository: tagRepository),
+                                  createTag: CreateTag(repository: tagRepository),
                                   updateTag: UpdateTag(repository: tagRepository),
                                   syncStatus: syncService.syncStatus)
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)

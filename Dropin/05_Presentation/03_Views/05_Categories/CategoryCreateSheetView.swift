@@ -14,6 +14,7 @@ struct CategoryCreateSheetView: View {
     
     private let existing: [String]
     private let onCreate: (String, String, Icon) -> Void
+    static let sheetHeight: CGFloat = 280
 
     init(existing: [String],
          onCreate: @escaping (String, String, Icon) -> Void) {
@@ -50,7 +51,7 @@ struct CategoryCreateSheetView: View {
 
 #Preview {
     @Previewable @State var present = false
-    var ex = ["111", "222"]
+    let ex = ["111", "222"]
     VStack {
         Spacer()
         Button {
@@ -64,7 +65,7 @@ struct CategoryCreateSheetView: View {
         CategoryCreateSheetView(existing: ex) { _, _, _ in
         }
         .presentationBackground(.backgroundPrimary)
-        .presentationDetents([.height(280)])
+        .presentationDetents([.height(CategoryCreateSheetView.sheetHeight)])
         .presentationDragIndicator(.visible)
     }
 }

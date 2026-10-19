@@ -95,7 +95,7 @@ struct ApplePOIViewFactory {
             if let phoneNumber = phoneNumber {
                 phoneNumberView(phoneNumber)
                     .padding(.top, 15)
-                if let url = url {
+                if let _ = url {
                     separator()
                 }
             }

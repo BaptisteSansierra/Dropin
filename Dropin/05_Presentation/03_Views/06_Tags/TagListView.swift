@@ -17,7 +17,7 @@ struct TagListView: View {
             //TagView(name: tag.name, color: tag.color)
             //            ^^^^^^^^         ^^^^^^^^^
             //       read happens inside TagListRow's body — observation is per-row
-
+            
             HStack(spacing: 0) {
                 let nPlaces = tag.placeCount
                 let textColor: Color = nPlaces == 0 ? .textTertiary : .textPrimary
@@ -33,22 +33,22 @@ struct TagListView: View {
             }
         }
     }
-
+    
     // MARK: - State & Bindings
     @State private var viewModel: TagListViewModel
     @Binding private var showingSideMenu: Bool
-        
+    
     // MARK: - private properties
     private var activeTags: [TagUIModel] {
         viewModel.tags.filter { $0.isActive }
     }
-
+    
     // MARK: - init
     init(viewModel: TagListViewModel, showingSideMenu: Binding<Bool>) {
         self.viewModel = viewModel
         self._showingSideMenu = showingSideMenu
     }
-        
+    
     // MARK: - Body
     var body: some View {
         NavigationStack(path: $viewModel.coordinator.path) {
@@ -95,6 +95,10 @@ struct TagListView: View {
             }
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+                ToolbarItem(placement: .topBarTrailing) {
+                    PlusToolbarView(toggleValue: $viewModel.presentCreateSheet)
+                        .frame(width: 44)
+                }
             }
             .alert("alert.remove_tag_title",
                    isPresented: $viewModel.showingRemoveAlert,
@@ -115,6 +119,13 @@ struct TagListView: View {
                     Text("alert.remove_tag_empty_body_\(tag.name)")
                 }
             }
+        }
+        .sheet(isPresented: $viewModel.presentCreateSheet) {
+            TagCreateSheetView(existing: viewModel.tags.map({ $0.name }),
+                               onCreate: createTag)
+            .presentationBackground(.backgroundPrimary)
+            .presentationDetents([.height(TagCreateSheetView.sheetHeight)])
+            .presentationDragIndicator(.visible)
         }
     }
     
@@ -174,7 +185,7 @@ struct TagListView: View {
     private func createPlaceEditView(_ placeRef: PlaceUIModelRef) -> PlaceEditView {
         return viewModel.createPlaceEditView(place: placeRef.place)
     }
-
+    
     @ViewBuilder
     private func resolveDestination(navigationItem: TagNavigationItem) -> some View {
         
@@ -198,6 +209,15 @@ struct TagListView: View {
                 .onAppear {
                     assertionFailure("undefined navigation item \(navigationItem)")
                 }
+        }
+    }
+    
+    private func createTag(name: String, color: String) {
+        viewModel.presentCreateSheet = false
+        Task {
+            try await viewModel.createTag(name: name,
+                                          color: color)
+            try await viewModel.loadTags()
         }
     }
 }

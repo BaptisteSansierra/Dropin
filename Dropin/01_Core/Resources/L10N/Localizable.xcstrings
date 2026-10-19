@@ -6233,6 +6233,7 @@
       }
     },
     "placeholder.tag_name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8320,7 +8321,6 @@
 
     },
     "tag_form.error.name_duplicate" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
