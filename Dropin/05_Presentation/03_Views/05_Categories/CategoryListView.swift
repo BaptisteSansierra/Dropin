@@ -82,6 +82,10 @@ struct CategoryListView: View {
             }
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+                ToolbarItem(placement: .topBarTrailing) {
+                    PlusToolbarView(toggleValue: $viewModel.presentCreateSheet)
+                        .frame(width: 44)
+                }
             }
             .alert("alert.remove_category_title",
                    isPresented: $viewModel.showingRemoveAlert,
@@ -102,6 +106,13 @@ struct CategoryListView: View {
                     Text("alert.remove_category_empty_body_\(category.name)")
                 }
             }
+        }
+        .sheet(isPresented: $viewModel.presentCreateSheet) {
+            CategoryCreateSheetView(existing: viewModel.categories.map({ $0.name }),
+                                    onCreate: createCategory)
+            .presentationBackground(.backgroundPrimary)
+            .presentationDetents([.height(280)])
+            .presentationDragIndicator(.visible)
         }
     }
     
@@ -197,6 +208,16 @@ struct CategoryListView: View {
                 .onAppear {
                     assertionFailure("undefined navigation item \(navigationItem)")
                 }
+        }
+    }
+    
+    private func createCategory(name: String, color: String, icon: Icon) {
+        viewModel.presentCreateSheet = false
+        Task {
+            try await viewModel.createCategory(name: name,
+                                               color: color,
+                                               icon: icon)
+            try await viewModel.loadCategories()
         }
     }
 }

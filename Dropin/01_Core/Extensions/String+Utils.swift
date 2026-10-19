@@ -8,7 +8,12 @@
 import Foundation
 
 extension String {
-    
+
+    var isTrimmedEmpty: Bool {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty
+    }
+
     var nonEmpty: String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed

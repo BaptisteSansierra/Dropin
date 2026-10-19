@@ -53,25 +53,20 @@ struct BurgerToolbarView: View {
     }
 }
 
-struct AddPlaceToolbarView: View {
-    @Binding private var showingCreatePlaceMenu: Bool
+struct PlusToolbarView: View {
+    @Binding private var toggleValue: Bool
     
     var body: some View {
         HStack {
             Button(String(""), systemImage: "plus") {
-                showingCreatePlaceMenu.toggle()
+                toggleValue.toggle()
             }
-//            Button {
-//                showingCreatePlaceMenu.toggle()
-//            } label: {
-//                Image(systemName: showingCreatePlaceMenu ? "plus.circle.fill" : "plus")
-//            }
             .tint(.dropinPrimary)
         }
     }
     
-    init(showingCreatePlaceMenu: Binding<Bool>) {
-        self._showingCreatePlaceMenu = showingCreatePlaceMenu
+    init(toggleValue: Binding<Bool>) {
+        self._toggleValue = toggleValue
     }
 }
 
@@ -122,7 +117,7 @@ struct DropinToolbar {
 
         var body: some ToolbarContent {
             ToolbarItem(placement: .topBarTrailing) {
-                AddPlaceToolbarView(showingCreatePlaceMenu: $showingCreatePlaceMenu)
+                PlusToolbarView(toggleValue: $showingCreatePlaceMenu)
             }
         }
         

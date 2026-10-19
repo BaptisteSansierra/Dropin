@@ -63,6 +63,7 @@ struct SpectrumColorPickerView: View {
                 .onAppear {
                     imageSize = geo.size
                     saturation = Self.extractSaturation(for: color)
+                    saturation = saturation == 0 ? 0.01 : saturation
                     position = Self.circlePosition(for: color, in: geo.size, lightnessRange: lightnessRange)
                 }
                 .onChange(of: geo.size) { _, newSize in
@@ -72,6 +73,7 @@ struct SpectrumColorPickerView: View {
                 .onChange(of: color) { _, newColor in
                     guard !isInternalUpdate else { return }
                     saturation = Self.extractSaturation(for: newColor)
+                    saturation = saturation == 0 ? 0.01 : saturation
                     position = Self.circlePosition(for: newColor, in: geo.size, lightnessRange: lightnessRange)
                 }
             }
@@ -103,7 +105,12 @@ struct SpectrumColorPickerView: View {
     }
 
     private func updateSaturation(_ newValue: Double) {
-        saturation = newValue
+        if newValue > 0 {
+            saturation = newValue
+        } else {
+            // Keep saturation not nil, else all the frame contains multiple times the same value
+            saturation = 0.01
+        }
         isInternalUpdate = true
         color = Self.makeColor(at: position, in: imageSize, saturation: newValue, lightnessRange: lightnessRange)
         isInternalUpdate = false

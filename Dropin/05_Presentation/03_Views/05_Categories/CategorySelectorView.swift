@@ -9,39 +9,45 @@ import SwiftUI
 import SwiftData
 
 
+
+
 // TODO: fix animation when keboard appears
 struct CategorySelectorView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: CategorySelectorViewModel
     @Binding private var place: PlaceUIModel
-    @State private var createdCategoryName: String = ""
-    @State private var createdCategoryColor: Color
-    @State private var createdCategoryIcon: Icon?
-    @State private var isShowingNameWarn = false
-    @State private var showingMarkerPicker = false
-    @State private var markerCircleOpacity: CGFloat = 1
-    @State private var markerPlaceholderOpacity: CGFloat
-    @State private var markerPlaceholderColor: Color
-    @State private var markerPlaceholderFont: Font
-    @FocusState private var isNameFieldFocused: Bool
 
+
+
+
+    
+    
+    
+//    @State private var createdCategoryName: String = ""
+//    @State private var createdCategoryColor: Color
+//    @State private var createdCategoryIcon: Icon?
+//    @State private var markerPlaceholderColor: Color
+//    @State private var markerPlaceholderFont: Font
+//    @FocusState private var isNameFieldFocused: Bool
+//    @State private var markerCircleOpacity: CGFloat = 1
+//    @State private var markerPlaceholderOpacity: CGFloat
+
+    
+    
+    
     // MARK: - Dependencies
     @Environment(\.dismiss) private var dismiss
 
-    // MARK: - Private properties
-    private let markerPlaceholderOpacityDefault: CGFloat = 0.3
-    private let markerPlaceholderColorDefault: Color = .textPrimary
-    private let markerPlaceholderFontDefault: Font = .system(size: 15)
 
     // MARK: - init
     init(viewModel: CategorySelectorViewModel, place: Binding<PlaceUIModel>) {
         self._viewModel = State(initialValue: viewModel)
         self._place = place
-        _createdCategoryColor = State(initialValue: Color.random())
-        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
-        markerPlaceholderColor = markerPlaceholderColorDefault
-        markerPlaceholderFont = markerPlaceholderFontDefault
+//        _createdCategoryColor = State(initialValue: Color.random())
+//        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
+//        markerPlaceholderColor = markerPlaceholderColorDefault
+//        markerPlaceholderFont = markerPlaceholderFontDefault
     }
 
     // MARK: - Body
@@ -58,8 +64,8 @@ struct CategorySelectorView: View {
             }
             .padding(.top, 16)
 
-            createCategoryView
-                //.opacity(isNameFieldFocused ? 0 : 1)
+            CategoryCreateView(existing: viewModel.categories.map({ $0.name }),
+                               onCreate: createCategory)
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
         .task {
@@ -71,14 +77,6 @@ struct CategorySelectorView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showingMarkerPicker) {
-            MarkerListView(selected: $createdCategoryIcon)
-        }
-        //.toolbar {
-        //    ToolbarItemGroup(placement: .keyboard) {
-        //        createCategoryView
-        //    }
-        //}
     }
 
     // MARK: - Header
@@ -174,108 +172,14 @@ struct CategorySelectorView: View {
                     .foregroundStyle(.white)
             }
     }
-
-    // MARK: - Create bar
-    private var createCategoryView: some View {
-        HStack(spacing: 10) {
-            // Color picker
-            VStack {
-                SpectrumColorPicker(color: $createdCategoryColor)
-                    .frame(width: 27, height: 27)
-            }
-            .frame(width: 38, height: 38)
-            .overlay {
-                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
-            }
-
-            // Marker picker
-            ZStack {
-                if let icon = createdCategoryIcon {
-                    IconView(icon: icon)
-                        .sizeCallout()
-                        .foregroundStyle(.dropinPrimary)
-                } else {
-                    Image(systemName: "tag")
-                        .foregroundStyle(markerPlaceholderColor)
-                        .font(markerPlaceholderFont)
-                        .opacity(markerPlaceholderOpacity)
-                }
-            }
-            .frame(width: 38, height: 38)
-            .background(.surface1, in: RoundedRectangle(cornerRadius: 10))
-            .overlay {
-                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
-            }
-            .opacity(markerCircleOpacity)
-            .onTapGesture {
-                showingMarkerPicker.toggle()
-            }
-
-            // Category name
-            TextField("category_selector.new", text: $createdCategoryName)
-                .textStyle(.body)
-                .autocorrectionDisabled()
-                .focused($isNameFieldFocused)
-                .overlay {
-                    if isShowingNameWarn {
-                        ZStack(alignment: .leading) {
-                            Rectangle().fill(.surface2)
-                            Text("placeholder.category_name")
-                                .textStyle(.bodyError)
-                        }
-                    }
-                }
-            
-            MainSmallButton(text: "common.add", action: createCategory)
-                .disabled(createdCategoryName.isEmpty)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(.surface2)
-        .overlay(alignment: .top) {
-            Rectangle().fill(.fieldBorder).frame(height: 1)
-        }
-    }
-
+    
     // MARK: - private methods
-    private func createCategory() {
-        guard let groupIcon = createdCategoryIcon else {
-            withAnimation(.linear(duration: 0.25)) {
-                markerCircleOpacity = 0
-                markerPlaceholderColor = .warning
-                markerPlaceholderFont = .system(size: 22)
-                markerPlaceholderOpacity = 1
-            } completion: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation(.easeOut(duration: 0.25)) {
-                        markerCircleOpacity = 1
-                        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
-                        markerPlaceholderColor = markerPlaceholderColorDefault
-                        markerPlaceholderFont = markerPlaceholderFontDefault
-                    }
-                }
-            }
-            return
-        }
-        guard !createdCategoryName.isEmpty else {
-            withAnimation(.linear(duration: 0.5)) {
-                isShowingNameWarn.toggle()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation(.linear(duration: 0.5)) {
-                        isShowingNameWarn.toggle()
-                    }
-                }
-            }
-            return
-        }
+    private func createCategory(name: String, color: String, icon: Icon) {
         Task {
-            let newCategory = try await viewModel.createCategory(name: createdCategoryName,
-                                                           color: createdCategoryColor.hex,
-                                                           icon: groupIcon)
+            let newCategory = try await viewModel.createCategory(name: name,
+                                                                 color: color,
+                                                                 icon: icon)
             place.category = newCategory
-            createdCategoryName = ""
-            createdCategoryColor = Color.random()
-            createdCategoryIcon = nil
             dismiss()
         }
     }

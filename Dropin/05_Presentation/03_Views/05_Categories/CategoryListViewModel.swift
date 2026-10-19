@@ -15,19 +15,23 @@ import SwiftUI
     var categories: [CategoryUIModel] = []
     var showingRemoveAlert: Bool = false
     var groupToRemove: CategoryUIModel? = nil
+    var presentCreateSheet: Bool = false
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchCategoriesWithCount: FetchCategoriesWithCount
+    @ObservationIgnored private var createCategory: CreateCategory
     @ObservationIgnored private var updateCategory: UpdateCategory
 
     init(_ appContainer: AppContainer,
          coordinator: CategoryCoordinator,
          fetchCategoriesWithCount: FetchCategoriesWithCount,
+         createCategory: CreateCategory,
          updateCategory: UpdateCategory,
          syncStatus: SyncStatus) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.fetchCategoriesWithCount = fetchCategoriesWithCount
+        self.createCategory = createCategory
         self.updateCategory = updateCategory
         self.syncStatus = syncStatus
     }
@@ -64,6 +68,11 @@ import SwiftUI
         let result = try await fetchCategoriesWithCount()
         let items = result.map { CategoryMapper.toUI($0, placeCount: $1) }
         categories = items
+    }
+
+    func createCategory(name: String, color: String, icon: Icon) async throws {
+        let category = Category(name: name, color: color, icon: icon)
+        try await createCategory(category)
     }
 
     private func updateCategory(_ category: CategoryUIModel) async throws {

@@ -10,12 +10,40 @@ import SwiftUI
 struct SpectrumColorPicker: View {
 
     @Binding var color: Color
+    @Binding var externalPickerTriggger: Bool
     @State private var presentSheet = false
     private var didEnd: (() -> Void)? = nil
+    private let useExternalTrigger : Bool
+
+    private var trigger: Binding<Bool> {
+        Binding {
+            guard useExternalTrigger else {
+                return presentSheet
+            }
+            return externalPickerTriggger
+        } set: { v in
+            guard useExternalTrigger else {
+                presentSheet = v
+                return
+            }
+            externalPickerTriggger = v
+        }
+    }
     
     init(color: Binding<Color>, didEnd: (() -> Void)? = nil) {
         self._color = color
+        self._externalPickerTriggger = Binding.constant(false)
         self.didEnd = didEnd
+        self.useExternalTrigger = false
+    }
+    
+    init(color: Binding<Color>,
+         externalPickerTriggger: Binding<Bool>,
+         didEnd: (() -> Void)? = nil) {
+        self._color = color
+        self._externalPickerTriggger = externalPickerTriggger
+        self.didEnd = didEnd
+        self.useExternalTrigger = true
     }
 
     var body: some View {
@@ -37,9 +65,13 @@ struct SpectrumColorPicker: View {
             .frame(width: size(geoProxy), height: size(geoProxy))
         }
         .onTapGesture {
-            presentSheet.toggle()
+            guard useExternalTrigger else {
+                presentSheet.toggle()
+                return
+            }
+            externalPickerTriggger.toggle()
         }
-        .sheet(isPresented: $presentSheet, onDismiss: {
+        .sheet(isPresented: trigger, onDismiss: {
             didEnd?()
         }) {
             SpectrumColorPickerSheetView(color: $color)
@@ -56,17 +88,22 @@ struct SpectrumColorPicker: View {
 
 #Preview {
     @Previewable @State var color: Color = .random()
-    
+    @Previewable @State var trigger: Bool = false
+
     VStack(spacing: 20) {
         HStack {
             SpectrumColorPicker(color: $color)
                 .frame(width: 40)
             SpectrumColorPicker(color: $color)
                 .frame(width: 75)
-            SpectrumColorPicker(color: $color)
+            SpectrumColorPicker(color: $color, externalPickerTriggger: $trigger)
                 .frame(width: 100)
         }
-        .padding(.top, 100)
-        Spacer()
+        .padding(.bottom, 50)
+        Text("TRIGGGER")
+            .onTapGesture {
+                trigger.toggle()
+            }
     }
+    .padding(.top, 100)
 }

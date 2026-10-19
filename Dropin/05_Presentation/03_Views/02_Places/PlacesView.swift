@@ -134,7 +134,7 @@ struct PlacesView: View {
             .frame(width: 44)
 
             if viewModel.selectedTab == 0 {
-                AddPlaceToolbarView(showingCreatePlaceMenu: $viewModel.showingCreatePlaceMenu)
+                PlusToolbarView(toggleValue: $viewModel.showingCreatePlaceMenu)
                     .frame(width: 44)
             } else {
                 Menu("common.sort", systemImage: "arrow.up.arrow.down") {

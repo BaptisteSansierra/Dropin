@@ -1509,6 +1509,22 @@
         }
       }
     },
+    "category_form.error.name_duplicate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A category with this name already exists"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une catégorie avec ce nom existe déjà"
+          }
+        }
+      }
+    },
     "category_list_view.num_places_%lld" : {
       "localizations" : {
         "en" : {
@@ -2196,6 +2212,22 @@
         }
       }
     },
+    "common.color" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur"
+          }
+        }
+      }
+    },
     "common.continue" : {
       "localizations" : {
         "en" : {
@@ -2608,6 +2640,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Depuis Apple Maps"
+          }
+        }
+      }
+    },
+    "common.icon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icône"
           }
         }
       }
@@ -4137,6 +4185,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible d’obtenir l’adresse"
+          }
+        }
+      }
+    },
+    "error.icon_needed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an icon"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez une icône"
+          }
+        }
+      }
+    },
+    "error.name_needed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrez un nom"
           }
         }
       }
@@ -8238,6 +8318,23 @@
     },
     "Shown on the map to help you find your way. Your places always stay visible." : {
 
+    },
+    "tag_form.error.name_duplicate" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tag with this name already exists"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un tag avec ce nom existe déjà"
+          }
+        }
+      }
     },
     "tag_list_view.num_places_%lld" : {
       "localizations" : {

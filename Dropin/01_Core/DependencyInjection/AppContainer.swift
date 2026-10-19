@@ -490,21 +490,22 @@ final class AppContainer {
 
     func createCategoryListView(showingSideMenu: Binding<Bool>) -> CategoryListView {
         let vm = CategoryListViewModel(self,
-                                    coordinator: groupCoordinator,
-                                    fetchCategoriesWithCount: FetchCategoriesWithCount(repository: categoryRepository),
-                                    updateCategory: UpdateCategory(repository: categoryRepository),
-                                    syncStatus: syncService.syncStatus)
+                                       coordinator: groupCoordinator,
+                                       fetchCategoriesWithCount: FetchCategoriesWithCount(repository: categoryRepository),
+                                       createCategory: CreateCategory(repository: categoryRepository),
+                                       updateCategory: UpdateCategory(repository: categoryRepository),
+                                       syncStatus: syncService.syncStatus)
         return CategoryListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
     func createCategoryDetailsView(category: CategoryUIModel) -> CategoryDetailsView {
         let vm = CategoryDetailsViewModel(self,
-                                       locationManager: locationManager,
-                                       coordinator: groupCoordinator,
-                                       category: category,
-                                       updateCategory: UpdateCategory(repository: categoryRepository),
-                                       fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository),
-                                       updatePlace: UpdatePlace(repository: placeRepository))
+                                          locationManager: locationManager,
+                                          coordinator: groupCoordinator,
+                                          category: category,
+                                          updateCategory: UpdateCategory(repository: categoryRepository),
+                                          fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository),
+                                          updatePlace: UpdatePlace(repository: placeRepository))
         return CategoryDetailsView(viewModel: vm)
     }
 
