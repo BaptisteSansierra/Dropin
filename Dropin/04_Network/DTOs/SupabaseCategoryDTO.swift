@@ -13,6 +13,8 @@ struct SupabaseCategoryDTO: Codable {
     let createdAt: Date
     let updatedAt: Date
     let deletedAt: Date?
+    let importedAt: Date?
+    let importSrc: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -23,6 +25,8 @@ struct SupabaseCategoryDTO: Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
+        case importedAt = "imported_at"
+        case importSrc = "import_source"
     }
 
     /// Explicit encode so `deleted_at: null` is sent over the wire (Postgrest upsert would
@@ -37,6 +41,8 @@ struct SupabaseCategoryDTO: Codable {
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)
+        try c.encode(importedAt, forKey: .importedAt)
+        try c.encode(importSrc, forKey: .importSrc)
     }
 
     init(from category: Category, userId: UUID) {
@@ -48,11 +54,14 @@ struct SupabaseCategoryDTO: Codable {
         self.createdAt = category.createdAt
         self.updatedAt = category.updatedAt
         self.deletedAt = category.deletedAt
+        self.importedAt = category.importedAt
+        self.importSrc  = category.importSrc?.rawValue
     }
 
     func toDomain() -> Category {
         Category(id: id, name: name, color: color,
                     icon: Icon(rawValue: icon) ?? .sf("questionmark"),
-                    createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+                    createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt,
+                    importedAt: importedAt, importSrc: importSrc.flatMap(ImportSource.init(rawValue:)))
     }
 }

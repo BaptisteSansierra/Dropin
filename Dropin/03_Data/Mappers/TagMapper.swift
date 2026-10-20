@@ -15,7 +15,9 @@ public enum TagMapper {
                             color: sdTag.color,
                             createdAt: sdTag.createdAt,
                             updatedAt: sdTag.updatedAt,
-                            deletedAt: sdTag.deletedAt)
+                            deletedAt: sdTag.deletedAt,
+                            importedAt: sdTag.importedAt,
+                            importSrc: sdTag.importSrc.flatMap(ImportSource.init(rawValue:)))
         return tag
     }
     
@@ -28,6 +30,8 @@ public enum TagMapper {
         sd.createdAt = tag.createdAt
         sd.updatedAt = tag.updatedAt
         sd.deletedAt = tag.deletedAt
+        sd.importedAt = tag.importedAt
+        sd.importSrc = tag.importSrc?.rawValue
         return sd
     }
 }

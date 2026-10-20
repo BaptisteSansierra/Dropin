@@ -63,7 +63,9 @@ struct PlaceImageUIModel: Identifiable {
     var createdAt: Date
     var updatedAt: Date
     var deletedAt: Date? = nil
-    
+    let importedAt: Date?
+    let importSrc: ImportSource?
+
     var categoryColor: Color {
         guard let category = self.category else { return .dropinPrimary }
         return category.color
@@ -116,7 +118,11 @@ struct PlaceImageUIModel: Identifiable {
          appleNotFoundAt: Date? = nil,
          createdAt: Date,
          updatedAt: Date,
-         deletedAt: Date? = nil) {
+         deletedAt: Date? = nil,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
+        self.importedAt = importedAt
+        self.importSrc = importSrc
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -145,6 +151,8 @@ struct PlaceImageUIModel: Identifiable {
         let now = Date()
         createdAt = now
         updatedAt = now
+        importedAt = nil
+        importSrc = nil
     }
 
     // Used for draft place from POI
@@ -160,6 +168,8 @@ struct PlaceImageUIModel: Identifiable {
         let now = Date()
         createdAt = now
         updatedAt = now
+        importedAt = nil
+        importSrc = nil
     }
     init(name: String?,
          coordinates: CLLocationCoordinate2D,
@@ -175,6 +185,8 @@ struct PlaceImageUIModel: Identifiable {
         let now = Date()
         createdAt = now
         updatedAt = now
+        importedAt = nil
+        importSrc = nil
     }
 
     func copy() -> PlaceUIModel {
@@ -196,7 +208,9 @@ struct PlaceImageUIModel: Identifiable {
                             appleNotFoundAt: appleNotFoundAt,
                             createdAt: createdAt,
                             updatedAt: updatedAt,
-                            deletedAt: deletedAt)
+                            deletedAt: deletedAt,
+                            importedAt: importedAt,
+                            importSrc: importSrc)
     }
 
     func update(from other: PlaceUIModel) {

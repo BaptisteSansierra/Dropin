@@ -107,7 +107,7 @@ final class ImportCoordinator {
                 guard ext == DropinApp.strings.exportExtension else {
                     throw ImportError.unrecognizedFormat(.dropin, DropinApp.strings.exportExtension, ext)
                 }
-            case .mapstr, .google:
+            case .mapstr:
                 guard ext == "geojson" else {
                     throw ImportError.unrecognizedFormat(.mapstr, "geojson", ext)
                 }

@@ -29,7 +29,7 @@ extension Category: Codable {
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
-    
+
     init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try c.decode(UUID.self, forKey: .id)
@@ -39,6 +39,9 @@ extension Category: Codable {
         self.createdAt = try c.decode(Date.self, forKey: .createdAt)
         self.updatedAt = try c.decode(Date.self, forKey: .updatedAt)
         self.deletedAt = try c.decodeIfPresent(Date.self, forKey: .deletedAt)
+        // Not part of the dropin wire format
+        self.importedAt = nil
+        self.importSrc = nil
     }
 }
 

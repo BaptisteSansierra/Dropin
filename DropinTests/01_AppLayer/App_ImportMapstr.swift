@@ -159,6 +159,16 @@ struct App_ImportMapstr {
         // No tag was converted, so no place gets a category
         #expect(madeleine.category == nil)
         #expect(judy.category == nil)
+        
+        // Check import source
+        let importedAt = places[0].importedAt
+        let importSrc = places[0].importSrc
+        #expect(importedAt != nil)
+        #expect(importedAt == tags[0].importedAt)
+        //#expect(importedAt == categories[0].importedAt)
+        #expect(importSrc == ImportSource.mapstr)
+        #expect(importSrc == tags[0].importSrc)
+       // #expect(importSrc == categories[0].importSrc)
     }
 
     ///
@@ -221,6 +231,17 @@ struct App_ImportMapstr {
         #expect(madeleine.tags.count == 2)
         // Check judy has 4 tags
         #expect(judy.tags.count == 4)
+
+        // The matched/reused existing tags must be untouched: still no import provenance
+        guard let reusedCafe = tags.first(where: { $0.id == t1Local.id }),
+              let reusedGrignotage = tags.first(where: { $0.id == t2Local.id }) else {
+            Issue.record("reused tags not found")
+            return
+        }
+        #expect(reusedCafe.importedAt == nil)
+        #expect(reusedCafe.importSrc == nil)
+        #expect(reusedGrignotage.importedAt == nil)
+        #expect(reusedGrignotage.importSrc == nil)
     }
 
     ///
@@ -361,6 +382,9 @@ struct App_ImportMapstr {
         let categories = try await localCategoryRepo.fetch()
         #expect(categories.count == 1)
         #expect(categories.first?.name == "Restaurant")
+        // Check import source on the freshly-created category
+        #expect(categories.first?.importedAt != nil)
+        #expect(categories.first?.importSrc == ImportSource.mapstr)
 
         let places = try await localPlaceRepo.fetch()
         guard let madeleine = places.first(where: { $0.name == madeleineName }) else {
@@ -374,8 +398,14 @@ struct App_ImportMapstr {
         // madeleine had ["À essayer", "Restaurant"] — Restaurant becomes its category, "À essayer" stays a tag
         #expect(madeleine.category?.name == "Restaurant")
         #expect(madeleine.tags.count == 1)
-        // judy never had "Restaurant" — no category, all 4 tags kept
+        // judy never had "Restaurant": no category, all 4 tags kept
         #expect(judy.category == nil)
         #expect(judy.tags.count == 4)
+
+        // Category, places and the places' own tags all share the exact same import instant
+        #expect(madeleine.importedAt == categories.first?.importedAt)
+        #expect(judy.importedAt == categories.first?.importedAt)
+        #expect(madeleine.importSrc == ImportSource.mapstr)
+        #expect(judy.importSrc == ImportSource.mapstr)
     }
 }

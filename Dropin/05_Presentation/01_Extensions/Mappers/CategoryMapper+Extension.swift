@@ -24,10 +24,12 @@ extension CategoryMapper {
                               places: [],
                               createdAt: category.createdAt,
                               updatedAt: category.updatedAt,
-                              deletedAt: category.deletedAt)
+                              deletedAt: category.deletedAt,
+                              importedAt: category.importedAt,
+                              importSrc: category.importSrc)
         return groupUI
     }
-    
+
     static func toDomain(_ groupUI: CategoryUIModel) -> Category {
         let category = Category(id: groupUI.id,
                                 name: groupUI.name,
@@ -35,7 +37,9 @@ extension CategoryMapper {
                                 icon: groupUI.icon,
                                 createdAt: groupUI.createdAt,
                                 updatedAt: groupUI.updatedAt,
-                                deletedAt: groupUI.deletedAt)
+                                deletedAt: groupUI.deletedAt,
+                                importedAt: groupUI.importedAt,
+                                importSrc: groupUI.importSrc)
         return category
     }
 }

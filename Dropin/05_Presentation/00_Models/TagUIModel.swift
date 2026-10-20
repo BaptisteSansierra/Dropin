@@ -17,6 +17,8 @@ import SwiftUI
     var createdAt: Date
     var updatedAt: Date
     var deletedAt: Date?
+    let importedAt: Date?
+    let importSrc: ImportSource?
 
     // used to get place count when places are not populated
     var placeCount: Int = -1
@@ -24,14 +26,16 @@ import SwiftUI
     var isActive: Bool {
         deletedAt == nil
     }
-    
+
     init(id: UUID,
          name: String,
          color: String,
          places: [PlaceUIModel],
          createdAt: Date,
          updatedAt: Date,
-         deletedAt: Date?) {
+         deletedAt: Date?,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
         self.id = id
         self.name = name
         self.color = Color(rgba: color)
@@ -39,5 +43,7 @@ import SwiftUI
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
 }

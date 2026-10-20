@@ -28,7 +28,7 @@ struct PlaceDTO: Decodable {
     var createdAt: Date
     var updatedAt: Date
     var deletedAt: Date?
-    
+
     init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: Place.CodingKeys.self)
         self.id = try c.decode(UUID.self, forKey: .id)

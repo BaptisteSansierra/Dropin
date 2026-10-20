@@ -39,7 +39,9 @@ public enum PlaceMapper {
                           appleNotFoundAt: sdPlace.appleNotFoundAt,
                           createdAt: sdPlace.createdAt,
                           updatedAt: sdPlace.updatedAt,
-                          deletedAt: sdPlace.deletedAt)
+                          deletedAt: sdPlace.deletedAt,
+                          importedAt: sdPlace.importedAt,
+                          importSrc: sdPlace.importSrc.flatMap(ImportSource.init(rawValue:)))
         return place
     }
     
@@ -67,6 +69,8 @@ public enum PlaceMapper {
         sd.createdAt = place.createdAt
         sd.updatedAt = place.updatedAt
         sd.deletedAt = place.deletedAt
+        sd.importedAt = place.importedAt
+        sd.importSrc = place.importSrc?.rawValue
         return sd
     }
 }

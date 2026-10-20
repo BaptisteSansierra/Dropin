@@ -20,6 +20,9 @@ final class CategoryRecord {
     var updatedAt: Date     // Set on every mutation; drives dirty detection
     var syncedAt: Date?     // Set on successful push; nil = never synced
     var deletedAt: Date?    // Soft delete
+    // Import source
+    var importedAt: Date? = nil
+    var importSrc: String? = nil
 
     init(identifier: UUID, name: String, color: String, icon: Icon, places: [PlaceRecord] = []) {
         self.identifier = identifier

@@ -23,17 +23,21 @@ extension TagMapper {
                           places: [],
                           createdAt: tag.createdAt,
                           updatedAt: tag.updatedAt,
-                          deletedAt: tag.deletedAt)
+                          deletedAt: tag.deletedAt,
+                          importedAt: tag.importedAt,
+                          importSrc: tag.importSrc)
         return tagUI
     }
-    
+
     static func toDomain(_ tagUI: TagUIModel) -> Tag {
         let tag = Tag(id: tagUI.id,
                             name: tagUI.name,
                             color: tagUI.color.hex,
                             createdAt: tagUI.createdAt,
                             updatedAt: tagUI.updatedAt,
-                            deletedAt: tagUI.deletedAt)
+                            deletedAt: tagUI.deletedAt,
+                            importedAt: tagUI.importedAt,
+                            importSrc: tagUI.importSrc)
         return tag
     }
 }

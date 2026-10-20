@@ -180,6 +180,8 @@ actor ImportMapstrService: ImportServiceProtocol {
     private func createLocalItems(_ plan: MapstrImportPlan,
                                   mapping: CategoryMapping,
                                   progress: @MainActor @Sendable (Int) -> Void) async throws {
+        // Every entity created by this import run shares the same instant.
+        let importDate = Date()
         let resolutions = plan.resolve(mapping)
         let resolutionByPlaceID = Dictionary(uniqueKeysWithValues: resolutions.map { ($0.placeID, $0) })
 
@@ -195,7 +197,8 @@ actor ImportMapstrService: ImportServiceProtocol {
                         Log.warning("MAPSTR import: existing category \(categoryID) not found for tag \(conversion.tagID)")
                     }
                 case .new(let name, let color, let icon):
-                    let category = Category(name: name, color: color, icon: icon)
+                    let category = Category(name: name, color: color, icon: icon,
+                                            importedAt: importDate, importSrc: .mapstr)
                     try await upsertCategory(category, shouldSave: false)
                     existingCategories.append(category)
                     createdCategoriesCount += 1
@@ -213,7 +216,8 @@ actor ImportMapstrService: ImportServiceProtocol {
             if let existingTag = existingTags.first(where: { $0.name.lemmaNormalized == mapstrTag.name.lemmaNormalized && $0.isActive }) {
                 tagByID[tagID] = existingTag
             } else {
-                let tag = Tag(name: mapstrTag.name, color: mapstrTag.color)
+                let tag = Tag(name: mapstrTag.name, color: mapstrTag.color,
+                              importedAt: importDate, importSrc: .mapstr)
                 try await upsertTag(tag, shouldSave: false)
                 existingTags.append(tag)
                 createdTagsCount += 1
@@ -229,7 +233,8 @@ actor ImportMapstrService: ImportServiceProtocol {
             try await processPlace(place,
                                    resolution: resolution,
                                    categoryByTagID: categoryByTagID,
-                                   tagByID: tagByID)
+                                   tagByID: tagByID,
+                                   importDate: importDate)
             upsertCount += 1
             await progress(upsertCount)
         }
@@ -238,7 +243,8 @@ actor ImportMapstrService: ImportServiceProtocol {
     private func processPlace(_ place: MapstrPlace,
                               resolution: PlaceResolution,
                               categoryByTagID: [String: Category],
-                              tagByID: [String: Tag]) async throws {
+                              tagByID: [String: Tag],
+                              importDate: Date) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
             duplicatePlacesCount += 1
@@ -257,7 +263,9 @@ actor ImportMapstrService: ImportServiceProtocol {
                              tags: tags,
                              category: category,
                              icon: place.icon,
-                             notes: place.notes)
+                             notes: place.notes,
+                             importedAt: importDate,
+                             importSrc: .mapstr)
 
         // Created place is added to existing places array so we ensure there's no duplicates in the file
         existingHardPlaces.append(newPlace)

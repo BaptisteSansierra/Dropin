@@ -49,7 +49,9 @@ extension PlaceMapper {
                               appleNotFoundAt: place.appleNotFoundAt,
                               createdAt: place.createdAt,
                               updatedAt: place.updatedAt,
-                              deletedAt: place.deletedAt)
+                              deletedAt: place.deletedAt,
+                              importedAt: place.importedAt,
+                              importSrc: place.importSrc)
         if !skipRelationships {
             groupUI?.places.append(placeUI)
             for i in 0..<tagsUI.count {
@@ -86,7 +88,9 @@ extension PlaceMapper {
                                 appleNotFoundAt: placeUI.appleNotFoundAt,
                                 createdAt: placeUI.createdAt,
                                 updatedAt: placeUI.updatedAt,
-                                deletedAt: placeUI.deletedAt)
+                                deletedAt: placeUI.deletedAt,
+                                importedAt: placeUI.importedAt,
+                                importSrc: placeUI.importSrc)
         return place
     }
 }

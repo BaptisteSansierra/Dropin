@@ -16,7 +16,9 @@ public enum CategoryMapper {
                                 icon: sdCategory.icon,
                                 createdAt: sdCategory.createdAt,
                                 updatedAt: sdCategory.updatedAt,
-                                deletedAt: sdCategory.deletedAt)
+                                deletedAt: sdCategory.deletedAt,
+                                importedAt: sdCategory.importedAt,
+                                importSrc: sdCategory.importSrc.flatMap(ImportSource.init(rawValue:)))
         return category
     }
     
@@ -30,6 +32,8 @@ public enum CategoryMapper {
         sd.createdAt = category.createdAt
         sd.updatedAt = category.updatedAt
         sd.deletedAt = category.deletedAt
+        sd.importedAt = category.importedAt
+        sd.importSrc = category.importSrc?.rawValue
         return sd
     }
 }

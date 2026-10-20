@@ -14,6 +14,8 @@ struct Tag: Hashable, Sendable {
     let createdAt: Date
     var updatedAt: Date
     var deletedAt: Date?
+    var importedAt: Date?
+    var importSrc: ImportSource?
     // Note: places are not stored here to avoid bidirectional relationships
     // Place owns the relationship
 
@@ -23,16 +25,20 @@ struct Tag: Hashable, Sendable {
          color: String,
          createdAt: Date,
          updatedAt: Date,
-         deletedAt: Date?) {
+         deletedAt: Date?,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
         self.id = id
         self.name = name
         self.color = color
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
-    
-    init(name: String, color: String) {
+
+    init(name: String, color: String, importedAt: Date? = nil, importSrc: ImportSource? = nil) {
         self.id = UUID()
         self.name = name
         self.color = color
@@ -40,6 +46,8 @@ struct Tag: Hashable, Sendable {
         self.createdAt = now
         self.updatedAt = now
         self.deletedAt = nil
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
     
     func deleted(deletedAt: Date) -> Tag {
@@ -59,7 +67,16 @@ struct Tag: Hashable, Sendable {
         copy.updatedAt = Date()
         return copy
     }
-    
+
+    /// Used by importers to stamp provenance on an already-constructed Tag
+    /// (e.g. one just decoded from a file).
+    func withImportProvenance(importedAt: Date, importSrc: ImportSource) -> Tag {
+        var copy = self
+        copy.importedAt = importedAt
+        copy.importSrc = importSrc
+        return copy
+    }
+
     static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id
     }

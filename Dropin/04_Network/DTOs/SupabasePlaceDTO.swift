@@ -27,6 +27,8 @@ struct SupabasePlaceDTO: Codable {
     let createdAt: Date
     let updatedAt: Date
     let deletedAt: Date?
+    let importedAt: Date?
+    let importSrc: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -50,9 +52,11 @@ struct SupabasePlaceDTO: Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
+        case importedAt = "imported_at"
+        case importSrc = "import_source"
     }
 
-    /// Explicit encoder — synthesized Codable uses `encodeIfPresent` for Optionals, which
+    /// Explicit encoder: synthesized Codable uses `encodeIfPresent` for Optionals, which
     /// drops nil keys entirely. Postgrest's `upsert` then leaves those columns untouched,
     /// so e.g. clearing `place.category` silently fails to nullify `group_id` server-side.
     /// Using `encode` writes the key with JSON `null`, which is what we want.
@@ -79,6 +83,8 @@ struct SupabasePlaceDTO: Codable {
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)
+        try c.encode(importedAt, forKey: .importedAt)
+        try c.encode(importSrc, forKey: .importSrc)
     }
 
     init(from place: Place, userId: UUID) {
@@ -103,6 +109,8 @@ struct SupabasePlaceDTO: Codable {
         self.createdAt      = place.createdAt
         self.updatedAt      = place.updatedAt
         self.deletedAt      = place.deletedAt
+        self.importedAt     = place.importedAt
+        self.importSrc      = place.importSrc?.rawValue
     }
 
     func toDomain() -> Place {
@@ -136,6 +144,8 @@ struct SupabasePlaceDTO: Codable {
                      appleNotFoundAt: appleNotFoundAt,
                      createdAt: createdAt,
                      updatedAt: updatedAt,
-                     deletedAt: deletedAt)
+                     deletedAt: deletedAt,
+                     importedAt: importedAt,
+                     importSrc: importSrc.flatMap(ImportSource.init(rawValue:)))
     }
 }

@@ -222,7 +222,7 @@ struct ImportStatusView: View {
                 return "import.title.dropin_\(importStatus.filename)"
             case .mapstr:
                 return "import.title.mapstr_\(importStatus.filename)"
-            case .google, .unknown:
+            case .unknown:
                 assertionFailure("unknown importer")
                 return "unknown"
         }

@@ -32,6 +32,8 @@ struct Place: Hashable, Sendable {
     var createdAt: Date     // Set at creation
     var updatedAt: Date     // Set on every mutation; drives dirty detection
     var deletedAt: Date?    // Soft delete
+    var importedAt: Date?
+    var importSrc: ImportSource?
 
     // Used by mappers
     init(id: UUID,
@@ -52,7 +54,9 @@ struct Place: Hashable, Sendable {
          appleNotFoundAt: Date? = nil,
          createdAt: Date,
          updatedAt: Date,
-         deletedAt: Date?) {
+         deletedAt: Date?,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -72,6 +76,8 @@ struct Place: Hashable, Sendable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
 
     /// Used to create a new place (Mapstr import / CatOpenData import / ...)
@@ -82,7 +88,9 @@ struct Place: Hashable, Sendable {
          tags: [Tag],
          category: Category? = nil,
          icon: Icon? = nil,
-         notes: String? = nil) {
+         notes: String? = nil,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -105,9 +113,11 @@ struct Place: Hashable, Sendable {
         self.createdAt = now
         self.updatedAt = now
         self.deletedAt = nil
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
     
-    /// "" is never a valid stored address — nil means "no address" (e.g. not yet fetched / offline lookup).
+    /// Empty string is never a valid stored address : nil means "no address" (e.g. not yet fetched / offline lookup).
     /// Normalizing here catches empty strings from any source: legacy data predating this distinction,
     /// imports, or callers that haven't been updated to pass nil.
     private static func normalized(_ value: String?) -> String? {
@@ -119,12 +129,6 @@ struct Place: Hashable, Sendable {
         copy.deletedAt = deletedAt
         return copy
     }
-
-//    func undeleted() -> Place {
-//        var copy = self
-//        copy.deletedAt = nil
-//        return copy
-//    }
 
     func updated() -> Place {
         var copy = self
@@ -165,7 +169,18 @@ struct Place: Hashable, Sendable {
                    appleNotFoundAt: appleNotFoundAt,
                    createdAt: createdAt,
                    updatedAt: updatedAt,
-                   deletedAt: deletedAt)
+                   deletedAt: deletedAt,
+                   importedAt: importedAt,
+                   importSrc: importSrc)
+    }
+
+    /// Used by importers to stamp provenance on an already-constructed Place
+    /// (e.g. one just decoded from a file).
+    func withImportProvenance(importedAt: Date, importSrc: ImportSource) -> Place {
+        var copy = self
+        copy.importedAt = importedAt
+        copy.importSrc = importSrc
+        return copy
     }
 
     func replacedCategoryAndTags(category: Category?, tags: [Tag]) -> Place {

@@ -21,7 +21,7 @@ struct ImportPicker: UIViewControllerRepresentable {
                     return []
                 }
                 return [dropinType]
-            case .mapstr, .google:
+            case .mapstr:
                 return [.geoJSON]
             default:
                 return []

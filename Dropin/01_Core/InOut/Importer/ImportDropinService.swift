@@ -116,6 +116,11 @@ actor ImportDropinService: ImportServiceProtocol {
 
     private func createLocalItems(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
 
+        // Every entity created by this import run shares the same instant.
+        // The .dropin wire format carries no import provenance of its own,
+        // this importer is the one that supplies it.
+        let importDate = Date()
+
         var replacedTags = [Tag: Tag]()
         var replacedCategories = [Category: Category]()
 
@@ -126,7 +131,8 @@ actor ImportDropinService: ImportServiceProtocol {
                existingCategory.isActive {
                 replacedCategories[category] = existingCategory
             } else {
-                try await upsertCategory(category, shouldSave: false)
+                let stampedCategory = category.withImportProvenance(importedAt: importDate, importSrc: .dropin)
+                try await upsertCategory(stampedCategory, shouldSave: false)
                 createdCategoriesCount += 1
             }
         }
@@ -136,7 +142,8 @@ actor ImportDropinService: ImportServiceProtocol {
                existingTag.isActive {
                 replacedTags[tag] = existingTag
             } else {
-                try await upsertTag(tag, shouldSave: false)
+                let stampedTag = tag.withImportProvenance(importedAt: importDate, importSrc: .dropin)
+                try await upsertTag(stampedTag, shouldSave: false)
                 createdTagsCount += 1
             }
         }
@@ -169,14 +176,14 @@ actor ImportDropinService: ImportServiceProtocol {
         for place in updatedPlaces {
             try Task.checkCancellation()
 
-            try await processPlace(place)
+            try await processPlace(place, importDate: importDate)
 
             upsertCount += 1
             await progress(upsertCount)
         }
     }
 
-    private func processPlace(_ place: Place) async throws {
+    private func processPlace(_ place: Place, importDate: Date) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
             duplicatePlacesCount += 1
@@ -185,11 +192,13 @@ actor ImportDropinService: ImportServiceProtocol {
             return
         }
 
+        let stampedPlace = place.withImportProvenance(importedAt: importDate, importSrc: .dropin)
+
         // Created place is added to existing places array so we ensure there's no duplicates in the file
-        existingHardPlaces.append(place)
+        existingHardPlaces.append(stampedPlace)
 
         // Add to database
-        try await upsertPlace(place, shouldSave: false)
+        try await upsertPlace(stampedPlace, shouldSave: false)
         createdPlacesCount += 1
     }
 

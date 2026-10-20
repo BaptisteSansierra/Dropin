@@ -188,9 +188,6 @@ struct SettingsView: View {
                         viewModel.pickFile = true
                         viewModel.isImporting = true
                     })
-                    Button(String(localized: "settings.import.google"), action: {
-                        //viewModel.isImporting = true
-                    })
                 } label: {
                     HStack(spacing: 12) {
                         iconBadge(systemName: "square.and.arrow.down",

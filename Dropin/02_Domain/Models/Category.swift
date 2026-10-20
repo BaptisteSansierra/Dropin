@@ -15,6 +15,8 @@ struct Category: Hashable, Sendable {
     let createdAt: Date
     var updatedAt: Date
     var deletedAt: Date?
+    var importedAt: Date?
+    var importSrc: ImportSource?
     // Note: places are not strores here to avoid bidirectional relationships
     // Place owns the relationship
 
@@ -25,7 +27,9 @@ struct Category: Hashable, Sendable {
          icon: Icon,
          createdAt: Date,
          updatedAt: Date,
-         deletedAt: Date?) {
+         deletedAt: Date?,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
         self.id = id
         self.name = name
         self.icon = icon
@@ -33,9 +37,11 @@ struct Category: Hashable, Sendable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
-    
-    init(name: String, color: String, icon: Icon) {
+
+    init(name: String, color: String, icon: Icon, importedAt: Date? = nil, importSrc: ImportSource? = nil) {
         self.id = UUID()
         self.name = name
         self.color = color
@@ -44,6 +50,8 @@ struct Category: Hashable, Sendable {
         createdAt = now
         updatedAt = now
         deletedAt = nil
+        self.importedAt = importedAt
+        self.importSrc = importSrc
     }
     
     func deleted(deletedAt: Date) -> Category {
@@ -61,6 +69,15 @@ struct Category: Hashable, Sendable {
     func updated() -> Category {
         var copy = self
         copy.updatedAt = Date()
+        return copy
+    }
+
+    /// Used by importers to stamp provenance on an already-constructed Category
+    /// (e.g. one just decoded from a file).
+    func withImportProvenance(importedAt: Date, importSrc: ImportSource) -> Category {
+        var copy = self
+        copy.importedAt = importedAt
+        copy.importSrc = importSrc
         return copy
     }
 

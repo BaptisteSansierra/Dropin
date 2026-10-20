@@ -84,6 +84,16 @@ struct App_ImportDropin {
         #expect(extractedCategory.id == g1.id)
         // Check place tag uuid matches imported tag
         #expect(places[0].tags[0].id == t1.id)
+        
+        // Check import source
+        let importedAt = places[0].importedAt
+        let importSrc = places[0].importSrc
+        #expect(importedAt != nil)
+        #expect(importedAt == tags[0].importedAt)
+        #expect(importedAt == categories[0].importedAt)
+        #expect(importSrc == ImportSource.dropin)
+        #expect(importSrc == tags[0].importSrc)
+        #expect(importSrc == categories[0].importSrc)
     }
 
     ///
@@ -135,6 +145,9 @@ struct App_ImportDropin {
         #expect(places[0].tags.count == 1)
         // Check place's tag id
         #expect(places[0].tags[0].id == t1Local.id)
+        // The matched/reused existing tag must be untouched, no import provenance
+        #expect(tags[0].importedAt == nil)
+        #expect(tags[0].importSrc == nil)
     }
 
     ///
@@ -247,6 +260,9 @@ struct App_ImportDropin {
         }
         // Check place's category id
         #expect(extractedCategory.id == g1Local.id)
+        // The matched/reused existing category must be untouched: no import provenance
+        #expect(categories[0].importedAt == nil)
+        #expect(categories[0].importSrc == nil)
     }
 
     ///
