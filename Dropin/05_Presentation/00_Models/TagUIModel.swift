@@ -19,6 +19,7 @@ import SwiftUI
     var deletedAt: Date?
     let importedAt: Date?
     let importSrc: ImportSource?
+    let spaceId: UUID?
 
     // used to get place count when places are not populated
     var placeCount: Int = -1
@@ -35,7 +36,8 @@ import SwiftUI
          updatedAt: Date,
          deletedAt: Date?,
          importedAt: Date? = nil,
-         importSrc: ImportSource? = nil) {
+         importSrc: ImportSource? = nil,
+         spaceId: UUID? = nil) {
         self.id = id
         self.name = name
         self.color = Color(rgba: color)
@@ -45,5 +47,6 @@ import SwiftUI
         self.deletedAt = deletedAt
         self.importedAt = importedAt
         self.importSrc = importSrc
+        self.spaceId = spaceId
     }
 }

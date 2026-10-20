@@ -11,6 +11,6 @@ import Foundation
 extension Icon {
     
     static var mock: Icon {
-        Icon(sf: "tag")!
+        Icon(rawValue: "sf:tag")!
     }
 }

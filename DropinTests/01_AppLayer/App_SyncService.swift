@@ -17,11 +17,13 @@ struct App_SyncService {
                          localTagRepo: MockTagRepository = MockTagRepository(),
                          localImageRepo: MockImageRepository = MockImageRepository(),
                          localProfileRepo: MockProfileRepository = MockProfileRepository(),
+                         localSpaceRepo: MockSpaceRepository = MockSpaceRepository(),
                          remotePlaceRepo: MockRemotePlaceRepository = MockRemotePlaceRepository(),
                          remoteCategoryRepo: MockRemoteCategoryRepository = MockRemoteCategoryRepository(),
                          remoteTagRepo: MockRemoteTagRepository = MockRemoteTagRepository(),
                          remoteImageRepo: MockRemoteImageRepository = MockRemoteImageRepository(),
                          remoteProfileRepo: MockRemoteProfileRepository = MockRemoteProfileRepository(),
+                         remoteSpaceRepo: MockRemoteSpaceRepository = MockRemoteSpaceRepository(),
                          isOnline: Bool = true,
                          reachability: MockReachabilityService? = nil) -> SyncService {
         let freshDefaults = UserDefaults(suiteName: UUID().uuidString)!
@@ -30,11 +32,13 @@ struct App_SyncService {
                            localTagRepo: localTagRepo,
                            localImageRepo: localImageRepo,
                            localProfileRepo: localProfileRepo,
+                           localSpaceRepo: localSpaceRepo,
                            remotePlaceRepo: remotePlaceRepo,
                            remoteCategoryRepo: remoteCategoryRepo,
                            remoteTagRepo: remoteTagRepo,
                            remoteImageRepo: remoteImageRepo,
                            remoteProfileRepo: remoteProfileRepo,
+                           remoteSpaceRepo: remoteSpaceRepo,
                            reachability: reachability ?? MockReachabilityService(isConnected: isOnline),
                            userDefaults: freshDefaults)
     }
@@ -109,7 +113,7 @@ struct App_SyncService {
     // MARK: - pull
 
     @Test func syncAllPullsRemoteChangesToLocal() async throws {
-        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London")
+        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London", spaceId: UUID())
         let localRepo = MockPlaceRepository()
         let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
         let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
@@ -124,7 +128,8 @@ struct App_SyncService {
         let tombstone = Place(id: UUID(),
                               name: "To Delete",
                               coordinates: .london,
-                              address: "")
+                              address: "",
+                              spaceId: UUID())
             .deleted(deletedAt: Date())
         let localRepo = MockPlaceRepository(initialPlaces: [])
         let remoteRepo = MockRemotePlaceRepository(placesToReturn: [tombstone])
@@ -135,7 +140,7 @@ struct App_SyncService {
     }
 
     @Test func syncAllPullPropagatesTombstone() async throws {
-        let place = Place(id: UUID(), name: "To Delete", coordinates: .london, address: "")
+        let place = Place(id: UUID(), name: "To Delete", coordinates: .london, address: "", spaceId: UUID())
         let tombstone = place.deleted(deletedAt: Date())
         let localRepo = MockPlaceRepository(initialPlaces: [place])
         let remoteRepo = MockRemotePlaceRepository()
@@ -152,7 +157,7 @@ struct App_SyncService {
     }
 
     @Test func syncAllPullIsIdempotent() async throws {
-        let remotePlace = Place(id: UUID(), name: "Place", coordinates: .london, address: "")
+        let remotePlace = Place(id: UUID(), name: "Place", coordinates: .london, address: "", spaceId: UUID())
         let localRepo = MockPlaceRepository()
         let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
         let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
@@ -190,7 +195,7 @@ struct App_SyncService {
     // the same listener-notification path a real reconnection would.
 
     @Test func reachabilityRestoredTriggersPull() async throws {
-        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London")
+        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London", spaceId: UUID())
         let localRepo = MockPlaceRepository()
         let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
         let reachability = MockReachabilityService(isConnected: false)

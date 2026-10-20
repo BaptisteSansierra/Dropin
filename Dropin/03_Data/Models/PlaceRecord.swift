@@ -37,8 +37,11 @@ final class PlaceRecord {
     // Import source
     var importedAt: Date? = nil
     var importSrc: String? = nil
+    // Storage partition: always real once persisted. See PlaceRepositoryImpl.
+    var spaceId: UUID
 
     init(identifier: UUID,
+         spaceId: UUID,
          name: String,
          latitude: Double,
          longitude: Double,
@@ -56,6 +59,7 @@ final class PlaceRecord {
          applePlaceID: String? = nil,
          appleNotFoundAt: Date? = nil) {
         self.identifier = identifier
+        self.spaceId = spaceId
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
@@ -86,8 +90,9 @@ import ContactFieldKit
 
 extension PlaceRecord {  // Mock extension
     
-    static func mockPlaces() -> [PlaceRecord] {
+    static func mockPlaces(spaceId: UUID) -> [PlaceRecord] {
         let l1 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "La Chitarra",
                          latitude: 41.40622777528736,
                          longitude: 2.1595467749244204,
@@ -97,6 +102,7 @@ extension PlaceRecord {  // Mock extension
                          icon: .sf("carrot.fill"))
 
         let l2 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Les Tres a la Cuina",
                          latitude: 41.40522138362398,
                          longitude: 2.1598304185317847,
@@ -113,6 +119,7 @@ extension PlaceRecord {  // Mock extension
                          notes: "Don't forget your tupper")
         
         let l3 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Chiringuito Karamba",
                         latitude: 41.44511384541266,
                         longitude: 2.2495646936392317,
@@ -121,6 +128,7 @@ extension PlaceRecord {  // Mock extension
                         category: nil)
 
         let l4 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Continental Bar",
                          latitude: 41.40626764285292,
                          longitude: 2.156492157860694,
@@ -129,6 +137,7 @@ extension PlaceRecord {  // Mock extension
                          category: nil)
 
         let l5 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Bagdad café",
                          latitude: 33.321589923265904,
                          longitude: 44.416811639303546,
@@ -138,6 +147,7 @@ extension PlaceRecord {  // Mock extension
                          icon: .sf("pianokeys"))
 
         let l6 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "El Col·leccionista",
                          latitude: 41.40602900686343,
                          longitude: 2.160639939265184,
@@ -147,6 +157,7 @@ extension PlaceRecord {  // Mock extension
                          icon: .sf("figure.socialdance"))
 
         let l7 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Molsa Biosí",
                          latitude: 41.403067387301924,
                          longitude: 2.158858952034207,
@@ -156,6 +167,7 @@ extension PlaceRecord {  // Mock extension
                          icon: .sf("carrot"))
 
         let l8 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Sincronia Yoga",
                          latitude: 41.40068001375675,
                          longitude: 2.155838283307449,
@@ -165,6 +177,7 @@ extension PlaceRecord {  // Mock extension
                          icon: .sf("swirl.circle.righthalf.filled.inverse"))
 
         let l9 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Be Laundry Joanic",
                          latitude: 41.399426209480154,
                          longitude: 2.154584065083631,
@@ -174,6 +187,7 @@ extension PlaceRecord {  // Mock extension
                          icon: .sf("basket"))
 
         let l10 = PlaceRecord(identifier: UUID(),
+                         spaceId: spaceId,
                          name: "Place without address",
                          latitude: 42.399426209480154,
                          longitude: 2.21545083631,

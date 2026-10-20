@@ -19,5 +19,6 @@ protocol PlaceRepository: Sendable {
     func fetch() async throws -> [Place]
     func fetch(_ filter: PlaceFilter?) async throws -> [Place]
     func upsert(_ place: Place, shouldSave: Bool) async throws
+    func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws
     func clearTable() async throws
 }

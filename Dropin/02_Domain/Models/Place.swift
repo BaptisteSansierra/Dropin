@@ -34,6 +34,10 @@ struct Place: Hashable, Sendable {
     var deletedAt: Date?    // Soft delete
     var importedAt: Date?
     var importSrc: ImportSource?
+    // Not nil spaceId is Storage partition: nil means "not yet persisted"
+    // The repository resolves it on insert; callers constructing a domain object never need to know about spaces.
+    // cf. PlaceRepositoryImpl.upsert(_:spaceId:shouldSave:).
+    var spaceId: UUID?
 
     // Used by mappers
     init(id: UUID,
@@ -56,7 +60,8 @@ struct Place: Hashable, Sendable {
          updatedAt: Date,
          deletedAt: Date?,
          importedAt: Date? = nil,
-         importSrc: ImportSource? = nil) {
+         importSrc: ImportSource? = nil,
+         spaceId: UUID? = nil) {
         self.id = id
         self.name = name
         self.coordinates = coordinates
@@ -78,6 +83,7 @@ struct Place: Hashable, Sendable {
         self.deletedAt = deletedAt
         self.importedAt = importedAt
         self.importSrc = importSrc
+        self.spaceId = spaceId
     }
 
     /// Used to create a new place (Mapstr import / CatOpenData import / ...)
@@ -115,8 +121,9 @@ struct Place: Hashable, Sendable {
         self.deletedAt = nil
         self.importedAt = importedAt
         self.importSrc = importSrc
+        self.spaceId = nil
     }
-    
+
     /// Empty string is never a valid stored address : nil means "no address" (e.g. not yet fetched / offline lookup).
     /// Normalizing here catches empty strings from any source: legacy data predating this distinction,
     /// imports, or callers that haven't been updated to pass nil.
@@ -171,7 +178,8 @@ struct Place: Hashable, Sendable {
                    updatedAt: updatedAt,
                    deletedAt: deletedAt,
                    importedAt: importedAt,
-                   importSrc: importSrc)
+                   importSrc: importSrc,
+                   spaceId: spaceId)
     }
 
     /// Used by importers to stamp provenance on an already-constructed Place

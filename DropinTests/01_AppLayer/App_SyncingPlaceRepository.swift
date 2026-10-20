@@ -23,6 +23,7 @@ struct AppSyncing_PlaceRepository {
         func markPlaceDirty(_ id: UUID) { dirtyPlaceIds.append(id) }
         func markCategoryDirty(_ id: UUID) {}
         func markTagDirty(_ id: UUID) {}
+        func markSpaceDirty(_ id: UUID) {}
         func markImagesChanged() {}
         func markProfileDirty() {}
         func syncAll() async {}

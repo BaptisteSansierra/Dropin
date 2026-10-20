@@ -23,7 +23,7 @@ struct Data_Mappers {
 
     @Test func placeRoundTrip() async throws {
         let original = SampleData.fullPlace()
-        let sd = PlaceMapper.toData(original)
+        let sd = PlaceMapper.toData(original, spaceId: UUID())
         // Relationships (tags/category/images) are intentionally not transferred
         // by toData (the repo wires SwiftData relationships afterward). Skip
         // them in the assert.
@@ -33,14 +33,14 @@ struct Data_Mappers {
 
     @Test func groupRoundTrip() async throws {
         let original = SampleData.fullCategory()
-        let sd = CategoryMapper.toData(original)
+        let sd = CategoryMapper.toData(original, spaceId: UUID())
         let back = CategoryMapper.toDomain(sd)
         assertEqualCategory(original, back)
     }
 
     @Test func tagRoundTrip() async throws {
         let original = SampleData.fullTag()
-        let sd = TagMapper.toData(original)
+        let sd = TagMapper.toData(original, spaceId: UUID())
         let back = TagMapper.toDomain(sd)
         assertEqualTag(original, back)
     }
@@ -60,13 +60,13 @@ struct Data_Mappers {
     @Test func softDeletePreservedOnPull() async throws {
         // Place
         let p = SampleData.fullPlace()
-        #expect(PlaceMapper.toDomain(PlaceMapper.toData(p), skipRelationships: true).deletedAt == p.deletedAt)
+        #expect(PlaceMapper.toDomain(PlaceMapper.toData(p, spaceId: UUID()), skipRelationships: true).deletedAt == p.deletedAt)
         // Group
         let g = SampleData.fullCategory()
-        #expect(CategoryMapper.toDomain(CategoryMapper.toData(g)).deletedAt == g.deletedAt)
+        #expect(CategoryMapper.toDomain(CategoryMapper.toData(g, spaceId: UUID())).deletedAt == g.deletedAt)
         // Tag
         let t = SampleData.fullTag()
-        #expect(TagMapper.toDomain(TagMapper.toData(t)).deletedAt == t.deletedAt)
+        #expect(TagMapper.toDomain(TagMapper.toData(t, spaceId: UUID())).deletedAt == t.deletedAt)
     }
 }
 

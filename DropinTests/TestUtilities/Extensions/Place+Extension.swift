@@ -29,7 +29,8 @@ extension Place {  // Mock extension
          url: [String] = [],
          notes: String? = nil,
          createdAt: Date = Date(),
-         deletedAt: Date? = nil) {
+         deletedAt: Date? = nil,
+         spaceId: UUID? = nil) {
         self.init(id: id,
                   name: name,
                   coordinates: coordinates,
@@ -46,7 +47,8 @@ extension Place {  // Mock extension
                   notes: notes,
                   createdAt: createdAt,
                   updatedAt: createdAt,
-                  deletedAt: deletedAt)
+                  deletedAt: deletedAt,
+                  spaceId: spaceId)
     }
 
     // Convenience init for copying a place with new tags/category.

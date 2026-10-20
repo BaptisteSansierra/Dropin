@@ -11,9 +11,11 @@ import SwiftData
 public final class CategoryRepositoryImpl: CategoryRepository {
     
     private let modelContext: ModelContext
-    
-    init(modelContext: ModelContext) {
+    private let spaceContext: SpaceContext
+
+    init(modelContext: ModelContext, spaceContext: SpaceContext) {
         self.modelContext = modelContext
+        self.spaceContext = spaceContext
     }
     
     // MARK: repository protocol methods
@@ -29,7 +31,7 @@ public final class CategoryRepositoryImpl: CategoryRepository {
     }
 
     func create(_ category: Category) async throws {
-        let sdCategory = CategoryMapper.toData(category)
+        let sdCategory = CategoryMapper.toData(category, spaceId: spaceContext.currentSpaceId)
         modelContext.insert(sdCategory)
         try modelContext.save()
     }
@@ -54,7 +56,8 @@ public final class CategoryRepositoryImpl: CategoryRepository {
     
     func fetch() async throws -> [Category] {
         // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
-        let predicate: Predicate<CategoryRecord>? = nil
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<CategoryRecord> { $0.spaceId == spaceId }
         let desc = FetchDescriptor<CategoryRecord>(predicate: predicate,
                                             sortBy: [SortDescriptor(\CategoryRecord.name),
                                                      SortDescriptor(\CategoryRecord.createdAt)])
@@ -63,7 +66,8 @@ public final class CategoryRepositoryImpl: CategoryRepository {
     }
 
     func fetchWithPlaceCount() async throws -> [(Category, Int)] {
-        let predicate: Predicate<CategoryRecord>? = nil
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<CategoryRecord> { $0.spaceId == spaceId }
         let desc = FetchDescriptor<CategoryRecord>(predicate: predicate,
                                             sortBy: [SortDescriptor(\CategoryRecord.name),
                                                      SortDescriptor(\CategoryRecord.createdAt)])
@@ -77,6 +81,14 @@ public final class CategoryRepositoryImpl: CategoryRepository {
     }
     
     func upsert(_ category: Category, shouldSave: Bool) async throws {
+        try await upsert(category, spaceId: spaceContext.currentSpaceId, shouldSave: shouldSave)
+    }
+
+    /// `spaceId` is only used for the insert branch; an existing record keeps its own
+    /// spaceId untouched, so an upsert can never silently reassign an entity's space.
+    func upsert(_ category: Category, spaceId: UUID, shouldSave: Bool) async throws {
+        // Looked up by id alone, across all spaces: SyncService.pull must be able to find and
+        // update an existing local record regardless of which space is currently active.
         let descriptor = FetchDescriptor<CategoryRecord>(predicate: #Predicate { $0.identifier == category.id })
         if let existing = try modelContext.fetch(descriptor).first {
             // Update
@@ -87,7 +99,7 @@ public final class CategoryRepositoryImpl: CategoryRepository {
             existing.deletedAt = category.deletedAt
         } else if category.deletedAt == nil {
             // Insert
-            let sdCategory = CategoryMapper.toData(category)
+            let sdCategory = CategoryMapper.toData(category, spaceId: spaceId)
             modelContext.insert(sdCategory)
         } else {
             // Tombstone for a category we never had locally — nothing to do.
@@ -110,7 +122,8 @@ public final class CategoryRepositoryImpl: CategoryRepository {
     }
     
     private func retrieveCategory(categoryId: UUID) async throws -> CategoryRecord {
-        let predicate = #Predicate<CategoryRecord> { $0.identifier == categoryId }
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<CategoryRecord> { $0.identifier == categoryId && $0.spaceId == spaceId }
         let descriptor = FetchDescriptor<CategoryRecord>(predicate: predicate)
         let sdCategories = try modelContext.fetch(descriptor)
         guard let result = sdCategories.first else {

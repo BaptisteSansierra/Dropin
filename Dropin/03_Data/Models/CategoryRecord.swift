@@ -23,9 +23,12 @@ final class CategoryRecord {
     // Import source
     var importedAt: Date? = nil
     var importSrc: String? = nil
+    // Storage partition: always real once persisted. See CategoryRepositoryImpl.
+    var spaceId: UUID
 
-    init(identifier: UUID, name: String, color: String, icon: Icon, places: [PlaceRecord] = []) {
+    init(identifier: UUID, spaceId: UUID, name: String, color: String, icon: Icon, places: [PlaceRecord] = []) {
         self.identifier = identifier
+        self.spaceId = spaceId
         self.name = name
         self.places = places
         self.icon = icon
@@ -42,29 +45,29 @@ final class CategoryRecord {
 
 extension CategoryRecord {  // Mock extension
     
-    static func mockCategories() -> [CategoryRecord] {
+    static func mockCategories(spaceId: UUID) -> [CategoryRecord] {
         /*
-        let g1 = CategoryRecord(identifier: UUID(), name: "Restaurant", color: "9944AA", icon: Icon("sf:fork.knife.circle"))
-        let g2 = CategoryRecord(identifier: UUID(), name: "Bar", color: "CC22AA", icon: Icon("sf:wineglass"))
-        let g3 = CategoryRecord(identifier: UUID(), name: "Trekking", color: "FF9999", icon: Icon("sf:figure.walk"))
-        let g4 = CategoryRecord(identifier: UUID(), name: "Fishing spot", color: "456699", icon: Icon("sf:figure.fishing"))
-        let g5 = CategoryRecord(identifier: UUID(), name: "Amusement", color: "DD8855", icon: Icon("sf:figure.play"))
-        let g6 = CategoryRecord(identifier: UUID(), name: "Disco", color: "7788CC", icon: Icon("sf:opticaldisc"))
-        let g7 = CategoryRecord(identifier: UUID(), name: "Culture", color: "2255DD", icon: Icon("sf:text.book.closed"))
-        let g8 = CategoryRecord(identifier: UUID(), name: "Shop", color: "FF6600", icon: Icon("sf:cart"))
-        let g9 = CategoryRecord(identifier: UUID(), name: "Body health", color: "4dd333", icon: Icon("sf:figure.mind.and.body"))
-        let g10 = CategoryRecord(identifier: UUID(), name: "Laundry", color: "334dd3", icon: Icon("sf:tshirt"))
+        let g1 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Restaurant", color: "9944AA", icon: Icon("sf:fork.knife.circle"))
+        let g2 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Bar", color: "CC22AA", icon: Icon("sf:wineglass"))
+        let g3 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Trekking", color: "FF9999", icon: Icon("sf:figure.walk"))
+        let g4 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Fishing spot", color: "456699", icon: Icon("sf:figure.fishing"))
+        let g5 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Amusement", color: "DD8855", icon: Icon("sf:figure.play"))
+        let g6 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Disco", color: "7788CC", icon: Icon("sf:opticaldisc"))
+        let g7 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Culture", color: "2255DD", icon: Icon("sf:text.book.closed"))
+        let g8 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Shop", color: "FF6600", icon: Icon("sf:cart"))
+        let g9 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Body health", color: "4dd333", icon: Icon("sf:figure.mind.and.body"))
+        let g10 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Laundry", color: "334dd3", icon: Icon("sf:tshirt"))
          */
-        let g1 = CategoryRecord(identifier: UUID(), name: "Restaurant", color: "9944AA", icon: .sf("fork.knife.circle"))
-        let g2 = CategoryRecord(identifier: UUID(), name: "Bar", color: "CC22AA", icon: .sf("wineglass"))
-        let g3 = CategoryRecord(identifier: UUID(), name: "Trekking", color: "FF9999", icon: .sf("figure.walk"))
-        let g4 = CategoryRecord(identifier: UUID(), name: "Fishing spot", color: "456699", icon: .sf("figure.fishing"))
-        let g5 = CategoryRecord(identifier: UUID(), name: "Amusement", color: "DD8855", icon: .sf("figure.play"))
-        let g6 = CategoryRecord(identifier: UUID(), name: "Disco", color: "7788CC", icon: .sf("opticaldisc"))
-        let g7 = CategoryRecord(identifier: UUID(), name: "Culture", color: "2255DD", icon: .sf("text.book.closed"))
-        let g8 = CategoryRecord(identifier: UUID(), name: "Shop", color: "FF6600", icon: .sf("cart"))
-        let g9 = CategoryRecord(identifier: UUID(), name: "Body health", color: "4dd333", icon: .sf("figure.mind.and.body"))
-        let g10 = CategoryRecord(identifier: UUID(), name: "Laundry", color: "334dd3", icon: .sf("tshirt"))
+        let g1 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Restaurant", color: "9944AA", icon: .sf("fork.knife.circle"))
+        let g2 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Bar", color: "CC22AA", icon: .sf("wineglass"))
+        let g3 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Trekking", color: "FF9999", icon: .sf("figure.walk"))
+        let g4 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Fishing spot", color: "456699", icon: .sf("figure.fishing"))
+        let g5 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Amusement", color: "DD8855", icon: .sf("figure.play"))
+        let g6 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Disco", color: "7788CC", icon: .sf("opticaldisc"))
+        let g7 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Culture", color: "2255DD", icon: .sf("text.book.closed"))
+        let g8 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Shop", color: "FF6600", icon: .sf("cart"))
+        let g9 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Body health", color: "4dd333", icon: .sf("figure.mind.and.body"))
+        let g10 = CategoryRecord(identifier: UUID(), spaceId: spaceId, name: "Laundry", color: "334dd3", icon: .sf("tshirt"))
         return [g1, g2, g3, g4, g5, g6, g7, g8, g9, g10]
     }
 }

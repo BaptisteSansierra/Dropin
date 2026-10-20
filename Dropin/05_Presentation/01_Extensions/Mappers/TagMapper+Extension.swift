@@ -25,7 +25,8 @@ extension TagMapper {
                           updatedAt: tag.updatedAt,
                           deletedAt: tag.deletedAt,
                           importedAt: tag.importedAt,
-                          importSrc: tag.importSrc)
+                          importSrc: tag.importSrc,
+                          spaceId: tag.spaceId)
         return tagUI
     }
 
@@ -37,7 +38,8 @@ extension TagMapper {
                             updatedAt: tagUI.updatedAt,
                             deletedAt: tagUI.deletedAt,
                             importedAt: tagUI.importedAt,
-                            importSrc: tagUI.importSrc)
+                            importSrc: tagUI.importSrc,
+                            spaceId: tagUI.spaceId)
         return tag
     }
 }

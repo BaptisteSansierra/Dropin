@@ -10,9 +10,11 @@ import SwiftData
 
 public final class PlaceRepositoryImpl: PlaceRepository {
     private let modelContext: ModelContext
-    
-    init(modelContext: ModelContext) {
+    private let spaceContext: SpaceContext
+
+    init(modelContext: ModelContext, spaceContext: SpaceContext) {
         self.modelContext = modelContext
+        self.spaceContext = spaceContext
     }
     
     // MARK: repository protocol methods
@@ -28,7 +30,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
     
     func create(_ place: Place) async throws {
-        let sdPlace = PlaceMapper.toData(place)
+        let sdPlace = PlaceMapper.toData(place, spaceId: spaceContext.currentSpaceId)
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
         try await linkCategory(sdPlace: sdPlace, domainPlace: place)
         modelContext.insert(sdPlace)
@@ -54,7 +56,8 @@ public final class PlaceRepositoryImpl: PlaceRepository {
 
     func fetch(_ filter: PlaceFilter?) async throws -> [Place] {
         // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
-        let predicate: Predicate<PlaceRecord>? = nil
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<PlaceRecord> { $0.spaceId == spaceId }
         let sorts: [SortDescriptor<PlaceRecord>] = [SortDescriptor<PlaceRecord>(\.createdAt), SortDescriptor<PlaceRecord>(\.name)]
         let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)
@@ -67,21 +70,23 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             return domainPlaces
         }
     }
-    
+
     func fetch(categoryId: UUID) async throws -> [Place] {
-        let predicate = #Predicate<PlaceRecord> { /*$0.deletedAt == nil &&*/ $0.category?.identifier == categoryId }
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<PlaceRecord> { $0.spaceId == spaceId && /*$0.deletedAt == nil &&*/ $0.category?.identifier == categoryId }
         let sorts: [SortDescriptor<PlaceRecord>] = [SortDescriptor<PlaceRecord>(\.createdAt), SortDescriptor<PlaceRecord>(\.name)]
         let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate, sortBy: sorts)
         let sdPlaces = try modelContext.fetch(descriptor)
         let domainPlaces = sdPlaces.map { PlaceMapper.toDomain($0) }
         return domainPlaces
     }
-    
+
     func fetch(tagId: UUID) async throws -> [Place] {
+        let spaceId = spaceContext.currentSpaceId
         let sorts: [SortDescriptor<PlaceRecord>] = [SortDescriptor<PlaceRecord>(\.createdAt), SortDescriptor<PlaceRecord>(\.name)]
         let descriptor = FetchDescriptor<PlaceRecord>(
             predicate: #Predicate { place in
-                /*place.deletedAt == nil &&*/ place.tags.contains { $0.identifier == tagId }
+                place.spaceId == spaceId && /*place.deletedAt == nil &&*/ place.tags.contains { $0.identifier == tagId }
             }, sortBy: sorts
         )
         let sdPlaces = try modelContext.fetch(descriptor)
@@ -110,7 +115,15 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
 
     func upsert(_ place: Place, shouldSave: Bool) async throws {
+        try await upsert(place, spaceId: spaceContext.currentSpaceId, shouldSave: shouldSave)
+    }
+
+    /// `spaceId` is only used for the insert branch; an existing record keeps its own
+    /// spaceId untouched, so an upsert can never silently reassign an entity's space.
+    func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws {
         let placeId = place.id
+        // Looked up by id alone, across all spaces: SyncService.pull must be able to find and
+        // update an existing local record regardless of which space is currently active.
         let predicate = #Predicate<PlaceRecord> { $0.identifier == placeId }
         let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate)
         if let existing = try modelContext.fetch(descriptor).first {
@@ -132,7 +145,7 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             existing.deletedAt = place.deletedAt
         } else if place.deletedAt == nil {
             // Insert
-            let sdPlace = PlaceMapper.toData(place)
+            let sdPlace = PlaceMapper.toData(place, spaceId: spaceId)
             try await linkTags(sdPlace: sdPlace, domainPlace: place)
             try await linkCategory(sdPlace: sdPlace, domainPlace: place)
             modelContext.insert(sdPlace)
@@ -160,7 +173,8 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     }
     
     private func retrievePlace(uuid: UUID) async throws -> PlaceRecord {
-        let predicate = #Predicate<PlaceRecord> { $0.identifier == uuid }
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<PlaceRecord> { $0.identifier == uuid && $0.spaceId == spaceId }
         let descriptor = FetchDescriptor<PlaceRecord>(predicate: predicate)
         let sdPlaces = try modelContext.fetch(descriptor)
         guard let result = sdPlaces.first else {
@@ -178,7 +192,8 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             return
         }
         let tagIdentifiers = Set(domainPlace.tags.map { $0.id }) // Ensure no duplicates
-        let tagPredicate = #Predicate<TagRecord> { tagIdentifiers.contains($0.identifier) }
+        let spaceId = spaceContext.currentSpaceId
+        let tagPredicate = #Predicate<TagRecord> { tagIdentifiers.contains($0.identifier) && $0.spaceId == spaceId }
         let tagDescriptor = FetchDescriptor<TagRecord>(predicate: tagPredicate)
         let sdTags = try modelContext.fetch(tagDescriptor)
 
@@ -201,7 +216,8 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             return
         }
         let categoryId = category.id
-        let categoryPredicate = #Predicate<CategoryRecord> { $0.identifier == categoryId }
+        let spaceId = spaceContext.currentSpaceId
+        let categoryPredicate = #Predicate<CategoryRecord> { $0.identifier == categoryId && $0.spaceId == spaceId }
         let categoryDescriptor = FetchDescriptor<CategoryRecord>(predicate: categoryPredicate)
         let sdCategories = try modelContext.fetch(categoryDescriptor)
         guard let sdCategory = sdCategories.first else {

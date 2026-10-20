@@ -11,9 +11,11 @@ import SwiftData
 public final class TagRepositoryImpl: TagRepository {
     
     private let modelContext: ModelContext
-    
-    init(modelContext: ModelContext) {
+    private let spaceContext: SpaceContext
+
+    init(modelContext: ModelContext, spaceContext: SpaceContext) {
         self.modelContext = modelContext
+        self.spaceContext = spaceContext
     }
     
     // MARK: repository protocol methods
@@ -29,7 +31,7 @@ public final class TagRepositoryImpl: TagRepository {
     }
 
     func create(_ tag: Tag) async throws {
-        let sdTag = TagMapper.toData(tag)
+        let sdTag = TagMapper.toData(tag, spaceId: spaceContext.currentSpaceId)
         modelContext.insert(sdTag)
         try modelContext.save()
     }
@@ -53,7 +55,8 @@ public final class TagRepositoryImpl: TagRepository {
 
     func fetch() async throws -> [Tag] {
         // Fetching do not ignore soft deleted objects (deletedAt) as swift UI may still rely on one of them
-        let predicate: Predicate<TagRecord>? = nil
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<TagRecord> { $0.spaceId == spaceId }
         let desc = FetchDescriptor<TagRecord>(predicate: predicate,
                                           sortBy: [SortDescriptor(\TagRecord.name),
                                                    SortDescriptor(\TagRecord.createdAt)])
@@ -62,7 +65,8 @@ public final class TagRepositoryImpl: TagRepository {
     }
 
     func fetchWithPlaceCount() async throws -> [(Tag, Int)] {
-        let predicate: Predicate<TagRecord>? = nil
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<TagRecord> { $0.spaceId == spaceId }
         let desc = FetchDescriptor<TagRecord>(predicate: predicate,
                                           sortBy: [SortDescriptor(\TagRecord.name),
                                                    SortDescriptor(\TagRecord.createdAt)])
@@ -76,6 +80,14 @@ public final class TagRepositoryImpl: TagRepository {
     }
     
     func upsert(_ tag: Tag, shouldSave: Bool) async throws {
+        try await upsert(tag, spaceId: spaceContext.currentSpaceId, shouldSave: shouldSave)
+    }
+
+    /// `spaceId` is only used for the insert branch; an existing record keeps its own
+    /// spaceId untouched, so an upsert can never silently reassign an entity's space.
+    func upsert(_ tag: Tag, spaceId: UUID, shouldSave: Bool) async throws {
+        // Looked up by id alone, across all spaces: SyncService.pull must be able to find and
+        // update an existing local record regardless of which space is currently active.
         let descriptor = FetchDescriptor<TagRecord>(predicate: #Predicate { $0.identifier == tag.id })
         if let existing = try modelContext.fetch(descriptor).first {
             // Update
@@ -85,7 +97,7 @@ public final class TagRepositoryImpl: TagRepository {
             existing.deletedAt = tag.deletedAt
         } else if tag.deletedAt == nil {
             // Insert
-            let sdTag = TagMapper.toData(tag)
+            let sdTag = TagMapper.toData(tag, spaceId: spaceId)
             modelContext.insert(sdTag)
         } else {
             // Tombstone for a tag we never had locally — nothing to do.
@@ -108,7 +120,8 @@ public final class TagRepositoryImpl: TagRepository {
     }
 
     private func retrieveTag(tagId: UUID) async throws -> TagRecord {
-        let predicate = #Predicate<TagRecord> { $0.identifier == tagId }
+        let spaceId = spaceContext.currentSpaceId
+        let predicate = #Predicate<TagRecord> { $0.identifier == tagId && $0.spaceId == spaceId }
         let descriptor = FetchDescriptor<TagRecord>(predicate: predicate)
         let sdTags = try modelContext.fetch(descriptor)
         guard let result = sdTags.first else {

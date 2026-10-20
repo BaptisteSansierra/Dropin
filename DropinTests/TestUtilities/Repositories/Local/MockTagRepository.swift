@@ -63,6 +63,10 @@ final class MockTagRepository: TagRepository {
             tags.append(tag)
         }
     }
+
+    func upsert(_ tag: Dropin.Tag, spaceId: UUID, shouldSave: Bool) async throws {
+        try await upsert(tag, shouldSave: shouldSave)
+    }
     
     func clearTable() async throws {
         tags.removeAll()

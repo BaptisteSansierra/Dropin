@@ -272,7 +272,7 @@ struct PlaceCreateQuickView: View {
         guard let suggestedName = viewModel.suggestedCategoryName else { return }
         let category = Category(name: suggestedName,
                                 color: viewModel.poiColor?.hex ?? String.randomColor(),
-                                icon: viewModel.suggestedCategoryIcon ?? Icon(sf: "question")! )
+                                icon: viewModel.suggestedCategoryIcon ?? Icon(rawValue: "sf:question")! )
         place.category = CategoryMapper.toUI(category)
     }
 }

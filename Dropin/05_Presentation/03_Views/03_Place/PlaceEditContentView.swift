@@ -1269,19 +1269,25 @@ struct MockPlaceEditContentView: View {
         let mock = MockContainer()
         self.mock = mock
         if index == Int.max {
+            let previewSpaceId = UUID()
             let t1 = TagRecord(identifier: UUID(),
+                           spaceId: previewSpaceId,
                            name: "discoteca",
                            color: Color.random().hex)
             let t2 = TagRecord(identifier: UUID(),
+                           spaceId: previewSpaceId,
                            name: "cool place",
                            color: Color.random().hex)
             let t3 = TagRecord(identifier: UUID(),
+                           spaceId: previewSpaceId,
                            name: "dancing",
                            color: Color.random().hex)
             let t4 = TagRecord(identifier: UUID(),
+                           spaceId: previewSpaceId,
                            name: "dscsdvsdv",
                            color: Color.random().hex)
             let g = CategoryRecord(identifier: UUID(),
+                            spaceId: previewSpaceId,
                             name: "Mes places",
                             color: Color.random().hex,
                             icon: Icon.sf("cross"))
@@ -1294,6 +1300,7 @@ struct MockPlaceEditContentView: View {
                              thumbnail: img2.compressedForStorage(),
                              full: img2.thumbnailData())
             let p = PlaceRecord(identifier: UUID(),
+                             spaceId: previewSpaceId,
                              name: "El Col·leccionista",
                              latitude: 41.40602900686343,
                              longitude: 2.160639939265184,
@@ -1328,6 +1335,7 @@ struct MockPlaceEditContentView: View {
             
         } else if index == Int.min {
             let p = PlaceRecord(identifier: UUID(),
+                             spaceId: UUID(),
                              name: "El Col·leccionista",
                              latitude: 41.40602900686343,
                              longitude: 2.160639939265184,

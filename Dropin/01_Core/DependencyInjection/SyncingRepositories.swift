@@ -50,6 +50,12 @@ final class SyncingPlaceRepository: PlaceRepository {
         sync.markPlaceDirty(stamped.id)
     }
 
+    func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws {
+        let stamped = place.updated()
+        try await wrapped.upsert(stamped, spaceId: spaceId, shouldSave: shouldSave)
+        sync.markPlaceDirty(stamped.id)
+    }
+
     func clearTable() async throws {
         try await wrapped.clearTable()
         // local-only: intentionally NOT calling sync.markDirty
@@ -94,7 +100,13 @@ final class SyncingCategoryRepository: CategoryRepository {
         try await wrapped.upsert(stamped, shouldSave: shouldSave)
         sync.markCategoryDirty(stamped.id)
     }
-    
+
+    func upsert(_ category: Category, spaceId: UUID, shouldSave: Bool) async throws {
+        let stamped = category.updated()
+        try await wrapped.upsert(stamped, spaceId: spaceId, shouldSave: shouldSave)
+        sync.markCategoryDirty(stamped.id)
+    }
+
     func clearTable() async throws {
         try await wrapped.clearTable()
         // local-only: intentionally NOT calling sync.markDirty
@@ -188,6 +200,43 @@ final class SyncingPlaceImageRepository: PlaceImageRepository {
 }
 
 @MainActor
+final class SyncingSpaceRepository: SpaceRepository {
+    private let wrapped: any SpaceRepository
+    private let sync: any SyncServiceProtocol
+
+    init(wrapped: any SpaceRepository, sync: any SyncServiceProtocol) {
+        self.wrapped = wrapped
+        self.sync = sync
+    }
+
+    func exists(_ space: Space) async throws -> Bool { try await wrapped.exists(space) }
+    func fetch() async throws -> [Space] { try await wrapped.fetch() }
+    func fetch(_ id: UUID) async throws -> Space { try await wrapped.fetch(id) }
+
+    func create(_ space: Space) async throws {
+        try await wrapped.create(space)
+        sync.markSpaceDirty(space.id)
+    }
+
+    func update(_ space: Space) async throws {
+        let stamped = space.updated()
+        try await wrapped.update(stamped)
+        sync.markSpaceDirty(stamped.id)
+    }
+
+    func upsert(_ space: Space, shouldSave: Bool) async throws {
+        let stamped = space.updated()
+        try await wrapped.upsert(stamped, shouldSave: shouldSave)
+        sync.markSpaceDirty(stamped.id)
+    }
+
+    func clearTable() async throws {
+        try await wrapped.clearTable()
+        // local-only: intentionally NOT calling sync.markDirty
+    }
+}
+
+@MainActor
 final class SyncingTagRepository: TagRepository {
     private let wrapped: any TagRepository
     private let sync: any SyncServiceProtocol
@@ -225,7 +274,13 @@ final class SyncingTagRepository: TagRepository {
         try await wrapped.upsert(stamped, shouldSave: shouldSave)
         sync.markTagDirty(stamped.id)
     }
-    
+
+    func upsert(_ tag: Tag, spaceId: UUID, shouldSave: Bool) async throws {
+        let stamped = tag.updated()
+        try await wrapped.upsert(stamped, spaceId: spaceId, shouldSave: shouldSave)
+        sync.markTagDirty(stamped.id)
+    }
+
     func clearTable() async throws {
         try await wrapped.clearTable()
         // local-only: intentionally NOT calling sync.markDirty

@@ -17,7 +17,10 @@ struct Category: Hashable, Sendable {
     var deletedAt: Date?
     var importedAt: Date?
     var importSrc: ImportSource?
-    // Note: places are not strores here to avoid bidirectional relationships
+    // Not nil spaceId is Storage partition: nil means "not yet persisted"
+    // The repository resolves it on insert; callers constructing a domain object never need to know about spaces.
+    var spaceId: UUID?
+    // Note: places are not stored here to avoid bidirectional relationships
     // Place owns the relationship
 
     // Used by mappers
@@ -29,7 +32,8 @@ struct Category: Hashable, Sendable {
          updatedAt: Date,
          deletedAt: Date?,
          importedAt: Date? = nil,
-         importSrc: ImportSource? = nil) {
+         importSrc: ImportSource? = nil,
+         spaceId: UUID? = nil) {
         self.id = id
         self.name = name
         self.icon = icon
@@ -39,6 +43,7 @@ struct Category: Hashable, Sendable {
         self.deletedAt = deletedAt
         self.importedAt = importedAt
         self.importSrc = importSrc
+        self.spaceId = spaceId
     }
 
     init(name: String, color: String, icon: Icon, importedAt: Date? = nil, importSrc: ImportSource? = nil) {
@@ -52,6 +57,7 @@ struct Category: Hashable, Sendable {
         deletedAt = nil
         self.importedAt = importedAt
         self.importSrc = importSrc
+        self.spaceId = nil
     }
     
     func deleted(deletedAt: Date) -> Category {

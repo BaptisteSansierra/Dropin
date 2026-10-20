@@ -32,8 +32,10 @@ struct DropinApp: App {
     // MARK: - init
     init() {
         // Create database, wire app
+        let schema = Schema([PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self])
+        let configuration = ModelConfiguration()
         do {
-            let modelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self)
+            let modelContainer = try ModelContainer(for: schema, configurations: configuration)
             modelContainer.mainContext.autosaveEnabled = false
             #if DEBUG
             // If empty database, populate with mock data
@@ -70,6 +72,10 @@ struct DropinApp: App {
             self.modelContainer = modelContainer
 
         } catch {
+            #if DEBUG
+            // Creating mock database for Preview/Simulator
+            // Is this still usefull ?
+            /*
             if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
                 let mock = MockContainer()
                 appContainer = mock.appContainer
@@ -82,11 +88,38 @@ struct DropinApp: App {
                 modelContainer = mock.mockModelContainer
                 return
             }
+             */
+            #endif
+            
+            #if !DEBUG
+            // Last resort: the store couldn't be opened against the current schema (an
+            // unmigrated schema change slipped through, a corrupted store, etc).
+            // By the time this ships, schema changes are expected to carry a real migration plan, so this
+            // shouldn't normally trigger; this only exists so a stale/incompatible store
+            // doesn't permanently brick the app for a user. Rename it aside (rather than delete)
+            // and start clean rather than crash-looping forever.
+            Log.error("ModelContainer failed (\(error)) -> backing up store and starting fresh")
+            let backupSuffix = ".corrupted-\(Int(Date().timeIntervalSince1970))"
+            // FIXME: DRO-50 once Sentry is wired in, upload/attach these backed-up store files
+            // here so a corrupted-store fallback is actually diagnosable instead of just inert.
+            for suffix in ["", "-wal", "-shm"] {
+                let source = URL(fileURLWithPath: configuration.url.path + suffix)
+                let backup = URL(fileURLWithPath: configuration.url.path + suffix + backupSuffix)
+                try? FileManager.default.moveItem(at: source, to: backup)
+            }
+            if let freshContainer = try? ModelContainer(for: schema, configurations: configuration) {
+                freshContainer.mainContext.autosaveEnabled = false
+                appContainer = AppContainer(modelContext: freshContainer.mainContext, appContext: appContext)
+                modelContainer = freshContainer
+                Self.configureDependencies()
+                return
+            }
+            #endif
             fatalError("Could not create ModelContainer: \(error)")
         }
 
         // Configure dependencies
-        configureContactFieldKit()
+        Self.configureDependencies()
     }
 
     // MARK: - Body
@@ -171,7 +204,11 @@ struct DropinApp: App {
     }
 
     // MARK: private methods
-    private func configureContactFieldKit() {
+    static private func configureDependencies() {
+        configureContactFieldKit()
+    }
+    
+    static private func configureContactFieldKit() {
         ContactFieldUIConfig.backgroundPrimary = .surface1
         ContactFieldUIConfig.backgroundSecondary = .surface2
         ContactFieldUIConfig.backgroundTertiary = .backgroundPrimary
@@ -257,5 +294,6 @@ extension DropinApp {
         static let poiConfig = "settings.map.poiConfig"
         static let clustering = "settings.map.clustering"
         static let lastSyncedAt = "service.sync.last"
+        static let currentSpaceId = "space.current"
     }
 }

@@ -22,6 +22,7 @@ final class AddressBackfillingPlaceRepository: PlaceRepository {
     func create(_ place: Place) async throws { try await wrapped.create(place) }
     func update(_ place: Place) async throws { try await wrapped.update(place) }
     func upsert(_ place: Place, shouldSave: Bool) async throws { try await wrapped.upsert(place, shouldSave: shouldSave) }
+    func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws { try await wrapped.upsert(place, spaceId: spaceId, shouldSave: shouldSave) }
     func clearTable() async throws { try await wrapped.clearTable() }
 
     func fetch(_ id: UUID) async throws -> Place {

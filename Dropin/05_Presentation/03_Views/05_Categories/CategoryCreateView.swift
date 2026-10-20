@@ -77,7 +77,7 @@ struct CategoryCreateView: View {
         .onAppear {
             if displayMode == .vertical {
                 isNameFieldFocused = true
-                createdCategoryIcon = Icon(sf: "folder")!
+                createdCategoryIcon = Icon(rawValue: "sf:folder")!
             }
         }
         .alertOk(isPresented: $presentExistsAlert,
@@ -229,7 +229,7 @@ struct CategoryCreateView: View {
         guard sanityCheck() else { return }
         onCreate(createdCategoryName,
                  createdCategoryColor.hex,
-                 createdCategoryIcon ?? Icon(sf: "folder")!)
+                 createdCategoryIcon ?? Icon(rawValue: "sf:folder")!)
         createdCategoryName = ""
         createdCategoryColor = Color.random()
         createdCategoryIcon = nil

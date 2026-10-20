@@ -17,5 +17,6 @@ protocol CategoryRepository {
     func fetchWithPlaceCount() async throws -> [(Category, Int)]
     func fetch(_ id: UUID) async throws -> Category
     func upsert(_ category: Category, shouldSave: Bool) async throws
+    func upsert(_ category: Category, spaceId: UUID, shouldSave: Bool) async throws
     func clearTable() async throws
 }

@@ -17,12 +17,17 @@ public enum TagMapper {
                             updatedAt: sdTag.updatedAt,
                             deletedAt: sdTag.deletedAt,
                             importedAt: sdTag.importedAt,
-                            importSrc: sdTag.importSrc.flatMap(ImportSource.init(rawValue:)))
+                            importSrc: sdTag.importSrc.flatMap(ImportSource.init(rawValue:)),
+                            spaceId: sdTag.spaceId)
         return tag
     }
-    
-    static func toData(_ tag: Tag) -> TagRecord {
+
+    /// `spaceId` is explicit, resolved by the repository (never read off `tag.spaceId`,
+    /// which is nil for anything not yet persisted).
+    /// cf. TagRepositoryImpl.upsert(_:spaceId:shouldSave:).
+    static func toData(_ tag: Tag, spaceId: UUID) -> TagRecord {
         let sd = TagRecord(identifier: tag.id,
+                       spaceId: spaceId,
                        name: tag.name,
                        color: tag.color)
         // TagRecord.init hardcodes fresh dates; preserve domain timestamps so

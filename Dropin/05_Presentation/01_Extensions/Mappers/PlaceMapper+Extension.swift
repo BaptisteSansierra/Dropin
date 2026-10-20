@@ -51,7 +51,8 @@ extension PlaceMapper {
                               updatedAt: place.updatedAt,
                               deletedAt: place.deletedAt,
                               importedAt: place.importedAt,
-                              importSrc: place.importSrc)
+                              importSrc: place.importSrc,
+                              spaceId: place.spaceId)
         if !skipRelationships {
             groupUI?.places.append(placeUI)
             for i in 0..<tagsUI.count {
@@ -90,7 +91,8 @@ extension PlaceMapper {
                                 updatedAt: placeUI.updatedAt,
                                 deletedAt: placeUI.deletedAt,
                                 importedAt: placeUI.importedAt,
-                                importSrc: placeUI.importSrc)
+                                importSrc: placeUI.importSrc,
+                                spaceId: placeUI.spaceId)
         return place
     }
 }

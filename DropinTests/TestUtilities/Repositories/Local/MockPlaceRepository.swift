@@ -80,6 +80,10 @@ final class MockPlaceRepository: PlaceRepository {
         }
     }
 
+    func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws {
+        try await upsert(place, shouldSave: shouldSave)
+    }
+
     func save() async throws {
         // no-op: mock repository has no deferred persistence to flush
     }

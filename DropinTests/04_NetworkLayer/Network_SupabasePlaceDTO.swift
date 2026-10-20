@@ -30,7 +30,8 @@ struct Network_SupabasePlaceDTO {
              appleNotFoundAt: appleNotFoundAt,
              createdAt: Date(timeIntervalSince1970: 1_700_000_000),
              updatedAt: Date(timeIntervalSince1970: 1_700_000_100),
-             deletedAt: nil)
+             deletedAt: nil,
+             spaceId: UUID())
     }
 
     @Test func toDomainPreservesAppleFields() {

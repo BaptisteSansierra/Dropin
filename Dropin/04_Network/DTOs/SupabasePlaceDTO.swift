@@ -29,10 +29,12 @@ struct SupabasePlaceDTO: Codable {
     let deletedAt: Date?
     let importedAt: Date?
     let importSrc: String?
+    let spaceId: UUID
 
     enum CodingKeys: String, CodingKey {
         case id
         case userId    = "user_id"
+        case spaceId   = "space_id"
         case name
         case latitude
         case longitude
@@ -85,11 +87,18 @@ struct SupabasePlaceDTO: Codable {
         try c.encode(deletedAt, forKey: .deletedAt)
         try c.encode(importedAt, forKey: .importedAt)
         try c.encode(importSrc, forKey: .importSrc)
+        try c.encode(spaceId,   forKey: .spaceId)
     }
 
     init(from place: Place, userId: UUID) {
         self.id             = place.id
         self.userId         = userId
+        // Pushed entity always come from an already-persisted local fetch, which
+        // always has a real spaceId. A nil here means a genuine bug, so fail loudly.
+        guard let spaceId = place.spaceId else {
+            preconditionFailure("Place \(place.id) has no spaceId — cannot push an entity that was never persisted")
+        }
+        self.spaceId = spaceId
         self.name           = place.name
         self.latitude       = place.coordinates.latitude
         self.longitude      = place.coordinates.longitude
@@ -146,6 +155,7 @@ struct SupabasePlaceDTO: Codable {
                      updatedAt: updatedAt,
                      deletedAt: deletedAt,
                      importedAt: importedAt,
-                     importSrc: importSrc.flatMap(ImportSource.init(rawValue:)))
+                     importSrc: importSrc.flatMap(ImportSource.init(rawValue:)),
+                     spaceId: spaceId)
     }
 }

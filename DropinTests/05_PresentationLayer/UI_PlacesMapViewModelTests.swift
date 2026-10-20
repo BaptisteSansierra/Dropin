@@ -23,19 +23,8 @@ struct UI_PlacesMapViewModelTests {
     }
     
     private func makeViewModel() throws -> PlacesMapViewModel {
-        let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self,
-                                                PlaceImageRecord.self, ProfileRecord.self,
-                                                configurations: modelConfiguration)
-        let modelContext = modelContainer.mainContext
-        let locationManager = LocationManager()
-        let appContainer = AppContainer(modelContext: modelContext,
-                                        appContext: AppContext(),
-                                        locationManager: locationManager,
-                                        addressLookupService: AddressLookupService(locationManager: locationManager),
-                                        reachabilityService: StubReachabilityService(),
-                                        profileService: StubProfileService())
-        return PlacesMapViewModel(appContainer, coordinator: PlaceCoordinator(), locationManager: locationManager)
+        let mock = MockContainer()
+        return PlacesMapViewModel(mock.appContainer, coordinator: PlaceCoordinator(), locationManager: mock.locationManager)
     }
 
     @Test func duplicateDetectedBySameNameAndCoordsCaseInsensitive() throws {

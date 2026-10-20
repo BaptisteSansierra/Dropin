@@ -26,7 +26,8 @@ extension CategoryMapper {
                               updatedAt: category.updatedAt,
                               deletedAt: category.deletedAt,
                               importedAt: category.importedAt,
-                              importSrc: category.importSrc)
+                              importSrc: category.importSrc,
+                              spaceId: category.spaceId)
         return groupUI
     }
 
@@ -39,7 +40,8 @@ extension CategoryMapper {
                                 updatedAt: groupUI.updatedAt,
                                 deletedAt: groupUI.deletedAt,
                                 importedAt: groupUI.importedAt,
-                                importSrc: groupUI.importSrc)
+                                importSrc: groupUI.importSrc,
+                                spaceId: groupUI.spaceId)
         return category
     }
 }

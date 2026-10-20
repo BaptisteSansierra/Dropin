@@ -18,6 +18,7 @@ final class StubSyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     func markPlaceDirty(_ id: UUID) {}
     func markCategoryDirty(_ id: UUID) {}
     func markTagDirty(_ id: UUID) {}
+    func markSpaceDirty(_ id: UUID) {}
     func markImagesChanged() {}
     func markProfileDirty() {}
     func syncAll() async {}

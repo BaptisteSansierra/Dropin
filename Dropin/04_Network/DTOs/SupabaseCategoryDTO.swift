@@ -15,6 +15,7 @@ struct SupabaseCategoryDTO: Codable {
     let deletedAt: Date?
     let importedAt: Date?
     let importSrc: String?
+    let spaceId: UUID
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -27,6 +28,7 @@ struct SupabaseCategoryDTO: Codable {
         case deletedAt = "deleted_at"
         case importedAt = "imported_at"
         case importSrc = "import_source"
+        case spaceId   = "space_id"
     }
 
     /// Explicit encode so `deleted_at: null` is sent over the wire (Postgrest upsert would
@@ -43,6 +45,7 @@ struct SupabaseCategoryDTO: Codable {
         try c.encode(deletedAt, forKey: .deletedAt)
         try c.encode(importedAt, forKey: .importedAt)
         try c.encode(importSrc, forKey: .importSrc)
+        try c.encode(spaceId,   forKey: .spaceId)
     }
 
     init(from category: Category, userId: UUID) {
@@ -56,12 +59,19 @@ struct SupabaseCategoryDTO: Codable {
         self.deletedAt = category.deletedAt
         self.importedAt = category.importedAt
         self.importSrc  = category.importSrc?.rawValue
+        // Pushed entity always come from an already-persisted local fetch, which
+        // always has a real spaceId. A nil here means a genuine bug, so fail loudly.
+        guard let spaceId = category.spaceId else {
+            preconditionFailure("Category \(category.id) has no spaceId — cannot push an entity that was never persisted")
+        }
+        self.spaceId = spaceId
     }
 
     func toDomain() -> Category {
         Category(id: id, name: name, color: color,
                     icon: Icon(rawValue: icon) ?? .sf("questionmark"),
                     createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt,
-                    importedAt: importedAt, importSrc: importSrc.flatMap(ImportSource.init(rawValue:)))
+                    importedAt: importedAt, importSrc: importSrc.flatMap(ImportSource.init(rawValue:)),
+                    spaceId: spaceId)
     }
 }

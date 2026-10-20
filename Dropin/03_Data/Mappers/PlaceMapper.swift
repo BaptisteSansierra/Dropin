@@ -41,12 +41,17 @@ public enum PlaceMapper {
                           updatedAt: sdPlace.updatedAt,
                           deletedAt: sdPlace.deletedAt,
                           importedAt: sdPlace.importedAt,
-                          importSrc: sdPlace.importSrc.flatMap(ImportSource.init(rawValue:)))
+                          importSrc: sdPlace.importSrc.flatMap(ImportSource.init(rawValue:)),
+                          spaceId: sdPlace.spaceId)
         return place
     }
-    
-    static func toData(_ place: Place) -> PlaceRecord {
+
+    /// `spaceId` is explicit, resolved by the repository (never read off `place.spaceId`,
+    /// which is nil for anything not yet persisted).
+    /// cf. PlaceRepositoryImpl.upsert(_:spaceId:shouldSave:).
+    static func toData(_ place: Place, spaceId: UUID) -> PlaceRecord {
         let sd = PlaceRecord(identifier: place.id,
+                         spaceId: spaceId,
                          name: place.name,
                          latitude: place.coordinates.latitude,
                          longitude: place.coordinates.longitude,

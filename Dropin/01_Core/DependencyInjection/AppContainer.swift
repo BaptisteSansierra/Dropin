@@ -21,7 +21,9 @@ final class AppContainer {
     private let categoryRepository: CategoryRepository
     private let imageRepository: PlaceImageRepository
     private let profileRepository: ProfileRepository
+    private let spaceRepository: SpaceRepository
     private let generalRepository: GeneralRepository
+    private let spaceContext: SpaceContext
     private let imageLoader: PlaceImageLoader
     // Coordinators
     private let profileCoordinator: ProfileCoordinator
@@ -75,29 +77,36 @@ final class AppContainer {
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
         self.shareService = ShareService(client: supabaseService.client, auth: authService)
+        // Space bootstrap: resolve the main space synchronously before any space-scoped repository is constructed.
+        let spaceContext = SpaceContext(mainSpaceId: Self.resolveMainSpaceId(modelContext: modelContext))
+        self.spaceContext = spaceContext
         // Local repos (raw — used by SyncService for push)
-        let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext)
-        let localCategoryRepo = CategoryRepositoryImpl(modelContext: modelContext)
-        let localTagRepo = TagRepositoryImpl(modelContext: modelContext)
+        let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        let localCategoryRepo = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        let localTagRepo = TagRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         let localImageRepo = PlaceImageRepositoryImpl(modelContext: modelContext)
         let localProfileRepo = ProfileRepositoryImpl(modelContext: modelContext)
+        let localSpaceRepo = SpaceRepositoryImpl(modelContext: modelContext)
         // Remote repos
         let remotePlaceRepo = SupabasePlaceRepository(client: supabaseService.client, auth: authService)
         let remoteCategoryRepo = SupabaseCategoryRepository(client: supabaseService.client, auth: authService)
         let remoteTagRepo = SupabaseTagRepository(client: supabaseService.client, auth: authService)
         let remoteImageRepo = SupabasePlaceImageRepository(client: supabaseService.client, auth: authService)
         let remoteProfileRepo = SupabaseProfileRepository(client: supabaseService.client, auth: authService)
+        let remoteSpaceRepo = SupabaseSpaceRepository(client: supabaseService.client, auth: authService)
         // Sync
         let syncService = SyncService(localPlaceRepo: localPlaceRepo,
                                       localCategoryRepo: localCategoryRepo,
                                       localTagRepo: localTagRepo,
                                       localImageRepo: localImageRepo,
                                       localProfileRepo: localProfileRepo,
+                                      localSpaceRepo: localSpaceRepo,
                                       remotePlaceRepo: remotePlaceRepo,
                                       remoteCategoryRepo: remoteCategoryRepo,
                                       remoteTagRepo: remoteTagRepo,
                                       remoteImageRepo: remoteImageRepo,
                                       remoteProfileRepo: remoteProfileRepo,
+                                      remoteSpaceRepo: remoteSpaceRepo,
                                       reachability: reachabilityService)
         self.syncService = syncService
         // Wrap local repos so mutations notify SyncService
@@ -112,6 +121,7 @@ final class AppContainer {
         tagRepository = SyncingTagRepository(wrapped: localTagRepo, sync: syncService)
         imageRepository = SyncingPlaceImageRepository(wrapped: localImageRepo, sync: syncService)
         profileRepository = SyncingProfileRepository(wrapped: localProfileRepo, sync: syncService)
+        spaceRepository = SyncingSpaceRepository(wrapped: localSpaceRepo, sync: syncService)
         imageLoader = PlaceImageLoader(local: imageRepository, remote: remoteImageRepo)
         profileService = ProfileService(local: profileRepository, remote: remoteProfileRepo)
         // Not entity-specific, not wrapped: save()/rollback() act on the whole
@@ -149,16 +159,33 @@ final class AppContainer {
         self.shareService = StubShareService()
         self.applePOIService = StubApplePOIService()
         // Repos — no syncing wrapper needed (stub would no-op anyway)
-        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
-        tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        categoryRepository = CategoryRepositoryImpl(modelContext: modelContext)
+        let spaceContext = SpaceContext(mainSpaceId: Self.resolveMainSpaceId(modelContext: modelContext))
+        self.spaceContext = spaceContext
+        placeRepository = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        tagRepository = TagRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        categoryRepository = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         imageRepository = PlaceImageRepositoryImpl(modelContext: modelContext)
         profileRepository = ProfileRepositoryImpl(modelContext: modelContext)
+        spaceRepository = SpaceRepositoryImpl(modelContext: modelContext)
         imageLoader = PlaceImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
         self.profileService = profileService
         generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
     }
     #endif
+
+    /// Local-only, synchronous lookup of the main space,
+    /// so repositories can be constructed with a resolved SpaceContext from the very start
+    private static func resolveMainSpaceId(modelContext: ModelContext) -> UUID {
+        let predicate = #Predicate<SpaceRecord> { $0.isMain }
+        do {
+            guard let mainSpace = try modelContext.fetch(FetchDescriptor<SpaceRecord>(predicate: predicate)).first else {
+                fatalError("AppContainer: no main Space found locally")
+            }
+            return mainSpace.identifier
+        } catch {
+            fatalError("AppContainer: failed to fetch main Space: \(error)")
+        }
+    }
 
     func startLocationManager() {
         locationManager.start()
@@ -643,52 +670,80 @@ final class AppContainer {
 extension AppContainer {
     
     static func insertMockData(modelContext: ModelContext) throws {
-        let mockCategories = CategoryRecord.mockCategories()
-        let mockTags = TagRecord.mockTags()
-        let mockPlaces = PlaceRecord.mockPlaces()
+        let mainSpace = SpaceRecord(identifier: UUID(), name: "Main", color: "588B8B", icon: .sf("house"),
+                                    isMain: true, ownerId: UUID())
+        modelContext.insert(mainSpace)
+
+        let mockCategories = CategoryRecord.mockCategories(spaceId: mainSpace.identifier)
+        let mockTags = TagRecord.mockTags(spaceId: mainSpace.identifier)
+        let mainPlaces = PlaceRecord.mockPlaces(spaceId: mainSpace.identifier)
         for item in mockCategories {
             modelContext.insert(item)
         }
         for item in mockTags {
             modelContext.insert(item)
         }
-        for item in mockPlaces {
+        for item in mainPlaces {
             modelContext.insert(item)
         }
-        
-        mockPlaces[0].category = nil // mockCategories[0]
-        mockPlaces[0].tags = [mockTags[1], mockTags[2], mockTags[3], mockTags[4],
+
+        mainPlaces[0].category = nil // mockCategories[0]
+        mainPlaces[0].tags = [mockTags[1], mockTags[2], mockTags[3], mockTags[4],
                               mockTags[5], mockTags[6], mockTags[7], mockTags[8],
                               mockTags[10], mockTags[13], mockTags[12], mockTags[14], mockTags[15]]
 
-        mockPlaces[1].category = mockCategories[0]
-        mockPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
+        mainPlaces[1].category = mockCategories[0]
+        mainPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
 
-        mockPlaces[2].category = mockCategories[4]
-        mockPlaces[2].tags = [mockTags[6], mockTags[7]]
+        mainPlaces[2].category = mockCategories[4]
+        mainPlaces[2].tags = [mockTags[6], mockTags[7]]
 
-        mockPlaces[3].category = mockCategories[5]
-        mockPlaces[3].tags = [mockTags[1]]
+        mainPlaces[3].category = mockCategories[5]
+        mainPlaces[3].tags = [mockTags[1]]
 
-        mockPlaces[4].category = mockCategories[5]
-        mockPlaces[4].tags = [mockTags[1]]
+        mainPlaces[4].category = mockCategories[5]
+        mainPlaces[4].tags = [mockTags[1]]
 
-        mockPlaces[5].category = mockCategories[5]
-        mockPlaces[5].tags = [mockTags[11], mockTags[12]]
+        mainPlaces[5].category = mockCategories[5]
+        mainPlaces[5].tags = [mockTags[11], mockTags[12]]
 
-        mockPlaces[6].category = mockCategories[7]
-        mockPlaces[6].tags = [mockTags[9], mockTags[12]]
+        mainPlaces[6].category = mockCategories[7]
+        mainPlaces[6].tags = [mockTags[9], mockTags[12]]
 
-        mockPlaces[7].category = mockCategories[8]
-        mockPlaces[7].tags = [mockTags[9]]
+        mainPlaces[7].category = mockCategories[8]
+        mainPlaces[7].tags = [mockTags[9]]
 
-        mockPlaces[6].category = mockCategories[8]
-        mockPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
+        mainPlaces[6].category = mockCategories[8]
+        mainPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
 
-        for p in mockPlaces {
+        // Secondary space: a single place/category/tag, so cross-space scoping has real
+        // data to verify against — fetches scoped to mainSpace must never leak these in.
+        let secondarySpace = SpaceRecord(identifier: UUID(), name: "Secondary", color: "8B5A2B", icon: .sf("briefcase"),
+                                         isMain: false, ownerId: UUID())
+        modelContext.insert(secondarySpace)
+
+        let secondaryCategory = CategoryRecord(identifier: UUID(), spaceId: secondarySpace.identifier,
+                                               name: "Work", color: "336699", icon: .sf("briefcase"))
+        let secondaryTag = TagRecord(identifier: UUID(), spaceId: secondarySpace.identifier,
+                                     name: "Client", color: "996633")
+        modelContext.insert(secondaryCategory)
+        modelContext.insert(secondaryTag)
+
+        let secondaryPlaces = [
+            PlaceRecord(identifier: UUID(), spaceId: secondarySpace.identifier,
+                        name: "Secondary Space Office",
+                        latitude: 41.390205, longitude: 2.154007,
+                        address: "Carrer de Balmes, 1, Barcelona",
+                        tags: [secondaryTag], category: secondaryCategory)
+        ]
+        for item in secondaryPlaces {
+            modelContext.insert(item)
+        }
+
+        for p in mainPlaces + secondaryPlaces {
             print("Mock place insert '\(p.name)' Category(\(p.category?.name ?? "N/A")) Tags(\(p.tags.count))")
         }
-        
+
         try modelContext.save()
     }
 }

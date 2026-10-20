@@ -69,6 +69,10 @@ final class MockCategoryRepository: CategoryRepository {
             categories.append(category)
         }
     }
+
+    func upsert(_ category: Dropin.Category, spaceId: UUID, shouldSave: Bool) async throws {
+        try await upsert(category, shouldSave: shouldSave)
+    }
     
     func clearTable() async throws {
         categories.removeAll()

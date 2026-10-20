@@ -18,15 +18,20 @@ public enum CategoryMapper {
                                 updatedAt: sdCategory.updatedAt,
                                 deletedAt: sdCategory.deletedAt,
                                 importedAt: sdCategory.importedAt,
-                                importSrc: sdCategory.importSrc.flatMap(ImportSource.init(rawValue:)))
+                                importSrc: sdCategory.importSrc.flatMap(ImportSource.init(rawValue:)),
+                                spaceId: sdCategory.spaceId)
         return category
     }
-    
-    static func toData(_ category: Category) -> CategoryRecord {
+
+    /// `spaceId` is explicit, resolved by the repository (never read off `category.spaceId`,
+    /// which is nil for anything not yet persisted).
+    /// cf. CategoryRepositoryImpl.upsert(_:spaceId:shouldSave:).
+    static func toData(_ category: Category, spaceId: UUID) -> CategoryRecord {
         let sd = CategoryRecord(identifier: category.id,
-                         name: category.name,
-                         color: category.color,
-                         icon: category.icon)
+                                spaceId: spaceId,
+                                name: category.name,
+                                color: category.color,
+                                icon: category.icon)
         // CategoryRecord.init hardcodes fresh dates; preserve domain timestamps so
         // server-originated rows (incl. soft-deletes) survive a pull.
         sd.createdAt = category.createdAt

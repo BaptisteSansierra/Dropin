@@ -14,6 +14,7 @@ struct SupabaseTagDTO: Codable {
     let deletedAt: Date?
     let importedAt: Date?
     let importSrc: String?
+    let spaceId: UUID
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -25,6 +26,7 @@ struct SupabaseTagDTO: Codable {
         case deletedAt = "deleted_at"
         case importedAt = "imported_at"
         case importSrc = "import_source"
+        case spaceId   = "space_id"
     }
 
     /// Explicit encode so `deleted_at: null` is sent over the wire. See SupabasePlaceDTO.
@@ -39,6 +41,7 @@ struct SupabaseTagDTO: Codable {
         try c.encode(deletedAt, forKey: .deletedAt)
         try c.encode(importedAt, forKey: .importedAt)
         try c.encode(importSrc, forKey: .importSrc)
+        try c.encode(spaceId,   forKey: .spaceId)
     }
 
     init(from tag: Tag, userId: UUID) {
@@ -51,11 +54,18 @@ struct SupabaseTagDTO: Codable {
         self.deletedAt = tag.deletedAt
         self.importedAt = tag.importedAt
         self.importSrc  = tag.importSrc?.rawValue
+        // Pushed entity always come from an already-persisted local fetch, which
+        // always has a real spaceId. A nil here means a genuine bug, so fail loudly.
+        guard let spaceId = tag.spaceId else {
+            preconditionFailure("Tag \(tag.id) has no spaceId — cannot push an entity that was never persisted")
+        }
+        self.spaceId = spaceId
     }
 
     func toDomain() -> Tag {
         Tag(id: id, name: name, color: color,
                   createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt,
-                  importedAt: importedAt, importSrc: importSrc.flatMap(ImportSource.init(rawValue:)))
+                  importedAt: importedAt, importSrc: importSrc.flatMap(ImportSource.init(rawValue:)),
+                  spaceId: spaceId)
     }
 }

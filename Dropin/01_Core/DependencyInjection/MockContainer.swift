@@ -28,22 +28,25 @@ final class MockContainer {
         do {
             // Create a mock database
             let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
-            let mockModelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self,
+            let mockModelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self,
                                                         configurations: modelConfiguration)
             let mockModelContext = mockModelContainer.mainContext
             mockModelContext.autosaveEnabled = false
-            
+
             self.mockModelContainer = mockModelContainer
             self.mockModelContext = mockModelContext
+
+            // Must seed the main Space (and other mock data) before constructing
+            // AppContainer, which resolves the main space synchronously at init time.
+            try AppContainer.insertMockData(modelContext: mockModelContext)
+
             self.appContainer = AppContainer(modelContext: mockModelContext,
                                              appContext: AppContext(),
                                              locationManager: locationManager,
                                              addressLookupService: addressLookupService,
                                              reachabilityService: reachabilityService,
                                              profileService: profileService)
-            
-            try AppContainer.insertMockData(modelContext: mockModelContext)
-            
+
         } catch {
             fatalError("couldn't create mock data \(error)")
         }

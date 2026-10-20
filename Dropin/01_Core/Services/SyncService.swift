@@ -13,6 +13,7 @@ protocol SyncServiceProtocol: AnyObject {
     func markPlaceDirty(_ id: UUID)
     func markCategoryDirty(_ id: UUID)
     func markTagDirty(_ id: UUID)
+    func markSpaceDirty(_ id: UUID)
     func markImagesChanged()
     func markProfileDirty()
     func syncAll() async
@@ -48,6 +49,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     private var dirtyPlaceIds: Set<UUID> = []
     private var dirtyCategoryIds: Set<UUID> = []
     private var dirtyTagIds: Set<UUID> = []
+    private var dirtySpaceIds: Set<UUID> = []
     // Profile is single-row; a bool suffices.
     private var dirtyProfile = false
     // Image dirty state lives on PlaceImageRecord itself (syncedAt == nil OR deletedAt != nil),
@@ -68,6 +70,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         dirtyPlaceIds.count
         + dirtyCategoryIds.count
         + dirtyTagIds.count
+        + dirtySpaceIds.count
         + (dirtyProfile ? 1 : 0)
         + (pendingPush ? 1 : 0)
         // A push batch drains its dirty set (e.g. dirtyPlaceIds.removeAll() in
@@ -85,12 +88,17 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     private let localTagRepo: any TagRepository
     private let localImageRepo: any PlaceImageRepository
     private let localProfileRepo: any ProfileRepository
+    private let localSpaceRepo: any SpaceRepository
     private let remotePlaceRepo: any RemotePlaceRepository
     private let remoteCategoryRepo: any RemoteCategoryRepository
     private let remoteTagRepo: any RemoteTagRepository
     private let remoteImageRepo: any RemotePlaceImageRepository
     private let remoteProfileRepo: any RemoteProfileRepository
+    private let remoteSpaceRepo: any RemoteSpaceRepository
     private let reachability: any ReachabilityServiceProtocol
+    private let upsertPlaceInSpace: UpsertPlaceInSpace
+    private let upsertCategoryInSpace: UpsertCategoryInSpace
+    private let upsertTagInSpace: UpsertTagInSpace
     /// Set by AppContainer right after both are constructed — can't be a
     /// constructor param: AddressBackfillService writes through the
     /// syncing-decorated PlaceRepository, which itself needs this SyncService
@@ -103,11 +111,13 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
          localTagRepo: any TagRepository,
          localImageRepo: any PlaceImageRepository,
          localProfileRepo: any ProfileRepository,
+         localSpaceRepo: any SpaceRepository,
          remotePlaceRepo: any RemotePlaceRepository,
          remoteCategoryRepo: any RemoteCategoryRepository,
          remoteTagRepo: any RemoteTagRepository,
          remoteImageRepo: any RemotePlaceImageRepository,
          remoteProfileRepo: any RemoteProfileRepository,
+         remoteSpaceRepo: any RemoteSpaceRepository,
          reachability: any ReachabilityServiceProtocol,
          userDefaults: UserDefaults = .standard) {
         self.localPlaceRepo = localPlaceRepo
@@ -115,12 +125,17 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         self.localTagRepo = localTagRepo
         self.localImageRepo = localImageRepo
         self.localProfileRepo = localProfileRepo
+        self.localSpaceRepo = localSpaceRepo
         self.remotePlaceRepo = remotePlaceRepo
         self.remoteCategoryRepo = remoteCategoryRepo
         self.remoteTagRepo = remoteTagRepo
         self.remoteImageRepo = remoteImageRepo
         self.remoteProfileRepo = remoteProfileRepo
+        self.remoteSpaceRepo = remoteSpaceRepo
         self.reachability = reachability
+        self.upsertPlaceInSpace = UpsertPlaceInSpace(repository: localPlaceRepo)
+        self.upsertCategoryInSpace = UpsertCategoryInSpace(repository: localCategoryRepo)
+        self.upsertTagInSpace = UpsertTagInSpace(repository: localTagRepo)
         self.syncStatus = SyncStatus()
         self.userDefaults = userDefaults
         if let lastSync = userDefaults.object(forKey: DropinApp.userDefaultsKeys.lastSyncedAt) as? Date {
@@ -139,6 +154,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         dirtyPlaceIds.removeAll()
         dirtyCategoryIds.removeAll()
         dirtyTagIds.removeAll()
+        dirtySpaceIds.removeAll()
         dirtyProfile = false
     }
 
@@ -157,6 +173,12 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     func markTagDirty(_ id: UUID) {
         Log.debug("Mark tag dirty \(id)")
         dirtyTagIds.insert(id)
+        schedulePush()
+    }
+
+    func markSpaceDirty(_ id: UUID) {
+        Log.debug("Mark space dirty \(id)")
+        dirtySpaceIds.insert(id)
         schedulePush()
     }
 
@@ -231,11 +253,13 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
 
     private func push() async {
         // Push order matters because of Postgres FK constraints:
+        //   - places/categories/tags.space_id references spaces.id → spaces must exist remotely first
         //   - images.place_id references places.id → places must exist remotely before image rows
         // Profile is independent of everything else; tags/categories have no FK from places
         // (places.tag_ids[] and group_id are unconstrained), but we still push them
         // before places for symmetry with pull.
         await pushDirtyProfile()
+        await pushDirtySpaces()
         await pushDirtyTags()
         await pushDirtyCategories()
         await pushDirtyPlaces()
@@ -256,6 +280,24 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
             dirtyProfile = true   // re-arm on failure
             assertNoBug(error)
             Log.error("SyncService: push profile failed: \(error)")
+        }
+    }
+
+    private func pushDirtySpaces() async {
+        let ids = dirtySpaceIds
+        dirtySpaceIds.removeAll()
+        for id in ids {
+            do {
+                let space = try await localSpaceRepo.fetch(id)
+                try await remoteSpaceRepo.upsert(space)
+                Log.debug("Remote upsert SPACE \(space.name)")
+            } catch DataError.notFound(_) {
+                Log.debug("SyncService: dropping dirty space \(id) — no longer exists locally")
+            } catch {
+                dirtySpaceIds.insert(id)
+                assertNoBug(error)
+                Log.error("SyncService: push space \(id) failed: \(error)")
+            }
         }
     }
 
@@ -363,13 +405,15 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         do {
             Log.debug("PULL since \(since) ...")
             let profile = try await remoteProfileRepo.fetch(updatedAfter: since)
+            let spaces  = try await remoteSpaceRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
             let places  = try await remotePlaceRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
             let categories  = try await remoteCategoryRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
             let tags    = try await remoteTagRepo.fetch(updatedAfter: since, excludeDeleted: isFirstSync)
-            Log.debug(" > PULLED \(places.count) places, \(categories.count) categories, \(tags.count) tags")
+            Log.debug(" > PULLED \(spaces.count) spaces, \(places.count) places, \(categories.count) categories, \(tags.count) tags")
 
             // Pull order matters because of local linkage:
             //   - Profile has no relationship to other tables; can be applied first.
+            //   - Tags/categories/places carry a spaceId, so spaces must be upserted locally first.
             //   - PlaceRepositoryImpl resolves tag_ids / group_id by looking them up in SwiftData,
             //     so tags and categories must be upserted locally before places.
             //   - PlaceImageRecord.place is a SwiftData relationship → places must exist locally before
@@ -379,9 +423,25 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
             // place referencing a tag id that failed to link) shouldn't block every
             // other row in the batch — log it and move on to the next one.
             if let profile { try await localProfileRepo.upsert(profile) }
+            for space in spaces {
+                do {
+                    try await localSpaceRepo.upsert(space, shouldSave: true)
+                } catch {
+                    assertNoBug(error)
+                    Log.error("SyncService: pull upsert failed for space \(space.id) (\(space.name)): \(error)")
+                }
+            }
             for tag in tags {
                 do {
-                    try await localTagRepo.upsert(tag, shouldSave: true)
+                    // Pulled rows aren't necessarily in the currently active
+                    // so the tag's own spaceId (from the remote row) must drive the insert branch
+                    // instead of SpaceContext.currentSpaceId.
+                    // SupabaseTagDTO.toDomain() always populates this from a non-optional column, so it's never nil here.
+                    guard let spaceId = tag.spaceId else {
+                        Log.error("SyncService: pulled tag \(tag.id) has no spaceId — dropping")
+                        continue
+                    }
+                    try await upsertTagInSpace(tag, spaceId: spaceId, shouldSave: true)
                 } catch {
                     assertNoBug(error)
                     Log.error("SyncService: pull upsert failed for tag \(tag.id) (\(tag.name)): \(error)")
@@ -389,7 +449,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
             }
             for category in categories {
                 do {
-                    try await localCategoryRepo.upsert(category, shouldSave: true)
+                    guard let spaceId = category.spaceId else {
+                        Log.error("SyncService: pulled category \(category.id) has no spaceId — dropping")
+                        continue
+                    }
+                    try await upsertCategoryInSpace(category, spaceId: spaceId, shouldSave: true)
                 } catch {
                     assertNoBug(error)
                     Log.error("SyncService: pull upsert failed for category \(category.id) (\(category.name)): \(error)")
@@ -397,7 +461,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
             }
             for place in places {
                 do {
-                    try await localPlaceRepo.upsert(place, shouldSave: true)
+                    guard let spaceId = place.spaceId else {
+                        Log.error("SyncService: pulled place \(place.id) has no spaceId — dropping")
+                        continue
+                    }
+                    try await upsertPlaceInSpace(place, spaceId: spaceId, shouldSave: true)
                     // A place synced down without an address (e.g. created offline on
                     // another device) gets backfilled here rather than waiting for it
                     // to be displayed.
