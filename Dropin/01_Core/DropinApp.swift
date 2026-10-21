@@ -10,6 +10,7 @@ import SwiftData
 import CoreLocation
 import MapKit
 import ContactFieldKit
+import Sentry
 
 // Note:
 // - 'Infer Sendable for Methods and Key Path Literals' set to Yes to avoid SortDescriptor warning (swift6 concurrency) cf. https://stackoverflow.com/questions/79000052/fetchdescriptor-including-sortdescriptor-returns-warning-in-xcode16
@@ -31,12 +32,27 @@ struct DropinApp: App {
 
     // MARK: - init
     init() {
+        // Init Sentry
+        SentrySDK.start { options in
+            options.dsn = AppConfig.Sentry.dsn
+            options.debug = true // Enabled debug when first installing is always helpful
+            // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+            // We recommend adjusting this value in production.
+            #if DEBUG
+            options.tracesSampleRate = 1.0
+            #else
+            options.tracesSampleRate = 0.1
+            #endif
+        }
+        
         // Create database, wire app
         let schema = Schema([PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self])
         let configuration = ModelConfiguration()
         do {
             let modelContainer = try ModelContainer(for: schema, configurations: configuration)
             modelContainer.mainContext.autosaveEnabled = false
+            // Healthy launch: let's clean up backups left behind by a past occurrence of corrupted-store
+            Self.cleanUpOldCorruptedBackups(near: configuration.url)
             #if DEBUG
             // If empty database, populate with mock data
             if false {
@@ -94,19 +110,27 @@ struct DropinApp: App {
             #if !DEBUG
             // Last resort: the store couldn't be opened against the current schema (an
             // unmigrated schema change slipped through, a corrupted store, etc).
-            // By the time this ships, schema changes are expected to carry a real migration plan, so this
-            // shouldn't normally trigger; this only exists so a stale/incompatible store
-            // doesn't permanently brick the app for a user. Rename it aside (rather than delete)
-            // and start clean rather than crash-looping forever.
+            // By the time this ships, schema changes are expected to carry a real migration plan, so this shouldn't normally trigger;
+            // this only exists so a stale/incompatible store doesn't permanently brick the app for a user.
+            // Backup it and start clean rather than crash-looping forever.
             Log.error("ModelContainer failed (\(error)) -> backing up store and starting fresh")
             let backupSuffix = ".corrupted-\(Int(Date().timeIntervalSince1970))"
-            // FIXME: DRO-50 once Sentry is wired in, upload/attach these backed-up store files
-            // here so a corrupted-store fallback is actually diagnosable instead of just inert.
+            var backupURLs: [URL] = []
             for suffix in ["", "-wal", "-shm"] {
                 let source = URL(fileURLWithPath: configuration.url.path + suffix)
                 let backup = URL(fileURLWithPath: configuration.url.path + suffix + backupSuffix)
-                try? FileManager.default.moveItem(at: source, to: backup)
+                if (try? FileManager.default.moveItem(at: source, to: backup)) != nil {
+                    backupURLs.append(backup)
+                }
             }
+            // So this fallback is actually diagnosable instead of just inert: attach the backed-up store files to the event
+            // small (in-memory-sized) local SQLite files, well under Sentry's attachment size limit.
+            SentrySDK.capture(error: error) { scope in
+                for url in backupURLs {
+                    scope.addAttachment(Attachment(path: url.path, filename: url.lastPathComponent))
+                }
+            }
+            // Backup is left on disk; a future healthy launch will clean up (see cleanUpOldCorruptedBackups)
             if let freshContainer = try? ModelContainer(for: schema, configurations: configuration) {
                 freshContainer.mainContext.autosaveEnabled = false
                 appContainer = AppContainer(modelContext: freshContainer.mainContext, appContext: appContext)
@@ -206,6 +230,20 @@ struct DropinApp: App {
     // MARK: private methods
     static private func configureDependencies() {
         configureContactFieldKit()
+    }
+
+    /// Deletes any `.corrupted-*` store backups left behind by a past occurrence of the fallback in `init()`'s catch block.
+    /// Called from the healthy-launch path, never from the fallback itself, so cleanup never races the Sentry upload that reported them.
+    static private func cleanUpOldCorruptedBackups(near url: URL) {
+        let directory = url.deletingLastPathComponent()
+        let baseName = url.lastPathComponent
+        guard let contents = try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil) else { return }
+        for fileURL in contents {
+            let name = fileURL.lastPathComponent
+            if name.hasPrefix(baseName), name.contains(".corrupted-") {
+                try? FileManager.default.removeItem(at: fileURL)
+            }
+        }
     }
     
     static private func configureContactFieldKit() {

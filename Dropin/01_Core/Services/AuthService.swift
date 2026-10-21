@@ -4,6 +4,7 @@
 
 import Supabase
 import Foundation
+import Sentry
 
 private struct SignOutTimeout: Error {}
 
@@ -37,7 +38,11 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
 @Observable
 @MainActor
 final class AuthService: AuthServiceProtocol {
-    private(set) var session: UserSession? = nil
+    private(set) var session: UserSession? = nil {
+        didSet {
+            updateSentryUser()
+        }
+    }
     var isAuthenticated: Bool { session != nil }
 
     private let client: SupabaseClient
@@ -129,5 +134,15 @@ final class AuthService: AuthServiceProtocol {
         } catch {
             session = nil
         }
+    }
+    
+    private func updateSentryUser() {
+        guard let session = session else {
+            SentrySDK.setUser(nil)
+            return
+        }
+        let user = Sentry.User(userId: session.userId.uuidString)
+        user.email = session.email
+        SentrySDK.setUser(user)
     }
 }

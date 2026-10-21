@@ -17,7 +17,7 @@ protocol ShareServiceProtocol: Sendable {
 final class ShareService: ShareServiceProtocol {
 
     /// Mirrors Dropin_frontend's live domain (see its CLAUDE.md) — not derived from
-    /// SupabaseConfig, which points at the backend project, not the static site.
+    /// AppConfig.Supabase, which points at the backend project, not the static site.
     private static let baseURL = URL(string: "https://dropin.lat/p.html")!
 
     private let client: SupabaseClient

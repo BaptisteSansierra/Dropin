@@ -1,12 +1,23 @@
+
+# Supabase credentials / Sentry - never commit
+Config.xcconfig
+
+# Sentry stuff
+.sentryclirc
+
+# My stuff
+ico/
+svg/
+DATA/
 TODO.txt
 TODO
 ARCHI
 CURL
 .DS_Store
 
-ico/
-svg/
-DATA/
+
+# and the default stuff...
+
 
 # Xcode
 #
@@ -42,9 +53,6 @@ playground.xcworkspace
 
 .build/
 
-# Supabase credentials — never commit
-Config.xcconfig
-
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
@@ -74,3 +82,4 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D6A6B8730887857003CDEC4 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 4D6A6B8630887857003CDEC4 /* Sentry */; };
 		4D8E8A052FADEE2600DC59D9 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 4D8E8A042FADEE2600DC59D9 /* Auth */; };
 		4D8E8A072FADEE2600DC59D9 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 4D8E8A062FADEE2600DC59D9 /* Storage */; };
 		4D8E8A092FADEE2600DC59D9 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 4D8E8A082FADEE2600DC59D9 /* Supabase */; };
@@ -79,6 +80,7 @@
 				4D8E8A092FADEE2600DC59D9 /* Supabase in Frameworks */,
 				4D8E8A072FADEE2600DC59D9 /* Storage in Frameworks */,
 				4DBBE55D2F4EF48D008413A2 /* NoFlyZone in Frameworks */,
+				4D6A6B8730887857003CDEC4 /* Sentry in Frameworks */,
 				4DC9DFF72F640DC500C1C60A /* SheetOverlay in Frameworks */,
 				4D90AA812F432643003614A2 /* NoFlyZone in Frameworks */,
 				4D8E8A052FADEE2600DC59D9 /* Auth in Frameworks */,
@@ -142,6 +144,7 @@
 				4D42C7362E2BFAFF00B50940 /* Sources */,
 				4D42C7372E2BFAFF00B50940 /* Frameworks */,
 				4D42C7382E2BFAFF00B50940 /* Resources */,
+				4D6A6B8830887B32003CDEC4 /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -159,6 +162,7 @@
 				4D8E8A042FADEE2600DC59D9 /* Auth */,
 				4D8E8A062FADEE2600DC59D9 /* Storage */,
 				4D8E8A082FADEE2600DC59D9 /* Supabase */,
+				4D6A6B8630887857003CDEC4 /* Sentry */,
 			);
 			productName = Dropin;
 			productReference = 4D42C73A2E2BFAFF00B50940 /* Dropin.app */;
@@ -248,6 +252,7 @@
 				4D90AEBB2F4C8CFD003614A2 /* XCRemoteSwiftPackageReference "ContactFieldKit" */,
 				4DC9DFF52F640DC500C1C60A /* XCRemoteSwiftPackageReference "SheetOverlay" */,
 				4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				4D6A6B8530887857003CDEC4 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D42C73B2E2BFAFF00B50940 /* Products */;
@@ -284,6 +289,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4D6A6B8830887B32003CDEC4 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script is responsible for uploading debug symbols and source context for Sentry.\nif [[ \"$(uname -m)\" == arm64 ]]; then\n  export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which sentry-cli >/dev/null; then\n  export SENTRY_ORG=dropin-yq\n  export SENTRY_PROJECT=dropin\n  ERROR=$(sentry-cli debug-files upload --include-sources \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\n  if [ ! $? -eq 0 ]; then\n    echo \"warning: sentry-cli - $ERROR\"\n  fi\nelse\n  echo \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4D42C7362E2BFAFF00B50940 /* Sources */ = {
@@ -461,9 +489,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 20250826102818;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = HT3SFSF7CQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Dropin/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Dropin needs access to your location to provide location-based services.";
@@ -506,9 +536,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 20250826102818;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = HT3SFSF7CQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Dropin/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Dropin needs access to your location to provide location-based services.";
@@ -679,6 +711,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4D6A6B8530887857003CDEC4 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.30.2;
+			};
+			traits = (
+			);
+		};
 		4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift.git";
@@ -714,6 +756,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4D6A6B8630887857003CDEC4 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D6A6B8530887857003CDEC4 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
 		4D8E8A042FADEE2600DC59D9 /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4D8E8A032FADEE2600DC59D9 /* XCRemoteSwiftPackageReference "supabase-swift" */;
