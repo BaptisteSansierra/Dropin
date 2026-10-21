@@ -28,11 +28,7 @@ final class CatOpenData {
             throw URLError(.unknown)
         }
         self.url = url
-        let predicate = #Predicate<SpaceRecord> { $0.isMain }
-        guard let mainSpace = try modelContext.fetch(FetchDescriptor<SpaceRecord>(predicate: predicate)).first else {
-            fatalError("CatOpenData: no main Space found locally")
-        }
-        let spaceContext = SpaceContext(mainSpaceId: mainSpace.identifier)
+        let spaceContext = SpaceContext()
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         groupRepository = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)

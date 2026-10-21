@@ -45,6 +45,13 @@ struct Data_Mappers {
         assertEqualTag(original, back)
     }
 
+    @Test func spaceRoundTrip() async throws {
+        let original = SampleData.fullSpace()
+        let sd = SpaceMapper.toData(original)
+        let back = SpaceMapper.toDomain(sd)
+        assertEqualSpace(original, back)
+    }
+
     @Test func profileRoundTrip() async throws {
         let original = SampleData.fullProfile()
         let sd = ProfileMapper.toData(original)
@@ -67,6 +74,9 @@ struct Data_Mappers {
         // Tag
         let t = SampleData.fullTag()
         #expect(TagMapper.toDomain(TagMapper.toData(t, spaceId: UUID())).deletedAt == t.deletedAt)
+        // Space
+        let s = SampleData.fullSpace()
+        #expect(SpaceMapper.toDomain(SpaceMapper.toData(s)).deletedAt == s.deletedAt)
     }
 }
 

@@ -81,6 +81,19 @@ struct App_SyncService {
         #expect(remoteRepo.upsertedTags.map(\.id).contains(tag.id))
     }
 
+    @Test func syncAllPushesDirtySpace() async throws {
+        let space = Space(id: UUID(), name: "Secondary", color: "8B5A2B", icon: .sf("briefcase"),
+                          ownerId: UUID(), createdAt: Date(), updatedAt: Date(), deletedAt: nil)
+        let localRepo = MockSpaceRepository(initialSpaces: [space])
+        let remoteRepo = MockRemoteSpaceRepository()
+        let sut = makeSUT(localSpaceRepo: localRepo, remoteSpaceRepo: remoteRepo)
+
+        sut.markSpaceDirty(space.id)
+        await sut.syncAll()
+
+        #expect(remoteRepo.upsertedSpaces.map(\.id).contains(space.id))
+    }
+
     @Test func syncAllOfflineDoesNotPush() async throws {
         let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
         let localRepo = MockPlaceRepository(initialPlaces: [place])
@@ -154,6 +167,63 @@ struct App_SyncService {
 
         let fetched = try await localRepo.fetch(place.id)
         #expect(fetched.deletedAt != nil)
+    }
+
+    @Test func syncAllPullsRemoteSpaceToLocal() async throws {
+        let remoteSpace = Space(id: UUID(), name: "Secondary", color: "8B5A2B", icon: .sf("briefcase"),
+                                ownerId: UUID(), createdAt: Date(), updatedAt: Date(), deletedAt: nil)
+        let localRepo = MockSpaceRepository()
+        let remoteRepo = MockRemoteSpaceRepository(spacesToReturn: [remoteSpace])
+        let sut = makeSUT(localSpaceRepo: localRepo, remoteSpaceRepo: remoteRepo)
+
+        await sut.syncAll()
+
+        let fetched = try await localRepo.fetch(remoteSpace.id)
+        #expect(fetched.name == remoteSpace.name)
+    }
+
+    // Regression: pull must route each entity to ITS OWN spaceId (as carried by the remote row),
+    // never to whatever space happens to be active locally.
+    // A user with multiple spaces could otherwise have a pull reassign an entity to the wrong space.
+    // See: UpsertPlaceInSpace/UpsertCategoryInSpace/UpsertTagInSpace and PlaceRepositoryImpl.upsert.
+    @Test func pullPlaceUsesItsOwnSpaceIdNotAnyLocalNotionOfCurrentSpace() async throws {
+        let remoteSpaceId = UUID()
+        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London", spaceId: remoteSpaceId)
+        let localRepo = MockPlaceRepository()
+        let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
+
+        await sut.syncAll()
+
+        #expect(localRepo.lastUpsertSpaceId == remoteSpaceId)
+    }
+
+    @Test func pullCategoryUsesItsOwnSpaceIdNotAnyLocalNotionOfCurrentSpace() async throws {
+        let remoteSpaceId = UUID()
+        let remoteCategory = Dropin.Category(id: UUID(), name: "Remote Category", color: "FF0000", icon: .sf("tag"),
+                                             createdAt: Date(), updatedAt: Date(), deletedAt: nil, spaceId: remoteSpaceId)
+        let localRepo = MockCategoryRepository()
+        let remoteRepo = MockRemoteCategoryRepository(categoriesToReturn: [remoteCategory])
+        let sut = makeSUT(localCategoryRepo: localRepo, remoteCategoryRepo: remoteRepo)
+
+        await sut.syncAll()
+
+        let lastSpaceId = localRepo.lastUpsertSpaceId
+        #expect(lastSpaceId == remoteSpaceId)
+    }
+
+    @Test func pullTagUsesItsOwnSpaceIdNotAnyLocalNotionOfCurrentSpace() async throws {
+        let remoteSpaceId = UUID()
+        let remoteTag = Dropin.Tag(id: UUID(), name: "Remote Tag", color: "0000FF",
+                                   createdAt: Date(), updatedAt: Date(), deletedAt: nil, spaceId: remoteSpaceId)
+        let localRepo = MockTagRepository()
+        let remoteRepo = MockRemoteTagRepository(tagsToReturn: [remoteTag])
+        let sut = makeSUT(localTagRepo: localRepo, remoteTagRepo: remoteRepo)
+
+        await sut.syncAll()
+
+        let lastSpaceId = await localRepo.lastUpsertSpaceId
+        #expect(lastSpaceId == remoteSpaceId)
     }
 
     @Test func syncAllPullIsIdempotent() async throws {

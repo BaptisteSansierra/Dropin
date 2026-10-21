@@ -8333,6 +8333,24 @@
     "Shown on the map to help you find your way. Your places always stay visible." : {
 
     },
+    "space.main_name" : {
+      "comment" : "Display name shown for the main Space, instead of its raw stored name",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principal"
+          }
+        }
+      }
+    },
     "tag_form.error.name_duplicate" : {
       "localizations" : {
         "en" : {

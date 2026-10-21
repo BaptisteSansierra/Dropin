@@ -31,9 +31,11 @@ public final class PlaceRepositoryImpl: PlaceRepository {
     
     func create(_ place: Place) async throws {
         let sdPlace = PlaceMapper.toData(place, spaceId: spaceContext.currentSpaceId)
+        // Insert before wiring relationships: assigning sdPlace.tags/category while it's
+        // still untracked by any ModelContext is unsafe.
+        modelContext.insert(sdPlace)
         try await linkTags(sdPlace: sdPlace, domainPlace: place)
         try await linkCategory(sdPlace: sdPlace, domainPlace: place)
-        modelContext.insert(sdPlace)
         try modelContext.save()
     }
     
@@ -144,13 +146,13 @@ public final class PlaceRepositoryImpl: PlaceRepository {
             try await linkCategory(sdPlace: existing, domainPlace: place)
             existing.deletedAt = place.deletedAt
         } else if place.deletedAt == nil {
-            // Insert
+            // Insert: tracked by the context before relationships are wired, same reason as create(_:).
             let sdPlace = PlaceMapper.toData(place, spaceId: spaceId)
+            modelContext.insert(sdPlace)
             try await linkTags(sdPlace: sdPlace, domainPlace: place)
             try await linkCategory(sdPlace: sdPlace, domainPlace: place)
-            modelContext.insert(sdPlace)
         } else {
-            // Tombstone for a place we never had locally — nothing to do.
+            // Tombstone for a place we never had locally; nothing to do.
             return
         }
         if shouldSave {

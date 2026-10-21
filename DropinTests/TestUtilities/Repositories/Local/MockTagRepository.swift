@@ -12,6 +12,7 @@ import Foundation
 final class MockTagRepository: TagRepository {
     
     private var tags: [Dropin.Tag]
+    private(set) var lastUpsertSpaceId: UUID?
 
     init(initialTags: [Dropin.Tag] = []) {
         self.tags = initialTags
@@ -65,6 +66,7 @@ final class MockTagRepository: TagRepository {
     }
 
     func upsert(_ tag: Dropin.Tag, spaceId: UUID, shouldSave: Bool) async throws {
+        lastUpsertSpaceId = spaceId
         try await upsert(tag, shouldSave: shouldSave)
     }
     

@@ -77,9 +77,7 @@ final class AppContainer {
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
         self.shareService = ShareService(client: supabaseService.client, auth: authService)
-        // Space bootstrap: resolve the main space synchronously before any space-scoped repository is constructed.
-        let spaceContext = SpaceContext(mainSpaceId: Self.resolveMainSpaceId(modelContext: modelContext))
-        self.spaceContext = spaceContext
+        self.spaceContext = SpaceContext()
         // Local repos (raw — used by SyncService for push)
         let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         let localCategoryRepo = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
@@ -159,8 +157,7 @@ final class AppContainer {
         self.shareService = StubShareService()
         self.applePOIService = StubApplePOIService()
         // Repos — no syncing wrapper needed (stub would no-op anyway)
-        let spaceContext = SpaceContext(mainSpaceId: Self.resolveMainSpaceId(modelContext: modelContext))
-        self.spaceContext = spaceContext
+        self.spaceContext = SpaceContext()
         placeRepository = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         tagRepository = TagRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
         categoryRepository = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
@@ -172,20 +169,6 @@ final class AppContainer {
         generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
     }
     #endif
-
-    /// Local-only, synchronous lookup of the main space,
-    /// so repositories can be constructed with a resolved SpaceContext from the very start
-    private static func resolveMainSpaceId(modelContext: ModelContext) -> UUID {
-        let predicate = #Predicate<SpaceRecord> { $0.isMain }
-        do {
-            guard let mainSpace = try modelContext.fetch(FetchDescriptor<SpaceRecord>(predicate: predicate)).first else {
-                fatalError("AppContainer: no main Space found locally")
-            }
-            return mainSpace.identifier
-        } catch {
-            fatalError("AppContainer: failed to fetch main Space: \(error)")
-        }
-    }
 
     func startLocationManager() {
         locationManager.start()
@@ -663,6 +646,7 @@ final class AppContainer {
         // Independant from others
         try await profileRepository.clearTable()
     }
+
 }
 
 #if DEBUG
@@ -670,13 +654,10 @@ final class AppContainer {
 extension AppContainer {
     
     static func insertMockData(modelContext: ModelContext) throws {
-        let mainSpace = SpaceRecord(identifier: UUID(), name: "Main", color: "588B8B", icon: .sf("house"),
-                                    isMain: true, ownerId: UUID())
-        modelContext.insert(mainSpace)
-
-        let mockCategories = CategoryRecord.mockCategories(spaceId: mainSpace.identifier)
-        let mockTags = TagRecord.mockTags(spaceId: mainSpace.identifier)
-        let mainPlaces = PlaceRecord.mockPlaces(spaceId: mainSpace.identifier)
+        // "Main"/personal space is implicit (Space.mainId), not a stored SpaceRecord.
+        let mockCategories = CategoryRecord.mockCategories(spaceId: Space.mainId)
+        let mockTags = TagRecord.mockTags(spaceId: Space.mainId)
+        let mainPlaces = PlaceRecord.mockPlaces(spaceId: Space.mainId)
         for item in mockCategories {
             modelContext.insert(item)
         }
@@ -717,9 +698,9 @@ extension AppContainer {
         mainPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
 
         // Secondary space: a single place/category/tag, so cross-space scoping has real
-        // data to verify against — fetches scoped to mainSpace must never leak these in.
+        // data to verify against — fetches scoped to the personal space must never leak these in.
         let secondarySpace = SpaceRecord(identifier: UUID(), name: "Secondary", color: "8B5A2B", icon: .sf("briefcase"),
-                                         isMain: false, ownerId: UUID())
+                                         ownerId: UUID())
         modelContext.insert(secondarySpace)
 
         let secondaryCategory = CategoryRecord(identifier: UUID(), spaceId: secondarySpace.identifier,

@@ -124,4 +124,76 @@ struct Domain_UseCases {
             try await createTagUC(tag)
         })
     }
+
+    // MARK: - UpsertXInSpace
+
+    @MainActor
+    @Test func upsertPlaceInSpaceRejectsEmptyName() async throws {
+        let placeRepo = MockPlaceRepository()
+        let sut = UpsertPlaceInSpace(repository: placeRepo)
+        let place = Place(id: UUID(), name: "", coordinates: .barcelona, address: "")
+        await #expect(throws: DomainError.Place.missingName, performing: {
+            try await sut(place, spaceId: UUID())
+        })
+    }
+
+    @MainActor
+    @Test func upsertPlaceInSpaceForwardsExplicitSpaceId() async throws {
+        let placeRepo = MockPlaceRepository()
+        let sut = UpsertPlaceInSpace(repository: placeRepo)
+        let spaceId = UUID()
+        let place = Place(id: UUID(), name: "La Chitarra", coordinates: .barcelona, address: "")
+
+        try await sut(place, spaceId: spaceId)
+
+        #expect(placeRepo.lastUpsertSpaceId == spaceId)
+        let stored = try await placeRepo.fetch(place.id)
+        #expect(stored.id == place.id)
+    }
+
+    @Test func upsertCategoryInSpaceRejectsEmptyName() async throws {
+        let categoryRepo = await MockCategoryRepository()
+        let sut = await UpsertCategoryInSpace(repository: categoryRepo)
+        let category = Dropin.Category(name: "", color: "9944AA", icon: .sf("tag"))
+        await #expect(throws: DomainError.Category.missingName, performing: {
+            try await sut(category, spaceId: UUID())
+        })
+    }
+
+    @Test func upsertCategoryInSpaceForwardsExplicitSpaceId() async throws {
+        let categoryRepo = await MockCategoryRepository()
+        let sut = await UpsertCategoryInSpace(repository: categoryRepo)
+        let spaceId = UUID()
+        let category = Dropin.Category(name: "Restaurant", color: "9944AA", icon: .sf("tag"))
+
+        try await sut(category, spaceId: spaceId)
+
+        let lastSpaceId = await categoryRepo.lastUpsertSpaceId
+        #expect(lastSpaceId == spaceId)
+        let stored = try await categoryRepo.fetch(category.id)
+        #expect(stored.id == category.id)
+    }
+
+    @Test func upsertTagInSpaceRejectsEmptyName() async throws {
+        let tagRepo = await MockTagRepository()
+        let sut = await UpsertTagInSpace(repository: tagRepo)
+        let tag = Dropin.Tag(name: "", color: "9944AA")
+        await #expect(throws: DomainError.Tag.missingName, performing: {
+            try await sut(tag, spaceId: UUID())
+        })
+    }
+
+    @Test func upsertTagInSpaceForwardsExplicitSpaceId() async throws {
+        let tagRepo = await MockTagRepository()
+        let sut = await UpsertTagInSpace(repository: tagRepo)
+        let spaceId = UUID()
+        let tag = Dropin.Tag(name: "Clean restrooms", color: "9944AA")
+
+        try await sut(tag, spaceId: spaceId)
+
+        let lastSpaceId = await tagRepo.lastUpsertSpaceId
+        #expect(lastSpaceId == spaceId)
+        let stored = try await tagRepo.fetch(tag.id)
+        #expect(stored.id == tag.id)
+    }
 }

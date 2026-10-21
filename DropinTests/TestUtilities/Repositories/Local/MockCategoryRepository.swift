@@ -12,6 +12,7 @@ import Foundation
 final class MockCategoryRepository: CategoryRepository {
     
     private var categories: [Dropin.Category]
+    private(set) var lastUpsertSpaceId: UUID?
     //private var allPlaces: [Place]
 
 //    init(initialCategories: [Category] = [], allPlaces: [Place]) {
@@ -71,6 +72,7 @@ final class MockCategoryRepository: CategoryRepository {
     }
 
     func upsert(_ category: Dropin.Category, spaceId: UUID, shouldSave: Bool) async throws {
+        lastUpsertSpaceId = spaceId
         try await upsert(category, shouldSave: shouldSave)
     }
     

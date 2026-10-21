@@ -99,6 +99,19 @@ public enum SampleData {
         )
     }
 
+    static func fullSpace() -> Space {
+        Space(
+            id: UUID(),
+            name: "Sample Space",
+            color: "#588B8B",
+            icon: .sf("house"),
+            ownerId: UUID(),
+            createdAt: created,
+            updatedAt: updated,
+            deletedAt: deleted
+        )
+    }
+
     static func fullProfile() -> Profile {
         Profile(
             id: UUID(),

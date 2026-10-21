@@ -69,6 +69,19 @@ public  func assertEqualTag(_ a: Dropin.Tag,
     #expect(a.deletedAt == b.deletedAt, sourceLocation: sourceLocation)
 }
 
+public  func assertEqualSpace(_ a: Space,
+                              _ b: Space,
+                              sourceLocation: SourceLocation = #_sourceLocation) {
+    #expect(a.id == b.id, sourceLocation: sourceLocation)
+    #expect(a.name == b.name, sourceLocation: sourceLocation)
+    #expect(a.color == b.color, sourceLocation: sourceLocation)
+    #expect(a.icon == b.icon, sourceLocation: sourceLocation)
+    #expect(a.ownerId == b.ownerId, sourceLocation: sourceLocation)
+    #expect(a.createdAt == b.createdAt, sourceLocation: sourceLocation)
+    #expect(a.updatedAt == b.updatedAt, sourceLocation: sourceLocation)
+    #expect(a.deletedAt == b.deletedAt, sourceLocation: sourceLocation)
+}
+
 public  func assertEqualProfile(_ a: Profile,
                                 _ b: Profile,
                                 sourceLocation: SourceLocation = #_sourceLocation) {

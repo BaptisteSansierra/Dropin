@@ -11,6 +11,7 @@ import Foundation
 @MainActor
 final class MockPlaceRepository: PlaceRepository {
     private var places: [Place]
+    private(set) var lastUpsertSpaceId: UUID?
 
     init(initialPlaces: [Place] = []) {
         self.places = initialPlaces
@@ -81,6 +82,7 @@ final class MockPlaceRepository: PlaceRepository {
     }
 
     func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws {
+        lastUpsertSpaceId = spaceId
         try await upsert(place, shouldSave: shouldSave)
     }
 
