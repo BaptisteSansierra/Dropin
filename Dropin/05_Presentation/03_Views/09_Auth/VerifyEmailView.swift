@@ -16,7 +16,6 @@ struct VerifyEmailView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Color.backgroundPrimary.ignoresSafeArea()
-
             ScrollView {
                 VStack(spacing: 0) {
                     Spacer(minLength: 60)
@@ -37,14 +36,10 @@ struct VerifyEmailView: View {
                                progress: viewModel.isCheckingConfirmation ? .run(color: .surface1, replaceContent: true) : .none) {
                         Task { await viewModel.checkConfirmationAndSignIn() }
                     }
-//                    AuthPrimaryButton(text: "auth.verify.check_confirmation",
-//                                      isLoading: viewModel.isCheckingConfirmation) {
-//                        Task { await viewModel.checkConfirmationAndSignIn() }
-//                    }
                     .padding(.top, 30)
 
                     resendRow
-                        .padding(.top, 18)
+                        .padding(.top, 30)
 
                     if let error = viewModel.lastError {
                         Text(error)
@@ -112,11 +107,14 @@ struct VerifyEmailView: View {
     }
 
     private var resendRow: some View {
-        HStack(spacing: 4) {
+        VStack(spacing: 0) {
             Text("auth.verify.didnt_get_it")
                 .textStyle(.body, color: .textSecondary)
-            if viewModel.canResend {
-                Button("auth.verify.resend") { Task { await viewModel.resend() } }
+                .padding(.bottom, 10)
+            if viewModel.isResending {
+                DropinLoader(style: .inline, size: .small)
+            } else if viewModel.canResend {
+                 Button("auth.verify.resend") { Task { await viewModel.resend() } }
                     .buttonStyle(.plain)
                     .textStyle(.link)
                     .disabled(viewModel.isResending)

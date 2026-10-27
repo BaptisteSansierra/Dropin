@@ -831,42 +831,6 @@
         }
       }
     },
-    "apple_poi_sheet.invalid_place.body" : {
-      "comment" : "Apple POI sheet: alert body when the selected POI can't be turned into a place (e.g. missing Apple identifier)",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This Apple Maps place is missing information needed to create a place from it."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce lieu Apple Maps ne contient pas les informations nécessaires pour créer un lieu."
-          }
-        }
-      }
-    },
-    "apple_poi_sheet.invalid_place.title" : {
-      "comment" : "Apple POI sheet: alert title when the selected POI can't be turned into a place",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cannot create place"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de créer le lieu"
-          }
-        }
-      }
-    },
     "apple_poi_sheet.loading" : {
       "comment" : "Apple POI sheet: loading state while fetching the place details",
       "localizations" : {
@@ -931,24 +895,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tenu à jour par Apple Maps · Lecture seule"
-          }
-        }
-      }
-    },
-    "apple_poi.legacy_desc" : {
-      "comment" : "Apple POI sheet: subtitle shown when the POI is no longer found on Apple Maps, %@ is the last fetch date",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No longer found on Apple Maps. Showing the last known details from %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "N'est plus trouvé sur Apple Maps. Affichage des dernières informations connues depuis %@."
           }
         }
       }
@@ -1037,6 +983,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Les mots de passe ne correspondent pas."
+          }
+        }
+      }
+    },
+    "auth.error.timeout" : {
+      "comment" : "Shown when sign-in or sign-up takes too long to respond (e.g. no connectivity)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is taking too long. Check your internet connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela prend trop de temps. Vérifiez votre connexion Internet et réessayez."
           }
         }
       }
@@ -1174,13 +1138,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We sent a password reset link to\n%@"
+            "value" : "We sent a password reset link to\n**%@**"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous avons envoyé un lien de réinitialisation à\n%@"
+            "value" : "Nous avons envoyé un lien de réinitialisation à\n**%@**"
           }
         }
       }
@@ -1318,13 +1282,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We sent a verification link to\n%@"
+            "value" : "We sent a verification link to\n**%@**"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous avons envoyé un lien de vérification à\n%@"
+            "value" : "Nous avons envoyé un lien de vérification à\n**%@**"
           }
         }
       }
@@ -1390,13 +1354,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not confirmed yet - check your inbox and try again."
+            "value" : "Not confirmed yet\nCheck your inbox and try again."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas encore confirmé - consultez votre boîte de réception et réessayez."
+            "value" : "Pas encore confirmé\nConsultez votre boîte de réception et réessayez."
           }
         }
       }
@@ -1629,23 +1593,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pas de catégorie"
-          }
-        }
-      }
-    },
-    "category_selector.title" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Should this place be in a category ?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mettre dans une catégorie ?"
           }
         }
       }
@@ -1930,23 +1877,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Badge"
-          }
-        }
-      }
-    },
-    "common.apple_maps" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple Maps"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple Maps"
           }
         }
       }
@@ -2560,23 +2490,6 @@
         }
       }
     },
-    "common.favorites" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Favorites"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Favoris"
-          }
-        }
-      }
-    },
     "common.filter_places" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2770,24 +2683,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carte"
-          }
-        }
-      }
-    },
-    "common.map_type.hybrid" : {
-      "comment" : "Map type picker option",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hybrid"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hybride"
           }
         }
       }
@@ -3138,23 +3033,6 @@
         }
       }
     },
-    "common.plus.change" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+  Change"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+  Changer"
-          }
-        }
-      }
-    },
     "common.plus.choose" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3375,23 +3253,6 @@
         }
       }
     },
-    "common.recents" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recents"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Récents"
-          }
-        }
-      }
-    },
     "common.related_places" : {
       "localizations" : {
         "en" : {
@@ -3404,23 +3265,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux associés"
-          }
-        }
-      }
-    },
-    "common.reportproblem" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Report a problem"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signaler un problème"
           }
         }
       }
@@ -3748,24 +3592,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obtenir l’adresse"
-          }
-        }
-      }
-    },
-    "create_place.fetching" : {
-      "comment" : "Fetching address from coordinates",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fetching address…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recherche de l’adresse"
           }
         }
       }
@@ -4758,6 +4584,22 @@
         }
       }
     },
+    "map.settings.poi.footnote" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown on the map to help you find your way. Your places always stay visible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affichés sur la carte pour vous aider à vous repérer. Vos lieux restent toujours visibles."
+          }
+        }
+      }
+    },
     "map.settings.style" : {
       "comment" : "Map settings sheet: map style section title",
       "localizations" : {
@@ -5335,23 +5177,6 @@
         }
       }
     },
-    "menu.new_place.contact" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "From contact (not implemented)"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depuis un contact (not implemented)"
-          }
-        }
-      }
-    },
     "menu.new_place.coords" : {
       "localizations" : {
         "en" : {
@@ -5396,23 +5221,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Placer un repère sur la carte"
-          }
-        }
-      }
-    },
-    "menu.new_place.image_library" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "From image library (not implemented)"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depuis la photothèque (not implemented)"
           }
         }
       }
@@ -6241,23 +6049,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au lieu"
-          }
-        }
-      }
-    },
-    "placeholder.tag_name" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Give tag a name"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Donner un nom au tag"
           }
         }
       }
@@ -7634,23 +7425,6 @@
         }
       }
     },
-    "privacy.body.intro" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dropin is an independent, one-person project, a simple tool to build your own map of places that matter to you. No ads, no algorithm, no accounts sold to anyone. Your places are yours: stored on your device, exportable anytime, in a format you can read."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dropin est un projet indépendant, développé par une seule personne : un outil simple pour créer votre propre carte des lieux qui comptent pour vous. Pas de publicité, pas d'algorithme, aucun compte revendu à qui que ce soit. Vos lieux vous appartiennent : stockés sur votre appareil, exportables à tout moment, dans un format que vous pouvez lire."
-          }
-        }
-      }
-    },
     "privacy.body.terms.body" : {
       "localizations" : {
         "en" : {
@@ -8459,23 +8233,6 @@
         }
       }
     },
-    "tag_selector.selected" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selected tags"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tags sélectionnés"
-          }
-        }
-      }
-    },
     "tag_selector.selected_count_%lld" : {
       "comment" : "Tag selector, new-UI \"Selected\" section header with count",
       "extractionState" : "manual",
@@ -8490,23 +8247,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sélectionnés · %lld"
-          }
-        }
-      }
-    },
-    "tag_selector.title" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select tags for this place"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélectionner des tags pour ce lieu"
           }
         }
       }

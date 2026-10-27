@@ -10,19 +10,18 @@ import Foundation
 
     #if DEBUG
 
-    var email: String = ""      // test@dropin.local
-    var password: String = ""   // test12345
-    /*
-    #if true
+    //var email: String = ""      // test@dropin.local
+    //var password: String = ""   // test12345
+
+    #if false
     //var email: String = "test@dropin.local"
     //var password: String = "test12345"
     var email: String = "demo@dropin.local"
     var password: String = "Test12345!"
     #else
     var email: String = "baptiste.sansierra@gmail.com"
-    var password: String = "Test-12345"
+    var password: String = "Test12345!"
     #endif
-     */
 
     //var email: String = "test@dropin.local"
     //var password: String = "test12345"
@@ -43,7 +42,9 @@ import Foundation
         email.isValidEmail() && !password.isEmpty
     }
 
-    init(appContainer: AppContainer, authService: any AuthServiceProtocol, coordinator: AuthCoordinator) {
+    init(appContainer: AppContainer,
+         authService: any AuthServiceProtocol,
+         coordinator: AuthCoordinator) {
         self.appContainer = appContainer
         self.authService = authService
         self.coordinator = coordinator
@@ -51,6 +52,8 @@ import Foundation
 
     func signIn() async {
         guard isFormValid else { return }
+        guard !isSubmitting else { return }
+        //guard reachability.isConnected else { lastError = "No no no.. creotte"; return }
         lastError = nil
         isSubmitting = true
         defer { isSubmitting = false }
@@ -60,8 +63,10 @@ import Foundation
         } catch AuthServiceError.confirmationRequired {
             coordinator.pushVerifyEmail(email: email, password: password, context: .unconfirmedLogin)
             resetFields()
+        } catch AuthServiceError.signInTimedOut {
+            Log.error("SignInViewModel: sign-in timeout")
+            lastError = String(localized: "auth.error.timeout")
         } catch {
-            Log.error("SignInViewModel: sign-in failed: \(error)")
             lastError = error.localizedDescription
         }
     }

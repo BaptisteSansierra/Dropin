@@ -2,10 +2,9 @@
 //  AuthStatus.swift
 //  Dropin
 //
-//  Observable wrapper exposing a tri-state derived from AuthService.session and
+//  Observable wrapper exposing a state derived from AuthService.session and
 //  an in-flight `restoreSession()` flag. Drives the root-level routing in
-//  DropinApp: splash while restoring → SignInView (auth flow) if no session →
-//  RootView if signed in.
+//  DropinApp: splash while restoring → SignInView (auth flow) if no session → RootView if signed in.
 //
 
 import Foundation
@@ -40,7 +39,15 @@ final class AuthStatus {
             Log.debug("AuthStatus is loading")
             return .loading
         }
-        let s: State = authService.session != nil ? .signedIn(signingOut: isSigningOut) : .signedOut
+        var s: State
+        //if failedOffline {
+        //    s = .offlineSignedIn(signingOut: isSigningOut)
+        //} else
+        if authService.session != nil {
+            s = .signedIn(signingOut: isSigningOut)
+        } else {
+            s = .signedOut
+        }
         Log.debug("AuthStatus is \(s)")
         return s
     }

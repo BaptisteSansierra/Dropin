@@ -107,7 +107,7 @@ struct MapSettingsSheetView: View {
                 }
             }
             
-            Text("Shown on the map to help you find your way. Your places always stay visible.")
+            Text("map.settings.poi.footnote")
                 .textStyle(.subheadline, color: .textTertiary)
                 .padding(.top)
 

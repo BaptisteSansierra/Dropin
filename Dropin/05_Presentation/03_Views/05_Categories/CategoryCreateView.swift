@@ -22,7 +22,7 @@ struct CategoryCreateView: View {
     @State private var presentExistsAlert = false
 
     @State private var createdCategoryColor: Color
-    @State private var createdCategoryName: String = "111"
+    @State private var createdCategoryName: String = ""
     @State private var createdCategoryIcon: Icon? = nil
 
     @FocusState var isNameFieldFocused: Bool

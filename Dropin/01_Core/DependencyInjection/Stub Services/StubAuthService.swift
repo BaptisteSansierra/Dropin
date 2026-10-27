@@ -15,6 +15,7 @@ import Foundation
 final class StubAuthService: AuthServiceProtocol {
     var session: UserSession? = nil
     var isAuthenticated: Bool { session != nil }
+
     func signUp(email: String, password: String) async throws {}
     func signIn(email: String, password: String) async throws {}
     func signInWithApple() async throws {}

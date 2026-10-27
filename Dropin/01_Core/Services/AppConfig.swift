@@ -4,7 +4,7 @@
 //
 //  Build-time configuration values sourced from Config.xcconfig via Info.plist
 //  substitution. Not secrets (Supabase's anon key and Sentry's DSN are both meant
-//  to be client-embedded) — just kept out of source so they're swappable per build
+//  to be client-embedded); just kept out of source so they're swappable per build
 //  without a code change.
 //
 

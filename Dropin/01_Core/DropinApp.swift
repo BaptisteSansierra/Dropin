@@ -10,7 +10,6 @@ import SwiftData
 import CoreLocation
 import MapKit
 import ContactFieldKit
-import Sentry
 
 // Note:
 // - 'Infer Sendable for Methods and Key Path Literals' set to Yes to avoid SortDescriptor warning (swift6 concurrency) cf. https://stackoverflow.com/questions/79000052/fetchdescriptor-including-sortdescriptor-returns-warning-in-xcode16
@@ -29,22 +28,14 @@ struct DropinApp: App {
     private var modelContainer: ModelContainer
     private var appSettings = AppSettings()
     private var appContext = AppContext()
+    private var reachabilityService = ReachabilityService()
 
     // MARK: - init
     init() {
-        // Init Sentry
-        SentrySDK.start { options in
-            options.dsn = AppConfig.Sentry.dsn
-            options.debug = true // Enabled debug when first installing is always helpful
-            // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-            // We recommend adjusting this value in production.
-            #if DEBUG
-            options.tracesSampleRate = 1.0
-            #else
-            options.tracesSampleRate = 0.1
-            #endif
-        }
         
+        // Init Sentry
+        DropinTracker.shared.start()
+                
         // Create database, wire app
         let schema = Schema([PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self])
         let configuration = ModelConfiguration()
@@ -83,8 +74,11 @@ struct DropinApp: App {
             #endif
             
             // Create app container
+            reachabilityService = ReachabilityService()
+            
             appContainer = AppContainer(modelContext: modelContainer.mainContext,
-                                        appContext: appContext)
+                                        appContext: appContext,
+                                        reachabilityService: reachabilityService)
             self.modelContainer = modelContainer
 
         } catch {
@@ -125,11 +119,8 @@ struct DropinApp: App {
             }
             // So this fallback is actually diagnosable instead of just inert: attach the backed-up store files to the event
             // small (in-memory-sized) local SQLite files, well under Sentry's attachment size limit.
-            SentrySDK.capture(error: error) { scope in
-                for url in backupURLs {
-                    scope.addAttachment(Attachment(path: url.path, filename: url.lastPathComponent))
-                }
-            }
+            DropinTracker.shared.captureWithFiles(error, urls: backupURLs)
+
             // Backup is left on disk; a future healthy launch will clean up (see cleanUpOldCorruptedBackups)
             if let freshContainer = try? ModelContainer(for: schema, configurations: configuration) {
                 freshContainer.mainContext.autosaveEnabled = false

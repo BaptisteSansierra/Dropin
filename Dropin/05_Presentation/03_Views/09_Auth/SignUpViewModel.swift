@@ -40,10 +40,11 @@ import Foundation
         self.authService = authService
         self.coordinator = coordinator
         #if DEBUG
-        displayName = "batobat"
-        email = "baptiste.sansierra@gmail.com"
-        password = "Test-12345"
-        confirmPassword = "Test-12345"
+        let random = String.randomColor()
+        displayName = "batobat_\(random)"
+        email = "baptiste.sansierra+\(random)@gmail.com"
+        password = "Test12345!"
+        confirmPassword = "Test12345!"
         #endif
     }
 
@@ -62,6 +63,9 @@ import Foundation
             // RootView on its own, nothing to do here.
         } catch AuthServiceError.confirmationRequired {
             coordinator.pushVerifyEmail(email: email, password: password, context: .justSignedUp)
+        } catch AuthServiceError.signUpTimedOut {
+            Log.error("SignUpViewModel: sign-up timeout")
+            lastError = String(localized: "auth.error.timeout")
         } catch {
             Log.error("SignUpViewModel: sign-up failed: \(error)")
             lastError = error.localizedDescription

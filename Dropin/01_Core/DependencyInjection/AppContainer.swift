@@ -56,7 +56,8 @@ final class AppContainer {
     var authState: AuthStatus.State { authStatus.state }
 
     init(modelContext: ModelContext,
-         appContext: AppContext) {
+         appContext: AppContext,
+         reachabilityService: any ReachabilityServiceProtocol) {
         self.appContext = appContext
         // Coordinators
         profileCoordinator = ProfileCoordinator()
@@ -68,11 +69,12 @@ final class AppContainer {
         // Services
         locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
-        reachabilityService = ReachabilityService()
+        self.reachabilityService = reachabilityService
         applePOIService = ApplePOIService(reachability: reachabilityService)
         // Supabase + auth
         let supabaseService = SupabaseService()
-        let authService = AuthService(client: supabaseService.client)
+        let authService = AuthService(client: supabaseService.client,
+                                      reachability: reachabilityService)
         self.supabaseService = supabaseService
         self.authService = authService
         self.authStatus = AuthStatus(authService: authService)
@@ -283,7 +285,9 @@ final class AppContainer {
 
     // MARK: - create views
     func createSignInView() -> SignInView {
-        let vm = SignInViewModel(appContainer: self, authService: authService, coordinator: authCoordinator)
+        let vm = SignInViewModel(appContainer: self,
+                                 authService: authService,
+                                 coordinator: authCoordinator)
         return SignInView(viewModel: vm)
     }
 
@@ -574,6 +578,7 @@ final class AppContainer {
                                    upsertCategory: UpsertCategory(repository: categoryRepository),
                                    upsertTag: UpsertTag(repository: tagRepository),
                                    deleteLibrary: DeleteLibrary(generalRepository: generalRepository,
+                                                                spaceRepository: spaceRepository,
                                                                 placeRepository: placeRepository,
                                                                 categoryRepository: categoryRepository,
                                                                 tagRepository: tagRepository),

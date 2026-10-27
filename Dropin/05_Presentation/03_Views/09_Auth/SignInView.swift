@@ -60,10 +60,7 @@ struct SignInView: View {
                         MainButton(text: "auth.signin",
                                    progress: viewModel.isSubmitting ? .run(color: .backgroundPrimary, replaceContent: true) : .none,
                                    action: submitSignIn)
-//                        AuthPrimaryButton(text: "auth.signin",
-//                                          isLoading: viewModel.isSubmitting,
-//                                          action: submitSignIn)
-                        .disabled(!viewModel.isFormValid)
+                        .disabled(!viewModel.isFormValid || viewModel.isSubmitting)
                         .padding(.top, 22)
 
                         if let error = viewModel.lastError {
