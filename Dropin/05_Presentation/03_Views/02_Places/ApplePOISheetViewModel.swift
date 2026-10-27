@@ -27,6 +27,7 @@ import MapKit
     }
         
     func load() async {
+        self.error = nil
         do {
             mapItem = try await applePOIService.details(for: applePOIAnnotation)
         } catch {
