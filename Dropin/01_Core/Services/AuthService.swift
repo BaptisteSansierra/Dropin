@@ -5,8 +5,6 @@
 import Supabase
 import Foundation
 
-private struct SignOutTimeout: Error {}
-
 struct UserSession: Sendable, Equatable {
     let userId: UUID
     let email: String?
@@ -16,9 +14,8 @@ enum AuthServiceError: Error, Equatable {
     case signInFailed
     case signInTimedOut
     case signUpTimedOut
+    case signOutTimedOut
     case notAuthenticated
-    /// Sign-up succeeded but the Supabase project requires email confirmation,
-    /// so no session was returned — the user isn't authenticated yet.
     case confirmationRequired
 }
 
@@ -71,26 +68,8 @@ final class AuthService: AuthServiceProtocol {
         
         Log.info("Signing up...")
         do {
-            try await withThrowingTaskGroup(of: Void.self) { ttg in
-                ttg.addTask {
-                    let response = try await self.client.auth.signUp(email: email, password: password, redirectTo: DropinApp.strings.emailConfirmedURL)
-                    // When the Supabase project requires email confirmation, `session` is nil (only `user` is returned)
-                    // don't mark the user as authenticated until they've confirmed and actually signed in.
-                    guard let supaSession = response.session else {
-                        Log.info("  > Signed up as \(response.user.email ?? "N/A"), awaiting email confirmation")
-                        throw AuthServiceError.confirmationRequired
-                    }
-                    await self.setSession(UserSession(userId: supaSession.user.id, email: supaSession.user.email))
-                    Log.info("  > Signed up as \(supaSession.user.email ?? "N/A")")
-                }
-                ttg.addTask {
-                    try await Task.sleep(for: .seconds(self.signUpTimeoutInterval))
-                    Log.info("  > Signup timeout triggered")
-                    throw AuthServiceError.signUpTimedOut
-                }
-                try await ttg.next() // first complete win
-                ttg.cancelAll()
-            }
+            let s = try await signupWithTimeout(email: email, password: password)
+            setSession(UserSession(userId: s.user.id, email: s.user.email))
             Log.info("  > Signup completed")
         } catch let error as AuthServiceError {
             // No-op : Just forward the error we just throw
@@ -115,20 +94,8 @@ final class AuthService: AuthServiceProtocol {
         
         Log.info("Signin in...")
         do {
-            try await withThrowingTaskGroup(of: Void.self) { ttg in
-                ttg.addTask {
-                    let supaSession = try await self.client.auth.signIn(email: email, password: password)
-                    await self.setSession(UserSession(userId: supaSession.user.id, email: supaSession.user.email))
-                    Log.info("  > Signed in as \(supaSession.user.email ?? "N/A")")
-                }
-                ttg.addTask {
-                    try await Task.sleep(for: .seconds(self.signInTimeoutInterval))
-                    Log.warning("  > Signin timeout triggered")
-                    throw AuthServiceError.signInTimedOut
-                }
-                try await ttg.next() // first complete win
-                ttg.cancelAll()
-            }
+            let s = try await signinWithTimeout(email: email, password: password)
+            setSession(UserSession(userId: s.user.id, email: s.user.email))
             Log.info("  > Signin completed")
         } catch let error as AuthServiceError {
             // No-op : Just forward the error we just throw
@@ -171,20 +138,10 @@ final class AuthService: AuthServiceProtocol {
             session = nil
         }
         do {
-            try await withThrowingTaskGroup(of: Void.self) { category in
-                category.addTask {
-                    try await self.client.auth.signOut()
-                }
-                category.addTask {
-                    try await Task.sleep(for: .seconds(self.signOutTimeoutInterval))
-                    throw SignOutTimeout()
-                }
-                try await category.next() // first complete win
-                category.cancelAll()
-            }
+            try await signoutWithTimeout()
             Log.info("Remote signOut completed")
-        } catch is SignOutTimeout {
-            Log.warning("SignOut is took more than 3 seconds, ignore it, wipe session")
+        } catch is AuthServiceError {
+            Log.warning("SignOut took more than 3 seconds, ignore it, wipe session")
         } catch {
             Log.warning("SignOut failed (\(error)), wipe session anyway")
         }
@@ -216,9 +173,11 @@ final class AuthService: AuthServiceProtocol {
         }
         // Refresh session if needed
         do {
-            let supaSession = try await client.auth.session
-            session = UserSession(userId: supaSession.user.id, email: supaSession.user.email)
-            Log.info("[restoreSession] Restored session as \(supaSession.user.email ?? "'undefined email'")")
+            let s: Session = try await refreshedSessionWithTimeout()
+            setSession(UserSession(userId: s.user.id, email: s.user.email))
+        } catch is AuthServiceError {
+            Log.debug("  -> CREATE SESSION FROM CACHE")
+            session = UserSession(userId: cachedSession.user.id, email: cachedSession.user.email)
         } catch let error as Supabase.AuthError {
             switch error {
                 case .sessionMissing:
@@ -227,10 +186,8 @@ final class AuthService: AuthServiceProtocol {
                 default:
                     Log.error("[restoreSession] Supabase error(\(error.errorCode)): \(error)")
             }
-            
             DropinTracker.shared.capture("Unexpected supabase error\(error.errorCode) \(error)", authFlow: .restore_session)
             assertionFailure()
-
             // Try it anyway
             session = UserSession(userId: cachedSession.user.id, email: cachedSession.user.email)
         } catch {
@@ -245,7 +202,7 @@ final class AuthService: AuthServiceProtocol {
                 }
             } else {
                 DropinTracker.shared.capture("Unexpected error \(error)", authFlow: .restore_session)
-                Log.debug("[restoreSession] undefined error: \(error)")
+                Log.debug("[restoreSession] unexpected error: \(error)")
                 assertionFailure()
             }
             // Try it anyway
@@ -273,11 +230,14 @@ final class AuthService: AuthServiceProtocol {
             guard let self else { return }
             for await (event, supaSession) in self.client.auth.authStateChanges {
                 switch event {
-                    case .tokenRefreshed, .signedIn, .userUpdated:
-                        if let supaSession {
-                            self.setSession(UserSession(userId: supaSession.user.id, email: supaSession.user.email))
-                            Log.info("Auth state changed (\(event)): \(supaSession.user.email ?? "N/A")")
-                        }
+                    case .tokenRefreshed, .signedIn:
+                         // No-op
+                        ()
+                    case .userUpdated:
+                        guard let supaSession else { return }
+                        // Extermely rare case where the user updated the email in another device...
+                        self.setSession(UserSession(userId: supaSession.user.id, email: supaSession.user.email))
+                        Log.info("Auth state changed (\(event)): \(supaSession.user.email ?? "N/A")")
                     case .signedOut:
                         // FIXME: DRO-54 :
                         /*
@@ -299,5 +259,97 @@ final class AuthService: AuthServiceProtocol {
                 }
             }
         }
+    }
+    
+    private func signupWithTimeout(email: String, password: String) async throws -> Session {
+        let (stream, continuation) = AsyncThrowingStream<Session, Error>.makeStream()
+        let work = Task {
+            do {
+                let response = try await self.client.auth.signUp(email: email, password: password, redirectTo: DropinApp.strings.emailConfirmedURL)
+                // When the Supabase project requires email confirmation, `session` is nil (only `user` is returned)
+                // don't mark the user as authenticated until they've confirmed and actually signed in.
+                guard let supaSession = response.session else {
+                    Log.info("  > Signed up as \(response.user.email ?? "N/A"), awaiting email confirmation")
+                    continuation.finish(throwing: AuthServiceError.confirmationRequired)
+                    return
+                }
+                Log.info("  > Signed up as \(supaSession.user.email ?? "N/A")")
+                continuation.yield(supaSession)
+                continuation.finish()
+            }
+            catch { continuation.finish(throwing: error) }
+        }
+        let timeout = Task {
+            try await Task.sleep(for: .seconds(signUpTimeoutInterval))
+            Log.info("  > Signup timeout triggered")
+            continuation.finish(throwing: AuthServiceError.signUpTimedOut)
+        }
+        defer { work.cancel(); timeout.cancel() }
+        for try await value in stream { return value }
+        throw CancellationError()
+    }
+    
+    private func signinWithTimeout(email: String, password: String) async throws -> Session {
+        let (stream, continuation) = AsyncThrowingStream<Session, Error>.makeStream()
+        let work = Task {
+            do {
+                let supaSession = try await self.client.auth.signIn(email: email, password: password)
+                Log.info("  > Signed in as \(supaSession.user.email ?? "N/A")")
+                continuation.yield(supaSession)
+                continuation.finish()
+            }
+            catch { continuation.finish(throwing: error) }
+        }
+        let timeout = Task {
+            try await Task.sleep(for: .seconds(signInTimeoutInterval))
+            Log.info("  > Signin timeout triggered")
+            continuation.finish(throwing: AuthServiceError.signInTimedOut)
+        }
+        defer { work.cancel(); timeout.cancel() }
+        for try await value in stream { return value }
+        throw CancellationError()
+    }
+    
+    private func signoutWithTimeout() async throws {
+        let (stream, continuation) = AsyncThrowingStream<Void, Error>.makeStream()
+        let work = Task {
+            do {
+                try await self.client.auth.signOut()
+                continuation.finish()
+            }
+            catch { continuation.finish(throwing: error) }
+        }
+        let timeout = Task {
+            try await Task.sleep(for: .seconds(self.signOutTimeoutInterval))
+            continuation.finish(throwing: AuthServiceError.signOutTimedOut)
+        }
+        defer { work.cancel(); timeout.cancel() }
+        for try await value in stream { return value }
+        throw CancellationError()
+    }
+
+    private func refreshedSessionWithTimeout() async throws -> Session {
+        let (stream, continuation) = AsyncThrowingStream<Session, Error>.makeStream()
+        let work = Task {
+            do {
+                let s = try await self.client.auth.session
+                continuation.yield(s)
+                continuation.finish()
+            } catch {
+                continuation.finish(throwing: error)
+            }
+        }
+        let timeout = Task {
+            try await Task.sleep(for: .seconds(self.signInTimeoutInterval))
+            continuation.finish(throwing: AuthServiceError.signInTimedOut)
+        }
+        defer {
+            work.cancel()
+            timeout.cancel()
+        }
+        // returns right away on first value or error
+        for try await value in stream { return value }
+        try Task.checkCancellation() // Can only be reached if parent Task was canceled, which won't happen
+        throw CancellationError()    // unreachable in practice, but keeps the compiler happy
     }
 }
