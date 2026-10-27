@@ -8104,9 +8104,6 @@
         }
       }
     },
-    "Shown on the map to help you find your way. Your places always stay visible." : {
-
-    },
     "space.main_name" : {
       "comment" : "Display name shown for the main Space, instead of its raw stored name",
       "extractionState" : "stale",
