@@ -501,7 +501,7 @@ extension PlaceEditContentView {
                         .padding(.top, 3)
                         .allowsHitTesting(false)
                 }
-                TextField("", text: $place.name)
+                TextField(String(""), text: $place.name)
                     .textStyle(.body)
                     .background(.clear)
                     .autocorrectionDisabled()
@@ -556,7 +556,7 @@ extension PlaceEditContentView {
                     .padding(.bottom, inCardBottomMargin)
                     .allowsHitTesting(false)
             }
-            TextField("", text: Binding(
+            TextField(String(""), text: Binding(
                 get: { place.address2 ?? "" },
                 set: { place.address2 = $0 }
             ), axis: .vertical)
@@ -886,7 +886,7 @@ extension PlaceEditContentView {
                     .foregroundStyle(.dropinPrimary)
             }
         }
-        .confirmationDialog("", isPresented: $showingImageSourceMenu) {
+        .confirmationDialog(String(""), isPresented: $showingImageSourceMenu) {
             Button("common.photo_library") { showingImagePicker = true }
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button("common.camera") { showingCamera = true }
@@ -1223,7 +1223,7 @@ extension PlaceEditContentView {
                         .padding(.top, 15)
                         .allowsHitTesting(false)
                 }
-                TextField("",
+                TextField(String(""),
                           text: Binding<String>(get: {
                     place.notes ?? ""
                 }, set: { value in

@@ -197,7 +197,7 @@ struct MapstrCategoriesView: View {
             .buttonStyle(.plain)
             .padding(.trailing, 10)
             // Priority
-            Text("\(priority)")
+            Text(priority, format: .number)
                 .textStyle(.caption, color: .textTertiary)
                 .fontWeight(.bold)
                 .frame(width: 16, alignment: .center)
@@ -215,7 +215,7 @@ struct MapstrCategoriesView: View {
             .frame(maxWidth: .infinity)
             .padding(.trailing, 10)
             // Place count
-            Text("\(row.placeCount)")
+            Text(row.placeCount, format: .number)
                 .textStyle(.caption, color: .textTertiary)
                 .padding(.trailing, 10)
             // Drag indicator
@@ -345,7 +345,7 @@ struct MapstrCategoriesView: View {
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("\(row.placeCount)")
+            Text(row.placeCount, format: .number)
                 .textStyle(.caption, color: .textTertiary)
                 .padding(.trailing)
         }

@@ -103,7 +103,7 @@ struct ImportStatusView: View {
                 Text("import.complete.count")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.createdPlaceCount)")
+                Text(importStatus.createdPlaceCount, format: .number)
                     .textStyle(.subheadlineSemibold)
             }
             
@@ -113,7 +113,7 @@ struct ImportStatusView: View {
                 Text("import.complete.duplicatesCount")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.duplicateCount)")
+                Text(importStatus.duplicateCount, format: .number)
                     .textStyle(.subheadline, color: .textSecondary)
             }
 
@@ -123,7 +123,7 @@ struct ImportStatusView: View {
                 Text("import.complete.count.category")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.createdCategoryCount)")
+                Text(importStatus.createdCategoryCount, format: .number)
                     .textStyle(.subheadline, color: .textSecondary)
             }
 
@@ -133,7 +133,7 @@ struct ImportStatusView: View {
                 Text("import.complete.count.tag")
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
-                Text("\(importStatus.createdTagCount)")
+                Text(importStatus.createdTagCount, format: .number)
                     .textStyle(.subheadline, color: .textSecondary)
             }
         }
@@ -181,7 +181,7 @@ struct ImportStatusView: View {
             
             Text("import.title")
                 .textStyle(.bodySemibold)
-            Text(subtitle())
+            Text(subtitle(importStatus))
                 .textStyle(.caption, color: .textSecondary)
             
             GeometryReader { geox in
@@ -215,8 +215,7 @@ struct ImportStatusView: View {
     }
 
     // MARK: - private methods
-    private func subtitle() -> LocalizedStringKey {
-        guard let importStatus = importStatus else { return "" }
+    private func subtitle(_ importStatus: ImportStatus) -> LocalizedStringKey {
         switch importStatus.source {
             case .dropin:
                 return "import.title.dropin_\(importStatus.filename)"

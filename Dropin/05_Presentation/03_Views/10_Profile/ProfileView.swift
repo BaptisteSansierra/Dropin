@@ -215,11 +215,11 @@ struct ProfileView: View {
 
     private var planLabel: String {
         switch viewModel.plan {
-            case .admin:      return "Admin"
-            case .invited:    return "Invited"
-            case .earlyStage: return "Early Stage"
+            case .admin:       return "Admin"
+            case .invited:     return "Invited"
+            case .earlyStage:  return "Early Stage"
             case .free, .none: return "Free"
-            case .paid:       return "Paid"
+            case .paid:        return "Paid"
         }
     }
 

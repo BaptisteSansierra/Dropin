@@ -131,12 +131,14 @@ struct TagCreateView: View {
                     .stroke(.fieldBorder)
             }
             // Error
-            HStack {
-                Text(verticalWarn ?? "")
-                    .textStyle(.footnote, color: .destructive)
-                    .padding(.top, 15)
-                    .opacity(isShowingVerticalWarn ? 1 : 0)
-                Spacer()
+            if let verticalWarn = verticalWarn {
+                HStack {
+                    Text(verticalWarn)
+                        .textStyle(.footnote, color: .destructive)
+                        .padding(.top, 15)
+                        .opacity(isShowingVerticalWarn ? 1 : 0)
+                    Spacer()
+                }
             }
         }
     }

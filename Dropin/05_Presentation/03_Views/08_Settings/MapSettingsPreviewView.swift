@@ -141,7 +141,7 @@ struct MapSettingsPreviewView: View {
             Image(systemName: "mappin")
                 .font(.system(size: 19))
                 .foregroundStyle(.secondary)
-            Text("\(Int(appSettings.mapSettings.pinSize))")
+            Text(Int(appSettings.mapSettings.pinSize), format: .number)
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
                 .frame(width: 28, alignment: .trailing)

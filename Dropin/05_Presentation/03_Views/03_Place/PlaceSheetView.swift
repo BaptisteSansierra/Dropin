@@ -689,6 +689,7 @@ struct PlaceSheetView: View {
         // TODO: present a specific alert anyway
     }
     
+    // TODO: REPLACE BY UserFacingError !!
     private func errorTitle() -> LocalizedStringKey {
         guard let error = viewModel.presentedPOIError else { return "" }
         switch error {

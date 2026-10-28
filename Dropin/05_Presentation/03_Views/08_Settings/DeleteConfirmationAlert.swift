@@ -47,7 +47,7 @@ struct DeleteConfirmationAlert: View {
                     Text("alert.reset_database.instr_\(required)")
                         .font(.system(size: 13))
                         .foregroundStyle(.secondary)
-                    TextField("", text: $typed)
+                    TextField(String(""), text: $typed)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.center)

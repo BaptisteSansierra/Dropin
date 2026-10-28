@@ -69,7 +69,8 @@ extension ShapeStyle where Self == Color {
     // TODO: should rename separator or borderSubtle
     static var fieldBorder: Color { Color(light: Color(rgba: "#E6DCCB"),
                                           dark: Color(rgba: "#38312A")) }
-    
+    static var hairline: Color { fieldBorder }
+
     
     // fields, cards, sheets — the top surface, almost white, it pops on paper
     static var surface1: Color { Color(light: Color(rgba: "#FDFCF8"),
