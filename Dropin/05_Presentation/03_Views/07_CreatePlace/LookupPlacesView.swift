@@ -21,6 +21,13 @@ struct LookupPlacesView: View {
     @Binding private var draftPlacePoiColor: Color?
 
     private var initialAddress = ""
+    private var presentingResolveError: Binding<Bool> {
+        Binding {
+            viewModel.resolveError != nil
+        } set: { v in
+            if !v { viewModel.resolveError = nil }
+        }
+    }
 
     // MARK: - init
     init(viewModel: LookupPlacesViewModel,
@@ -104,18 +111,6 @@ struct LookupPlacesView: View {
                 viewModel.resetResults()
             }
         }
-        .sheet(item: $viewModel.resolvedPlace) {
-            if viewModel.resultStatus == .pending {
-                viewModel.resultStatus = .cancelled
-            }
-            completeLookup(viewModel.resultStatus)
-        } content: { resolvedPlace in
-            LookupPlaceSheetView(lookupResolvedItem: resolvedPlace,
-                                 place: $editedPlace,
-                                 status: $viewModel.resultStatus)
-            .presentationBackground(.surface1)
-            .presentationDetents([.medium])
-        }
     }
     
     // MARK: - Subviews
@@ -164,6 +159,19 @@ struct LookupPlacesView: View {
             if viewModel.searching {
                 loadingView
             }
+        }
+        .alertError(error: $viewModel.resolveError)
+        .sheet(item: $viewModel.resolvedPlace) {
+            if viewModel.resultStatus == .pending {
+                viewModel.resultStatus = .cancelled
+            }
+            completeLookup(viewModel.resultStatus)
+        } content: { resolvedPlace in
+            LookupPlaceSheetView(lookupResolvedItem: resolvedPlace,
+                                 place: $editedPlace,
+                                 status: $viewModel.resultStatus)
+            .presentationBackground(.surface1)
+            .presentationDetents([.medium])
         }
     }
     

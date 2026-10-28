@@ -197,7 +197,7 @@ struct CategoryView: View {
                         .frame(height: 10)
             }
         } else {
-            Text("-")
+            Text(verbatim: "-")
                 .foregroundStyle(.textPrimary)
                 .font(.system(size: 30))
                 .opacity(0.5)

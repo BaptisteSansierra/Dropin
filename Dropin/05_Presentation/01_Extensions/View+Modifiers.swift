@@ -52,6 +52,10 @@ extension View {
         modifier(AlertOk(isPresented: isPresented, title: title, body: body, action: action))
     }
 
+    func alertError<E: UserFacingError>(error: Binding<E?>, action: (() -> Void)? = nil) -> some View {
+        modifier(AlertError(error: error, action: action))
+    }
+
     @ViewBuilder
     func `if`<Content: View>(_ condition: Bool, action: (Self) -> Content, elseAction: ((Self) -> Content)? = nil) -> some View {
         if condition {

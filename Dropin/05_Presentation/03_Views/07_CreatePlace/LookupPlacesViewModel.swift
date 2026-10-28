@@ -11,9 +11,27 @@ import MapKit
 @MainActor
 @Observable class LookupPlacesViewModel {
     
-    enum ViewError: Error {
+    enum ViewError: Error, UserFacingError {
         case noResultFound
         case noAddress
+        case notConnected
+        case unexpected(Error)
+
+        var messageTitle: String {
+            String(localized: "lookup_places_view.error.resolve.title")
+        }
+        var messageBody: String {
+            switch self {
+                case .noResultFound:
+                    String(localized: "lookup_places_view.resolve.error.empty")
+                case .noAddress:
+                    String(localized: "lookup_places_view.resolve.error.no_address")
+                case .notConnected:
+                    String(localized: "lookup_places_view.resolve.error.not_connected")
+                case .unexpected(let error):
+                    String(localized: "lookup_places_view.resolve.error.unexpected_\(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: Properties
@@ -29,15 +47,16 @@ import MapKit
         }
     }
     private(set) var results: [LookupResult] = []
-    private(set) var lookupError: Error?
+    private(set) var lookupError: Error?  // a ContentUnavailableView is displayed if defined
     private(set) var searching = false
     private(set) var reachabilityService: any ReachabilityServiceProtocol
     private var searchTask: Task<Void, Never>?
 
+    // True when requesting data for a specific place
     private(set) var resolving = false
     var resolvedPlace: LookupResolvedItem?
     var resolvedPlaceComputed: Bool = false
-    private(set) var resolveError: Error?
+    var resolveError: ViewError?   // an alert is presented if defined
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
@@ -88,6 +107,8 @@ import MapKit
 
     func resolvePlace(_ lookupResult: LookupResult) async {
         resolving = true
+        defer { resolving = false }
+        resolveError = nil
         let request = MKLocalSearch.Request(completion: lookupResult.localSearchCompletion)
         let search = MKLocalSearch(request: request)
         do {
@@ -98,21 +119,23 @@ import MapKit
             }
             resolvedPlace = try resolvedPlaceFromMapItem(item, isPOI: lookupResult.isPOI)
             resolvedPlaceComputed = true
-            
-            resolving = false
-        } catch {
+        } catch let error as ViewError {
             resolveError = error
-            resolving = false
+        } catch {
+            if error.isOffline || error.isTimeout {
+                resolveError = .notConnected
+            } else {
+                resolveError = .unexpected(error)
+            }
         }
     }
         
     // MARK: - private methods
     private func handleQueryChanges() {
         searchTask?.cancel()
-        
+        lookupError = nil
         guard query.count > 2 else {
             results = []
-            lookupError = nil
             searching = false
             return
         }
@@ -120,16 +143,16 @@ import MapKit
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(300))
             guard !Task.isCancelled else { return }
-            
             do {
                 results = try await addressLookupService.search(query: query)
+                searching = false
             } catch is CancellationError {
                 // Silent
             } catch {
                 results = []
                 lookupError = error
+                searching = false
             }
-            searching = false
         }
     }
     

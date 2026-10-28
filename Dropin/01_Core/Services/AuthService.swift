@@ -26,7 +26,7 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
 
     func signUp(email: String, password: String) async throws
     func signIn(email: String, password: String) async throws
-    func signInWithApple() async throws   // TODO: implement when Apple Sign-In is added
+    func signInWithApple() async throws   // FIXME: DRO-56 > implement when Apple Sign-In is added
     func resetPassword(email: String) async throws
     func resendVerificationEmail(email: String) async throws
     func signOut() async throws
@@ -119,7 +119,7 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func signInWithApple() async throws {
-        throw AuthServiceError.signInFailed // TODO: Supabase Apple Sign-In
+        throw AuthServiceError.signInFailed // FIXME: DRO-56 > Supabase Apple Sign-In
     }
     
     func resetPassword(email: String) async throws {
@@ -191,15 +191,12 @@ final class AuthService: AuthServiceProtocol {
             // Try it anyway
             session = UserSession(userId: cachedSession.user.id, email: cachedSession.user.email)
         } catch {
-            if let eu = error as? URLError {
-                switch eu.code {
-                    case .notConnectedToInternet, .timedOut, .networkConnectionLost, .cannotConnectToHost:
-                        Log.debug("[restoreSession] offline-ish failure: \(error)")
-                    default:
-                        DropinTracker.shared.capture("Unexpected URLError error\(eu.errorCode) \(eu)", authFlow: .restore_session)
-                        Log.debug("[restoreSession] undefined URLError: \(error)")
-                        assertionFailure()
-                }
+            if error.isOffline || error.isTimeout {
+                Log.debug("[restoreSession] offline-ish failure: \(error)")
+            } else if let eu = error as? URLError {
+                DropinTracker.shared.capture("Unexpected URLError error\(eu.errorCode) \(eu)", authFlow: .restore_session)
+                Log.debug("[restoreSession] undefined URLError: \(error)")
+                assertionFailure()
             } else {
                 DropinTracker.shared.capture("Unexpected error \(error)", authFlow: .restore_session)
                 Log.debug("[restoreSession] unexpected error: \(error)")

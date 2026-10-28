@@ -186,7 +186,7 @@ struct PlaceCreateQuickView: View {
                         Text("common.create")
                             .textStyle(.footnote, color: .dropinPrimary)
                             .padding(.trailing, 5)
-                        Text("\"\(suggested)\"")
+                        Text(verbatim: "\"\(suggested)\"")
                             .textStyle(.footnote, color: .dropinPrimary)
                     }
                     //.padding(.vertical, 8)

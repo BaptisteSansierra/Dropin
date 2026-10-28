@@ -152,15 +152,12 @@ import MapKit
             shareURL = IdentifiableURL(url: url)
         } catch {
             Log.error("PlaceSheetViewModel: share failed for place \(place.id): \(error)")
-            if let urlError =  error as? URLError {
-                switch urlError.code {
-                    case .notConnectedToInternet:
-                        shareErrorMsg = "place_sheet.share.error.connection"
-                    default:
-                        // shareErrorMsg is wrapped in LocalizedStringKey(_:) by the view, which needs
-                        // the literal catalog key "place_sheet.share.error.url.%d" (with the code substituted via %d)
-                        shareErrorMsg = String(format: NSLocalizedString("place_sheet.share.error.url.%d", comment: ""), urlError.code.rawValue)
-                }
+            if error.isOffline || error.isTimeout {
+                shareErrorMsg = "place_sheet.share.error.connection"
+            } else if let urlError =  error as? URLError {
+                // shareErrorMsg is wrapped in LocalizedStringKey(_:) by the view, which needs
+                // the literal catalog key "place_sheet.share.error.url.%d" (with the code substituted via %d)
+                shareErrorMsg = String(format: NSLocalizedString("place_sheet.share.error.url.%d", comment: ""), urlError.code.rawValue)
             } else {
                 shareErrorMsg = "place_sheet.share.error"
             }

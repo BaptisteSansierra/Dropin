@@ -85,9 +85,9 @@ struct SpectrumColorPickerView: View {
                        step: Self.saturationStep) {
                     Text("common.saturation")
                 } minimumValueLabel: {
-                    Text("0")
+                    Text(0, format: .number)
                 } maximumValueLabel: {
-                    Text("1")
+                    Text(1, format: .number)
                 }
             }
             .tint(.dropinPrimary)

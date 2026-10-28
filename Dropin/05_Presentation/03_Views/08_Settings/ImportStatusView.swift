@@ -201,7 +201,7 @@ struct ImportStatusView: View {
                 Text(progressionLabel(importStatus))
                     .textStyle(.caption, color: .textSecondary)
                 Spacer()
-                Text("\(progressionPercent())%")
+                Text(progressionPercent(), format: .percent.scale(1))
                     .textStyle(.caption, color: .textSecondary)
             }
             

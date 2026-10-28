@@ -370,7 +370,7 @@ struct MapstrCategoriesView: View {
                         (Text(conflictsAttributedString)
                             .font(TextStyle.caption.font)
                             .foregroundColor(.textSecondary)
-                         + Text(" ")
+                         + Text(verbatim: " ")
                          + Text("mapstr_categories.conflicts.review")
                             .font(TextStyle.link.font)
                             .foregroundColor(TextStyle.link.color))

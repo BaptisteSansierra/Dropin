@@ -64,7 +64,7 @@ struct MapstrConflictsView: View {
     private var summaryHeader: some View {
         HStack(spacing: 4) {
             Text("mapstr_conflicts.places_\(conflictPlaceCount)")
-            Text("·")
+            Text(verbatim: "·")
             Text("mapstr_conflicts.combinations_\(getConflictGroups().count)")
         }
         .textStyle(.formSectionTitle)

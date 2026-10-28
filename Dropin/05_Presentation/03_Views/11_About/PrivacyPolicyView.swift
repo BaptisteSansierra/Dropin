@@ -74,7 +74,7 @@ struct PrivacyPolicyView: View {
         Text(title)
             .font(TextStyle.bodySemibold.font)
             .foregroundStyle(TextStyle.bodySemibold.color)
-        + Text(" ")
+        + Text(verbatim: " ")
         + Text(body)
             .font(TextStyle.body.font)
             .foregroundStyle(TextStyle.body.color)

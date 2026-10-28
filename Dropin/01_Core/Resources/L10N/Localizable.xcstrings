@@ -7,25 +7,10 @@
     " " : {
 
     },
-    "-" : {
-
-    },
-    "·" : {
-
-    },
-    "\"%@\"" : {
-
-    },
     "%@" : {
 
     },
     "%lld" : {
-
-    },
-    "%lld%%" : {
-
-    },
-    "0" : {
 
     },
     "1" : {
@@ -4427,6 +4412,87 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Export Mapstr · %@"
+          }
+        }
+      }
+    },
+    "lookup_places_view.error.resolve.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t load place"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger le lieu"
+          }
+        }
+      }
+    },
+    "lookup_places_view.resolve.error.empty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No place was found for this search. Try a different name or address."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun lieu trouvé pour cette recherche. Essayez un autre nom ou une autre adresse."
+          }
+        }
+      }
+    },
+    "lookup_places_view.resolve.error.no_address" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place has no address on Apple Maps. You can still add it and fill in the address yourself."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce lieu n’a pas d’adresse sur Apple Maps. Vous pouvez tout de même l’ajouter et renseigner l’adresse vous-même."
+          }
+        }
+      }
+    },
+    "lookup_places_view.resolve.error.not_connected" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You appear to be offline. Check your connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous semblez être hors ligne. Vérifiez votre connexion et réessayez."
+          }
+        }
+      }
+    },
+    "lookup_places_view.resolve.error.unexpected_%@" : {
+      "comment" : "%@ is the underlying error description.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue : %@"
           }
         }
       }

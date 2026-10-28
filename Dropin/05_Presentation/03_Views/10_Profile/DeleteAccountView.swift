@@ -79,7 +79,7 @@ struct DeleteAccountView: View {
                 .textStyle(.caption, color: .textSecondary)
 
             (Text("delete_account.body_emphasis").font(.bodySemibold).tracking(0.6)
-             + Text(" ")
+             + Text(verbatim: " ")
              + Text("delete_account.body_details").font(.bodyRegular).tracking(0.6))
                 .foregroundStyle(.textPrimary)
                 .multilineTextAlignment(.center)
