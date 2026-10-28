@@ -312,6 +312,7 @@ final class AuthService: AuthServiceProtocol {
         let work = Task {
             do {
                 try await self.client.auth.signOut()
+                continuation.yield()   // give an empty value to the stream so it will return before CancellationError
                 continuation.finish()
             }
             catch { continuation.finish(throwing: error) }

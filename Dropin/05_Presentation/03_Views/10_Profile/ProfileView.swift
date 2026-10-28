@@ -2,12 +2,6 @@
 //  ProfileView.swift
 //  Dropin
 //
-//  Presented modally (its own NavigationStack) from RootView via the side-menu
-//  header — not pushed onto RootView's stack, since nesting a NavigationStack
-//  inside another's content causes toolbar/nav-bar cross-talk in SwiftUI.
-//  EditDisplayNameView/DeleteAccountView are pushed within *this* stack via
-//  ProfileCoordinator.
-//
 
 import SwiftUI
 
@@ -57,6 +51,9 @@ struct ProfileView: View {
             .navigationBarBackButtonHidden(true)
             .navigationDestination(for: ProfileNavigationItem.self) { item in
                 resolveDestination(item)
+            }
+            .onAppear {
+                viewModel.updateProfile()
             }
         }
         // First confirmation: are you sure you want to log out?
@@ -150,7 +147,7 @@ struct ProfileView: View {
                 .padding(.leading, 16)
 
             accountRow(label: "profile.email",
-                       value: viewModel.email ?? "—",
+                       value: viewModel.email,
                        showChevron: false,
                        action: nil)
         }
@@ -212,13 +209,12 @@ struct ProfileView: View {
     }
 
     // MARK: - Helpers
-
     private var planLabel: String {
         switch viewModel.plan {
             case .admin:       return "Admin"
             case .invited:     return "Invited"
             case .earlyStage:  return "Early Stage"
-            case .free, .none: return "Free"
+            case .free:        return "Free"
             case .paid:        return "Paid"
         }
     }

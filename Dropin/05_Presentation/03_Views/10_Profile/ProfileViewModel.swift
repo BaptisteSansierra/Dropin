@@ -9,8 +9,8 @@ import Foundation
 @Observable class ProfileViewModel {
 
     // MARK: - Sign-out flow state
-    /// Set after first attempt that requires user confirmation (offline or
-    /// post-sync still pending). Drives the second confirmation alert.
+    /// Set after first attempt that requires user confirmation (offline or post-sync still pending).
+    /// Drives the second confirmation alert.
     var pendingForceSignOut: ForceSignOutReason?
 
     var isSigningOut: Bool = false
@@ -26,33 +26,50 @@ import Foundation
         }
     }
 
-    /// Not private/ObservationIgnored — the view binds `$viewModel.coordinator.path`
-    /// to its own NavigationStack (same pattern as SignInViewModel/AuthCoordinator).
     var coordinator: ProfileCoordinator
+
+    var displayName: String
+    var email: String
+    var plan: UserPlan
+    var avatarInitial: String {
+        let placeholder = "-"
+        var source = placeholder
+        if !displayName.isEmpty {
+            source = displayName.initials()
+        }
+        return source.uppercased()
+    }
 
     @ObservationIgnored private let appContainer: AppContainer
     @ObservationIgnored private let profileService: any ProfileServiceProtocol
 
+    // MARK: init
     init(appContainer: AppContainer,
          profileService: any ProfileServiceProtocol,
          coordinator: ProfileCoordinator) {
         self.appContainer = appContainer
         self.profileService = profileService
         self.coordinator = coordinator
+        if let p = profileService.profile {
+            displayName = p.displayName ?? ""
+            email = p.email ?? ""
+            plan = p.plan
+        } else {
+            displayName = ""
+            email = ""
+            plan = .free
+        }
     }
-
-    // MARK: - Read-only fields surfaced to the view
-    var profile: Profile? { profileService.profile }
-    var displayName: String { profile?.displayName ?? "" }
-    var email: String? { profile?.email }
-    var plan: UserPlan? { profile?.plan }
-
-    var avatarInitial: String {
-        let placeholder = "N/A"
-        let source = displayName.isEmpty ? placeholder : displayName.initials()
-        return source.uppercased()
+    
+    func updateProfile() {
+        guard let p = profileService.profile else {
+            return
+        }
+        displayName = p.displayName ?? ""
+        email = p.email ?? ""
+        plan = p.plan
     }
-
+    
     // MARK: - Navigation
     func pushEditDisplayName() {
         coordinator.pushEditName()

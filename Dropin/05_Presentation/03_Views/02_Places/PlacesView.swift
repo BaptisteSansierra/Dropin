@@ -231,44 +231,22 @@ struct PlacesView: View {
     
     @ViewBuilder
     private var syncingView: some View {
-        if viewModel.syncStatus.isSyncing {
-            /*
-            if !viewModel.reachabilityService.isConnected {
-                Text("common.offline")
-                    .foregroundStyle(.white)
-                    .textStyle(.caption2)
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 3)
-                    .phaseAnimator([0.15, 0.5]) { view, opacity in
-                        view.opacity(opacity)
-                    } animation: { _ in
-                            .linear(duration: 0.5)
-                    }
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.destructive)
-                    }
-                    .padding(.top)
-                    .transition(.opacity)
-            } else {
-             */
-                Text("main.syncing")
-                    .textStyle(.caption2)
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 3)
-                    .phaseAnimator([0.15, 0.5]) { view, opacity in
-                        view.opacity(opacity)
-                    } animation: { _ in
-                            .linear(duration: 0.5)
-                    }
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.backgroundPrimary)
-                    }
-                    .padding(.top)
-                    .transition(.opacity)
-            //}
-        }
+        Text("main.syncing")
+            .textStyle(.caption2)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .phaseAnimator([0.15, 0.5]) { view, opacity in
+                view.opacity(opacity)
+            } animation: { _ in
+                .linear(duration: 0.5)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.surface1)
+            }
+            .padding(.top)
+            .transition(.opacity)
+            .opacity(viewModel.syncStatus.isSyncing ? 1 : 0)
     }
 
     // MARK: private methods

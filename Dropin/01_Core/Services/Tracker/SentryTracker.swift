@@ -52,4 +52,11 @@ final class SentryTracker: TrackerProtocol, Sendable {
             scope.setTag(value: authFlow.rawValue, key: TrackerTag.authFlow.rawValue)
         }
     }
+    
+    func capture(_ message: String, flow: TrackerFlow) {
+        SentrySDK.capture(message: message) { scope in
+            scope.setLevel(.error)
+            scope.setTag(value: flow.rawValue, key: TrackerTag.flow.rawValue)
+        }
+    }
 }

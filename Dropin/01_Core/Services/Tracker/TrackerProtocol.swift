@@ -19,7 +19,7 @@ enum TrackerAuthFlow: String {
 }
 
 enum TrackerFlow: String {
-    case noop // to be defined...
+    case profile
 }
 
 protocol TrackerProtocol: Sendable {
@@ -28,4 +28,5 @@ protocol TrackerProtocol: Sendable {
     func resetUser()
     func captureWithFiles(_ error: Error, urls: [URL])
     func capture(_ message: String, authFlow: TrackerAuthFlow)
+    func capture(_ message: String, flow: TrackerFlow)
 }

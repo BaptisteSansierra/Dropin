@@ -137,13 +137,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No trackers, no algorithm, no accounts sold to anyone."
+            "value" : "No ad trackers, no algorithm, no accounts sold to anyone."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun traceur, aucun algorithme, aucun compte revendu à qui que ce soit."
+            "value" : "Aucun traceur publicitaire, aucun algorithme, aucun compte revendu à qui que ce soit."
           }
         }
       }
@@ -7601,13 +7601,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dropin does not use third-party analytics or advertising SDKs."
+            "value" : "Dropin uses Sentry to catch and diagnose crashes and errors, not for analytics, advertising, or tracking your activity. When you're signed in, error reports may include your account details so we can look into issues affecting you specifically. Dropin does not use any third-party analytics or advertising SDKs."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dropin n'utilise aucun SDK d'analyse ou de publicité tiers."
+            "value" : "Dropin utilise Sentry pour détecter et diagnostiquer les plantages et les erreurs, pas pour l'analyse, la publicité ou le suivi de votre activité. Lorsque vous êtes connecté, les rapports d'erreur peuvent inclure les détails de votre compte afin que nous puissions examiner les problèmes qui vous concernent. Dropin n'utilise aucun SDK d'analyse ou de publicité tiers."
           }
         }
       }
@@ -7617,13 +7617,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Analytics."
+            "value" : "Crash and error reporting."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Analytique."
+            "value" : "Rapports de plantage et d'erreurs."
           }
         }
       }

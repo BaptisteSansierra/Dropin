@@ -48,4 +48,8 @@ final class DropinTracker: TrackerProtocol, Sendable {
     func capture(_ message: String, authFlow: TrackerAuthFlow) {
         backend.capture(message, authFlow: authFlow)
     }
+
+    func capture(_ message: String, flow: TrackerFlow) {
+        backend.capture(message, flow: flow)
+    }
 }

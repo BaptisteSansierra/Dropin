@@ -23,4 +23,7 @@ final class NoopTracker: TrackerProtocol, Sendable {
     
     func capture(_ message: String, authFlow: TrackerAuthFlow) {
     }
+    
+    func capture(_ message: String, flow: TrackerFlow) {
+    }
 }
