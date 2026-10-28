@@ -322,7 +322,8 @@ struct IdentifiablePOI: Identifiable {
                 let address = try await fetchAddress(coords: addressPickerCoords)
                 pickedAddress = address
             } catch {
-                // TODO: handle error
+                // Address picker shows a connection if fetch fails
+                // TODO: (improvement) error could be provided for specific message
             }
             fetchingAddressPicker = false
         }

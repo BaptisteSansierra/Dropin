@@ -50,13 +50,8 @@ struct TagDetailsView: View {
             }
             deleteButton
         }
-        .task {
-            do {
-                try await viewModel.fetchPlace()
-            } catch {
-                // TODO: handle error
-            }
-        }
+        .task { await viewModel.fetchPlace() }
+        .alertError(error: $viewModel.genericError)
         .toolbar {
             if activePlaces.count > 0 {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -264,23 +259,15 @@ struct TagDetailsView: View {
     // MARK: private methods
     private func updateTag() {
         Task {
-            do {
-                try await viewModel.updateTag()
-            } catch {
-                // TODO: handle error
-                assertionFailure("Could not update tag: \(error)")
-            }
+            // alert will pop if fails
+            try await viewModel.updateTag()
         }
     }
     
     private func unlinkPlaceFromTag(_ place: PlaceUIModel, at tagIdx: Int) {
         Task {
-            do {
-                try await viewModel.unlinkPlaceFromTag(place, at: tagIdx)
-            } catch {
-                // TODO: handle error
-                assertionFailure("Could not update place: \(error)")
-            }
+            // alert will pop if fails
+            try await viewModel.unlinkPlaceFromTag(place, at: tagIdx)
         }
     }
     

@@ -16,6 +16,7 @@ import SwiftUI
     var showingRemoveAlert: Bool = false
     var tagToRemove: TagUIModel? = nil
     var presentCreateSheet: Bool = false
+    var genericError: GenericError? = nil
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchTagsWithCount: FetchTagsWithCount
@@ -37,10 +38,10 @@ import SwiftUI
     }
     
     // MARK: Actions
-    func softDeleteTag(_ index: Int) async throws {
+    func softDeleteTag(_ index: Int) async {
         // Soft delete tag
         tags[index].deletedAt = Date()
-        try await updateTag(tags[index])
+        await updateTag(tags[index])
         tagToRemove = nil
     }
     
@@ -63,19 +64,35 @@ import SwiftUI
     }
 
     // MARK: use cases
-    func loadTags() async throws {
-        let result = try await fetchTagsWithCount()
-        let items = result
-            .map { TagMapper.toUI($0, placeCount: $1) }
-        tags = items
+    func loadTags() async {
+        do {
+            let result = try await fetchTagsWithCount()
+            let items = result
+                .map { TagMapper.toUI($0, placeCount: $1) }
+            tags = items
+        } catch is CancellationError {
+        } catch {
+            genericError = .fetchDatabase(error)
+        }
     }
     
-    func createTag(name: String, color: String) async throws {
-        let tag = Tag(name: name, color: color)
-        try await createTag(tag)
+    func createTag(name: String, color: String) async {
+        do {
+            let tag = Tag(name: name, color: color)
+            try await createTag(tag)
+            await loadTags()
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+        }
     }
 
-    private func updateTag(_ tag: TagUIModel) async throws {
-        try await updateTag(TagMapper.toDomain(tag))
+    private func updateTag(_ tag: TagUIModel) async {
+        do {
+            try await updateTag(TagMapper.toDomain(tag))
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+        }
     }
 }

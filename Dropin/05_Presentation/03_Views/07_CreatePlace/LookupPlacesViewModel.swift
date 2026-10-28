@@ -17,19 +17,19 @@ import MapKit
         case notConnected
         case unexpected(Error)
 
-        var messageTitle: String {
-            String(localized: "lookup_places_view.error.resolve.title")
+        var messageTitle: LocalizedStringResource {
+            "lookup_places_view.error.resolve.title"
         }
-        var messageBody: String {
+        var messageBody: LocalizedStringResource {
             switch self {
                 case .noResultFound:
-                    String(localized: "lookup_places_view.resolve.error.empty")
+                    "lookup_places_view.resolve.error.empty"
                 case .noAddress:
-                    String(localized: "lookup_places_view.resolve.error.no_address")
+                    "lookup_places_view.resolve.error.no_address"
                 case .notConnected:
-                    String(localized: "lookup_places_view.resolve.error.not_connected")
+                    "lookup_places_view.resolve.error.not_connected"
                 case .unexpected(let error):
-                    String(localized: "lookup_places_view.resolve.error.unexpected_\(error.localizedDescription)")
+                    "lookup_places_view.resolve.error.unexpected_\(error.localizedDescription)"
             }
         }
     }

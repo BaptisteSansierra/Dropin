@@ -29,6 +29,8 @@ import SwiftUI
 
     var importing: Bool = false
     var importStatus: ImportStatus?
+    
+    var genericError: GenericError? = nil
 
     @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var appContainer: AppContainer
@@ -71,11 +73,24 @@ import SwiftUI
         self.sync = sync
     }
 
-    func export() async throws -> URL {
-        try await ExportService(fetchPlaces: fetchPlaces,
-                                fetchCategories: fetchCategories,
-                                fetchTags: fetchTags)
-            .execute()
+    func export() async {
+        isExporting = true
+        exportedTemporaryFile = nil
+        defer { isExporting = false }
+        do {
+            let url = try await ExportService(fetchPlaces: fetchPlaces,
+                                              fetchCategories: fetchCategories,
+                                              fetchTags: fetchTags).execute()
+            exportedTemporaryFile = IdentifiableURL(url: url)
+        } catch is CancellationError {
+            // ignore silently
+        } catch let error as EncodingError {
+            genericError = .encoding(error)
+        } catch let error as CocoaError where error.code == .fileWriteOutOfSpace {
+            genericError = .noDiskSpace(error)
+        } catch {
+            genericError = .unexpected(error)
+        }
     }
 
     func resetDatabase() async throws {

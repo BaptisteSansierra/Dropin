@@ -16,31 +16,10 @@ struct PlaceCreateView: View {
     @State private var showMissingName: Bool = false
     @Environment(RootView.ActionBus.self) private var actionBus
 
-    // To be moved in VM
-    @State private var confirmCancel: Bool = false
-
-    private var tagIds: [UUID]?
-    private var categoryId: UUID?
+    //private var tagIds: [UUID]?
+    //private var categoryId: UUID?
 
     // MARK: - Init
-//    init(viewModel: PlaceCreateViewModel,
-//         coordinates: CLLocationCoordinate2D,
-//         address: String?,
-//         name: String,
-//         marker: String?,
-//         tags: [UUID],
-//         category: UUID?) {
-//        self._viewModel = State(initialValue: viewModel)
-//        place = PlaceUIModel(coordinates: coordinates)
-//        place.address = address
-//        place.name = name
-//        if let marker = marker {
-//            place.icon = Icon(rawValue: marker)
-//        }
-//        self.tagIds = tags
-//        self.categoryId = category
-//    }
-
     init(viewModel: PlaceCreateViewModel,
          place: PlaceUIModel) {
         self._viewModel = State(initialValue: viewModel)
@@ -69,7 +48,7 @@ struct PlaceCreateView: View {
             Button("common.cancel", action: cancelEdits)
                 .tint(.blue)
                 .confirmationDialog("dialog.cancel_creation.title",
-                                    isPresented: $confirmCancel,
+                                    isPresented: $viewModel.confirmCancel,
                                     titleVisibility: .visible,
                                     actions: {
                     Button("common.cancel", role: .destructive) {
@@ -102,16 +81,15 @@ struct PlaceCreateView: View {
             do {
                 try await viewModel.save(place: place)
                 actionBus.send(.reloadMainPlaces)
+                viewModel.popToRoot()
             } catch {
-                // TODO: handle
-                assertionFailure("Couldn't save: \(error)")
+                viewModel.genericError = .updateDatabase(error)
             }
         }
-        viewModel.popToRoot()
     }
     
     private func cancelEdits() {
-        confirmCancel = true
+        viewModel.confirmCancel = true
     }
 }
 

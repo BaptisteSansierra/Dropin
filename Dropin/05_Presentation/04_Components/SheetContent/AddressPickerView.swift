@@ -49,33 +49,19 @@ struct AddressPickerView: View {
     // MARK: - body
     var body: some View {
         VStack(spacing: 0) {
-            
             headerView
                 .padding(.top, 30)
-
-            
             if editCoords {
-//                coordsView
-//                    .padding(.top, editCoords ? 20 : 0)
-//                    .padding(.bottom, editCoords ? 5 : 0)
-//                    .opacity(editCoords ? 1 : 0.1)
-//                    .if(!editCoords) { v in
-//                        v.frame(height: 1)
-//                    }
-//                    .clipped()
-
                 coordsView
                     .padding(.top, 20)
                     .padding(.bottom, 5)
                     .opacity(1)
             }
-             
             addressView
                 .padding(.top)
             if !editCoords {
                 coordsInfoView
                     .padding(.top, 20)
-                    //.opacity(editCoords ? 0 : 1)
             }
             Spacer()
             MainButton(text: "common.continue") {

@@ -17,6 +17,7 @@ import SwiftUI
     var categoryColor: Color
     var showingRemoveAlert: Bool = false
     var showingMarkerList: Bool = false
+    var genericError: GenericError?
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored var locationManager: LocationManager
@@ -66,23 +67,40 @@ import SwiftUI
     
     // MARK: use cases
     func updateCategory(shouldUpdatePlaces: Bool = true) async throws {
-        try await updateCategory(CategoryMapper.toDomain(category))
-        if shouldUpdatePlaces {
-            updateCachedPlaces()
+        do {
+            try await updateCategory(CategoryMapper.toDomain(category))
+            if shouldUpdatePlaces {
+                updateCachedPlaces()
+            }
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+            throw error
         }
     }
  
-    func fetchPlaces() async throws {
+    func fetchPlaces() async {
         loadingPlaces = true
-        places = try await fetchCategoryPlaces(category.id)
-            .filter { $0.isActive }
-            .map { PlaceMapper.toUI($0) }
-        loadingPlaces = false
+        defer { loadingPlaces = false }
+        do {
+            places = try await fetchCategoryPlaces(category.id)
+                .filter { $0.isActive }
+                .map { PlaceMapper.toUI($0) }
+        } catch is CancellationError {
+        } catch {
+            genericError = .fetchDatabase(error)
+        }
     }
     
     func nullifyPlaceCategory(_ place: PlaceUIModel) async throws {
         place.category = nil
-        try await updatePlace(PlaceMapper.toDomain(place))
+        do {
+            try await updatePlace(PlaceMapper.toDomain(place))
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+            throw error
+        }
     }
     
     // MARK: - private methods

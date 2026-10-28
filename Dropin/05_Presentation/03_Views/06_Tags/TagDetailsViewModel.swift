@@ -16,6 +16,7 @@ import SwiftUI
     var selectedPlaceId: UUID? = nil
     var tagColor: Color
     var showingRemoveAlert: Bool = false
+    var genericError: GenericError? = nil
     
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var coordinator: TagCoordinator
@@ -66,23 +67,39 @@ import SwiftUI
     
     // MARK: use cases
     func updateTag(shouldUpdatePlaces: Bool = true) async throws {
-        try await updateTag(TagMapper.toDomain(tag))
-        if shouldUpdatePlaces {
-            updateCachedPlaces()
+        do {
+            try await updateTag(TagMapper.toDomain(tag))
+            if shouldUpdatePlaces {
+                updateCachedPlaces()
+            }
+        } catch {
+            genericError = .updateDatabase(error)
+            throw error
         }
     }
     
-    func fetchPlace() async throws {
+    func fetchPlace() async {
         loadingPlaces = true
-        places = try await fetchTagPlaces(tag.id)
-            .filter { $0.isActive }
-            .map { PlaceMapper.toUI($0) }
-        loadingPlaces = false
+        defer { loadingPlaces = false }
+        do {
+            places = try await fetchTagPlaces(tag.id)
+                .filter { $0.isActive }
+                .map { PlaceMapper.toUI($0) }
+        } catch is CancellationError {
+        } catch {
+            genericError = .fetchDatabase(error)
+        }
     }
     
     func unlinkPlaceFromTag(_ place: PlaceUIModel, at tagIdx: Int) async throws {
-        place.tags.remove(at: tagIdx)
-        try await updatePlace(PlaceMapper.toDomain(place))
+        do {
+            place.tags.remove(at: tagIdx)
+            try await updatePlace(PlaceMapper.toDomain(place))
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+            throw error
+        }
     }
     
     // MARK: - private methods

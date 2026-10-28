@@ -88,11 +88,8 @@ struct TagListView: View {
             .navigationDestination(for: TagNavigationItem.self) { navigationItem in
                 resolveDestination(navigationItem: navigationItem)
             }
-            .task{
-                Task {
-                    try await viewModel.loadTags()
-                }
-            }
+            .task { await viewModel.loadTags() }
+            .alertError(error: $viewModel.genericError)
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
                 ToolbarItem(placement: .topBarTrailing) {
@@ -163,12 +160,7 @@ struct TagListView: View {
         guard let index = viewModel.tags.firstIndex(where: { $0.id == tagId }) else {
             fatalError("couldn't find any tag id '\(tagId)' in list")
         }
-        do {
-            try await viewModel.softDeleteTag(index)
-        } catch {
-            // TODO: handle error
-            assertionFailure("couldn't delete tag")
-        }
+        await viewModel.softDeleteTag(index)
     }
     
     private func createTagDetailsView(_ tagId: UUID) -> TagDetailsView {
@@ -215,9 +207,8 @@ struct TagListView: View {
     private func createTag(name: String, color: String) {
         viewModel.presentCreateSheet = false
         Task {
-            try await viewModel.createTag(name: name,
-                                          color: color)
-            try await viewModel.loadTags()
+            await viewModel.createTag(name: name,
+                                      color: color)
         }
     }
 }

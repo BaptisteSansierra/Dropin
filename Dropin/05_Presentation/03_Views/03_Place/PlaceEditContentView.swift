@@ -21,11 +21,10 @@ struct PlaceEditContentView: View {
     @Environment(AppSettings.self) private var appSettings
     @Environment(RootView.ActionBus.self) private var actionBus
 
-    //private var isNameFocused: FocusState<Bool>.Binding
-
     // To be moved in VM
 //    @State private var confirmCancel: Bool = false
 //    @State private var edited: Bool = false // true if contains some edits
+    /*
     @State private var scrollY: CGFloat = 0
     //@State private var headerOpacity: CGFloat = 0
     @State private var headerBackgroundOffsetY: CGFloat = 0
@@ -49,6 +48,7 @@ struct PlaceEditContentView: View {
     @State private var noFlyAuthorizedZones: [NoFlyZoneData] = []
     @State private var noFlyZoneCompletionStatus: NoFlyZoneCompletionStatus = .undefined
     @State private var showDeleteWarning = false
+     */
 
     private let scrollCoordinateSpace = "scroll"
     private let topLayerHeight: CGFloat = 200
@@ -74,13 +74,13 @@ struct PlaceEditContentView: View {
 
         // Create UI models from Domain models
         let phones = place.wrappedValue.phone.map { ContactItemUI(contactItem: $0) }
-        self._phones = State(initialValue: phones)
+        viewModel.phones = phones
         
         let emails = place.wrappedValue.email.map { ContactItemUI(contactItem: $0) }
-        self._emails = State(initialValue: emails)
+        viewModel.emails = emails
         
         let urls = place.wrappedValue.url.map { ContactItemUI(contactItem: $0) }
-        self._urls = State(initialValue: urls)
+        viewModel.urls = urls
         
         // local ContactFieldKit config override
         ContactFieldUIConfig.backgroundPrimary = .surface1
@@ -104,18 +104,18 @@ struct PlaceEditContentView: View {
                 headerView
             }
         }
-        .noFlyZone(enabled: noFlyZoneEnabled,
-                   authorizedZones: noFlyAuthorizedZones,
+        .noFlyZone(enabled: viewModel.noFlyZoneEnabled,
+                   authorizedZones: viewModel.noFlyAuthorizedZones,
                    onAllowed: noFlyZoneOnAllowed,
                    onBlocked: noFlyZoneOnBlocked,
                    coloredDebugOverlay: false)
-        .onChange(of: phones) {
+        .onChange(of: viewModel.phones) {
             applyContactUpdate()
         }
-        .onChange(of: emails) {
+        .onChange(of: viewModel.emails) {
             applyContactUpdate()
         }
-        .onChange(of: urls) {
+        .onChange(of: viewModel.urls) {
             applyContactUpdate()
         }
         .alertOk(isPresented: $showMissingName,
@@ -125,20 +125,20 @@ struct PlaceEditContentView: View {
         .onAppear {
             viewModel.loadThumbnails(for: place)
         }
-        .sheet(isPresented: $showingImagePicker) {
+        .sheet(isPresented: $viewModel.showingImagePicker) {
             PHPickerRepresentable { image in
                 viewModel.addImage(to: place, image: image)
             }
         }
-        .fullScreenCover(isPresented: $showingCamera) {
+        .fullScreenCover(isPresented: $viewModel.showingCamera) {
             CameraPickerRepresentable { image in
                 viewModel.addImage(to: place, image: image)
             }
         }
         .fullScreenCover(isPresented: Binding(get: {
-            selectedImageId != nil
+            viewModel.selectedImageId != nil
         }, set: { v in
-            if !v { selectedImageId = nil }
+            if !v { viewModel.selectedImageId = nil }
         })) {
             let displayThumbnails: [(id: UUID, state: ImageLoadState)] = place.images.compactMap { img in
                 guard let thumb = img.thumbnail else { return nil }
@@ -146,14 +146,14 @@ struct PlaceEditContentView: View {
             }
             ImageFullscreenOverlay(
                 thumbnails: displayThumbnails,
-                initialIndex: displayThumbnails.firstIndex(where: { $0.id == selectedImageId }) ?? 0,
+                initialIndex: displayThumbnails.firstIndex(where: { $0.id == viewModel.selectedImageId }) ?? 0,
                 loadFull: { localId in
                     guard let img = place.images.first(where: { $0.id == localId }) else { return nil }
                     if let uiImage = img.fullImage { return uiImage.jpegData(compressionQuality: 0.9) }
                     guard let dbId = img.dbId else { return nil }
                     return await viewModel.getFullImage(dbId: dbId, placeId: place.id)
                 },
-                onDismiss: { selectedImageId = nil }
+                onDismiss: { viewModel.selectedImageId = nil }
             )
         }
     }
@@ -188,28 +188,28 @@ struct PlaceEditContentView: View {
                         PlaceRectAnnotationView(color: place.categoryColor,
                                                 icon: place.category?.icon,
                                                 iconExtra: place.icon,
-                                                size: annotationSize)
+                                                size: viewModel.annotationSize)
                     case .rounded:
                         PlacePinAnnotationView(color: place.categoryColor,
                                                icon: place.category?.icon,
                                                iconExtra: place.icon,
-                                               size: annotationSize,
+                                               size: viewModel.annotationSize,
                                                shadow: false)
                 }
             }
-            .padding(.bottom, annotationBottomPading)
+            .padding(.bottom, viewModel.annotationBottomPading)
             
             VStack {
                 Spacer()
                 Text(place.name)
                     .font(.captionMedium)
                     .foregroundStyle(Color(light: .textSecondary, dark: .textPrimary))
-                    .opacity(headerNameOpacity)
+                    .opacity(viewModel.headerNameOpacity)
                     .padding(.bottom, 10)
             }
         }
         .frame(height: topLayerHeight)
-        .offset(x: 0, y: headerBackgroundOffsetY)
+        .offset(x: 0, y: viewModel.headerBackgroundOffsetY)
         .ignoresSafeArea()
     }
     
@@ -346,7 +346,7 @@ struct PlaceEditContentView: View {
                           action: onPressDelete)
         .padding(.bottom, 15)
         .alert("alert.delete_place_title_\(place.name)",
-               isPresented: $showDeleteWarning,
+               isPresented: $viewModel.showDeleteWarning,
                actions: {
             
             // TODO: add a 'turn the wheel to delete' popup
@@ -378,35 +378,35 @@ struct PlaceEditContentView: View {
     }
 
     private func didUpdateScroll(_ proxy: GeometryProxy) {
-        scrollY = proxy.frame(in: .named(scrollCoordinateSpace)).minY
+        viewModel.scrollY = proxy.frame(in: .named(scrollCoordinateSpace)).minY
         // Update header offset
         let headerOffsetLimit: CGFloat = 70
-        headerBackgroundOffsetY = min(max(scrollY, -headerOffsetLimit), 0)
+        viewModel.headerBackgroundOffsetY = min(max(viewModel.scrollY, -headerOffsetLimit), 0)
         // Update annotation size
         let annotationBottomPadingMin: CGFloat = 30
         let annotationBottomPadingMax: CGFloat = 40
         let annotationSizeMin: CGFloat = 36
         let annotationSizeMax: CGFloat = 50
-        if scrollY < -headerOffsetLimit {
-            annotationSize = annotationSizeMin
-            annotationBottomPading = annotationBottomPadingMin
-            headerNameOpacity = 1
-        } else if scrollY > 0 {
-            annotationSize = annotationSizeMax
-            annotationBottomPading = annotationBottomPadingMax
-            headerNameOpacity = 0
+        if viewModel.scrollY < -headerOffsetLimit {
+            viewModel.annotationSize = annotationSizeMin
+            viewModel.annotationBottomPading = annotationBottomPadingMin
+            viewModel.headerNameOpacity = 1
+        } else if viewModel.scrollY > 0 {
+            viewModel.annotationSize = annotationSizeMax
+            viewModel.annotationBottomPading = annotationBottomPadingMax
+            viewModel.headerNameOpacity = 0
         } else {
-            let lerp = abs(abs(scrollY) - headerOffsetLimit) / headerOffsetLimit
-            annotationSize = lerp * annotationSizeMax + (1 - lerp) * annotationSizeMin
-            annotationBottomPading = lerp * annotationBottomPadingMax + (1 - lerp) * annotationBottomPadingMin
-            headerNameOpacity = 0
+            let lerp = abs(abs(viewModel.scrollY) - headerOffsetLimit) / headerOffsetLimit
+            viewModel.annotationSize = lerp * annotationSizeMax + (1 - lerp) * annotationSizeMin
+            viewModel.annotationBottomPading = lerp * annotationBottomPadingMax + (1 - lerp) * annotationBottomPadingMin
+            viewModel.headerNameOpacity = 0
         }
     }
     
     func applyContactUpdate() {
-        let phoneItems: [ContactItem] = phones.map { $0.contactItem }
-        let emailItems: [ContactItem] = emails.map { $0.contactItem }
-        let urlItems: [ContactItem] = urls.map { $0.contactItem }
+        let phoneItems: [ContactItem] = viewModel.phones.map { $0.contactItem }
+        let emailItems: [ContactItem] = viewModel.emails.map { $0.contactItem }
+        let urlItems: [ContactItem] = viewModel.urls.map { $0.contactItem }
 
         place.phone = phoneItems
         place.email = emailItems
@@ -414,13 +414,13 @@ struct PlaceEditContentView: View {
     }
 
     private func noFlyZoneOnBlocked() {
-        noFlyZoneEnabled = false
-        noFlyZoneCompletionStatus = .blocked
+        viewModel.noFlyZoneEnabled = false
+        viewModel.noFlyZoneCompletionStatus = .blocked
     }
     
     private func noFlyZoneOnAllowed(tappedZones: [NoFlyZoneData]) {
-        noFlyZoneEnabled = false
-        noFlyZoneCompletionStatus = .allowed
+        viewModel.noFlyZoneEnabled = false
+        viewModel.noFlyZoneCompletionStatus = .allowed
         
         // FIXME:
         // 1- add some phones
@@ -431,31 +431,31 @@ struct PlaceEditContentView: View {
         
         for z in tappedZones {
             if z.viewId == phoneFieldId {
-                guard z.itemId < phones.count else {
-                    assertionFailure("Trying to remove phone[\(z.itemId)] when count is \(phones.count)")
+                guard z.itemId < viewModel.phones.count else {
+                    assertionFailure("Trying to remove phone[\(z.itemId)] when count is \(viewModel.phones.count)")
                     return
                 }
-                phones[z.itemId].toBeDeleted = true
+                viewModel.phones[z.itemId].toBeDeleted = true
             }
             else if z.viewId == emailFieldId {
-                guard z.itemId < emails.count else {
-                    assertionFailure("Trying to remove email[\(z.itemId)] when count is \(emails.count)")
+                guard z.itemId < viewModel.emails.count else {
+                    assertionFailure("Trying to remove email[\(z.itemId)] when count is \(viewModel.emails.count)")
                     return
                 }
-                emails[z.itemId].toBeDeleted = true
+                viewModel.emails[z.itemId].toBeDeleted = true
             }
             else if z.viewId == urlFieldId {
-                guard z.itemId < urls.count else {
-                    assertionFailure("Trying to remove url[\(z.itemId)] when count is \(urls.count)")
+                guard z.itemId < viewModel.urls.count else {
+                    assertionFailure("Trying to remove url[\(z.itemId)] when count is \(viewModel.urls.count)")
                     return
                 }
-                urls[z.itemId].toBeDeleted = true
+                viewModel.urls[z.itemId].toBeDeleted = true
             }
         }
     }
     
     private func onPressDelete() {
-        showDeleteWarning.toggle()
+        viewModel.showDeleteWarning.toggle()
     }
     
     private func performDelete() {
@@ -537,11 +537,11 @@ extension PlaceEditContentView {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .confirmationDialog(String(""),
-                                isPresented: $showEditAddressMenu,
+                                isPresented: $viewModel.showEditAddressMenu,
                                 actions: editAddressActionsView)
         }
         .onTapGesture {
-            showEditAddressMenu.toggle()
+            viewModel.showEditAddressMenu.toggle()
         }
         
         inCardDivider
@@ -581,7 +581,7 @@ extension PlaceEditContentView {
                 cardView(title: "common.category",
                          headerActionTitle: "common.change",
                          headerAction: {
-                    showingCategorySelector.toggle()
+                    viewModel.showingCategorySelector.toggle()
                 }) {
                     HStack {
                         CategoryView(category: category,
@@ -595,7 +595,7 @@ extension PlaceEditContentView {
                 emptyCategoryContentView
             }
         }
-        .sheet(isPresented: $showingCategorySelector) {
+        .sheet(isPresented: $viewModel.showingCategorySelector) {
             viewModel.createCategorySelectorView(place: $place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
@@ -607,7 +607,7 @@ extension PlaceEditContentView {
         cardView(title: "common.category",
                  headerActionTitle: "common.choose",
                  headerAction: {
-            showingCategorySelector.toggle()
+            viewModel.showingCategorySelector.toggle()
         }) {
             HStack {
                 Text("placeholder.no_category")
@@ -632,7 +632,7 @@ extension PlaceEditContentView {
                 noTagsCardContentView
             }
         }
-        .sheet(isPresented: $showingTagSelector) {
+        .sheet(isPresented: $viewModel.showingTagSelector) {
             viewModel.createTagSelectorView(place: $place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
@@ -644,10 +644,10 @@ extension PlaceEditContentView {
         cardView(title: "common.tags",
                  headerActionTitle: "common.edit",
                  headerAction: {
-            showingTagSelector.toggle()
+            viewModel.showingTagSelector.toggle()
         }) {
             PlaceTagsView(place: $place,
-                          showingTagsSelector: $showingTagSelector,
+                          showingTagsSelector: $viewModel.showingTagSelector,
                           editEnabled: false,
                           presentationMode: .form)
             .padding(.top, inCardTopMargin)
@@ -659,7 +659,7 @@ extension PlaceEditContentView {
         cardView(title: "common.tags",
                  headerActionTitle: "common.add",
                  headerAction: {
-            showingTagSelector.toggle()
+            viewModel.showingTagSelector.toggle()
         }) {
             HStack {
                 Text("placeholder.no_tags")
@@ -684,7 +684,7 @@ extension PlaceEditContentView {
                 noIconCardContentView
             }
         }
-        .fullScreenCover(isPresented: $showingMarkerList) {
+        .fullScreenCover(isPresented: $viewModel.showingMarkerList) {
             MarkerListView(selected: $place.icon)
         }
     }
@@ -692,7 +692,7 @@ extension PlaceEditContentView {
     private func iconCardContentView(_ icon: Icon) -> some View {
         cardView(title: "common.annotation_icon",
                  headerActionTitle: "common.change",
-                 headerAction: { showingMarkerList.toggle() }) {
+                 headerAction: { viewModel.showingMarkerList.toggle() }) {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -717,7 +717,7 @@ extension PlaceEditContentView {
     private var noIconCardContentView: some View {
         cardView(title: "common.annotation_icon",
                  headerActionTitle: "common.choose",
-                 headerAction: { showingMarkerList.toggle() }) {
+                 headerAction: { viewModel.showingMarkerList.toggle() }) {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -768,7 +768,7 @@ extension PlaceEditContentView {
                     Spacer()
                     IcoButton(systemImage: "ellipsis",
                               icoSize: 14,
-                              action: { showingMarkerList.toggle() })
+                              action: { viewModel.showingMarkerList.toggle() })
                     .padding(.trailing, 15)
                 }
                 if place.icon == nil {
@@ -780,7 +780,7 @@ extension PlaceEditContentView {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showingMarkerList) {
+        .fullScreenCover(isPresented: $viewModel.showingMarkerList) {
             MarkerListView(selected: $place.icon)
         }
     }
@@ -835,7 +835,7 @@ extension PlaceEditContentView {
     private func imageContentView(_ item: PlaceImageUIModel) -> some View {
         ZStack(alignment: .topTrailing) {
             Button {
-                if item.thumbnail != nil { selectedImageId = item.id }
+                if item.thumbnail != nil { viewModel.selectedImageId = item.id }
             } label: {
                 if let thumb = item.thumbnail, let image = UIImage(data: thumb) {
                     Image(uiImage: image)
@@ -874,7 +874,7 @@ extension PlaceEditContentView {
 
     private var imagesAddView: some View {
         Button {
-            showingImageSourceMenu = true
+            viewModel.showingImageSourceMenu = true
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
@@ -886,10 +886,10 @@ extension PlaceEditContentView {
                     .foregroundStyle(.dropinPrimary)
             }
         }
-        .confirmationDialog(String(""), isPresented: $showingImageSourceMenu) {
-            Button("common.photo_library") { showingImagePicker = true }
+        .confirmationDialog(String(""), isPresented: $viewModel.showingImageSourceMenu) {
+            Button("common.photo_library") { viewModel.showingImagePicker = true }
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                Button("common.camera") { showingCamera = true }
+                Button("common.camera") { viewModel.showingCamera = true }
             }
         }
     }
@@ -959,7 +959,7 @@ extension PlaceEditContentView {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showingMarkerList) {
+        .fullScreenCover(isPresented: $viewModel.showingMarkerList) {
             MarkerListView(selected: $place.icon)
         }
     }
@@ -972,10 +972,10 @@ extension PlaceEditContentView {
         cardView(title: "common.phone") {
             ContactItemEditView(viewIdentifier: phoneFieldId,
                                 kind: .phone,
-                                values: $phones,
-                                noFlyZoneEnabled: $noFlyZoneEnabled,
-                                noFlyZoneCompletionStatus: $noFlyZoneCompletionStatus,
-                                noFlyAuthorizedZones: $noFlyAuthorizedZones)
+                                values: $viewModel.phones,
+                                noFlyZoneEnabled: $viewModel.noFlyZoneEnabled,
+                                noFlyZoneCompletionStatus: $viewModel.noFlyZoneCompletionStatus,
+                                noFlyAuthorizedZones: $viewModel.noFlyAuthorizedZones)
             .padding(.horizontal, -15)
             .accentColor(.dropinPrimary)
         }
@@ -989,10 +989,10 @@ extension PlaceEditContentView {
         cardView(title: "common.email") {
             ContactItemEditView(viewIdentifier: emailFieldId,
                                 kind: .email,
-                                values: $emails,
-                                noFlyZoneEnabled: $noFlyZoneEnabled,
-                                noFlyZoneCompletionStatus: $noFlyZoneCompletionStatus,
-                                noFlyAuthorizedZones: $noFlyAuthorizedZones)
+                                values: $viewModel.emails,
+                                noFlyZoneEnabled: $viewModel.noFlyZoneEnabled,
+                                noFlyZoneCompletionStatus: $viewModel.noFlyZoneCompletionStatus,
+                                noFlyAuthorizedZones: $viewModel.noFlyAuthorizedZones)
             .padding(.horizontal, -15)
             .accentColor(.dropinPrimary)
         }
@@ -1005,10 +1005,10 @@ extension PlaceEditContentView {
         cardView(title: "common.url") {
             ContactItemEditView(viewIdentifier: urlFieldId,
                                 kind: .url,
-                                values: $urls,
-                                noFlyZoneEnabled: $noFlyZoneEnabled,
-                                noFlyZoneCompletionStatus: $noFlyZoneCompletionStatus,
-                                noFlyAuthorizedZones: $noFlyAuthorizedZones)
+                                values: $viewModel.urls,
+                                noFlyZoneEnabled: $viewModel.noFlyZoneEnabled,
+                                noFlyZoneCompletionStatus: $viewModel.noFlyZoneCompletionStatus,
+                                noFlyAuthorizedZones: $viewModel.noFlyAuthorizedZones)
             .padding(.horizontal, -15)
             .accentColor(.dropinPrimary)
         }

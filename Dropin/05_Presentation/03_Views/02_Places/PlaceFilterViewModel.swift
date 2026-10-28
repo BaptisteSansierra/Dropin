@@ -13,6 +13,7 @@ import SwiftUI
     var categories: [CategoryUIModel] = []
     var tags: [TagUIModel] = []
     var filter: Binding<PlaceFilter?>
+    var loadDataError: GenericError?
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let fetchCategories: FetchCategories
@@ -28,12 +29,17 @@ import SwiftUI
         self.filter = filter
     }
     
-    func loadData() async throws {
-        categories = try await fetchCategories() 
-            .filter { $0.isActive }
-            .map { CategoryMapper.toUI($0) }
-        tags = try await fetchTags()
-            .filter { $0.isActive }
-            .map { TagMapper.toUI($0) }
+    func loadData() async {
+        do {
+            categories = try await fetchCategories()
+                .filter { $0.isActive }
+                .map { CategoryMapper.toUI($0) }
+            tags = try await fetchTags()
+                .filter { $0.isActive }
+                .map { TagMapper.toUI($0) }
+        } catch is CancellationError {
+        } catch {
+            loadDataError = .fetchDatabase(error)
+        }
     }
 }

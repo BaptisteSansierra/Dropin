@@ -56,6 +56,7 @@ struct SettingsView: View {
             ), content: mapstrCategoriesSheetContent)
             .overlay(content: deleteDatabaseOverlay)
         }
+        .alertError(error: $viewModel.genericError)
         /*
         .onAppear {
             // DEBUGLY display ImportStatusView
@@ -312,18 +313,8 @@ struct SettingsView: View {
     }
     
     private func exportData() {
-        viewModel.isExporting = true
         Task {
-            do {
-                //try await Task.sleep(for: .seconds(2))
-                let url = try await viewModel.export()
-                viewModel.exportedTemporaryFile = IdentifiableURL(url: url)
-            } catch {
-                // TODO: handle error
-                
-                viewModel.isExporting = false
-                viewModel.exportedTemporaryFile = nil
-            }
+            await viewModel.export()
         }
     }
 }

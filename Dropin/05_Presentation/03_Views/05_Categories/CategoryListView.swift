@@ -71,15 +71,8 @@ struct CategoryListView: View {
             .navigationDestination(for: CategoryNavigationItem.self) { navigationItem in
                 resolveDestination(navigationItem: navigationItem)
             }
-            .onAppear {
-                Task {
-                    do {
-                        try await viewModel.loadCategories()
-                    } catch {
-                        // TODO: handle error
-                    }
-                }
-            }
+            .task { await viewModel.loadCategories() }
+            .alertError(error: $viewModel.genericError)
             .toolbar {
                 DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
                 ToolbarItem(placement: .topBarTrailing) {
@@ -160,12 +153,7 @@ struct CategoryListView: View {
         guard let index = viewModel.categories.firstIndex(where: { $0.id == categoryId }) else {
             fatalError("couldn't find any category id '\(categoryId)' in list")
         }
-        do {
-            try await viewModel.softDeleteCategory(index)
-        } catch {
-            // TODO: handle error
-            assertionFailure("couldn't delete category")
-        }
+        await viewModel.softDeleteCategory(index)
     }
     
     private func createCategoryDetailsView(_ categoryId: UUID) -> CategoryDetailsView {
@@ -214,10 +202,9 @@ struct CategoryListView: View {
     private func createCategory(name: String, color: String, icon: Icon) {
         viewModel.presentCreateSheet = false
         Task {
-            try await viewModel.createCategory(name: name,
-                                               color: color,
-                                               icon: icon)
-            try await viewModel.loadCategories()
+            await viewModel.createCategory(name: name,
+                                           color: color,
+                                           icon: icon)
         }
     }
 }

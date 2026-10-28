@@ -8,6 +8,6 @@
 import Foundation
 
 protocol UserFacingError: Error {
-    var messageTitle: String { get }
-    var messageBody: String { get }
+    var messageTitle: LocalizedStringResource { get }
+    var messageBody: LocalizedStringResource { get }
 }

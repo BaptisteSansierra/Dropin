@@ -21,6 +21,7 @@ import MapKit
     var matchingCategory: CategoryUIModel?
     var suggestedCategoryName: String?
     var suggestedCategoryIcon: Icon?
+    var genericError: GenericError? = nil
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer

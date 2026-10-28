@@ -349,7 +349,6 @@ extension PlacesMapViewVCRepresentable {
                     let address = try await viewModel.fetchAddress(coords: coords)
                     viewModel.pickedAddress = address
                 } catch {
-                    // TODO: handle error
                     return
                 }
             }

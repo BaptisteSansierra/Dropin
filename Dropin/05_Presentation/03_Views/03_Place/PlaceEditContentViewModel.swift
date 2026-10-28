@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import ContactFieldKit
 import CoreLocation
+import NoFlyZone
 
 @MainActor
 @Observable class PlaceEditContentViewModel {
@@ -20,6 +21,28 @@ import CoreLocation
     
     var reachabilityService: any ReachabilityServiceProtocol
 
+    var scrollY: CGFloat = 0
+    var headerBackgroundOffsetY: CGFloat = 0
+    var annotationSize: CGFloat = 50
+    var annotationBottomPading: CGFloat = 40
+    var headerNameOpacity: CGFloat = 0
+    var showingCategorySelector: Bool = false
+    var showingTagSelector: Bool = false
+    var showingMarkerList: Bool = false
+    var showEditAddressMenu: Bool = false
+    var phones: [ContactItemUI] = []
+    var emails: [ContactItemUI] = []
+    var urls: [ContactItemUI] = []
+    var showingImagePicker: Bool = false
+    var showingCamera: Bool = false
+    var showingImageSourceMenu: Bool = false
+    var selectedImageId: UUID? = nil
+    // NoFlyZone states
+    var noFlyZoneEnabled: Bool = false
+    var noFlyAuthorizedZones: [NoFlyZoneData] = []
+    var noFlyZoneCompletionStatus: NoFlyZoneCompletionStatus = .undefined
+    var showDeleteWarning = false
+    
     // Apple POI fetched data
     var applePhoneNumber: String?
     var appleURL: URL?

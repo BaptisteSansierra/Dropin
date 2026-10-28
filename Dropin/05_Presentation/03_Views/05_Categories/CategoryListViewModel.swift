@@ -16,6 +16,7 @@ import SwiftUI
     var showingRemoveAlert: Bool = false
     var groupToRemove: CategoryUIModel? = nil
     var presentCreateSheet: Bool = false
+    var genericError: GenericError? = nil
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var fetchCategoriesWithCount: FetchCategoriesWithCount
@@ -37,10 +38,10 @@ import SwiftUI
     }
     
     // MARK: Actions
-    func softDeleteCategory(_ index: Int) async throws {
+    func softDeleteCategory(_ index: Int) async {
         // TODO: DRO-24 implement delete stategy
         categories[index].deletedAt = Date()
-        try await updateCategory(categories[index])
+        await updateCategory(categories[index])
         categories.remove(at: index)
         groupToRemove = nil
     }
@@ -64,18 +65,35 @@ import SwiftUI
     }
 
     // MARK: use cases
-    func loadCategories() async throws {
-        let result = try await fetchCategoriesWithCount()
-        let items = result.map { CategoryMapper.toUI($0, placeCount: $1) }
-        categories = items
+    func loadCategories() async {
+        do {
+            let result = try await fetchCategoriesWithCount()
+            let items = result.map { CategoryMapper.toUI($0, placeCount: $1) }
+            categories = items
+        } catch is CancellationError {
+        } catch {
+            genericError = .fetchDatabase(error)
+        }
     }
 
-    func createCategory(name: String, color: String, icon: Icon) async throws {
-        let category = Category(name: name, color: color, icon: icon)
-        try await createCategory(category)
+    func createCategory(name: String, color: String, icon: Icon) async {
+        do {
+            let category = Category(name: name, color: color, icon: icon)
+            try await createCategory(category)
+            await loadCategories()
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+        }
     }
 
-    private func updateCategory(_ category: CategoryUIModel) async throws {
-        try await updateCategory(CategoryMapper.toDomain(category))
+    // MARK: private
+    private func updateCategory(_ category: CategoryUIModel) async {
+        do {
+            try await updateCategory(CategoryMapper.toDomain(category))
+        } catch is CancellationError {
+        } catch {
+            genericError = .updateDatabase(error)
+        }
     }
 }

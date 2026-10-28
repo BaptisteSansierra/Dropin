@@ -42,12 +42,8 @@ struct PlaceFilterView: View {
             bottomView
         }
         .presentationBackground(.backgroundPrimary)
-        .task {
-            Task {
-                try? await viewModel.loadData()
-                // TODO: handle errors
-            }
-        }
+        .task { await viewModel.loadData() }
+        .alertError(error: $viewModel.loadDataError)
     }
     
     // MARK: subviews

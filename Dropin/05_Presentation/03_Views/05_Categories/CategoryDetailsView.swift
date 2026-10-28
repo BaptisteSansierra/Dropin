@@ -51,13 +51,8 @@ struct CategoryDetailsView: View {
             }
             deleteButton
         }
-        .task {
-            do {
-                try await viewModel.fetchPlaces()
-            } catch {
-                // TODO: handle error
-            }
-        }
+        .task { await viewModel.fetchPlaces() }
+        .alertError(error: $viewModel.genericError)
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .toolbar {
@@ -98,7 +93,8 @@ struct CategoryDetailsView: View {
                 }, set: { value in
                     viewModel.category.icon = value
                     Task {
-                        try await viewModel.updateCategory()
+                        // shows popup if throw
+                        try? await viewModel.updateCategory()
                     }
                 }))
         }
@@ -301,23 +297,15 @@ struct CategoryDetailsView: View {
     // MARK: private methods
     private func updateCategory() {
         Task {
-            do {
-                try await viewModel.updateCategory()
-            } catch {
-                // TODO: handle error
-                assertionFailure("Could not delete update category")
-            }
+            // shows popup if throw
+            try? await viewModel.updateCategory()
         }
     }
     
     private func nullifyPlaceCategory(_ place: PlaceUIModel) {
         Task {
-            do {
-                try await viewModel.nullifyPlaceCategory(place)
-            } catch {
-                // TODO: handle error
-                assertionFailure("Could not update place: \(error)")
-            }
+            // shows popup if throw
+            try await viewModel.nullifyPlaceCategory(place)
         }
     }
     

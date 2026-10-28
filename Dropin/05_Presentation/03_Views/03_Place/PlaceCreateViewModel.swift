@@ -12,6 +12,9 @@ import CoreLocation
 @MainActor
 @Observable class PlaceCreateViewModel {
 
+    var confirmCancel: Bool = false
+    var genericError: GenericError? = nil
+    
     @ObservationIgnored private var coordinator: PlaceCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let createPlace: CreatePlace
@@ -86,6 +89,8 @@ import CoreLocation
         }
     }
 
+    // Currently not used
+    #if false
     func retrieveTags(tagIds: [UUID]) async -> [TagUIModel] {
         var tags = [TagUIModel]()
         for tagId in tagIds {
@@ -108,7 +113,5 @@ import CoreLocation
         }
         return nil
     }
-
-    // MARK: - callbacks and co
-
+    #endif
 }

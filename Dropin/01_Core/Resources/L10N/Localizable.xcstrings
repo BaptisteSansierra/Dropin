@@ -3972,6 +3972,105 @@
         }
       }
     },
+    "error.disk_space.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t save file"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’enregistrer le fichier"
+          }
+        }
+      }
+    },
+    "error.disk_space.body_%@" : {
+      "comment" : "%@ is the underlying error description.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your device is running low on storage. Free up some space and try again.\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre appareil n’a plus assez d’espace de stockage. Libérez de l’espace et réessayez.\n%@"
+          }
+        }
+      }
+    },
+    "error.encoding.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t save data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’enregistrer les données"
+          }
+        }
+      }
+    },
+    "error.encoding.body_%@" : {
+      "comment" : "%@ is the underlying error description.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong while saving your data. Try again, or restart Dropin if the problem continues.\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue lors de l’enregistrement de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
+          }
+        }
+      }
+    },
+    "error.fetch_database.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t load local data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger les données locales"
+          }
+        }
+      }
+    },
+    "error.fetch_database.body_%@" : {
+      "comment" : "%@ is the underlying error description.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong while loading your data. Try again, or restart Dropin if the problem continues.\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue lors du chargement de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
+          }
+        }
+      }
+    },
     "error.fetching" : {
       "localizations" : {
         "en" : {
@@ -4048,6 +4147,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun résultat"
+          }
+        }
+      }
+    },
+    "error.unexpected.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue"
+          }
+        }
+      }
+    },
+    "error.unexpected.body_%@" : {
+      "comment" : "%@ is the underlying error description.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An unexpected error occurred. Try again, or restart Dropin if the problem continues.\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur inattendue s’est produite. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
+          }
+        }
+      }
+    },
+    "error.update_database.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t update data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de mettre à jour les données"
+          }
+        }
+      }
+    },
+    "error.update_database.body_%@" : {
+      "comment" : "%@ is the underlying error description.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong while updating your data. Try again, or restart Dropin if the problem continues.\n%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue lors de la mise à jour de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
           }
         }
       }

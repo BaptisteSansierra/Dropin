@@ -64,6 +64,7 @@ struct PlaceCreateQuickView: View {
                 place.category = category
             }
         }
+        .alertError(error: $viewModel.genericError)
         .sheet(isPresented: $viewModel.showingTagsSelector) {
             viewModel.createTagSelectorView(place: $place)
                 .presentationDetents([.medium, .large])
@@ -256,8 +257,7 @@ struct PlaceCreateQuickView: View {
             } catch DomainError.Place.missingName {
                 viewModel.missingName = true
             } catch {
-                // TODO: handle failure
-                fatalError("couldn't save place in DB: \(error)")
+                viewModel.genericError = .updateDatabase(error)
             }
         }
     }
