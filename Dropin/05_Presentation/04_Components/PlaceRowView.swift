@@ -29,7 +29,7 @@ struct PlaceRowView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 14)
                 .fill(.surface1)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
             
             HStack(alignment: .top, spacing: 0) {
                 switch appSettings.mapSettings.pinStyle {

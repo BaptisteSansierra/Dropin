@@ -85,7 +85,7 @@ struct AboutView: View {
         .background {
             RoundedRectangle(cornerRadius: 14)
                 .fill(.surface1)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
         }
     }
 
@@ -138,7 +138,7 @@ struct AboutView: View {
             .background {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
         }
     }
@@ -175,7 +175,7 @@ struct AboutView: View {
             .background {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             .onTapGesture {
                 viewModel.pushPrivacyPolicyView()
@@ -215,7 +215,7 @@ struct AboutView: View {
             .background {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
         }
     }
@@ -233,7 +233,7 @@ struct AboutView: View {
 
     private var rowSeparator: some View {
         Rectangle()
-            .fill(.fieldBorder)
+            .fill(.hairline)
             .frame(height: 1)
             .padding(.leading, 16)
     }

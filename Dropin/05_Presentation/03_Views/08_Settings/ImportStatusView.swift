@@ -91,7 +91,7 @@ struct ImportStatusView: View {
 
     private var resultDetailsSpacerView: some View {
         Rectangle()
-            .fill(.fieldBorder)
+            .fill(.hairline)
             .frame(height: 1)
             .padding(.horizontal, -20)
             .padding(.leading, 10)
@@ -142,7 +142,7 @@ struct ImportStatusView: View {
         .background {
             RoundedRectangle(cornerRadius: 8)
                 .fill(.clear)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
         }
         .padding(.top, 10)
     }

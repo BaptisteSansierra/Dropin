@@ -97,14 +97,14 @@ struct PlaceCreateQuickView: View {
         .background {
             RoundedRectangle(cornerRadius: 8)
                 .fill(.clear)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
         }
         .padding(.top, 10)
     }
 
     private var detailsSeparatorView: some View {
         Rectangle()
-            .fill(.fieldBorder)
+            .fill(.hairline)
             .frame(height: 1)
             .padding(.leading, 55)
     }

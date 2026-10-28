@@ -64,7 +64,7 @@ struct PlaceFilterView: View {
                     ZStack {
                         Circle()
                             .fill(.surface1)
-                            .stroke(.fieldBorder)
+                            .stroke(.hairline)
                             .frame(width: 35, height: 35)
                         Image(systemName: "multiply")
                             .textStyle(.body)

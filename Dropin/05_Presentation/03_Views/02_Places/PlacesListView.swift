@@ -43,7 +43,7 @@ struct PlacesListView: View {
     private var contentView: some View {
         VStack(spacing: 0) {
 //            Rectangle()
-//                .fill(.fieldBorder)
+//                .fill(.hairline)
 //                .frame(height: 1)
             ScrollView {
                 LazyVStack(spacing: 15) {

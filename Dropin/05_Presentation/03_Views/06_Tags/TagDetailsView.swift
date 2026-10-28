@@ -102,7 +102,7 @@ struct TagDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
                     .frame(height: 45)
                     .padding(.horizontal)
                 TextField("common.tag_name", text: $viewModel.tag.name)
@@ -129,7 +129,7 @@ struct TagDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
                     .frame(height: 45)
                     .padding(.horizontal)
                 HStack() {

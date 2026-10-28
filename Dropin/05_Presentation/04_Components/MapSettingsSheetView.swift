@@ -76,7 +76,7 @@ struct MapSettingsSheetView: View {
                 ForEach(POIBundle.allCases) { b in
 
                     let selected = appSettings.mapSettings.poiConfig.contains(b)
-                    let borderColor: Color = selected ? .dropinPrimary : .fieldBorder
+                    let borderColor: Color = selected ? .dropinPrimary : .hairline
                     let bgColor: Color = selected ? .dropinPrimary.opacity(0.15) : .backgroundPrimary
                     let txtColor: Color = selected ? .dropinPrimary : .textSecondary
                     let borderW: CGFloat = selected ? 2 : 1

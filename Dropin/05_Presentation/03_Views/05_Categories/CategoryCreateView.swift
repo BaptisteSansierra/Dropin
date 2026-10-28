@@ -94,12 +94,12 @@ struct CategoryCreateView: View {
             }
             .frame(width: 38, height: 38)
             .overlay {
-                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 10).stroke(.hairline, lineWidth: 1)
             }
             // Marker picker
             markerView
                 .overlay {
-                    RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 10).stroke(.hairline, lineWidth: 1)
                 }
                 .onTapGesture {
                     showingMarkerPicker.toggle()
@@ -114,7 +114,7 @@ struct CategoryCreateView: View {
         .padding(.vertical, 12)
         .background(.surface2)
         .overlay(alignment: .top) {
-            Rectangle().fill(.fieldBorder).frame(height: 1)
+            Rectangle().fill(.hairline).frame(height: 1)
         }
     }
     
@@ -127,7 +127,7 @@ struct CategoryCreateView: View {
                 .background {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(.surface1)
-                        .stroke(.fieldBorder)
+                        .stroke(.hairline)
                 }
                 .padding(.bottom, 15)
             // Color & Icon
@@ -150,7 +150,7 @@ struct CategoryCreateView: View {
                     presentColorPicker.toggle()
                 }
                 Rectangle()
-                    .fill(.fieldBorder)
+                    .fill(.hairline)
                     .frame(height: 1)
                     .padding(.leading, 10)
                 HStack {
@@ -176,7 +176,7 @@ struct CategoryCreateView: View {
             .background {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             // Error
             if let verticalWarn = verticalWarn {

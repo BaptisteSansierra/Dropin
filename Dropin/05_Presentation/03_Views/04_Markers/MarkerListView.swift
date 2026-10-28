@@ -94,7 +94,7 @@ struct MarkerListView: View {
                                 .background {
                                     RoundedRectangle(cornerRadius: 14)
                                         .fill(.surface1)
-                                        .stroke(.fieldBorder)
+                                        .stroke(.hairline)
 
                                     
                                 }
@@ -157,7 +157,7 @@ struct MarkerListView: View {
                     .frame(height: 60)
                 VStack(spacing: 0) {
                     Rectangle()
-                        .fill(.fieldBorder)
+                        .fill(.hairline)
                         .frame(height: 1)
                     Spacer()
                     TextButton(text: "common.clear_selection") {

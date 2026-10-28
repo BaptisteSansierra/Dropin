@@ -52,7 +52,7 @@ struct ApplePOIViewFactory {
         .background {
             RoundedRectangle(cornerRadius: 8)
                 .fill(.clear)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
         }
     }
     
@@ -83,7 +83,7 @@ struct ApplePOIViewFactory {
         .background {
             RoundedRectangle(cornerRadius: 8)
                 .fill(.clear)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
         }
     }
     
@@ -134,7 +134,7 @@ struct ApplePOIViewFactory {
 
     static func separator() -> some View {
         Rectangle()
-            .fill(.fieldBorder)
+            .fill(.hairline)
             .frame(height: 1)
             .padding(.leading, 50)
             .padding(.bottom, 10)
@@ -242,7 +242,7 @@ struct ApplePOIViewFactory {
             .background {
                 Rectangle()
                     .fill(.clear)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             .padding(.bottom, 25)
             
@@ -252,7 +252,7 @@ struct ApplePOIViewFactory {
             .background {
                 Rectangle()
                     .fill(.clear)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             .padding(.bottom, 25)
             
@@ -262,7 +262,7 @@ struct ApplePOIViewFactory {
             .background {
                 Rectangle()
                     .fill(.clear)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             .padding(.bottom, 25)
         }

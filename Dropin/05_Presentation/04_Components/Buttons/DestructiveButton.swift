@@ -38,7 +38,7 @@ struct DestructiveButton: View {
                      maxWidth: .infinity,
                      background: style == .filled ? .destructive : .surface1,
                      foreground: style == .filled ? .surface1 : .destructive,
-                     stroke: style == .filled ? .fieldBorder : .destructive.opacity(0.25),
+                     stroke: style == .filled ? .hairline : .destructive.opacity(0.25),
                      progress: progress,
                      action: action)
     }

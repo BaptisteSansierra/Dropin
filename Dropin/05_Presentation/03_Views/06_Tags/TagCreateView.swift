@@ -76,7 +76,7 @@ struct TagCreateView: View {
             }
             .frame(width: 38, height: 38)
             .overlay {
-                RoundedRectangle(cornerRadius: 10).stroke(.fieldBorder, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 10).stroke(.hairline, lineWidth: 1)
             }
 
             // Tag name
@@ -89,7 +89,7 @@ struct TagCreateView: View {
         .padding(.vertical, 12)
         .background(.surface2)
         .overlay(alignment: .top) {
-            Rectangle().fill(.fieldBorder).frame(height: 1)
+            Rectangle().fill(.hairline).frame(height: 1)
         }
     }
     
@@ -102,7 +102,7 @@ struct TagCreateView: View {
                 .background {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(.surface1)
-                        .stroke(.fieldBorder)
+                        .stroke(.hairline)
                 }
                 .padding(.bottom, 15)
             // Color & Icon
@@ -128,7 +128,7 @@ struct TagCreateView: View {
             .background {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             // Error
             if let verticalWarn = verticalWarn {

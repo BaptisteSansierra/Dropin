@@ -36,7 +36,7 @@ struct DropinSegmented<T: Hashable>: View {
         }
         .padding(3)
         .background(.backgroundPrimary, in: .rect(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.fieldBorder, lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.hairline, lineWidth: 1))
         .sensoryFeedback(.selection, trigger: selection)
     }
 }

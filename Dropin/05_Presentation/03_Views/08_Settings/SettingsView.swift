@@ -131,14 +131,14 @@ struct SettingsView: View {
             .background {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
         }
     }
     
     private var rowSeparator: some View {
         Rectangle()
-            .fill(.fieldBorder)
+            .fill(.hairline)
             .frame(height: 1)
             .padding(.leading, 57)
     }
@@ -225,7 +225,7 @@ struct SettingsView: View {
             .background {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
             
         }

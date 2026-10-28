@@ -15,7 +15,7 @@ struct BackButton: View {
         Button(action: action) {
             Circle()
             .fill(.surface2)
-            .stroke(.fieldBorder)
+            .stroke(.hairline)
             .frame(width: 36, height: 36)
             .overlay {
                 Image(systemName: "chevron.left")

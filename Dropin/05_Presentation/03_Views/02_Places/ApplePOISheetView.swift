@@ -158,7 +158,7 @@ struct ApplePOISheetView: View {
                 .padding(.top, 30)
             RoundedRectangle(cornerRadius: 8)
                 .fill(.clear)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background {
                     VStack {
@@ -200,7 +200,7 @@ struct ApplePOISheetView: View {
                 .padding(.top, 30)
             RoundedRectangle(cornerRadius: 8)
                 .fill(.clear)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background {
                     VStack {

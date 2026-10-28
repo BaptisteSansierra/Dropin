@@ -99,7 +99,7 @@ struct AuthTextFieldView<Value: Hashable>: View {
         .background {
             RoundedRectangle(cornerRadius: 14)
                 .fill(.surface1)
-                .stroke(.fieldBorder)
+                .stroke(.hairline)
         }
         .onTapGesture { focusedField.wrappedValue = fieldValue }
     }

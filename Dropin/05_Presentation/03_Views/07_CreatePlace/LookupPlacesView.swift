@@ -143,7 +143,7 @@ struct LookupPlacesView: View {
                         }
                         if idx != viewModel.results.count - 1 {
                             Rectangle()
-                                .fill(.fieldBorder)
+                                .fill(.hairline)
                                 .frame(height: 1)
                                 .frame(maxWidth: .infinity)
                                 //.padding(.leading, 70)

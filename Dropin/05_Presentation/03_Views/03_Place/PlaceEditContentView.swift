@@ -1079,7 +1079,7 @@ extension PlaceEditContentView {
                                             body: poiNotFoundBody())
                     }
                     Rectangle()
-                        .fill(.fieldBorder)
+                        .fill(.hairline)
                         .frame(height: 1)
                     HStack {
                         TextButton(text: "common.unlink", preSystemImage: "personalhotspot.slash") {
@@ -1129,7 +1129,7 @@ extension PlaceEditContentView {
         VStack(spacing: 0) {
             content()
             Rectangle()
-                .fill(.fieldBorder)
+                .fill(.hairline)
                 .frame(height: 1)
             HStack {
                 Image(systemName: "map")

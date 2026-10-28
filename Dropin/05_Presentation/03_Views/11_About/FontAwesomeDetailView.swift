@@ -29,7 +29,7 @@ struct FontAwesomeDetailView: View {
                     .background {
                         RoundedRectangle(cornerRadius: 14)
                             .fill(.surface1)
-                            .stroke(.fieldBorder)
+                            .stroke(.hairline)
                     }
 
                     Text("fontawesome.detail.footnote")

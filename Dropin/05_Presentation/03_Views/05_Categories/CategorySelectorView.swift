@@ -115,7 +115,7 @@ struct CategorySelectorView: View {
         .background(.surface1, in: RoundedRectangle(cornerRadius: 14))
         .overlay {
             RoundedRectangle(cornerRadius: 14)
-                .stroke(.fieldBorder, lineWidth: 1)
+                .stroke(.hairline, lineWidth: 1)
         }
     }
 

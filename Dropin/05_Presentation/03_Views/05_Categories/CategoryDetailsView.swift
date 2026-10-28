@@ -114,7 +114,7 @@ struct CategoryDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
                     .frame(height: 45)
                     .padding(.horizontal)
                 TextField("common.category_name", text: $viewModel.category.name)
@@ -141,13 +141,13 @@ struct CategoryDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
                     .frame(height: 45)
                     .padding(.horizontal)
                 HStack() {
                     RoundedRectangle(cornerSize: 8)
                         .fill(viewModel.categoryColor)
-                        .stroke(.fieldBorder)
+                        .stroke(.hairline)
                         .frame(height: 25)
                         .frame(width: 100)
                         .padding(.leading, 30)
@@ -177,7 +177,7 @@ struct CategoryDetailsView: View {
             ZStack {
                 RoundedRectangle(cornerSize: 8)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
                     .frame(height: 45)
                     .padding(.horizontal)
                 
@@ -185,7 +185,7 @@ struct CategoryDetailsView: View {
                     ZStack(alignment: .center) {
                         RoundedRectangle(cornerSize: 8)
                             .fill(viewModel.category.color.opacity(0.15))
-                            .strokeBorder(.fieldBorder)
+                            .strokeBorder(.hairline)
                             .frame(height: 30)
                             .frame(width: 30)
                             .foregroundStyle(.clear)

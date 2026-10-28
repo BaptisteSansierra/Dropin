@@ -145,7 +145,7 @@ struct ProfileView: View {
             }
 
             Rectangle()
-                .fill(.fieldBorder)
+                .fill(.hairline)
                 .frame(height: 1)
                 .padding(.leading, 16)
 
@@ -157,7 +157,7 @@ struct ProfileView: View {
         .background(.surface1, in: RoundedRectangle(cornerRadius: 14))
         .overlay {
             RoundedRectangle(cornerRadius: 14)
-                .stroke(.fieldBorder, lineWidth: 1)
+                .stroke(.hairline, lineWidth: 1)
         }
     }
 

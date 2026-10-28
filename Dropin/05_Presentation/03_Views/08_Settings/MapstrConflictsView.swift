@@ -88,7 +88,7 @@ struct MapstrConflictsView: View {
             .padding(.vertical, 12)
 
             Rectangle()
-                .fill(.fieldBorder)
+                .fill(.hairline)
                 .frame(height: 1)
 
             // Places category row
@@ -126,7 +126,7 @@ struct MapstrConflictsView: View {
             .padding(.bottom, 12)
 
             Rectangle()
-                .fill(.fieldBorder)
+                .fill(.hairline)
                 .frame(height: 1)
 
             placeChips(group)

@@ -105,7 +105,7 @@ struct DeleteAccountView: View {
             ForEach(Array(visibleConsequenceRows.enumerated()), id: \.offset) { index, row in
                 if index > 0 {
                     Rectangle()
-                        .fill(.fieldBorder)
+                        .fill(.hairline)
                         .frame(height: 1)
                         .padding(.leading, 16)
                 }
@@ -125,7 +125,7 @@ struct DeleteAccountView: View {
         .background(.surface1, in: RoundedRectangle(cornerRadius: 14))
         .overlay {
             RoundedRectangle(cornerRadius: 14)
-                .stroke(.fieldBorder, lineWidth: 1)
+                .stroke(.hairline, lineWidth: 1)
         }
     }
 
@@ -156,7 +156,7 @@ struct DeleteAccountView: View {
     private var confirmationSheet: some View {
         VStack(alignment: .leading, spacing: 16) {
 //            Capsule()
-//                .fill(.fieldBorder)
+//                .fill(.hairline)
 //                .frame(width: 38, height: 5)
 //                .frame(maxWidth: .infinity)
 //                .padding(.top, 8)

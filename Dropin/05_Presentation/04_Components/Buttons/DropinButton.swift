@@ -30,7 +30,7 @@ struct DropinButton: View {
          height: CGFloat = DropinApp.ui.button.height,
          background: Color = .surface1,
          foreground: Color = .dropinPrimary,
-         stroke: Color = .fieldBorder,
+         stroke: Color = .hairline,
          progress: Progress = .none,
          action: @escaping () -> Void) {
         self.systemImage = systemImage

@@ -125,7 +125,7 @@ struct MapstrCategoriesView: View {
                                 .frame(height: 55)
                             if idx < viewModel.categoryRows.count - 1 {
                                 Rectangle()
-                                    .fill(.fieldBorder)
+                                    .fill(.hairline)
                                     .frame(height: 1)
                                     .padding(.trailing, -15)
                                     .padding(.leading, 31)
@@ -150,7 +150,7 @@ struct MapstrCategoriesView: View {
                 .background {
                     RoundedRectangle(cornerRadius: 15)
                         .fill(.surface1)
-                        .stroke(.fieldBorder)
+                        .stroke(.hairline)
                 }
             }
         }
@@ -309,7 +309,7 @@ struct MapstrCategoriesView: View {
                     stayingTagRow(row)
                     if idx < viewModel.stayingRows.count - 1 {
                         Rectangle()
-                            .fill(.fieldBorder)
+                            .fill(.hairline)
                             .frame(height: 1)
                             .padding(.trailing, -15)
                             .padding(.leading, 31)
@@ -319,7 +319,7 @@ struct MapstrCategoriesView: View {
             .background {
                 RoundedRectangle(cornerRadius: 15)
                     .fill(.surface1)
-                    .stroke(.fieldBorder)
+                    .stroke(.hairline)
             }
         }
         .padding(.top)
@@ -357,7 +357,7 @@ struct MapstrCategoriesView: View {
     private var bottomBar: some View {
         VStack(spacing: 10) {
             Rectangle()
-                .fill(.fieldBorder)
+                .fill(.hairline)
                 .frame(height: 1)
 
             if viewModel.conflictingPlacesCount > 0 {

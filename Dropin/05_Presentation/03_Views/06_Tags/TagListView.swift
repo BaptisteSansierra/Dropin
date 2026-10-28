@@ -62,7 +62,7 @@ struct TagListView: View {
                                 .frame(height: 55)
                                 .padding(.horizontal)
                             Rectangle()
-                                .fill(.fieldBorder)
+                                .fill(.hairline)
                                 .frame(height: 1)
                                 .opacity(idx == activeTags.count - 1 ? 0 : 1)
                                 .padding(.leading)
@@ -71,7 +71,7 @@ struct TagListView: View {
                     .background {
                         RoundedRectangle(cornerRadius: 14)
                             .fill(.surface1)
-                            .stroke(.fieldBorder)
+                            .stroke(.hairline)
                     }
                     .padding(.top, 20)
                 }
