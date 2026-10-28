@@ -40,7 +40,9 @@ struct DropinApp: App {
         let schema = Schema([PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self])
         let configuration = ModelConfiguration()
         do {
-            let modelContainer = try ModelContainer(for: schema, configurations: configuration)
+            let modelContainer = try ModelContainer(for: schema,
+                                                    migrationPlan: DropinMigrationPlan.self,
+                                                    configurations: configuration)
             modelContainer.mainContext.autosaveEnabled = false
             // Healthy launch: let's clean up backups left behind by a past occurrence of corrupted-store
             Self.cleanUpOldCorruptedBackups(near: configuration.url)
@@ -122,9 +124,12 @@ struct DropinApp: App {
             DropinTracker.shared.captureWithFiles(error, urls: backupURLs)
 
             // Backup is left on disk; a future healthy launch will clean up (see cleanUpOldCorruptedBackups)
-            if let freshContainer = try? ModelContainer(for: schema, configurations: configuration) {
+            if let freshContainer = try? ModelContainer(for: schema,
+                                                        migrationPlan: DropinMigrationPlan.self,
+                                                        configurations: configuration) {
                 freshContainer.mainContext.autosaveEnabled = false
-                appContainer = AppContainer(modelContext: freshContainer.mainContext, appContext: appContext)
+                appContainer = AppContainer(modelContext: freshContainer.mainContext,
+                                            appContext: appContext)
                 modelContainer = freshContainer
                 Self.configureDependencies()
                 return
