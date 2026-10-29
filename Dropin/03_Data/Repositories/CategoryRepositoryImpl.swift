@@ -87,9 +87,10 @@ public final class CategoryRepositoryImpl: CategoryRepository {
     /// `spaceId` is only used for the insert branch; an existing record keeps its own
     /// spaceId untouched, so an upsert can never silently reassign an entity's space.
     func upsert(_ category: Category, spaceId: UUID, shouldSave: Bool) async throws {
+        let categoryId = category.id
         // Looked up by id alone, across all spaces: SyncService.pull must be able to find and
         // update an existing local record regardless of which space is currently active.
-        let descriptor = FetchDescriptor<CategoryRecord>(predicate: #Predicate { $0.identifier == category.id })
+        let descriptor = FetchDescriptor<CategoryRecord>(predicate: #Predicate { $0.identifier == categoryId })
         if let existing = try modelContext.fetch(descriptor).first {
             // Update
             existing.name      = category.name

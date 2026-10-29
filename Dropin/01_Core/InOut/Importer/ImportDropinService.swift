@@ -117,73 +117,54 @@ actor ImportDropinService: ImportServiceProtocol {
     private func createLocalItems(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
 
         // Every entity created by this import run shares the same instant.
-        // The .dropin wire format carries no import provenance of its own,
-        // this importer is the one that supplies it.
+        // The .dropin wire format carries no ids/dates of its own:
+        // this importer assigns a fresh identity and stamps every date with importDate.
         let importDate = Date()
 
-        var replacedTags = [Tag: Tag]()
-        var replacedCategories = [Category: Category]()
+        // File-local ids -> local entities (either existing ones with the same name, or newly created)
+        var categoriesByFileId = [UUID: Category]()
+        var tagsByFileId = [UUID: Tag]()
 
         // Upsert categories and tags first (places depend on them)
-        for category in export.categories {
+        for categoryDTO in export.categories {
             try Task.checkCancellation()
-            if let existingCategory = existingCategories.first(where: { item in item.name == category.name }),
-               existingCategory.isActive {
-                replacedCategories[category] = existingCategory
+            if let existingCategory = existingCategories.first(where: { $0.name == categoryDTO.name && $0.isActive }) {
+                categoriesByFileId[categoryDTO.id] = existingCategory
             } else {
-                let stampedCategory = category.withImportProvenance(importedAt: importDate, importSrc: .dropin)
-                try await upsertCategory(stampedCategory, shouldSave: false)
+                let category = categoryDTO.toDomain(importDate: importDate)
+                try await upsertCategory(category, shouldSave: false)
+                categoriesByFileId[categoryDTO.id] = category
                 createdCategoriesCount += 1
             }
         }
-        for tag in export.tags {
+        for tagDTO in export.tags {
             try Task.checkCancellation()
-            if let existingTag = existingTags.first(where: { item in item.name == tag.name }),
-               existingTag.isActive {
-                replacedTags[tag] = existingTag
+            if let existingTag = existingTags.first(where: { $0.name == tagDTO.name && $0.isActive }) {
+                tagsByFileId[tagDTO.id] = existingTag
             } else {
-                let stampedTag = tag.withImportProvenance(importedAt: importDate, importSrc: .dropin)
-                try await upsertTag(stampedTag, shouldSave: false)
+                let tag = tagDTO.toDomain(importDate: importDate)
+                try await upsertTag(tag, shouldSave: false)
+                tagsByFileId[tagDTO.id] = tag
                 createdTagsCount += 1
             }
         }
 
-        // Replace category and tags in places
-        var updatedPlaces: [Place] = []
-        for place in export.places {
-            // Find category replacement if needed
-            var category: Category? = place.category
-            if let currentCategory = place.category {
-                if let replacement = replacedCategories[currentCategory] {
-                    category = replacement
-                }
-            }
-            // Find tags replacements if needed
-            var tags: [Tag] = []
-            for tag in place.tags {
-                if let replacement = replacedTags[tag] {
-                    tags.append(replacement)
-                } else {
-                    tags.append(tag)
-                }
-            }
-            // Create place from replaced category and tags
-            updatedPlaces.append(place.replacedCategoryAndTags(category: category, tags: tags))
-        }
-
-        // Upsert places
+        // Upsert places, resolving their file-local category / tags references
         var upsertCount = 0
-        for place in updatedPlaces {
+        for placeDTO in export.places {
             try Task.checkCancellation()
 
-            try await processPlace(place, importDate: importDate)
+            let category = placeDTO.categoryId.flatMap { categoriesByFileId[$0] }
+            let tags = placeDTO.tagIds.compactMap { tagsByFileId[$0] }
+            let place = placeDTO.toDomain(tags: tags, category: category, importDate: importDate)
+            try await processPlace(place)
 
             upsertCount += 1
             await progress(upsertCount)
         }
     }
 
-    private func processPlace(_ place: Place, importDate: Date) async throws {
+    private func processPlace(_ place: Place) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
             duplicatePlacesCount += 1
@@ -192,13 +173,11 @@ actor ImportDropinService: ImportServiceProtocol {
             return
         }
 
-        let stampedPlace = place.withImportProvenance(importedAt: importDate, importSrc: .dropin)
-
         // Created place is added to existing places array so we ensure there's no duplicates in the file
-        existingHardPlaces.append(stampedPlace)
+        existingHardPlaces.append(place)
 
         // Add to database
-        try await upsertPlace(stampedPlace, shouldSave: false)
+        try await upsertPlace(place, shouldSave: false)
         createdPlacesCount += 1
     }
 

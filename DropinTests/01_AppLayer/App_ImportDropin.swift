@@ -80,10 +80,13 @@ struct App_ImportDropin {
         }
         // Check place has 1 tag
         #expect(places[0].tags.count == 1)
-        // Check place category uuid matches imported category
-        #expect(extractedCategory.id == g1.id)
-        // Check place tag uuid matches imported tag
-        #expect(places[0].tags[0].id == t1.id)
+        // Check exported ids are never reused: imported entities get a fresh identity
+        #expect(places[0].id != p1.id)
+        #expect(extractedCategory.id != g1.id)
+        #expect(places[0].tags[0].id != t1.id)
+        // Check place is linked to the created category / tag
+        #expect(extractedCategory.id == categories[0].id)
+        #expect(places[0].tags[0].id == tags[0].id)
         
         // Check import source
         let importedAt = places[0].importedAt
@@ -94,6 +97,14 @@ struct App_ImportDropin {
         #expect(importSrc == ImportSource.dropin)
         #expect(importSrc == tags[0].importSrc)
         #expect(importSrc == categories[0].importSrc)
+
+        // Check dates are not imported: every date is the import date
+        #expect(places[0].createdAt == importedAt)
+        #expect(places[0].updatedAt == importedAt)
+        #expect(categories[0].createdAt == importedAt)
+        #expect(categories[0].updatedAt == importedAt)
+        #expect(tags[0].createdAt == importedAt)
+        #expect(tags[0].updatedAt == importedAt)
     }
 
     ///
@@ -193,19 +204,20 @@ struct App_ImportDropin {
         let places = try await localPlaceRepo.fetch()
         // Check we have 1 place on disk
         #expect(places.count == 1)
-        // Check the created place is linked to new created category
-        #expect(places[0].tags[0].id == t1Import.id)
-        // Check the 2 categories deletedAt property
+        // Check the 2 tags deletedAt property
         guard let testT1Local = tags.first(where: { $0.id == t1Local.id }) else {
             Issue.record("t1Local not found")
             return
         }
-        guard let testT1Imported = tags.first(where: { $0.id == t1Import.id }) else {
+        guard let testT1Imported = tags.first(where: { $0.id != t1Local.id }) else {
             Issue.record("t1Imported not found")
             return
         }
         #expect(testT1Local.deletedAt != nil)
         #expect(testT1Imported.deletedAt == nil)
+        // Check the created place is linked to the new created tag, which has a fresh id
+        #expect(places[0].tags[0].id == testT1Imported.id)
+        #expect(testT1Imported.id != t1Import.id)
     }
 
     ///
@@ -315,19 +327,20 @@ struct App_ImportDropin {
             Issue.record("no category")
             return
         }
-        // Check the place is linked to new created category
-        #expect(extractedCategory.id == g1Import.id)
         // Check the 2 categories deletedAt property
         guard let testG1Local = categories.first(where: { $0.id == g1Local.id }) else {
             Issue.record("g1Local not found")
             return
         }
-        guard let testG1Imported = categories.first(where: { $0.id == g1Import.id }) else {
+        guard let testG1Imported = categories.first(where: { $0.id != g1Local.id }) else {
             Issue.record("g1Imported not found")
             return
         }
         #expect(testG1Local.deletedAt != nil)
         #expect(testG1Imported.deletedAt == nil)
+        // Check the place is linked to the new created category, which has a fresh id
+        #expect(extractedCategory.id == testG1Imported.id)
+        #expect(testG1Imported.id != g1Import.id)
     }
 
     ///
@@ -423,14 +436,14 @@ struct App_ImportDropin {
             Issue.record("p1Local not found")
             return
         }
-        guard let testP1Imported = places.first(where: { $0.id == p1Import.id }) else {
+        guard let testP1Imported = places.first(where: { $0.id != p1Local.id }) else {
             Issue.record("p1Imported not found")
             return
         }
         #expect(testP1Local.deletedAt != nil)
         #expect(testP1Imported.deletedAt == nil)
-        #expect(testP1Local.id == p1Local.id)
-        #expect(testP1Imported.id == p1Import.id)
+        // Check the imported place has a fresh id
+        #expect(testP1Imported.id != p1Import.id)
     }
 
     ///
@@ -513,17 +526,108 @@ struct App_ImportDropin {
 
         // Assert relationships are coherent
         let tagIds = Set(export.tags.map({ $0.id }))
-        let groupIds = Set(export.categories.map(\.id))
+        let categoryIds = Set(export.categories.map(\.id))
 
         for place in export.places {
             // Every tagId on a place references a known tag
-            let placeTagIds = place.tags.map({ $0.id })
-            #expect(placeTagIds.allSatisfy { tagIds.contains($0) })
+            #expect(place.tagIds.allSatisfy { tagIds.contains($0) })
             // Every categoryId on a place references a known category
-            if let categoryId = place.category?.id {
-                #expect(groupIds.contains(categoryId))
+            if let categoryId = place.categoryId {
+                #expect(categoryIds.contains(categoryId))
             }
         }
+    }
+
+    ///
+    /// Test exported file never carries place ids nor dates
+    ///  tag / category ids are exported, only as file-local references for places
+    ///
+    @Test func exportOmitsIdsAndDates() async throws {
+        // Entities carry import provenance, to check it is not exported either
+        let g1 = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock,
+                                 importedAt: Date(), importSrc: .mapstr)
+        let t1 = Dropin.Tag(name: "tag1", color: String.randomColor(),
+                            importedAt: Date(), importSrc: .mapstr)
+        let p1 = Place(id: UUID(),
+                       name: "place1",
+                       coordinates: CLLocationCoordinate2D.barcelona,
+                       address: "xxx",
+                       tags: [t1],
+                       category: g1,
+                       importedAt: Date(),
+                       importSrc: .mapstr)
+        let dropinExport = DropinInOut(exportedAt: Date(),
+                                       places: [p1],
+                                       categories: [g1],
+                                       tags: [t1])
+        let data = try ExportService.encoder.encode(dropinExport)
+        let json = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+
+        let dateKeys = ["createdAt", "updatedAt", "deletedAt", "importedAt", "importSrc"]
+        let place = try #require((json["places"] as? [[String: Any]])?.first)
+        let tag = try #require((json["tags"] as? [[String: Any]])?.first)
+        let category = try #require((json["categories"] as? [[String: Any]])?.first)
+        // No place id, no images
+        #expect(place["id"] == nil)
+        #expect(place["images"] == nil)
+        // No dates / provenance
+        for key in dateKeys {
+            #expect(place[key] == nil)
+            #expect(tag[key] == nil)
+            #expect(category[key] == nil)
+        }
+        // Tag / category references are kept
+        #expect(tag["id"] as? String == t1.id.uuidString)
+        #expect(category["id"] as? String == g1.id.uuidString)
+        #expect(place["tagIds"] as? [String] == [t1.id.uuidString])
+        #expect(place["categoryId"] as? String == g1.id.uuidString)
+    }
+
+    ///
+    /// Test ImportDropinService never reuses exported ids, even when they exist locally
+    ///  e.g. re-importing one's own export after soft deleting a tag must not resurrect / overwrite the deleted record
+    ///
+    @Test func importDropinServiceNeverReusesExportedIds() async throws {
+        // Fill the local database with a soft deleted tag and category
+        let t1Local = Dropin.Tag(name: "tag1", color: String.randomColor()).deleted(deletedAt: Date())
+        let g1Local = Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock).deleted(deletedAt: Date())
+        try await UpsertTag(repository: localTagRepo)(t1Local)
+        try await UpsertCategory(repository: localCategoryRepo)(g1Local)
+
+        // Export carrying the very same ids
+        let p1 = Place(id: UUID(),
+                       name: "place1",
+                       coordinates: CLLocationCoordinate2D.barcelona,
+                       address: "xxx",
+                       tags: [t1Local.undeleted()],
+                       category: g1Local.undeleted())
+        let dropinExport = DropinInOut(exportedAt: Date(),
+                                       places: [p1],
+                                       categories: [g1Local.undeleted()],
+                                       tags: [t1Local.undeleted()])
+        let data = try ExportService.encoder.encode(dropinExport)
+
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+        try await importDropinService.import(export) { _ in
+        } canceled: {
+        } completion: { _, _, createdCategoriesCount, createdTagsCount in
+            #expect(createdCategoriesCount == 1)
+            #expect(createdTagsCount == 1)
+        }
+
+        let tags = try await localTagRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
+        // Local records are untouched (still soft deleted), new ones are created alongside
+        #expect(tags.count == 2)
+        #expect(categories.count == 2)
+        #expect(tags.first(where: { $0.id == t1Local.id })?.deletedAt != nil)
+        #expect(categories.first(where: { $0.id == g1Local.id })?.deletedAt != nil)
+        // The imported place is linked to the new records
+        let places = try await localPlaceRepo.fetch()
+        #expect(places.count == 1)
+        #expect(places[0].tags.map(\.id) != [t1Local.id])
+        #expect(places[0].category?.id != g1Local.id)
     }
 
 }

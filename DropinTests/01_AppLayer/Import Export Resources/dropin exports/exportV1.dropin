@@ -1,5 +1,5 @@
 {
-  "groups" : [
+  "categories" : [
     {
       "color" : "#655991",
       "id" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30",
@@ -79,7 +79,7 @@
 
       ],
       "address2" : "",
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0",
       "address" : "4 Rue de la Passerelle, 17180 Périgny, France",
       "name" : "Papa & Maman",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -107,7 +107,7 @@
 
       ],
       "address2" : "5 D",
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0",
       "address" : "Calle de Honduras, 2, 28822 Coslada, Madrid, Spain",
       "name" : "Virtu",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -135,7 +135,7 @@
 
       ],
       "address2" : "3b",
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0",
       "address" : "Calle de Manuel Lamela, 6, 28025 Madrid, Spain",
       "name" : "Miguel",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -163,7 +163,7 @@
 
       ],
       "address2" : "",
-      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "categoryId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
       "address" : "Carrer de Martí, 79, 08024 Barcelona, Spain",
       "name" : "Rosti 79",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -191,7 +191,7 @@
         "{\"value\":\"http:\\\/\\\/lestresalacuina.com\\\/lestres\\\/\",\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"id\":\"DCCEAB42-94C8-4EC0-A152-FAC621A3FD79\"}"
       ],
       "address2" : "",
-      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "categoryId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
       "address" : "Carrer de Sant Lluís, 35, 08012 Barcelona, Spain",
       "name" : "Les Tres a la Cuina",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -220,7 +220,7 @@
         "{\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"value\":\"http:\\\/\\\/www.chitarraecologica.com\\\/\",\"id\":\"E7454372-9C26-49CD-8FD5-3A16040EFD95\"}"
       ],
       "address2" : "",
-      "groupId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
+      "categoryId" : "44EEC552-B359-41FF-ACDE-38A813BC9BC2",
       "address" : "Carrer de Joan Blanques, 56, 08024 Barcelona, Spain",
       "name" : "La Chitarra",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -250,7 +250,7 @@
 
       ],
       "address2" : "",
-      "groupId" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30",
+      "categoryId" : "EE625B31-34BF-4D93-9F46-E46B60B6CD30",
       "address" : "Carrer del Torrent de les Flors, 46, 08024 Barcelona, Spain",
       "name" : "El Col-leccionista",
       "updatedAt" : "2026-05-08T08:47:16Z",
@@ -271,7 +271,7 @@
       "email" : [
 
       ],
-      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "categoryId" : "C144E896-238D-4DC4-9847-0112CE491850",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "79B05539-9C25-41C6-B416-6968A5A0C652"
@@ -300,7 +300,7 @@
       "email" : [
 
       ],
-      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "categoryId" : "C144E896-238D-4DC4-9847-0112CE491850",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "0F58A29C-D0B0-4E63-BEFE-E878D7D8C31D"
@@ -328,7 +328,7 @@
       "email" : [
 
       ],
-      "groupId" : "C144E896-238D-4DC4-9847-0112CE491850",
+      "categoryId" : "C144E896-238D-4DC4-9847-0112CE491850",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "BE7A3629-9DA1-4398-A6D3-BDF54253E615"
@@ -356,7 +356,7 @@
       "email" : [
 
       ],
-      "groupId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
+      "categoryId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "AC9439FE-4F94-4802-894A-9EC9CF62484A"
@@ -386,7 +386,7 @@
       "email" : [
 
       ],
-      "groupId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
+      "categoryId" : "FAEC85E4-1675-446B-BDCD-D339E1F09A2F",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "A4CB521D-1B2C-442B-83AB-90EAF581DB0D"
@@ -443,7 +443,7 @@
       "email" : [
 
       ],
-      "groupId" : "1C513430-57C8-4330-870B-C7692C5976A0",
+      "categoryId" : "1C513430-57C8-4330-870B-C7692C5976A0",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "6696F1FE-7B16-4569-951D-DA6B7748548E"
@@ -471,7 +471,7 @@
       "email" : [
 
       ],
-      "groupId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD",
+      "categoryId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "DC0AE20A-67AD-44FA-8DF4-2211E144EDD5"
@@ -499,7 +499,7 @@
       "email" : [
 
       ],
-      "groupId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD",
+      "categoryId" : "80E31DDF-2B24-4F71-B406-BC854C8852DD",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "CAA8555A-F544-4000-86AD-C22C2EE28AD8"
@@ -527,7 +527,7 @@
       "email" : [
 
       ],
-      "groupId" : "B13C1BBB-0351-4F6A-B6ED-9C2D86BFB785",
+      "categoryId" : "B13C1BBB-0351-4F6A-B6ED-9C2D86BFB785",
       "createdAt" : "2026-05-08T08:47:16Z",
       "images" : [
         "10AF66DE-BFDD-41A5-BECF-1E838841DB09"

@@ -74,15 +74,6 @@ struct Tag: Hashable, Sendable {
         return copy
     }
 
-    /// Used by importers to stamp provenance on an already-constructed Tag
-    /// (e.g. one just decoded from a file).
-    func withImportProvenance(importedAt: Date, importSrc: ImportSource) -> Tag {
-        var copy = self
-        copy.importedAt = importedAt
-        copy.importSrc = importSrc
-        return copy
-    }
-
     static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id
     }

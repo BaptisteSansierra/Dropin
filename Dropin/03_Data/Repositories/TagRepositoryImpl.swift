@@ -86,9 +86,10 @@ public final class TagRepositoryImpl: TagRepository {
     /// `spaceId` is only used for the insert branch; an existing record keeps its own
     /// spaceId untouched, so an upsert can never silently reassign an entity's space.
     func upsert(_ tag: Tag, spaceId: UUID, shouldSave: Bool) async throws {
+        let tagId = tag.id
         // Looked up by id alone, across all spaces: SyncService.pull must be able to find and
         // update an existing local record regardless of which space is currently active.
-        let descriptor = FetchDescriptor<TagRecord>(predicate: #Predicate { $0.identifier == tag.id })
+        let descriptor = FetchDescriptor<TagRecord>(predicate: #Predicate { $0.identifier == tagId })
         if let existing = try modelContext.fetch(descriptor).first {
             // Update
             existing.name      = tag.name

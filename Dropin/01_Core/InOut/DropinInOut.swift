@@ -13,17 +13,15 @@ struct DropinInOut: Codable, Sendable {
 
     private(set) var version: Int
     private(set) var exportedAt: Date
-    private(set) var categories: [Category]
-    private(set) var tags: [Tag]
-    private(set) var places: [Place]
+    private(set) var categories: [DropinCategoryDTO]
+    private(set) var tags: [DropinTagDTO]
+    private(set) var places: [DropinPlaceDTO]
     
     enum CodingKeys: String, CodingKey {
         case version
         case exportedAt
         case tags
-        // Wire key stays "groups" — old exported .dropin v1 files use it, and
-        // this is a stable on-disk format, unlike the in-app Category rename.
-        case categories = "groups"
+        case categories
         case places
     }
     
@@ -36,9 +34,9 @@ struct DropinInOut: Codable, Sendable {
          tags: [Tag]) {
         self.version = CURRENT_VERSION
         self.exportedAt = exportedAt
-        self.places = places
-        self.categories = categories
-        self.tags = tags
+        self.places = places.map { DropinPlaceDTO($0) }
+        self.categories = categories.map { DropinCategoryDTO($0) }
+        self.tags = tags.map { DropinTagDTO($0) }
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -71,35 +69,8 @@ struct DropinInOut: Codable, Sendable {
     
     private mutating func loadV1(_ container: KeyedDecodingContainer<CodingKeys>) throws {
         self.exportedAt = try container.decode(Date.self, forKey: .exportedAt)
-
-        self.tags = try container.decode([Tag].self, forKey: .tags)
-        self.categories = try container.decode([Category].self, forKey: .categories)
-        let placesDTO = try container.decode([PlaceDTO].self, forKey: .places)
-
-        // Create places
-        self.places = placesDTO.map({ placeDTO in
-            let placeTags = tags.filter({ placeDTO.tagIds.contains($0.id) })
-            var placeCategory: Category? = nil
-            if let categoryId = placeDTO.categoryId {
-                placeCategory = categories.first(where: { $0.id == categoryId })
-            }
-            return Place(id: placeDTO.id,
-                               name: placeDTO.name,
-                               coordinates: placeDTO.coordinates,
-                               address: placeDTO.address,
-                               address2: placeDTO.address2,
-                               tags: placeTags,
-                               category: placeCategory,
-                               images: [],
-                               icon: placeDTO.icon,
-                               rating: placeDTO.rating,
-                               phone: placeDTO.phone,
-                               email: placeDTO.email,
-                               url: placeDTO.url,
-                               notes: placeDTO.notes,
-                               createdAt: placeDTO.createdAt,
-                               updatedAt: placeDTO.updatedAt,
-                               deletedAt: placeDTO.deletedAt)
-        })
+        self.tags = try container.decode([DropinTagDTO].self, forKey: .tags)
+        self.categories = try container.decode([DropinCategoryDTO].self, forKey: .categories)
+        self.places = try container.decode([DropinPlaceDTO].self, forKey: .places)
     }
 }
