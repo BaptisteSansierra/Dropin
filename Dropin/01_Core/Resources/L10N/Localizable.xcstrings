@@ -5871,6 +5871,136 @@
         }
       }
     },
+    "place_filter_view.category.none.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All categories shown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les catégories sont affichées"
+          }
+        }
+      }
+    },
+    "place_filter_view.category.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places in any of these categories"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieux dans l'une de ces catégories"
+          }
+        }
+      }
+    },
+    "place_filter_view.tag.all" : {
+      "comment" : "match 'all' selected tags",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous"
+          }
+        }
+      }
+    },
+    "place_filter_view.tag.all.no_tags_footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"No tags\" isn't available when matching all tags."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« Aucun tag » n'est pas disponible quand tous les tags doivent correspondre."
+          }
+        }
+      }
+    },
+    "place_filter_view.tag.all.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places with all of these tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieux avec tous ces tags"
+          }
+        }
+      }
+    },
+    "place_filter_view.tag.any" : {
+      "comment" : "match 'any' selected tag",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au moins un"
+          }
+        }
+      }
+    },
+    "place_filter_view.tag.any.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places with at least one of these tags"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lieux avec au moins un de ces tags"
+          }
+        }
+      }
+    },
+    "place_filter_view.tag.none.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select tags to filter"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélectionnez des tags pour filtrer"
+          }
+        }
+      }
+    },
     "place_filter_view.title" : {
       "extractionState" : "manual",
       "localizations" : {

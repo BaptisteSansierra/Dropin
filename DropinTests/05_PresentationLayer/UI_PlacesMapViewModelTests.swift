@@ -24,7 +24,10 @@ struct UI_PlacesMapViewModelTests {
     
     private func makeViewModel() throws -> PlacesMapViewModel {
         let mock = MockContainer()
-        return PlacesMapViewModel(mock.appContainer, coordinator: PlaceCoordinator(), locationManager: mock.locationManager)
+        return PlacesMapViewModel(mock.appContainer,
+                                  coordinator: PlaceCoordinator(),
+                                  locationManager: mock.locationManager,
+                                  syncStatus: SyncStatus())
     }
 
     @Test func duplicateDetectedBySameNameAndCoordsCaseInsensitive() throws {

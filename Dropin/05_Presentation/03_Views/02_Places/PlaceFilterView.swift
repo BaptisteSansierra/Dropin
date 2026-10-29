@@ -16,7 +16,8 @@ struct PlaceFilterView: View {
     
     // MARK: private props
     let unselectOpacity: CGFloat = 0.5
-    
+    let disabledOpacity: CGFloat = 0.5
+
     // MARK: init
     init(viewModel: PlaceFilterViewModel) {
         self.viewModel = viewModel
@@ -76,7 +77,8 @@ struct PlaceFilterView: View {
     private var categoriesView: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(String(localized: "common.categories").uppercased())
+                Text("common.categories")
+                    .textCase(.uppercase)
                     .textStyle(.formSectionTitle2, color: .textSecondary)
                 Spacer()
                 TextButton(text: "common.clear", textStyle: .smallButton) {
@@ -85,7 +87,19 @@ struct PlaceFilterView: View {
             }
             .padding(.top, 10)
             .padding(.horizontal)
+            
+            let hasSelectedCategories = !filter.categoryIDs.isEmpty || filter.includeUncategorized
 
+            let str: LocalizedStringKey = hasSelectedCategories ?
+                "place_filter_view.category.subtitle" :
+                "place_filter_view.category.none.subtitle"
+            Text(str)
+                .textStyle(.caption, color: .textTertiary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.top, 5)
+                .padding(.bottom, 5)
+            
             FlowLayout(alignment: .leading) {
                 CategoryView(name: String(localized: "common.uncategorized"),
                           color: .gray,
@@ -127,6 +141,39 @@ struct PlaceFilterView: View {
             .padding(.top, 10)
             .padding(.horizontal)
 
+            VStack(spacing: 0) {
+                let hasSelectedTags = !filter.tagIDs.isEmpty || filter.includeUntagged
+                Picker("", selection: $filter.selectedTagFilterPolicy) {
+                    ForEach(PlaceFilter.TagFilterPolicy.allCases, id: \.self) { policy in
+                        Text(policy.displayName).tag(policy)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .padding(.trailing, 5)
+                .onChange(of: filter.selectedTagFilterPolicy) { oldValue, newValue in
+                    if filter.selectedTagFilterPolicy == .all {
+                        filter.includeUntagged = false
+                    }
+                }
+                .disabled(!hasSelectedTags)
+
+                let str: LocalizedStringKey = !hasSelectedTags ?
+                    "place_filter_view.tag.none.subtitle" :
+                    (filter.selectedTagFilterPolicy == .all ?
+                        "place_filter_view.tag.all.subtitle" :
+                        "place_filter_view.tag.any.subtitle")
+                Text(str)
+                    .textStyle(.caption, color: .textTertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .minimumScaleFactor(0.5)
+                    .padding(.top, 5)
+            }
+            .padding(.horizontal)
+            .padding(.top, 10)
+            .padding(.bottom, 5)
+            //.environment(\.locale, Locale(identifier: "fr"))
+
             FlowLayout(alignment: .leading) {
                 TagView(name: String(localized: "placeholder.no_tags"),
                         color: .textPrimary,
@@ -134,10 +181,15 @@ struct PlaceFilterView: View {
                     .if( !filter.includeUntagged ) { view in
                         view.opacity(unselectOpacity)
                     }
-                    .onTapGesture {
-                        filter.includeUntagged.toggle()
+                    .if( filter.selectedTagFilterPolicy == .any ) { view in
+                        view.onTapGesture {
+                            filter.includeUntagged.toggle()
+                        }
                     }
-                
+                    .if( filter.selectedTagFilterPolicy == .all ) { view in
+                        view.opacity(unselectOpacity)
+                    }
+
                 ForEach(viewModel.tags) { tag in
                     TagView(name: tag.name,
                             color: tag.color,
@@ -152,6 +204,14 @@ struct PlaceFilterView: View {
             }
             .padding(.horizontal)
             .padding(.top)
+            
+            if filter.selectedTagFilterPolicy == .all {
+                Text("place_filter_view.tag.all.no_tags_footer")
+                    .textStyle(.caption, color: .textTertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.top)
+            }
         }
     }
     
