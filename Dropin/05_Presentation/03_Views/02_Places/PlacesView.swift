@@ -52,10 +52,6 @@ struct PlacesView: View {
                     .ignoresSafeArea(edges: .top)
                      
                 }
-                .overlay(alignment: .top) {
-                    syncingView
-                        .animation(.easeInOut(duration: 0.3), value: viewModel.syncStatus.isSyncing)
-                }
                 .onAppear {
                     onAppearCallback()
                 }
@@ -227,26 +223,6 @@ struct PlacesView: View {
             }
         }
         .ignoresSafeArea()
-    }
-    
-    @ViewBuilder
-    private var syncingView: some View {
-        Text("main.syncing")
-            .textStyle(.caption2)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .phaseAnimator([0.15, 0.5]) { view, opacity in
-                view.opacity(opacity)
-            } animation: { _ in
-                .linear(duration: 0.5)
-            }
-            .background {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(.surface1)
-            }
-            .padding(.top)
-            .transition(.opacity)
-            .opacity(viewModel.syncStatus.isSyncing ? 1 : 0)
     }
 
     // MARK: private methods

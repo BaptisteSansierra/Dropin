@@ -15,6 +15,7 @@ struct PlacesMapView: View {
     // MARK: - State & Bindings
     @State private var viewModel: PlacesMapViewModel
     @Binding private var selectedPlaceId: UUID?
+    @Binding private var filter: PlaceFilter?
     /// True if parent is presenting something over the view (sidebar / menu / ...) => should hide sheetOverlays
     @Binding private var isParentPresenting: Bool
     @Binding private var showingCreatePlaceMenu: Bool
@@ -27,6 +28,7 @@ struct PlacesMapView: View {
 
     // MARK: - Properties
     private var places: () -> [PlaceUIModel]
+    private var allPlacesCount: Int
     private var createPlaceSheetDefaultDetent: CGFloat = 400 // FIXME: rename? / move to VM?
     private var navBarHeight: CGFloat
     private var mapReloadGen: Int
@@ -35,10 +37,12 @@ struct PlacesMapView: View {
     // MARK: - Init
     init(viewModel: PlacesMapViewModel,
          places: @escaping () -> [PlaceUIModel],
+         allPlacesCount: Int,
          draftPlace: Binding<PlaceUIModel?>,
          draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
          draftPlacePoiColor: Binding<Color?>,
          selectedPlaceId: Binding<UUID?>,
+         filter: Binding<PlaceFilter?>,
          isParentPresenting: Binding<Bool>,
          showingCreatePlaceMenu: Binding<Bool>,
          mapReloadGen: Int,
@@ -46,10 +50,12 @@ struct PlacesMapView: View {
          isActiveTab: Bool = true) {
         self.viewModel = viewModel
         self.places = places
+        self.allPlacesCount = allPlacesCount
         self._draftPlace = draftPlace
         self._draftPlacePoiCategory = draftPlacePoiCategory
         self._draftPlacePoiColor = draftPlacePoiColor
         self._selectedPlaceId = selectedPlaceId
+        self._filter = filter
         self._isParentPresenting = isParentPresenting
         self._showingCreatePlaceMenu = showingCreatePlaceMenu
         self.mapReloadGen = mapReloadGen
@@ -84,6 +90,9 @@ struct PlacesMapView: View {
                     pickingMarkerView
                         .allowsHitTesting(false)
                 }
+                
+                headerOverlayView
+                    .padding(.top, navBarHeight)
             }
         }
         .onAppear {
@@ -171,7 +180,66 @@ struct PlacesMapView: View {
         }
     }
     
-    // MARK: - UI
+    // MARK: - Subviews
+    @ViewBuilder
+    private var headerOverlayView: some View {
+        VStack(spacing: 0) {
+            if let filter = filter {
+                filterView(filter)
+                    .padding(.bottom, 10)
+            }
+            syncingView
+        }
+        .padding(.top)
+    }
+
+    private func filterView(_ filter: PlaceFilter) -> some View {
+        HStack(spacing: 0) {
+            Image(systemName: "line.3.horizontal.decrease")
+                .padding(.trailing, 5)
+            Text(filter.filterCount, format: .number)
+            Text(String(" "))
+            if filter.filterCount > 1 {
+                Text("common.filters")
+                    .padding(.trailing, 5)
+            } else {
+                Text("common.filter")
+                    .padding(.trailing, 5)
+            }
+            Image(systemName: "multiply")
+        }
+        .textStyle(.footnote, color: .dropinPrimary)
+        .padding(.vertical, 7)
+        .padding(.horizontal, 10)
+        .background {
+            Capsule()
+                .fill(.surface1)
+                .stroke(.dropinPrimary)
+        }
+        .onTapGesture {
+            self.filter = nil
+        }
+    }
+    
+    private var syncingView: some View {
+        Text("main.syncing")
+            .textStyle(.caption2)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
+            .keyframeAnimator(initialValue: 0.15, repeating: true) { view, opacity in
+                view.opacity(opacity)          // text blinks
+            } keyframes: { _ in
+                LinearKeyframe(0.5, duration: 0.5)
+                LinearKeyframe(0.15, duration: 0.5)
+            }
+            .background {
+                Capsule()
+                    .fill(.surface1)
+            }
+            .opacity(viewModel.syncStatus.isSyncing ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.syncStatus.isSyncing)
+    }
+
     private var creationDialogPlaceholderView: some View {
         // Create an hidden rectangle over the (+) nav bar button
         // So the dialog can be anchored on it (FIXME: anchor on the right button)
@@ -376,13 +444,16 @@ struct MockPlacesMapView: View {
     @State var selectedPlaceId: UUID? = nil
     @State var isParentPresenting: Bool = false
     @State var showingCreatePlaceMenu: Bool = false
+    @State var filter: PlaceFilter?
 
     var body: some View {
         mock.appContainer.createPlacesMapView(places: { places },
+                                              allPlacesCount: places.count,
                                               draftPlace: .constant(nil),
                                               draftPlacePoiCategory: .constant(nil),
                                               draftPlacePoiColor: .constant(nil),
                                               selectedPlaceId: $selectedPlaceId,
+                                              filter: $filter,
                                               isParentPresenting: $isParentPresenting,
                                               showingCreatePlaceMenu: $showingCreatePlaceMenu,
                                               mapReloadGen: Int.zero,
@@ -393,6 +464,11 @@ struct MockPlacesMapView: View {
         let mock = MockContainer()
         self.mock = mock
         self.places = mock.getAllPlaceUIModel()
+
+        // Create a fake filter
+        var filter = PlaceFilter()
+        filter.tagIDs = Set<UUID>([UUID(), UUID(), UUID()])
+        self._filter = State(initialValue: filter)
     }
 }
 

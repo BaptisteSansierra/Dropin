@@ -354,10 +354,12 @@ final class AppContainer {
     }
 
     func createPlacesMapView(places: @escaping () -> [PlaceUIModel],
+                             allPlacesCount: Int,
                              draftPlace: Binding<PlaceUIModel?>,
                              draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
                              draftPlacePoiColor: Binding<Color?>,
                              selectedPlaceId: Binding<UUID?>,
+                             filter: Binding<PlaceFilter?>,
                              isParentPresenting: Binding<Bool>,
                              showingCreatePlaceMenu: Binding<Bool>,
                              mapReloadGen: Int,
@@ -365,13 +367,16 @@ final class AppContainer {
                              isActiveTab: Bool = true) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
                                     coordinator: placeCoordinator,
-                                    locationManager: locationManager)
+                                    locationManager: locationManager,
+                                    syncStatus: syncService.syncStatus)
         return PlacesMapView(viewModel: vm,
                              places: places,
+                             allPlacesCount: allPlacesCount,
                              draftPlace: draftPlace,
                              draftPlacePoiCategory: draftPlacePoiCategory,
                              draftPlacePoiColor: draftPlacePoiColor,
                              selectedPlaceId: selectedPlaceId,
+                             filter: filter,
                              isParentPresenting: isParentPresenting,
                              showingCreatePlaceMenu: showingCreatePlaceMenu,
                              mapReloadGen: mapReloadGen,
@@ -380,11 +385,18 @@ final class AppContainer {
     }
     
     func createPlacesListView(places: [PlaceUIModel],
-                              selectedPlaceId: Binding<UUID?>) -> PlacesListView {
+                              allPlacesCount: Int,
+                              selectedPlaceId: Binding<UUID?>,
+                              filter: Binding<PlaceFilter?>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
                                      coordinator: placeCoordinator,
-                                     locationManager: locationManager)
-        return PlacesListView(viewModel: vm, places: places, selectedPlaceId: selectedPlaceId)
+                                     locationManager: locationManager,
+                                     syncStatus: syncService.syncStatus)
+        return PlacesListView(viewModel: vm,
+                              places: places,
+                              allPlacesCount: allPlacesCount,
+                              selectedPlaceId: selectedPlaceId,
+                              filter: filter)
     }
     
     func createPlaceCreateQuickView(place: PlaceUIModel,

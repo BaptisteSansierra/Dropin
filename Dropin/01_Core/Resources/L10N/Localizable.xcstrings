@@ -4,6 +4,9 @@
     "" : {
 
     },
+    " " : {
+
+    },
     "about.data_yours.body" : {
       "localizations" : {
         "en" : {
@@ -2463,6 +2466,23 @@
         }
       }
     },
+    "common.filter" : {
+      "comment" : "Noun",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "filter"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "filtre"
+          }
+        }
+      }
+    },
     "common.filter_places" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2476,6 +2496,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Filtrer les lieux"
+          }
+        }
+      }
+    },
+    "common.filters" : {
+      "comment" : "Noun plural",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "filters"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "filtres"
           }
         }
       }
@@ -3405,6 +3442,72 @@
         }
       }
     },
+    "common.subtotal_over_total_places_%lld_%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg place"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg places"
+                    }
+                  },
+                  "zero" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg place"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld sur %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lieu"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lieux"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "common.tag_color" : {
       "localizations" : {
         "en" : {
@@ -3972,22 +4075,6 @@
         }
       }
     },
-    "error.disk_space.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn’t save file"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible d’enregistrer le fichier"
-          }
-        }
-      }
-    },
     "error.disk_space.body_%@" : {
       "comment" : "%@ is the underlying error description.",
       "localizations" : {
@@ -4005,18 +4092,18 @@
         }
       }
     },
-    "error.encoding.title" : {
+    "error.disk_space.title" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn’t save data"
+            "value" : "Couldn’t save file"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer les données"
+            "value" : "Impossible d’enregistrer le fichier"
           }
         }
       }
@@ -4038,18 +4125,18 @@
         }
       }
     },
-    "error.fetch_database.title" : {
+    "error.encoding.title" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn’t load local data"
+            "value" : "Couldn’t save data"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de charger les données locales"
+            "value" : "Impossible d’enregistrer les données"
           }
         }
       }
@@ -4067,6 +4154,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur est survenue lors du chargement de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
+          }
+        }
+      }
+    },
+    "error.fetch_database.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t load local data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger les données locales"
           }
         }
       }
@@ -4151,22 +4254,6 @@
         }
       }
     },
-    "error.unexpected.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Something went wrong"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une erreur est survenue"
-          }
-        }
-      }
-    },
     "error.unexpected.body_%@" : {
       "comment" : "%@ is the underlying error description.",
       "localizations" : {
@@ -4184,18 +4271,18 @@
         }
       }
     },
-    "error.update_database.title" : {
+    "error.unexpected.title" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couldn’t update data"
+            "value" : "Something went wrong"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de mettre à jour les données"
+            "value" : "Une erreur est survenue"
           }
         }
       }
@@ -4213,6 +4300,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur est survenue lors de la mise à jour de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
+          }
+        }
+      }
+    },
+    "error.update_database.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t update data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de mettre à jour les données"
           }
         }
       }
@@ -5785,6 +5888,22 @@
         }
       }
     },
+    "place_list.search.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search name or address"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher un nom ou une adresse"
+          }
+        }
+      }
+    },
     "place_sheet.share.email_subject" : {
       "comment" : "Email subject when sharing a place: 1=sender display name, 2=place name",
       "localizations" : {
@@ -6084,6 +6203,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune photo"
+          }
+        }
+      }
+    },
+    "placeholder.no_matching_places.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places match your current search."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun lieu ne correspond à votre recherche actuelle."
           }
         }
       }

@@ -22,6 +22,8 @@ struct IdentifiablePOI: Identifiable {
     // MARK: - Observed Properties
     private(set) var coordinator: PlaceCoordinator
 
+    var syncStatus: SyncStatus
+
     // Alerts toggles
     var showAuthLocAlert = false
     var showQuickCreateSheet = false
@@ -80,10 +82,12 @@ struct IdentifiablePOI: Identifiable {
     // MARK: init
     init(_ appContainer: AppContainer,
          coordinator: PlaceCoordinator,
-         locationManager: LocationManager) {
+         locationManager: LocationManager,
+         syncStatus: SyncStatus) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
+        self.syncStatus = syncStatus
         self.mapCamera = MapCamera()
         //self.mapActionBus = MapActionBus(locationManager: locationManager)
         self.mapController = MapController()

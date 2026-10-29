@@ -16,6 +16,17 @@ struct PlaceFilter {
     var isActive: Bool {
         !categoryIDs.isEmpty || includeUncategorized || !tagIDs.isEmpty || includeUntagged
     }
+    
+    var filterCount: Int {
+        var count = categoryIDs.count + tagIDs.count
+        if includeUncategorized {
+            count += 1
+        }
+        if includeUntagged {
+            count += 1
+        }
+        return count
+    }
 }
 
 extension PlaceFilter {

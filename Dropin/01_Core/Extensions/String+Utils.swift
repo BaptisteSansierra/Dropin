@@ -46,4 +46,8 @@ extension String {
         }
         return hasLower && hasUpper && hasDigit && hasSymbol
     }
+    
+    func localized() -> String {
+        String(localized: LocalizedStringResource(stringLiteral: self))
+    }
 }

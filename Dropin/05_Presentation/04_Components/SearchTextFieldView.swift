@@ -15,6 +15,7 @@ struct SearchTextFieldView: View {
     @FocusState private var textFocused: Bool
     
     // MARK: - properties
+    private var fillColor: Color
     private let height: CGFloat = 40
     private var placeholder: String
     private var isTextEmpty: Bool {
@@ -40,7 +41,7 @@ struct SearchTextFieldView: View {
     // MARK: - subviews
     private var backgroundView: some View {
         RoundedRectangle(cornerRadius: 15)
-            .fill(.surface1)
+            .fill(fillColor)
             .frame(height: height)
             .onTapGesture {
                 textFocused = true
@@ -51,16 +52,16 @@ struct SearchTextFieldView: View {
         HStack(spacing: 0) {
             Image(systemName: "magnifyingglass")
                 .font(.body)
-                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                .foregroundStyle(.textPrimary)
                 .frame(width: height, height: height)
             ZStack {
                 Text(placeholder)
                     .textStyle(.placeholder)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+                    .foregroundStyle(.textSecondary)
                     .opacity(isTextEmpty ? 1 : 0)
                 TextField(String(""), text: $text)
-                    .textStyle(.body)
+                    .textStyle(.body, color: .textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .focused($textFocused)
                     .keyboardType(.default)
@@ -70,7 +71,7 @@ struct SearchTextFieldView: View {
             }
             Image(systemName: "xmark.circle.fill")
                 .font(.body)
-                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                .foregroundStyle(.textPrimary)
                 .frame(width: height, height: height)
                 .opacity(clearButtonOpacity)
                 .onTapGesture {
@@ -80,10 +81,11 @@ struct SearchTextFieldView: View {
     }
     
     // MARK: - init
-    init(text: Binding<String>, placeholder: String) {
+    init(text: Binding<String>, placeholder: String, fillColor: Color = .surface1) {
         self._text = text
         self.placeholder = placeholder
         self.clearButtonOpacity = text.wrappedValue.count == 0 ? 0 : 1
+        self.fillColor = fillColor
     }
 }
 

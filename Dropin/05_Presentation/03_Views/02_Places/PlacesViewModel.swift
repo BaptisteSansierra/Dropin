@@ -28,6 +28,11 @@ import MapKit
     var syncStatus: SyncStatus
     var reachabilityService: any ReachabilityServiceProtocol
 
+    /// Filter active places (aka not deleted)
+    var activePlaces: [PlaceUIModel] {
+        return places.filter({ $0.isActive })
+    }
+
     /// Places filtered with `currentFilter`
     var filteredPlaces: [PlaceUIModel] {
         guard let filter = currentFilter else { return places }
@@ -131,12 +136,18 @@ import MapKit
             }, set: { value in
                 self.draftPlacePoiColor = value
             })
-        
+        let bindingFilter = Binding<PlaceFilter?> {
+            self.currentFilter
+        } set: { newValue in
+            self.currentFilter = newValue
+        }
         return appContainer.createPlacesMapView(places: { self.filteredPlaces },
+                                                allPlacesCount: activePlaces.count,
                                                 draftPlace: bindingDraftPlace,
                                                 draftPlacePoiCategory: bindingDraftPlacePoiCategory,
                                                 draftPlacePoiColor: bindingDraftPlacePoiColor,
                                                 selectedPlaceId: bindingSelectedPlaceId,
+                                                filter: bindingFilter,
                                                 isParentPresenting: bindingIsPresenting,
                                                 showingCreatePlaceMenu: bindingShowingCreatePlaceMenu,
                                                 mapReloadGen: mapReloadGen,
@@ -150,7 +161,15 @@ import MapKit
         } set: { newValue in
             self.selectedPlaceId = newValue
         }
-        return appContainer.createPlacesListView(places: sortedPlaces, selectedPlaceId: bindingSelectedPlaceId)
+        let bindingFilter = Binding<PlaceFilter?> {
+            self.currentFilter
+        } set: { newValue in
+            self.currentFilter = newValue
+        }
+        return appContainer.createPlacesListView(places: sortedPlaces,
+                                                 allPlacesCount: activePlaces.count,
+                                                 selectedPlaceId: bindingSelectedPlaceId,
+                                                 filter: bindingFilter)
     }
 
     func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
