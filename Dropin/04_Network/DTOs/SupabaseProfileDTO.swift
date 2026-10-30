@@ -5,7 +5,8 @@
 
 import Foundation
 
-struct SupabaseProfileDTO: Codable {
+/// Read-only: profile writes go through RemoteProfileRepository.updateDisplayName (display_name only).
+struct SupabaseProfileDTO: Decodable {
     let id: UUID
     let email: String?
     let displayName: String?
@@ -20,28 +21,6 @@ struct SupabaseProfileDTO: Codable {
         case plan        = "plan"
         case createdAt   = "created_at"
         case updatedAt   = "updated_at"
-    }
-
-    /// Explicit encode so nullable columns (`email`, `display_name`) are sent
-    /// as JSON `null` rather than being omitted. See SupabasePlaceDTO for the
-    /// same rationale (Postgrest upsert preserves columns missing from the payload).
-    func encode(to encoder: Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(id,          forKey: .id)
-        try c.encode(email,       forKey: .email)
-        try c.encode(displayName, forKey: .displayName)
-        try c.encode(plan,        forKey: .plan)
-        try c.encode(createdAt,   forKey: .createdAt)
-        try c.encode(updatedAt,   forKey: .updatedAt)
-    }
-
-    init(from profile: Profile) {
-        self.id          = profile.id
-        self.email       = profile.email
-        self.displayName = profile.displayName
-        self.plan        = profile.plan.rawValue
-        self.createdAt   = profile.createdAt
-        self.updatedAt   = profile.updatedAt
     }
 
     func toDomain() -> Profile {

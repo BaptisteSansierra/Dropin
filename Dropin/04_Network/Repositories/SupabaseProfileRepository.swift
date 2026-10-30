@@ -47,10 +47,14 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
         return dtos.first?.toDomain()
     }
 
-    func upsert(_ profile: Profile) async throws {
+    /// display_name is the only column `authenticated` may write (cf. migration 20261029000002_profiles_lock_plan).
+    /// Every other column is server-owned and comes back through the profile pull.
+    func updateDisplayName(_ profile: Profile) async throws {
         _ = try await requireUserId()
-        let dto = SupabaseProfileDTO(from: profile)
-        try await client.from("profiles").upsert(dto, onConflict: "id").execute()
+        try await client.from("profiles")
+            .update(["display_name": profile.displayName])
+            .eq("id", value: profile.id)
+            .execute()
     }
 
     @MainActor

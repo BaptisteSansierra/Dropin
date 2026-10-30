@@ -274,8 +274,8 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         dirtyProfile = false
         do {
             guard let profile = try await localProfileRepo.fetch() else { return }
-            try await remoteProfileRepo.upsert(profile)
-            Log.debug("Remote upsert PROFILE \(profile.id)")
+            try await remoteProfileRepo.updateDisplayName(profile)
+            Log.debug("Remote update PROFILE display name \(profile.id)")
         } catch {
             dirtyProfile = true   // re-arm on failure
             assertNoBug(error)

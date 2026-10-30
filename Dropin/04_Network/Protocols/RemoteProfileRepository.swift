@@ -12,6 +12,7 @@ protocol RemoteProfileRepository: Sendable {
     func fetch() async throws -> Profile?
     /// Pulls only if the row was updated after `date`. Returns nil otherwise.
     func fetch(updatedAfter date: Date) async throws -> Profile?
-    /// Upserts the profile row. RLS rejects anything where `id != auth.uid()`.
-    func upsert(_ profile: Profile) async throws
+    /// Pushes `profile.displayName` only; every other column is server-owned (plan included).
+    /// The row itself is created server-side at sign up. RLS rejects anything where `id != auth.uid()`.
+    func updateDisplayName(_ profile: Profile) async throws
 }

@@ -7,8 +7,8 @@ import Foundation
 
 final class MockRemoteProfileRepository: RemoteProfileRepository, @unchecked Sendable {
     var profileToReturn: Profile?
-    private(set) var upserted: [Profile] = []
-    var shouldThrowOnUpsert = false
+    private(set) var updatedDisplayNames: [Profile] = []
+    var shouldThrowOnUpdate = false
 
     init(profileToReturn: Profile? = nil) {
         self.profileToReturn = profileToReturn
@@ -21,8 +21,8 @@ final class MockRemoteProfileRepository: RemoteProfileRepository, @unchecked Sen
         return p
     }
 
-    func upsert(_ profile: Profile) async throws {
-        if shouldThrowOnUpsert { throw MockSyncError.intentional }
-        upserted.append(profile)
+    func updateDisplayName(_ profile: Profile) async throws {
+        if shouldThrowOnUpdate { throw MockSyncError.intentional }
+        updatedDisplayNames.append(profile)
     }
 }

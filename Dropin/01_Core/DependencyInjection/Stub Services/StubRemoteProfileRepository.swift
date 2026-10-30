@@ -14,7 +14,7 @@ import Foundation
 final class StubRemoteProfileRepository: RemoteProfileRepository {
     func fetch() async throws -> Profile? { nil }
     func fetch(updatedAfter date: Date) async throws -> Profile? { nil }
-    func upsert(_ profile: Profile) async throws {}
+    func updateDisplayName(_ profile: Profile) async throws {}
 }
 
 #endif
