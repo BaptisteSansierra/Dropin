@@ -12,225 +12,681 @@ import MapKit
 
 @MainActor
 final class AppContainer {
-    
+
+    // App context
+    var appContext: AppContext
     // Repositories
     private let placeRepository: PlaceRepository
     private let tagRepository: TagRepository
-    private let groupRepository: GroupRepository
+    private let categoryRepository: CategoryRepository
+    private let imageRepository: PlaceImageRepository
+    private let profileRepository: ProfileRepository
+    private let spaceRepository: SpaceRepository
+    private let generalRepository: GeneralRepository
+    private let spaceContext: SpaceContext
+    private let imageLoader: PlaceImageLoader
     // Coordinators
-    private let mainCoordinator: MainCoordinator
+    private let profileCoordinator: ProfileCoordinator
+    private let placeCoordinator: PlaceCoordinator
     private let tagCoordinator: TagCoordinator
-    private let groupCoordinator: GroupCoordinator
+    private let groupCoordinator: CategoryCoordinator
+    private let authCoordinator: AuthCoordinator
+    private let aboutCoordinator: AboutCoordinator
     // Services
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
-    private let reachabilityService: ReachabilityService
+    private let reachabilityService: any ReachabilityServiceProtocol
+    private let supabaseService: SupabaseService?
+    private let authService: any AuthServiceProtocol
+    private let authStatus: AuthStatus
+    private let profileService: any ProfileServiceProtocol
+    private let syncService: any SyncServiceProtocol & SyncServicePausableProtocol
+    private let shareService: any ShareServiceProtocol
+    private let applePOIService: any ApplePOIServiceProtocol
+    // Map memory
+    private(set) var lastMapRegion: MKCoordinateRegion?
+    /// Display name entered on the Sign up form, stashed here (rather than sent  straight to `profileService.setDisplayName`) as there's no define `Profile` at this point
+    /// name will be set in `loadProfile()` which runs later (immediately, or after email confirmation + sign-in).
+    /// Consumed and cleared there once the row exists.
+    var pendingDisplayName: String?
 
-    init(modelContext: ModelContext) {
-        // Repos
-        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
-        tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+    /// Narrow auth-state surface for routing (no full `AuthStatus` exposed).
+    /// Reading this from a view body registers observation on both
+    /// `isRestoring` and `authService.session` because both are `@Observable`.
+    var authState: AuthStatus.State { authStatus.state }
+
+    init(modelContext: ModelContext,
+         appContext: AppContext,
+         reachabilityService: any ReachabilityServiceProtocol) {
+        self.appContext = appContext
         // Coordinators
-        mainCoordinator = MainCoordinator()
+        profileCoordinator = ProfileCoordinator()
+        placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
-        groupCoordinator = GroupCoordinator()
+        groupCoordinator = CategoryCoordinator()
+        authCoordinator = AuthCoordinator()
+        aboutCoordinator = AboutCoordinator()
         // Services
         locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
-        reachabilityService = ReachabilityService()
+        self.reachabilityService = reachabilityService
+        applePOIService = ApplePOIService(reachability: reachabilityService)
+        // Supabase + auth
+        let supabaseService = SupabaseService()
+        let authService = AuthService(client: supabaseService.client,
+                                      reachability: reachabilityService)
+        self.supabaseService = supabaseService
+        self.authService = authService
+        self.authStatus = AuthStatus(authService: authService)
+        self.shareService = ShareService(client: supabaseService.client, auth: authService)
+        self.spaceContext = SpaceContext()
+        // Local repos (raw — used by SyncService for push)
+        let localPlaceRepo = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        let localCategoryRepo = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        let localTagRepo = TagRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        let localImageRepo = PlaceImageRepositoryImpl(modelContext: modelContext)
+        let localProfileRepo = ProfileRepositoryImpl(modelContext: modelContext)
+        let localSpaceRepo = SpaceRepositoryImpl(modelContext: modelContext)
+        // Remote repos
+        let remotePlaceRepo = SupabasePlaceRepository(client: supabaseService.client, auth: authService)
+        let remoteCategoryRepo = SupabaseCategoryRepository(client: supabaseService.client, auth: authService)
+        let remoteTagRepo = SupabaseTagRepository(client: supabaseService.client, auth: authService)
+        let remoteImageRepo = SupabasePlaceImageRepository(client: supabaseService.client, auth: authService)
+        let remoteProfileRepo = SupabaseProfileRepository(client: supabaseService.client, auth: authService)
+        let remoteSpaceRepo = SupabaseSpaceRepository(client: supabaseService.client, auth: authService)
+        // Sync
+        let syncService = SyncService(localPlaceRepo: localPlaceRepo,
+                                      localCategoryRepo: localCategoryRepo,
+                                      localTagRepo: localTagRepo,
+                                      localImageRepo: localImageRepo,
+                                      localProfileRepo: localProfileRepo,
+                                      localSpaceRepo: localSpaceRepo,
+                                      remotePlaceRepo: remotePlaceRepo,
+                                      remoteCategoryRepo: remoteCategoryRepo,
+                                      remoteTagRepo: remoteTagRepo,
+                                      remoteImageRepo: remoteImageRepo,
+                                      remoteProfileRepo: remoteProfileRepo,
+                                      remoteSpaceRepo: remoteSpaceRepo,
+                                      reachability: reachabilityService)
+        self.syncService = syncService
+        // Wrap local repos so mutations notify SyncService
+        let syncingPlaceRepo = SyncingPlaceRepository(wrapped: localPlaceRepo, sync: syncService)
+        let addressBackfillService = AddressBackfillService(repository: syncingPlaceRepo, reachability: reachabilityService)
+        syncService.addressBackfillService = addressBackfillService
+        // Decorates reads so every place-fetching screen gets address backfill for
+        // free (see AddressBackfillingPlaceRepository) — SyncService triggers it
+        // separately, straight after a pull, via the same service above.
+        placeRepository = AddressBackfillingPlaceRepository(wrapped: syncingPlaceRepo, backfillService: addressBackfillService)
+        categoryRepository = SyncingCategoryRepository(wrapped: localCategoryRepo, sync: syncService)
+        tagRepository = SyncingTagRepository(wrapped: localTagRepo, sync: syncService)
+        imageRepository = SyncingPlaceImageRepository(wrapped: localImageRepo, sync: syncService)
+        profileRepository = SyncingProfileRepository(wrapped: localProfileRepo, sync: syncService)
+        spaceRepository = SyncingSpaceRepository(wrapped: localSpaceRepo, sync: syncService)
+        imageLoader = PlaceImageLoader(local: imageRepository, remote: remoteImageRepo)
+        profileService = ProfileService(local: profileRepository, remote: remoteProfileRepo)
+        // Not entity-specific, not wrapped: save()/rollback() act on the whole
+        // shared modelContext, so there's nothing for a Syncing decorator to do.
+        generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
+        
+        // Handle session lost 
+        authService.onSessionLost = { [weak self] in
+            Task { await self?.handleSessionLost() }
+        }
     }
-    
-    /// Used by mock container which owns the services for convenience purpose
+
+    #if DEBUG
+    /// Used by mock container (previews + tests). Skips reality :0
     init(modelContext: ModelContext,
+         appContext: AppContext,
          locationManager: LocationManager,
          addressLookupService: AddressLookupService,
-         reachabilityService: ReachabilityService) {
-        // Repos
-        placeRepository = PlaceRepositoryImpl(modelContext: modelContext)
-        tagRepository = TagRepositoryImpl(modelContext: modelContext)
-        groupRepository = GroupRepositoryImpl(modelContext: modelContext)
+         reachabilityService: any ReachabilityServiceProtocol,
+         profileService: StubProfileService) {
+        self.appContext = appContext
         // Coordinators
-        mainCoordinator = MainCoordinator()
+        profileCoordinator = ProfileCoordinator()
+        placeCoordinator = PlaceCoordinator()
         tagCoordinator = TagCoordinator()
-        groupCoordinator = GroupCoordinator()
+        groupCoordinator = CategoryCoordinator()
+        authCoordinator = AuthCoordinator()
+        aboutCoordinator = AboutCoordinator()
         // Services
         self.locationManager = locationManager
         self.addressLookupService = addressLookupService
         self.reachabilityService = reachabilityService
+        // Stub auth + sync
+        self.supabaseService = nil
+        let authService = StubAuthService()
+        let syncService = StubSyncService()
+        self.authService = authService
+        self.authStatus = AuthStatus(authService: authService)
+        self.syncService = syncService
+        self.shareService = StubShareService()
+        self.applePOIService = StubApplePOIService()
+        // Repos — no syncing wrapper needed (stub would no-op anyway)
+        self.spaceContext = SpaceContext()
+        placeRepository = PlaceRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        tagRepository = TagRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        categoryRepository = CategoryRepositoryImpl(modelContext: modelContext, spaceContext: spaceContext)
+        imageRepository = PlaceImageRepositoryImpl(modelContext: modelContext)
+        profileRepository = ProfileRepositoryImpl(modelContext: modelContext)
+        spaceRepository = SpaceRepositoryImpl(modelContext: modelContext)
+        imageLoader = PlaceImageLoader(local: imageRepository, remote: StubRemoteImageRepository())
+        self.profileService = profileService
+        generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
     }
-    
+    #endif
+
     func startLocationManager() {
         locationManager.start()
     }
 
+    func syncAll() async {
+        await syncService.syncAll()
+    }
+
+    /// Signed in (sign-in, sign-up or restored session): re-enables sync stopped by a previous sign-out, then syncs.
+    func startSync() async {
+        syncService.start()
+        await syncService.syncAll()
+    }
+
+    /// Current user's display name, e.g. for the share-sheet message's sender attribution.
+    var currentDisplayName: String? { profileService.profile?.displayName }
+
+    func loadProfile() async {
+        await profileService.load()
+        if let pendingDisplayName, !pendingDisplayName.isEmpty {
+            self.pendingDisplayName = nil
+            try? await profileService.setDisplayName(pendingDisplayName)
+        }
+    }
+
+    func restoreSession() async {
+        authStatus.isRestoring = true
+        await authService.restoreSession()
+        authStatus.isRestoring = false
+    }
+
+    func rememberMapRegion(_ region: MKCoordinateRegion?) {
+        lastMapRegion = region
+    }
+
+    // MARK: - sign-out
+
+    enum SignOutError: Error, Equatable {
+        case offlineWithPendingChanges(count: Int)
+        case syncFailedWithPendingChanges(count: Int)
+    }
+
+    /// Signs the user out and wipes local data.
+    /// - If `force == false` and there are pending changes:
+    ///   - online → attempts a sync first; if it leaves changes pending, throws `.syncFailedWithPendingChanges`.
+    ///   - offline → throws `.offlineWithPendingChanges`.
+    /// - If `force == true`, skips the sync check entirely. Use after the user has accepted that unsynced changes will be lost.
+    ///
+    /// Cleanup order (intentional): try sync → in-memory caches → local data → session.
+    /// The session flip is last so the UI only switches to the sign-in flow once everything else is clean.
+    func signOut(force: Bool = false, didStartClearingSession: (() -> Void)) async throws {
+        Log.debug("Signout (forced:\(force)")
+        if !force {
+            // User chose not to force, cancel the signout if there's some pending sync actions
+            let pending = syncService.pendingChangeCount
+            if pending > 0 {
+                Log.debug(" -> \(pending) pending syncs")
+                guard reachabilityService.isConnected else {
+                    Log.debug(" -> Throw error offline with pending changes")
+                    throw SignOutError.offlineWithPendingChanges(count: pending)
+                }
+                await syncService.syncAll()
+                let stillPending = syncService.pendingChangeCount
+                if stillPending > 0 {
+                    Log.debug(" -> Throw error failed with pending changes")
+                    throw SignOutError.syncFailedWithPendingChanges(count: stillPending)
+                }
+            } else {
+                Log.debug(" -> no pending sync")
+            }
+        }
+        didStartClearingSession()
+        // Enable loader
+        authStatus.isSigningOut = true
+
+        // 1. In-memory caches
+        profileService.clear()
+        // 2. Navigation state (reset coordinators + side menu)
+        profileCoordinator.popToRoot()
+        placeCoordinator.popToRoot()
+        tagCoordinator.path.removeAll()
+        groupCoordinator.path.removeAll()
+        appContext.currentSideMenuContext = .main
+        // 3. Sync: before wiping local data and the session: nothing must be pushed in between
+        await syncService.stop()
+        // 4. Local data
+        try await clearDatabase()
+        // 5. Session: last; AuthStatus flips → root switches to the sign-in flow
+        try await authService.signOut()
+        
+        authStatus.isSigningOut = false
+    }
+
+    // MARK: - session lost
+
+    /// The session can't be renewed (revoked, password changed, deleted user…): forced sign-out.
+    /// Unsynced changes are lost, they can't be pushed anymore.
+    private func handleSessionLost() async {
+        guard !authStatus.isSigningOut else { return }
+        Log.warning("Session lost, forced sign-out")
+        do {
+            try await signOut(force: true, didStartClearingSession: {})
+        } catch {
+            Log.error("Sign-out after session lost failed: \(error)")
+        }
+    }
+
+    // MARK: - delete account
+
+    /// Deletes the remote account first; local cleanup (mirroring `signOut`)
+    /// only happens once that has actually succeeded, so a failure leaves the
+    /// user's local data untouched.
+    func deleteAccount() async throws {
+        Log.debug("Delete account requested")
+        try await authService.deleteAccount()
+
+        authStatus.isSigningOut = true
+        profileService.clear()
+        profileCoordinator.popToRoot()
+        placeCoordinator.popToRoot()
+        tagCoordinator.path.removeAll()
+        groupCoordinator.path.removeAll()
+        appContext.currentSideMenuContext = .main
+        await syncService.stop()
+        try await clearDatabase()
+        try await authService.signOut()
+        authStatus.isSigningOut = false
+    }
+
     // MARK: - create views
+    func createSignInView() -> SignInView {
+        let vm = SignInViewModel(appContainer: self,
+                                 authService: authService,
+                                 coordinator: authCoordinator)
+        return SignInView(viewModel: vm)
+    }
+
+    func createSignUpView() -> SignUpView {
+        let vm = SignUpViewModel(appContainer: self, authService: authService, coordinator: authCoordinator)
+        return SignUpView(viewModel: vm)
+    }
+
+    func createResetPasswordView() -> ResetPasswordView {
+        let vm = ResetPasswordViewModel(authService: authService, coordinator: authCoordinator)
+        return ResetPasswordView(viewModel: vm)
+    }
+
+    func createVerifyEmailView(email: String, password: String, context: VerifyEmailContext) -> VerifyEmailView {
+        let vm = VerifyEmailViewModel(email: email, password: password, context: context, authService: authService, coordinator: authCoordinator)
+        return VerifyEmailView(viewModel: vm)
+    }
+
+    func createProfileView() -> ProfileView {
+        let vm = ProfileViewModel(appContainer: self,
+                                  profileService: profileService,
+                                  coordinator: profileCoordinator)
+        return ProfileView(viewModel: vm)
+    }
+
+    func createEditDisplayNameView() -> EditDisplayNameView {
+        let vm = EditDisplayNameViewModel(profileService: profileService, coordinator: profileCoordinator)
+        return EditDisplayNameView(viewModel: vm)
+    }
+
+    func createDeleteAccountView() -> DeleteAccountView {
+        let vm = DeleteAccountViewModel(appContainer: self,
+                                        coordinator: profileCoordinator,
+                                        fetchPlaces: FetchPlaces(repository: placeRepository),
+                                        fetchCategories: FetchCategories(repository: categoryRepository),
+                                        fetchTags: FetchTags(repository: tagRepository),
+                                        imageRepository: imageRepository)
+        return DeleteAccountView(viewModel: vm)
+    }
+
+    func createSideMenuView(showingSideMenu: Binding<Bool>,
+                            currentSideMenuContext: Binding<SideMenuContext>,
+                            showingProfile: Binding<Bool>) -> SideMenuView {
+        let vm = SideMenuViewModel(profileService: profileService,
+                                   showingProfile: showingProfile)
+        return SideMenuView(viewModel: vm,
+                            showingSideMenu: showingSideMenu,
+                            currentSideMenuContext: currentSideMenuContext)
+    }
+
     func createRootView() -> RootView {
-        let vm = RootViewModel(self)
+        let vm = RootViewModel(self, appContext: appContext)
         return RootView(viewModel: vm)
     }
     
-    func createMainView(showingSideMenu: Binding<Bool>) -> MainView {
-        let vm = MainViewModel(self,
-                               coordinator: mainCoordinator,
-                               getPlaces: GetPlaces(repository: placeRepository))
-        return MainView(viewModel: vm, showingSideMenu: showingSideMenu)
+    func createPlacesView(showingSideMenu: Binding<Bool>) -> PlacesView {
+        let vm = PlacesViewModel(self,
+                               coordinator: placeCoordinator,
+                               locationManager: locationManager,
+                               fetchPlaces: FetchPlaces(repository: placeRepository),
+                               syncStatus: syncService.syncStatus,
+                               reachabilityService: reachabilityService)
+        return PlacesView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
-    func createPlacesMapView(places: Binding<[PlaceUI]>, showingCreatePlaceMenu: Binding<Bool>) -> PlacesMapView {
+    func createPlacesMapView(places: @escaping () -> [PlaceUIModel],
+                             allPlacesCount: Int,
+                             draftPlace: Binding<PlaceUIModel?>,
+                             draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                             draftPlacePoiColor: Binding<Color?>,
+                             selectedPlaceId: Binding<UUID?>,
+                             filter: Binding<PlaceFilter?>,
+                             isParentPresenting: Binding<Bool>,
+                             showingCreatePlaceMenu: Binding<Bool>,
+                             mapReloadGen: Int,
+                             navBarHeight: CGFloat,
+                             isActiveTab: Bool = true) -> PlacesMapView {
         let vm = PlacesMapViewModel(self,
-                                    coordinator: mainCoordinator,
+                                    coordinator: placeCoordinator,
                                     locationManager: locationManager,
-                                    getPlaces: GetPlaces(repository: placeRepository),
-                                    createPlace: CreatePlace(repository: placeRepository))
+                                    syncStatus: syncService.syncStatus)
         return PlacesMapView(viewModel: vm,
                              places: places,
-                             showingCreatePlaceMenu: showingCreatePlaceMenu)
+                             allPlacesCount: allPlacesCount,
+                             draftPlace: draftPlace,
+                             draftPlacePoiCategory: draftPlacePoiCategory,
+                             draftPlacePoiColor: draftPlacePoiColor,
+                             selectedPlaceId: selectedPlaceId,
+                             filter: filter,
+                             isParentPresenting: isParentPresenting,
+                             showingCreatePlaceMenu: showingCreatePlaceMenu,
+                             mapReloadGen: mapReloadGen,
+                             navBarHeight: navBarHeight,
+                             isActiveTab: isActiveTab)
     }
     
-    func createPlacesListView(places: Binding<[PlaceUI]>) -> PlacesListView {
+    func createPlacesListView(places: [PlaceUIModel],
+                              allPlacesCount: Int,
+                              selectedPlaceId: Binding<UUID?>,
+                              filter: Binding<PlaceFilter?>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
-                                     coordinator: mainCoordinator,
+                                     coordinator: placeCoordinator,
                                      locationManager: locationManager,
-                                     getPlaces: GetPlaces(repository: placeRepository),
-                                     createPlace: CreatePlace(repository: placeRepository))
-        return PlacesListView(viewModel: vm, places: places)
+                                     syncStatus: syncService.syncStatus)
+        return PlacesListView(viewModel: vm,
+                              places: places,
+                              allPlacesCount: allPlacesCount,
+                              selectedPlaceId: selectedPlaceId,
+                              filter: filter)
     }
     
-//    func createCreatePlaceView(place: PlaceUI) -> CreatePlaceView {
-//        let vm = CreatePlaceViewModel(self,
-//                                      createPlace: CreatePlace(repository: placeRepository))
-//        return CreatePlaceView(viewModel: vm, place: place)
-//    }
-
-    func createCreatePlaceQuickView(place: PlaceUI) -> CreatePlaceQuickView {
-        let vm = CreatePlaceQuickViewModel(self,
-                                           coordinator: mainCoordinator,
-                                           createPlace: CreatePlace(repository: placeRepository))
-        return CreatePlaceQuickView(viewModel: vm, place: place)
+    func createPlaceCreateQuickView(place: PlaceUIModel,
+                                    result: Binding<PlaceCreateQuickView.Result>,
+                                    poiCategory: MKPointOfInterestCategory? = nil,
+                                    poiColor: Color? = nil) -> PlaceCreateQuickView {
+        let vm = PlaceCreateQuickViewModel(self,
+                                           coordinator: placeCoordinator,
+                                           createPlace: CreatePlace(repository: placeRepository),
+                                           getTag: FetchTag(repository: tagRepository),
+                                           getCategory: FetchCategory(repository: categoryRepository),
+                                           createTag: CreateTag(repository: tagRepository),
+                                           createCategory: CreateCategory(repository: categoryRepository),
+                                           suggestCategoryForAppleCategory: SuggestCategoryForAppleCategory(repository: categoryRepository),
+                                           poiCategory: poiCategory,
+                                           poiColor: poiColor)
+        return PlaceCreateQuickView(viewModel: vm, place: place, result: result)
     }
-
-    func createCreatePlaceFullView(coordinates: CLLocationCoordinate2D,
-                                   address: String,
-                                   name: String,
-                                   marker: String?,
-                                   tags: [String],
-                                   group: String?) -> CreatePlaceFullView {
-        let vm = CreatePlaceFullViewModel(self,
-                                          coordinator: mainCoordinator,
-                                          createPlace: CreatePlace(repository: placeRepository),
-                                          getTag: GetTag(repository: tagRepository),
-                                          getGroup: GetGroup(repository: groupRepository))
-        return CreatePlaceFullView(viewModel: vm,
-                                   coordinates: coordinates,
-                                   address: address,
-                                   name: name,
-                                   marker: marker,
-                                   tags: tags,
-                                   group: group)
-    }
-
-    func createTagSelectorView(place: Binding<PlaceUI>) -> TagSelectorView {
+    
+    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
-                                      getTags: GetTags(repository: tagRepository),
+                                      fetchTags: FetchTags(repository: tagRepository),
                                       createTags: CreateTag(repository: tagRepository))
         return TagSelectorView(viewModel: vm, place: place)
     }
     
-    func createGroupSelectorView(place: Binding<PlaceUI>) -> GroupSelectorView {
-        let vm = GroupSelectorViewModel(self,
-                                        getGroups: GetGroups(repository: groupRepository),
-                                        createGroup: CreateGroup(repository: groupRepository))
-        return GroupSelectorView(viewModel: vm, place: place)
+    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+        let vm = CategorySelectorViewModel(self,
+                                        fetchCategories: FetchCategories(repository: categoryRepository),
+                                        createCategory: CreateCategory(repository: categoryRepository))
+        return CategorySelectorView(viewModel: vm, place: place)
     }
     
-    func createPlaceDetailsSheetView(place: Binding<PlaceUI>) -> PlaceDetailsSheetView {
-        let vm = PlaceDetailsSheetViewModel(self,
-                                            coordinator: mainCoordinator,
-                                            updatePlace: UpdatePlace(repository: placeRepository),
-                                            deletePlace: DeletePlace(repository: placeRepository),
-                                            getTags: GetTags(repository: tagRepository),
-                                            createTags: CreateTag(repository: tagRepository),
-                                            getGroups: GetGroups(repository: groupRepository),
-                                            createGroup: CreateGroup(repository: groupRepository))
-        return PlaceDetailsSheetView(viewModel: vm,
-                                     place: place)
+    func createPlaceSheetView(place: Binding<PlaceUIModel>,
+                              mapAction: (() -> Void)?,
+                              detent: Binding<PresentationDetent>) -> PlaceSheetView {
+        let vm = PlaceSheetViewModel(self,
+                                     coordinator: currentPlaceCoordinator(),
+                                     locationManager: locationManager,
+                                     shareService: shareService,
+                                     getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
+                                     getPlaceImage: GetPlaceImage(loader: imageLoader),
+                                     markPlacePOINotFound: MarkPlacePOINotFound(repository: placeRepository),
+                                     unmarkPlacePOINotFound: UnmarkPlacePOINotFound(repository: placeRepository),
+                                     applePOIService: applePOIService)
+        return PlaceSheetView(viewModel: vm,
+                              place: place,
+                              mapAction: mapAction,
+                              detent: detent)
     }
 
-    func createPlaceDetailsView(place: Binding<PlaceUI>, editMode: PlaceEditMode) -> PlaceDetailsView {
-        let vm = PlaceDetailsViewModel(self,
-                                       coordinator: mainCoordinator,
-                                       updatePlace: UpdatePlace(repository: placeRepository),
-                                       deletePlace: DeletePlace(repository: placeRepository),
-                                       getTags: GetTags(repository: tagRepository),
-                                       createTags: CreateTag(repository: tagRepository),
-                                       getGroups: GetGroups(repository: groupRepository),
-                                       createGroup: CreateGroup(repository: groupRepository))
-        return PlaceDetailsView(viewModel: vm, place: place, editMode: editMode)
+    func createPlaceEditContentView(place: Binding<PlaceUIModel>,
+                                    mode: PlaceEditContentViewModel.Mode,
+                                    showMissingName: Binding<Bool>) -> PlaceEditContentView {
+        let vm = PlaceEditContentViewModel(self,
+                                           coordinator: placeCoordinator,
+                                           reachabilityService: reachabilityService,
+                                           markPlacePOINotFound: MarkPlacePOINotFound(repository: placeRepository),
+                                           unmarkPlacePOINotFound: UnmarkPlacePOINotFound(repository: placeRepository),
+                                           unlinkPlacePOI: UnlinkPlacePOI(repository: placeRepository),
+                                           updatePlace: UpdatePlace(repository: placeRepository),
+                                           getPlaceThumbnails: GetPlaceThumbnails(loader: imageLoader),
+                                           getPlaceImage: GetPlaceImage(loader: imageLoader),
+                                           applePOIService: applePOIService,
+                                           mode: mode)
+        return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
     }
-    
-    func createPlaceDetailsContentView(place: Binding<PlaceUI>,
-                                       editMode: Binding<PlaceEditMode>) -> PlaceDetailsContentView {
-        let vm = PlaceDetailsContentViewModel(self,
-                                              updatePlace: UpdatePlace(repository: placeRepository),
-                                              deletePlace: DeletePlace(repository: placeRepository),
-                                              getTags: GetTags(repository: tagRepository),
-                                              createTags: CreateTag(repository: tagRepository),
-                                              getGroups: GetGroups(repository: groupRepository),
-                                              createGroup: CreateGroup(repository: groupRepository))
-        return PlaceDetailsContentView(viewModel: vm,
-                                       place: place,
-                                       editMode: editMode)
+
+    func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
+        let vm = PlaceEditViewModel(self,
+                                    coordinator: currentCoordinator(),
+                                    updatePlace: UpdatePlace(repository: placeRepository),
+                                    addPlaceImage: AddPlaceImage(repository: imageRepository),
+                                    removePlaceImage: RemovePlaceImage(repository: imageRepository))
+        return PlaceEditView(viewModel: vm, place: place)
+    }
+
+    func createPlaceCreateView(place: PlaceUIModel) -> PlaceCreateView {
+        let vm = PlaceCreateViewModel(self,
+                                      coordinator: placeCoordinator,
+                                      createPlace: CreatePlace(repository: placeRepository),
+                                      getTag: FetchTag(repository: tagRepository),
+                                      getCategory: FetchCategory(repository: categoryRepository),
+                                      createTag: CreateTag(repository: tagRepository),
+                                      createCategory: CreateCategory(repository: categoryRepository),
+                                      addPlaceImage: AddPlaceImage(repository: imageRepository))
+        return PlaceCreateView(viewModel: vm,
+                               place: place)
     }
     
     func createTagListView(showingSideMenu: Binding<Bool>) -> TagListView {
         let vm = TagListViewModel(self,
                                   coordinator: tagCoordinator,
-                                  getTags: GetTags(repository: tagRepository),
-                                  deleteTag: DeleteTag(repository: tagRepository))
+                                  fetchTagsWithCount: FetchTagsWithCount(repository: tagRepository),
+                                  createTag: CreateTag(repository: tagRepository),
+                                  updateTag: UpdateTag(repository: tagRepository),
+                                  syncStatus: syncService.syncStatus)
         return TagListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
-    func createTagDetailsView(tag: Binding<TagUI>) -> TagDetailsView {
+    func createTagDetailsView(tag: TagUIModel) -> TagDetailsView {
         let vm = TagDetailsViewModel(self,
                                      locationManager: locationManager,
+                                     coordinator: tagCoordinator,
+                                     tag: tag,
                                      updateTag: UpdateTag(repository: tagRepository),
-                                     deleteTag: DeleteTag(repository: tagRepository))
-        return TagDetailsView(viewModel: vm, tag: tag)
+                                     fetchTagPlaces: FetchTagPlaces(repository: placeRepository),
+                                     updatePlace: UpdatePlace(repository: placeRepository))
+        return TagDetailsView(viewModel: vm)
+    }
+    
+    func createTagMapView(tagId: UUID) -> TagMapView {
+        let vm = TagMapViewModel(self,
+                                 tagId: tagId,
+                                 fetchTagPlaces: FetchTagPlaces(repository: placeRepository))
+        return TagMapView(viewModel: vm)
     }
 
-    func createGroupListView(showingSideMenu: Binding<Bool>) -> GroupListView {
-        let vm = GroupListViewModel(self,
-                                    coordinator: groupCoordinator,
-                                    getGroups: GetGroups(repository: groupRepository),
-                                    deleteGroup: DeleteGroup(repository: groupRepository))
-        return GroupListView(viewModel: vm, showingSideMenu: showingSideMenu)
+    func createCategoryListView(showingSideMenu: Binding<Bool>) -> CategoryListView {
+        let vm = CategoryListViewModel(self,
+                                       coordinator: groupCoordinator,
+                                       fetchCategoriesWithCount: FetchCategoriesWithCount(repository: categoryRepository),
+                                       createCategory: CreateCategory(repository: categoryRepository),
+                                       updateCategory: UpdateCategory(repository: categoryRepository),
+                                       syncStatus: syncService.syncStatus)
+        return CategoryListView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
     
-    func createGroupDetailsView(group: Binding<GroupUI>) -> GroupDetailsView {
-        let vm = GroupDetailsViewModel(self,
-                                       locationManager: locationManager,
-                                       updateGroup: UpdateGroup(repository: groupRepository),
-                                       deleteGroup: DeleteGroup(repository: groupRepository))
-        return GroupDetailsView(viewModel: vm, group: group)
+    func createCategoryDetailsView(category: CategoryUIModel) -> CategoryDetailsView {
+        let vm = CategoryDetailsViewModel(self,
+                                          locationManager: locationManager,
+                                          coordinator: groupCoordinator,
+                                          category: category,
+                                          updateCategory: UpdateCategory(repository: categoryRepository),
+                                          fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository),
+                                          updatePlace: UpdatePlace(repository: placeRepository))
+        return CategoryDetailsView(viewModel: vm)
     }
-    
-    func createLookupPlacesView() -> LookupPlacesView {
+
+    func createCategoryMapView(categoryId: UUID) -> CategoryMapView {
+        let vm = CategoryMapViewModel(self,
+                                   categoryId: categoryId,
+                                   fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository))
+        return CategoryMapView(viewModel: vm)
+    }
+
+    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>,
+                                draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                                draftPlacePoiColor: Binding<Color?>) -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
+                                       coordinator: placeCoordinator,
                                        addressLookupService: addressLookupService,
                                        locationManager: locationManager,
-                                       reachabilityService: reachabilityService)
-        return LookupPlacesView(viewModel: vm)
+                                       reachabilityService: reachabilityService,
+                                       updatePlace: UpdatePlace(repository: placeRepository))
+        return LookupPlacesView(viewModel: vm,
+                                draftPlace: draftPlace,
+                                draftPlacePoiCategory: draftPlacePoiCategory,
+                                draftPlacePoiColor: draftPlacePoiColor)
+    }
+
+    func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
+        let vm = LookupPlacesViewModel(self,
+                                       coordinator: placeCoordinator,
+                                       addressLookupService: addressLookupService,
+                                       locationManager: locationManager,
+                                       reachabilityService: reachabilityService,
+                                       updatePlace: UpdatePlace(repository: placeRepository))
+        return LookupPlacesView(viewModel: vm, place: place)
     }
     
-    func createLookupPlaceView(lookupResolvedItem: LookupResolvedItem,
-                               status: Binding<LookupPlaceView.PresentationStatus>) -> LookupPlaceView {
-        let vm = LookupPlaceViewModel(self,
-                                      coordinator: mainCoordinator,
-                                      createPlace: CreatePlace(repository: placeRepository),
-                                      lookupResolvedItem: lookupResolvedItem)
-        return LookupPlaceView(viewModel: vm, status: status)
+    func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
+        let vm = PlaceFilterViewModel(self,
+                                      fetchCategories: FetchCategories(repository: categoryRepository),
+                                      fetchTags: FetchTags(repository: tagRepository),
+                                      filter: filter)
+        return PlaceFilterView(viewModel: vm)
     }
+    
+    
+    // MARK: - settings views
+    func createSettingsView(showingSideMenu: Binding<Bool>) -> SettingsView {
+        let vm = SettingsViewModel(self,
+                                   coordinator: placeCoordinator,
+                                   saveContext: SaveContext(repository: generalRepository),
+                                   rollbackContext: RollbackContext(repository: generalRepository),
+                                   fetchPlaces: FetchPlaces(repository: placeRepository),
+                                   fetchCategories: FetchCategories(repository: categoryRepository),
+                                   fetchTags: FetchTags(repository: tagRepository),
+                                   upsertPlace: UpsertPlace(repository: placeRepository),
+                                   upsertCategory: UpsertCategory(repository: categoryRepository),
+                                   upsertTag: UpsertTag(repository: tagRepository),
+                                   deleteLibrary: DeleteLibrary(generalRepository: generalRepository,
+                                                                spaceRepository: spaceRepository,
+                                                                placeRepository: placeRepository,
+                                                                categoryRepository: categoryRepository,
+                                                                tagRepository: tagRepository),
+                                   sync: syncService)
+        return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
+    }
+
+    func createMapstrCategoriesView(plan: MapstrImportPlan,
+                                    onImport: @escaping (CategoryMapping) -> Void) -> MapstrCategoriesView {
+        let vm = MapstrCategoriesViewModel(plan: plan,
+                                           fetchCategories: FetchCategories(repository: categoryRepository))
+        return MapstrCategoriesView(viewModel: vm, onImport: onImport)
+    }
+
+    // MARK: - about views
+    func createAboutView(showingSideMenu: Binding<Bool>) -> AboutView {
+        let vm = AboutViewModel(coordinator: aboutCoordinator)
+        return AboutView(viewModel: vm, showingSideMenu: showingSideMenu)
+    }
+    
+    // MARK: POI view
+    func createApplePOISheetView(applePOIAnnotation: MKMapFeatureAnnotation,
+                                 draftPlace: Binding<PlaceUIModel?>,
+                                 draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
+                                 draftPlacePoiColor: Binding<Color?>) -> ApplePOISheetView {
+        let vm = ApplePOISheetViewModel(applePOIAnnotation: applePOIAnnotation,
+                                        applePOIService: applePOIService)
+        return ApplePOISheetView(viewModel: vm,
+                                 draftPlace: draftPlace,
+                                 draftPlacePoiCategory: draftPlacePoiCategory,
+                                 draftPlacePoiColor: draftPlacePoiColor)
+    }
+
+    // MARK: - private methods
+    private func currentCoordinator() -> any NavigationCoordinator {
+        switch appContext.currentSideMenuContext {
+            case .main:
+                return placeCoordinator
+            case .categories:
+                return groupCoordinator
+            case .tags:
+                return tagCoordinator
+            default:
+                assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
+                return placeCoordinator
+        }
+    }
+    
+    private func currentPlaceCoordinator() -> any PlaceNavigationCoordinator {
+        switch appContext.currentSideMenuContext {
+            case .main:
+                return placeCoordinator
+            case .categories:
+                return groupCoordinator
+            case .tags:
+                return tagCoordinator
+            default:
+                assertionFailure("Undefined coordinator for section \(appContext.currentSideMenuContext)")
+                return placeCoordinator
+        }
+    }
+    
+    private func clearDatabase() async throws {
+        // Places first: cascade-deletes their images, nullifies tag/category refs
+        try await placeRepository.clearTable()
+        try await tagRepository.clearTable()
+        try await categoryRepository.clearTable()
+        // Should be empty already, just in case...
+        try await imageRepository.clearTable()
+        // Independant from others
+        try await profileRepository.clearTable()
+    }
+
 }
 
 #if DEBUG
@@ -238,48 +694,76 @@ final class AppContainer {
 extension AppContainer {
     
     static func insertMockData(modelContext: ModelContext) throws {
-        let mockGroups = SDGroup.mockGroups()
-        let mockTags = SDTag.mockTags()
-        let mockPlaces = SDPlace.mockPlaces()
-        for item in mockGroups {
-            //print(" GROUP -> \(item.name)")
+        // "Main"/personal space is implicit (Space.mainId), not a stored SpaceRecord.
+        let mockCategories = CategoryRecord.mockCategories(spaceId: Space.mainId)
+        let mockTags = TagRecord.mockTags(spaceId: Space.mainId)
+        let mainPlaces = PlaceRecord.mockPlaces(spaceId: Space.mainId)
+        for item in mockCategories {
             modelContext.insert(item)
         }
         for item in mockTags {
-            //print(" TAG -> \(item.name)")
             modelContext.insert(item)
         }
-        for item in mockPlaces {
-            //print(" PLACE -> \(item.name)")
+        for item in mainPlaces {
             modelContext.insert(item)
         }
-        
-        mockPlaces[0].group = mockGroups[0]
-        mockPlaces[0].tags = [mockTags[8], mockTags[10], mockTags[13]]
 
-        mockPlaces[1].group = mockGroups[0]
-        mockPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
+        mainPlaces[0].category = nil // mockCategories[0]
+        mainPlaces[0].tags = [mockTags[1], mockTags[2], mockTags[3], mockTags[4],
+                              mockTags[5], mockTags[6], mockTags[7], mockTags[8],
+                              mockTags[10], mockTags[13], mockTags[12], mockTags[14], mockTags[15]]
 
-        mockPlaces[2].group = mockGroups[4]
-        mockPlaces[2].tags = [mockTags[6], mockTags[7]]
+        mainPlaces[1].category = mockCategories[0]
+        mainPlaces[1].tags = [mockTags[8], mockTags[9], mockTags[13]]
 
-        mockPlaces[3].group = mockGroups[5]
-        mockPlaces[3].tags = [mockTags[1]]
+        mainPlaces[2].category = mockCategories[4]
+        mainPlaces[2].tags = [mockTags[6], mockTags[7]]
 
-        mockPlaces[4].group = mockGroups[5]
-        mockPlaces[4].tags = [mockTags[1]]
+        mainPlaces[3].category = mockCategories[5]
+        mainPlaces[3].tags = [mockTags[1]]
 
-        mockPlaces[5].group = mockGroups[5]
-        mockPlaces[5].tags = [mockTags[11], mockTags[12]]
+        mainPlaces[4].category = mockCategories[5]
+        mainPlaces[4].tags = [mockTags[1]]
 
-        mockPlaces[6].group = mockGroups[7]
-        mockPlaces[6].tags = [mockTags[9], mockTags[12]]
+        mainPlaces[5].category = mockCategories[5]
+        mainPlaces[5].tags = [mockTags[11], mockTags[12]]
 
-        mockPlaces[7].group = mockGroups[8]
-        mockPlaces[7].tags = [mockTags[9]]
+        mainPlaces[6].category = mockCategories[7]
+        mainPlaces[6].tags = [mockTags[9], mockTags[12]]
 
-        mockPlaces[6].group = mockGroups[8]
-        mockPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
+        mainPlaces[7].category = mockCategories[8]
+        mainPlaces[7].tags = [mockTags[9]]
+
+        mainPlaces[6].category = mockCategories[8]
+        mainPlaces[6].tags = [mockTags[12], mockTags[14], mockTags[15]]
+
+        // Secondary space: a single place/category/tag, so cross-space scoping has real
+        // data to verify against — fetches scoped to the personal space must never leak these in.
+        let secondarySpace = SpaceRecord(identifier: UUID(), name: "Secondary", color: "8B5A2B", icon: .sf("briefcase"),
+                                         ownerId: UUID())
+        modelContext.insert(secondarySpace)
+
+        let secondaryCategory = CategoryRecord(identifier: UUID(), spaceId: secondarySpace.identifier,
+                                               name: "Work", color: "336699", icon: .sf("briefcase"))
+        let secondaryTag = TagRecord(identifier: UUID(), spaceId: secondarySpace.identifier,
+                                     name: "Client", color: "996633")
+        modelContext.insert(secondaryCategory)
+        modelContext.insert(secondaryTag)
+
+        let secondaryPlaces = [
+            PlaceRecord(identifier: UUID(), spaceId: secondarySpace.identifier,
+                        name: "Secondary Space Office",
+                        latitude: 41.390205, longitude: 2.154007,
+                        address: "Carrer de Balmes, 1, Barcelona",
+                        tags: [secondaryTag], category: secondaryCategory)
+        ]
+        for item in secondaryPlaces {
+            modelContext.insert(item)
+        }
+
+        for p in mainPlaces + secondaryPlaces {
+            print("Mock place insert '\(p.name)' Category(\(p.category?.name ?? "N/A")) Tags(\(p.tags.count))")
+        }
 
         try modelContext.save()
     }

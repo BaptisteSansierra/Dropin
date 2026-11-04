@@ -1,0 +1,204 @@
+//
+//  Place.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 1/10/25.
+//
+
+import Foundation
+import CoreLocation
+import ContactFieldKit
+
+struct Place: Hashable, Sendable {
+    let id: UUID
+    let name: String
+    let coordinates: CLLocationCoordinate2D
+    let address: String?
+    let address2: String?
+    var tags: [Tag]
+    var category: Category?
+    let images: [UUID]
+    let icon: Icon?
+    let rating: Float?
+    let phone: [String]
+    let email: [String]
+    let url: [String]
+    let notes: String?
+    // Apple POI linking: set when this place was created from an Apple Maps point of interest; nil otherwise.
+    var applePlaceID: String?
+    // Set when Apple returns a placemarkNotFound error. If set, it probably means the POI was deleted on Apple's side
+    var appleNotFoundAt: Date?
+    // Dates
+    var createdAt: Date     // Set at creation
+    var updatedAt: Date     // Set on every mutation; drives dirty detection
+    var deletedAt: Date?    // Soft delete
+    var importedAt: Date?
+    var importSrc: ImportSource?
+    // Not nil spaceId is Storage partition: nil means "not yet persisted"
+    // The repository resolves it on insert; callers constructing a domain object never need to know about spaces.
+    // cf. PlaceRepositoryImpl.upsert(_:spaceId:shouldSave:).
+    var spaceId: UUID?
+
+    // Used by mappers
+    init(id: UUID,
+         name: String,
+         coordinates: CLLocationCoordinate2D,
+         address: String?,
+         address2: String?,
+         tags: [Tag],
+         category: Category?,
+         images: [UUID] = [],
+         icon: Icon?,
+         rating: Float?,
+         phone: [String],
+         email: [String],
+         url: [String],
+         notes: String?,
+         applePlaceID: String? = nil,
+         appleNotFoundAt: Date? = nil,
+         createdAt: Date,
+         updatedAt: Date,
+         deletedAt: Date?,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil,
+         spaceId: UUID? = nil) {
+        self.id = id
+        self.name = name
+        self.coordinates = coordinates
+        self.address = Self.normalized(address)
+        self.address2 = Self.normalized(address2)
+        self.tags = tags
+        self.category = category
+        self.images = images
+        self.icon = icon
+        self.rating = rating
+        self.phone = phone
+        self.email = email
+        self.url = url
+        self.notes = notes
+        self.applePlaceID = applePlaceID
+        self.appleNotFoundAt = appleNotFoundAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+        self.importedAt = importedAt
+        self.importSrc = importSrc
+        self.spaceId = spaceId
+    }
+
+    /// Used to create a new place (Mapstr import / CatOpenData import / ...)
+    init(id: UUID,
+         name: String,
+         coordinates: CLLocationCoordinate2D,
+         address: String?,
+         tags: [Tag],
+         category: Category? = nil,
+         icon: Icon? = nil,
+         notes: String? = nil,
+         importedAt: Date? = nil,
+         importSrc: ImportSource? = nil) {
+        self.id = id
+        self.name = name
+        self.coordinates = coordinates
+        self.address = Self.normalized(address)
+        self.tags = tags
+        self.category = category
+        self.icon = icon
+
+        self.address2 = nil
+        self.rating = nil
+        self.phone = []
+        self.email = []
+        self.url = []
+        self.notes = notes
+        self.images = []
+        self.applePlaceID = nil
+        self.appleNotFoundAt = nil
+
+        let now = Date()
+        self.createdAt = now
+        self.updatedAt = now
+        self.deletedAt = nil
+        self.importedAt = importedAt
+        self.importSrc = importSrc
+        self.spaceId = nil
+    }
+
+    /// Empty string is never a valid stored address : nil means "no address" (e.g. not yet fetched / offline lookup).
+    /// Normalizing here catches empty strings from any source: legacy data predating this distinction,
+    /// imports, or callers that haven't been updated to pass nil.
+    private static func normalized(_ value: String?) -> String? {
+        value?.isEmpty == true ? nil : value
+    }
+
+    func deleted(deletedAt: Date) -> Place {
+        var copy = self
+        copy.deletedAt = deletedAt
+        return copy
+    }
+
+    func updated() -> Place {
+        var copy = self
+        copy.updatedAt = Date()
+        return copy
+    }
+
+    func withAppleNotFoundAt(notFoundAt: Date?) -> Place {
+        var copy = self
+        copy.appleNotFoundAt = notFoundAt
+        return copy
+    }
+
+    func withUnlinkedPOI() -> Place {
+        var copy = self
+        copy.applePlaceID = nil
+        return copy
+    }
+
+    /// Used by AddressBackfillService once a reverse-geocode lookup resolves an
+    /// address for a place that didn't have one yet.
+    func withAddress(_ address: String) -> Place {
+        Place(id: id,
+                   name: name,
+                   coordinates: coordinates,
+                   address: address,
+                   address2: address2,
+                   tags: tags,
+                   category: category,
+                   images: images,
+                   icon: icon,
+                   rating: rating,
+                   phone: phone,
+                   email: email,
+                   url: url,
+                   notes: notes,
+                   applePlaceID: applePlaceID,
+                   appleNotFoundAt: appleNotFoundAt,
+                   createdAt: createdAt,
+                   updatedAt: updatedAt,
+                   deletedAt: deletedAt,
+                   importedAt: importedAt,
+                   importSrc: importSrc,
+                   spaceId: spaceId)
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+extension Place {
+    
+    var isActive: Bool { deletedAt == nil }
+    
+    func isIdentical(name: String, coords: CLLocationCoordinate2D) -> Bool {
+        // Let's not be too strict with place's case, the coords check is strong enough
+        let compareName = self.name.lowercased() == name.lowercased()
+        let compareCoords = self.coordinates.isIdentical(to: coords)
+        return compareName && compareCoords
+    }
+}

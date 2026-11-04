@@ -1,0 +1,143 @@
+//
+//  VerifyEmailView.swift
+//  Dropin
+//
+
+import SwiftUI
+
+struct VerifyEmailView: View {
+
+    @State private var viewModel: VerifyEmailViewModel
+
+    init(viewModel: VerifyEmailViewModel) {
+        self.viewModel = viewModel
+    }
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Color.backgroundPrimary.ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: 0) {
+                    Spacer(minLength: 60)
+
+                    badgeView
+
+                    Text(titleKey)
+                        .textStyle(.authTitle)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 26)
+
+                    bodyText
+                        .textStyle(.body, color: .textSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 10)
+
+                    MainButton(text: "auth.verify.check_confirmation",
+                               progress: viewModel.isCheckingConfirmation ? .run(color: .surface1, replaceContent: true) : .none) {
+                        Task { await viewModel.checkConfirmationAndSignIn() }
+                    }
+                    .padding(.top, 30)
+
+                    resendRow
+                        .padding(.top, 30)
+
+                    if let error = viewModel.lastError {
+                        Text(error)
+                            .textStyle(.formFieldError)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 12)
+                    }
+
+                    Spacer(minLength: 40)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 32)
+                .padding(.top, 40)
+                .padding(.bottom, 90)
+            }
+
+            footer
+                .padding(.horizontal, 32)
+                .padding(.vertical, 16)
+                .background(.backgroundPrimary)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+
+    // MARK: - context-dependent copy
+    private var titleKey: LocalizedStringKey {
+        switch viewModel.context {
+            case .justSignedUp: "auth.verify.title"
+            case .unconfirmedLogin: "auth.verify.unconfirmed_title"
+        }
+    }
+
+    @ViewBuilder
+    private var bodyText: some View {
+        switch viewModel.context {
+            case .justSignedUp:
+                Text("auth.verify.body_\(viewModel.email)")
+            case .unconfirmedLogin:
+                Text("auth.verify.unconfirmed_body")
+        }
+    }
+
+    // MARK: - subviews
+    private var badgeView: some View {
+        Circle()
+            .fill(.surface2)
+            .frame(width: 96, height: 96)
+            .overlay {
+                Image(systemName: "envelope.badge")
+                    .font(.system(size: 38, weight: .regular))
+                    .foregroundStyle(.dropinPrimary)
+            }
+            .shadow(color: .black.opacity(0.1),
+                    radius: 10,
+                    x: 0,
+                    y: 5)
+    }
+
+    private var footer: some View {
+        Button("auth.verify.change_email") { viewModel.changeEmailAddress() }
+            .buttonStyle(.plain)
+            .textStyle(.link)
+            .frame(maxWidth: .infinity)
+    }
+
+    private var resendRow: some View {
+        VStack(spacing: 0) {
+            Text("auth.verify.didnt_get_it")
+                .textStyle(.body, color: .textSecondary)
+                .padding(.bottom, 10)
+            if viewModel.isResending {
+                DropinLoader(style: .inline, size: .small)
+            } else if viewModel.canResend {
+                 Button("auth.verify.resend") { Task { await viewModel.resend() } }
+                    .buttonStyle(.plain)
+                    .textStyle(.link)
+                    .disabled(viewModel.isResending)
+            } else {
+                Text("auth.verify.resend_countdown_\(viewModel.formattedCountdown)")
+                    .textStyle(.body, color: .textTertiary)
+            }
+        }
+    }
+
+}
+
+#if DEBUG
+struct MockVerifyEmailView: View {
+    var mock: MockContainer
+    var body: some View {
+        mock.appContainer.createVerifyEmailView(email: "bat@o.surlo", password: "hunter2", context: .justSignedUp)
+    }
+
+    init() { self.mock = MockContainer() }
+}
+
+#Preview {
+    MockVerifyEmailView()
+}
+#endif

@@ -19,7 +19,8 @@ final class MockContainer {
 
     let locationManager: LocationManager = LocationManager()
     let addressLookupService: AddressLookupService
-    let reachabilityService: ReachabilityService = ReachabilityService()
+    let reachabilityService: any ReachabilityServiceProtocol = StubReachabilityService()
+    let profileService: StubProfileService = StubProfileService()
 
     init() {
         addressLookupService = AddressLookupService(locationManager: locationManager)
@@ -27,29 +28,44 @@ final class MockContainer {
         do {
             // Create a mock database
             let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
-            let mockModelContainer = try ModelContainer(for: SDPlace.self, SDTag.self, SDGroup.self,
+            let mockModelContainer = try ModelContainer(for: PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self,
                                                         configurations: modelConfiguration)
             let mockModelContext = mockModelContainer.mainContext
             mockModelContext.autosaveEnabled = false
-            
+
             self.mockModelContainer = mockModelContainer
             self.mockModelContext = mockModelContext
+
+            // Must seed the main Space (and other mock data) before constructing
+            // AppContainer, which resolves the main space synchronously at init time.
+            try AppContainer.insertMockData(modelContext: mockModelContext)
+
             self.appContainer = AppContainer(modelContext: mockModelContext,
+                                             appContext: AppContext(),
                                              locationManager: locationManager,
                                              addressLookupService: addressLookupService,
-                                             reachabilityService: reachabilityService)
-            
-            try AppContainer.insertMockData(modelContext: mockModelContext)
-            
+                                             reachabilityService: reachabilityService,
+                                             profileService: profileService)
+
         } catch {
             fatalError("couldn't create mock data \(error)")
         }
     }
+    
+    func updateReachability(_ v: Bool) {
+        (reachabilityService as? StubReachabilityService)?.isConnected = v
+    }
+    
+    func loadProfile() {
+        Task {
+            await profileService.load()
+        }
+    }
 
-    func getAllPlaceUI() -> [PlaceUI] {
+    func getAllPlaceUIModel() -> [PlaceUIModel] {
         do {
-            let sorts = [SortDescriptor(\SDPlace.name), SortDescriptor(\SDPlace.creationDate)]
-            let sdArray = try mockModelContext.fetch(FetchDescriptor<SDPlace>(sortBy: sorts)) as [SDPlace]
+            let sorts = [SortDescriptor(\PlaceRecord.name), SortDescriptor(\PlaceRecord.createdAt)]
+            let sdArray = try mockModelContext.fetch(FetchDescriptor<PlaceRecord>(sortBy: sorts)) as [PlaceRecord]
             let domainItems = sdArray.map { PlaceMapper.toDomain($0) }
             return domainItems.map { PlaceMapper.toUI($0) }
         } catch {
@@ -57,21 +73,21 @@ final class MockContainer {
         }
     }
 
-    func getAllGroupUI() -> [GroupUI] {
+    func getAllCategoryUIModel() -> [CategoryUIModel] {
         do {
-            let sorts = [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.creationDate)]
-            let sdArray = try mockModelContext.fetch(FetchDescriptor<SDGroup>(sortBy: sorts)) as [SDGroup]
-            let domainItems = sdArray.map { GroupMapper.toDomain($0) }
-            return domainItems.map { GroupMapper.toUI($0) }
+            let sorts = [SortDescriptor(\CategoryRecord.name), SortDescriptor(\CategoryRecord.createdAt)]
+            let sdArray = try mockModelContext.fetch(FetchDescriptor<CategoryRecord>(sortBy: sorts)) as [CategoryRecord]
+            let domainItems = sdArray.map { CategoryMapper.toDomain($0) }
+            return domainItems.map { CategoryMapper.toUI($0) }
         } catch {
             fatalError("couldn't retrieve place mock data \(error)")
         }
     }
 
-    func getAllTagUI() -> [TagUI] {
+    func getAllTagUI() -> [TagUIModel] {
         do {
-            let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.creationDate)]
-            let sdArray = try mockModelContext.fetch(FetchDescriptor<SDTag>(sortBy: sorts)) as [SDTag]
+            let sorts = [SortDescriptor(\TagRecord.name), SortDescriptor(\TagRecord.createdAt)]
+            let sdArray = try mockModelContext.fetch(FetchDescriptor<TagRecord>(sortBy: sorts)) as [TagRecord]
             let domainItems = sdArray.map { TagMapper.toDomain($0) }
             return domainItems.map { TagMapper.toUI($0) }
         } catch {
@@ -79,10 +95,10 @@ final class MockContainer {
         }
     }
     
-    func getPlaceUI(_ index: Int = 0) -> PlaceUI {
+    func getPlaceUIModel(_ index: Int = 0) -> PlaceUIModel {
         do {
-            let sorts = [SortDescriptor(\SDPlace.name), SortDescriptor(\SDPlace.creationDate)]
-            let sdArray = try mockModelContext.fetch(FetchDescriptor<SDPlace>(sortBy: sorts)) as [SDPlace]
+            let sorts = [SortDescriptor(\PlaceRecord.name), SortDescriptor(\PlaceRecord.createdAt)]
+            let sdArray = try mockModelContext.fetch(FetchDescriptor<PlaceRecord>(sortBy: sorts)) as [PlaceRecord]
             let domainItem = PlaceMapper.toDomain(sdArray[index])
             return PlaceMapper.toUI(domainItem)
         } catch {
@@ -90,10 +106,17 @@ final class MockContainer {
         }
     }
     
-    func getTagUI(_ index: Int = 0) -> TagUI {
+    func getNoAddressPlaceUIModel() -> PlaceUIModel {
+        guard let place = getAllPlaceUIModel().first(where: { $0.hasNoAddress }) else {
+            fatalError("no mock place without address")
+        }
+        return place
+    }
+    
+    func getTagUIModel(_ index: Int = 0) -> TagUIModel {
         do {
-            let sorts = [SortDescriptor(\SDTag.name), SortDescriptor(\SDTag.creationDate)]
-            let sdArray = try mockModelContext.fetch(FetchDescriptor<SDTag>(sortBy: sorts))
+            let sorts = [SortDescriptor(\TagRecord.name), SortDescriptor(\TagRecord.createdAt)]
+            let sdArray = try mockModelContext.fetch(FetchDescriptor<TagRecord>(sortBy: sorts))
             let domainItem = TagMapper.toDomain(sdArray[index])
             return TagMapper.toUI(domainItem)
         } catch {
@@ -101,14 +124,14 @@ final class MockContainer {
         }
     }
     
-    func getGroupUI(_ index: Int = 0) -> GroupUI {
+    func getCategoryUIModel(_ index: Int = 0) -> CategoryUIModel {
         do {
-            let sorts = [SortDescriptor(\SDGroup.name), SortDescriptor(\SDGroup.creationDate)]
-            let sdArray = try mockModelContext.fetch(FetchDescriptor<SDGroup>(sortBy: sorts))
-            let domainItem = GroupMapper.toDomain(sdArray[index])
-            return GroupMapper.toUI(domainItem)
+            let sorts = [SortDescriptor(\CategoryRecord.name), SortDescriptor(\CategoryRecord.createdAt)]
+            let sdArray = try mockModelContext.fetch(FetchDescriptor<CategoryRecord>(sortBy: sorts))
+            let domainItem = CategoryMapper.toDomain(sdArray[index])
+            return CategoryMapper.toUI(domainItem)
         } catch {
-            fatalError("couldn't retrieve group mock data \(error)")
+            fatalError("couldn't retrieve category mock data \(error)")
         }
     }
 }

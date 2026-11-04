@@ -1,0 +1,21 @@
+//
+//  FetchPlaces.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 3/10/25.
+//
+
+import Foundation
+
+@MainActor
+struct FetchPlaces: Sendable {
+    private let repository: PlaceRepository
+    
+    init(repository: PlaceRepository) {
+        self.repository = repository
+    }
+    
+    func callAsFunction(_ filter: PlaceFilter? = nil) async throws -> [Place] {
+        return try await repository.fetch(filter)
+    }
+}

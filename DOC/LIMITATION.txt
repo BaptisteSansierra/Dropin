@@ -1,0 +1,19 @@
+
+
+Known limitations 
+
+==================================
+==      Map
+. Multiple places at the same position are not handled
+
+
+==================================
+==      Import
+. What happens with DROPIN import if same file imported multiple times ?
+. What happens with MAPSTR import if same file imported multiple times ?
+
+
+==================================
+==      Image handling
+
+

@@ -1,0 +1,21 @@
+//
+//  FetchTag.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 26/1/26.
+//
+
+import Foundation
+
+@MainActor
+struct FetchTag {
+    private let repository: TagRepository
+    
+    init(repository: TagRepository) {
+        self.repository = repository
+    }
+    
+    func callAsFunction(id: UUID) async throws -> Tag {
+        return try await repository.fetch(id)
+    }
+}

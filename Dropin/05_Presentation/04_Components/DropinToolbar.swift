@@ -1,0 +1,148 @@
+//
+//  DropinToolbar.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 7/8/25.
+//
+
+import SwiftUI
+
+struct LogoToolbarView: View {
+    
+    @State private var logoVariant: DropinLogo.Variant = .logo
+    
+    var body: some View {
+        HStack {
+            Text(verbatim: "Dr")
+                .font(.titleBold)
+                .foregroundStyle(.textPrimary)
+                .padding(0)
+                .offset(x: 4, y: 0)
+            DropinLogo(variant: logoVariant,
+                       lineWidthMuliplier: 2,
+                       pinSizeMuliplier: 1.5)
+                .frame(width: 25, height: 25)
+            Text(verbatim: "pin")
+                .font(.titleBold)
+                .foregroundStyle(.textPrimary)
+                .padding(0)
+                .offset(x: -4, y: 0)
+        }
+        .onTapGesture {
+            logoVariant = DropinLogo.Variant.random(excluded: logoVariant)
+        }
+    }
+}
+
+struct BurgerToolbarView: View {
+
+    @Binding private var showingSideMenu: Bool
+    private var disabled: Bool
+
+    var body: some View {
+        Button(String(""), systemImage: "line.3.horizontal") {
+            showingSideMenu.toggle()
+        }
+        .tint(.dropinPrimary)
+        .disabled(disabled)
+    }
+
+    init(showingSideMenu: Binding<Bool>, disabled: Bool = false) {
+        self._showingSideMenu = showingSideMenu
+        self.disabled = disabled
+    }
+}
+
+struct PlusToolbarView: View {
+    @Binding private var toggleValue: Bool
+    
+    var body: some View {
+        HStack {
+            Button(String(""), systemImage: "plus") {
+                toggleValue.toggle()
+            }
+            .tint(.dropinPrimary)
+        }
+    }
+    
+    init(toggleValue: Binding<Bool>) {
+        self._toggleValue = toggleValue
+    }
+}
+
+
+/// DropinToolbar contains toolbar items shared over the app
+struct DropinToolbar {
+    
+    /// Centered dropin logo
+    struct Logo: ToolbarContent {
+        var body: some ToolbarContent {
+            ToolbarItem(placement: .principal) {
+                if #available(iOS 26.0, *) {
+                    LogoToolbarView()
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .glassEffect(.regular, in: .capsule)
+                    //                    .background {
+                    //                        Capsule()
+                    //                            .fill(.ultraThinMaterial)
+                    //                    }
+                } else {
+                    LogoToolbarView()
+                }
+            }
+        }
+    }
+    
+    /// Left burger button, toggling sidebar
+    struct Burger: ToolbarContent {
+        @Binding private var showingSideMenu: Bool
+        private var disabled: Bool
+
+        var body: some ToolbarContent {
+            ToolbarItem(placement: .topBarLeading) {
+                BurgerToolbarView(showingSideMenu: $showingSideMenu, disabled: disabled)
+            }
+        }
+
+        init(showingSideMenu: Binding<Bool>, disabled: Bool = false) {
+            self._showingSideMenu = showingSideMenu
+            self.disabled = disabled
+        }
+    }
+    
+    /// Right (+) button, toggling add place options
+    struct AddPlace: ToolbarContent {
+        @Binding private var showingCreatePlaceMenu: Bool
+
+        var body: some ToolbarContent {
+            ToolbarItem(placement: .topBarTrailing) {
+                PlusToolbarView(toggleValue: $showingCreatePlaceMenu)
+            }
+        }
+        
+        init(showingCreatePlaceMenu: Binding<Bool>) {
+            self._showingCreatePlaceMenu = showingCreatePlaceMenu
+        }
+    }
+}
+
+
+#Preview {
+    @Previewable @State var showingSideMenu: Bool = false
+    @Previewable @State var showingCreatePlaceMenu: Bool = false
+    NavigationStack {
+        VStack {
+            Text("111")
+            Text("222")
+            Text("333")
+        }
+        .toolbar {
+            DropinToolbar.Logo()
+        }
+        .toolbar {
+            DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+            DropinToolbar.AddPlace(showingCreatePlaceMenu: $showingCreatePlaceMenu)
+        }
+    }
+}

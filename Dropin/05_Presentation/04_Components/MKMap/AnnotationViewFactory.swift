@@ -1,0 +1,192 @@
+//
+//  AnnotationViewFactory.swift
+//  Dropin
+//
+//  Created by baptiste sansierra on 20/3/26.
+//
+
+import MapKit
+import SwiftUI
+
+@MainActor
+struct AnnotationViewFactory {
+
+    // DEBUG: switch Apple vs. custom Annotations
+    enum MapPinMode {
+        case apple
+        case custom
+    }
+    var mapPinMode: MapPinMode = .custom
+
+    private enum Identifiers {
+        static let applePlace = "ApplePlacePin"
+        static let dot = "PlaceDot"
+        static let tempPlace = "TmpPlacePin"
+        static let cluster = "ClusterPin"
+        static let promotedPlace = "PromotedPlace"
+    }
+
+    private var mapSettings: MapSettings
+    // See `PlacesMKMapVCR.Configuration.displayAllPins`.
+    private var displayAllPins: Bool
+    // Applied to full pins + dots at creation time; see `refreshPinsOpacity`
+    // for keeping already-created views in sync when this changes.
+    var pinsOpacity: CGFloat = 1.0
+
+    init(mapSettings: MapSettings, displayAllPins: Bool = false) {
+        self.mapSettings = mapSettings
+        self.displayAllPins = displayAllPins
+    }
+
+    func registerViews(for mapView: MKMapView) {
+        mapView.register(PlaceAnnotationView.self,
+                         forAnnotationViewWithReuseIdentifier: Identifiers.tempPlace)
+        if mapPinMode == .apple {
+            mapView.register(MKMarkerAnnotationView.self,
+                             forAnnotationViewWithReuseIdentifier: Identifiers.applePlace)
+        } else {
+            mapView.register(DotAnnotationView.self,
+                             forAnnotationViewWithReuseIdentifier: Identifiers.dot)
+            mapView.register(PlaceAnnotationView.self,
+                             forAnnotationViewWithReuseIdentifier: Identifiers.promotedPlace)
+        }
+
+        mapView.register(MKMarkerAnnotationView.self,
+                         forAnnotationViewWithReuseIdentifier: Identifiers.cluster)
+    }
+
+    func view(for annotation: MKAnnotation,
+              in mapView: MKMapView) -> MKAnnotationView? {
+        // User location
+        if annotation is MKUserLocation {
+            return nil
+        }
+
+        // Cluster
+        if let cluster = annotation as? MKClusterAnnotation {
+            return createClusterView(for: cluster, on: mapView)
+        }
+
+        // Temporary place (used for creation)
+        if let tmp = annotation as? MKDraftPlaceAnnotation {
+            return createTmpPlaceView(for: tmp, on: mapView)
+        }
+
+        if mapPinMode == .apple {
+            guard let placeAnnotation = annotation as? MKPlaceAnnotationRepresentable else { return nil }
+            return createPlaceAppleMarkerView(for: placeAnnotation, on: mapView)
+        }
+        
+        // Full pins
+        if let pinAnnotation = annotation as? MKPlacePromotedAnnotation {
+            return createPlaceView(for: pinAnnotation, on: mapView)
+        }
+
+        // Dots
+        if let dotAnnotation = annotation as? MKPlaceDotAnnotation, !mapSettings.clustering {
+            return createDotView(for: dotAnnotation, on: mapView)
+        }
+
+        return nil
+    }
+
+
+    private func createClusterView(for cluster: MKClusterAnnotation,
+                                          on mapView: MKMapView) -> MKAnnotationView {
+        let identifier = Identifiers.cluster
+        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
+                                                         for: cluster) as? MKMarkerAnnotationView
+            ?? MKMarkerAnnotationView(annotation: cluster, reuseIdentifier: identifier)
+        view.markerTintColor = .systemBlue
+        view.glyphText = "\(cluster.memberAnnotations.count)"
+        view.displayPriority = .required
+        return view
+    }
+
+    private func createTmpPlaceView(for placeAnnotation: MKDraftPlaceAnnotation,
+                                           on mapView: MKMapView) -> MKAnnotationView {
+        let identifier = Identifiers.tempPlace
+        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
+                                                         for: placeAnnotation) as? PlaceAnnotationView
+            ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+        view.annotation = placeAnnotation
+        view.temporary = true
+        view.isEnabled = false
+        view.canShowCallout = false
+        // No place identity yet, use a neutral color
+        view.configure(color: UIColor(Color.dropinPrimary),
+                       icon: nil,
+                       iconExtra: nil,
+                       pinStyle: mapSettings.pinStyle,
+                       size: mapSettings.pinSize,
+                       title: nil,
+                       showLabel: false)
+        return view
+    }
+
+    // Create an apple default Marker (development only)
+    private func createPlaceAppleMarkerView(for placeAnnotation: any MKPlaceAnnotationRepresentable,
+                                            on mapView: MKMapView) -> MKAnnotationView {
+        let identifier = Identifiers.applePlace
+        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
+                                                         for: placeAnnotation) as? MKMarkerAnnotationView
+            ?? MKMarkerAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+        view.annotation = placeAnnotation
+        view.markerTintColor = UIColor(placeAnnotation.place.category?.color ?? .gray)
+        if let category = placeAnnotation.place.category {
+            view.glyphImage = UIImage(icon: category.icon)
+        }
+        view.canShowCallout = true
+        if mapSettings.clustering {
+            view.clusteringIdentifier = "PlaceCluster"
+        }
+        return view
+    }
+
+    // Create a regular place (promoted overlay, or the base annotation when clustering is on)
+    private func createPlaceView(for placeAnnotation: any MKPlaceAnnotationRepresentable,
+                                 on mapView: MKMapView) -> MKAnnotationView {
+        let identifier = Identifiers.promotedPlace
+        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
+                                                         for: placeAnnotation) as? PlaceAnnotationView
+            ?? PlaceAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+        view.annotation = placeAnnotation
+        view.displayPriority = displayAllPins ? .required : .defaultHigh
+        view.collisionMode = DropinApp.map.usePinPromotionLogic ? .circle : .rectangle
+        view.alpha = pinsOpacity
+        view.configure(color: placeAnnotation.color,
+                       icon: placeAnnotation.place.category?.icon,
+                       iconExtra: placeAnnotation.place.icon,
+                       pinStyle: mapSettings.pinStyle,
+                       size: mapSettings.pinSize,
+                       title: placeAnnotation.place.name,
+                       showLabel: declutterState(for: mapView))
+        if mapSettings.clustering {
+            view.clusteringIdentifier = "PlaceCluster"
+        }
+        return view
+    }
+
+    // Create a dot for a place not currently promoted (no-cluster mode only)
+    private func createDotView(for placeAnnotation: MKPlaceDotAnnotation,
+                               on mapView: MKMapView) -> MKAnnotationView {
+        let identifier = Identifiers.dot
+        let view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier,
+                                                         for: placeAnnotation) as? DotAnnotationView
+            ?? DotAnnotationView(annotation: placeAnnotation, reuseIdentifier: identifier)
+        view.annotation = placeAnnotation
+        view.configure(color: placeAnnotation.color)
+        view.alpha = pinsOpacity
+        view.clusteringIdentifier = nil
+        return view
+    }
+
+    // MARK: - Declutter
+
+    /// Single source of truth for whether labels should show at the current
+    /// camera altitude. Used both at annotation-view creation time and by
+    /// `Coordinator` when refreshing already-created views on camera settle.
+    func declutterState(for mapView: MKMapView) -> Bool {
+        mapView.camera.altitude < DropinApp.map.mapLabelHideAltitude
+    }
+}

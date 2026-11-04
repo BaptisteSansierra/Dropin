@@ -8,18 +8,27 @@
 import SwiftUI
 
 @MainActor
-@Observable class TagCoordinator {
+@Observable class TagCoordinator: PlaceNavigationCoordinator {
     
     var path: [TagNavigationItem] = [] {
         didSet {
-            print("TAG COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
+            //Log.info("TAG COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
         }
     }
     
-    func pushTagDetailsView(tagId: String) {
+    // MARK: navigation methods
+    func pushPlaceEditView(placeRef: PlaceUIModelRef) {
+        path.append(TagNavigationItem.tagPlace(placeRef: placeRef))
+    }
+
+    func pushTagDetailsView(tagId: UUID) {
         path.append(TagNavigationItem.tagDetails(tagId: tagId))
     }
     
+    func pushTagMapView(tagId: UUID) {
+        path.append(TagNavigationItem.tagMap(tagId: tagId))
+    }
+
     func pushUndefinedDummyView() {
         path.append(TagNavigationItem.undefinedDummyView)
     }
@@ -30,7 +39,9 @@ import SwiftUI
 }
 
 enum TagNavigationItem: Hashable {
-    case tagDetails(tagId: String)
+    case tagDetails(tagId: UUID)
+    case tagMap(tagId: UUID)
+    case tagPlace(placeRef: PlaceUIModelRef)
     // development
     case undefinedDummyView
 }
