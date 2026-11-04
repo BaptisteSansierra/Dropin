@@ -300,4 +300,93 @@ struct App_SyncService {
 
         #expect(sut.pendingReachabilityTask == nil)
     }
+
+    // MARK: - stop / start (sign-out)
+
+    @Test func stopDropsPendingChanges() async throws {
+        let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let localRepo = MockPlaceRepository(initialPlaces: [place])
+        let remoteRepo = MockRemotePlaceRepository()
+        let reachability = MockReachabilityService(isConnected: false)
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo, reachability: reachability)
+        sut.markPlaceDirty(place.id)   // queued while offline
+        sut.markProfileDirty()
+        #expect(sut.pendingChangeCount > 0)
+
+        await sut.stop()
+        #expect(sut.pendingChangeCount == 0)
+
+        // Next user: nothing left from the previous one
+        sut.start()
+        reachability.isConnected = true
+        await sut.pendingReachabilityTask?.value
+        #expect(remoteRepo.upsertedPlaces.isEmpty)
+    }
+
+    @Test func stopResetsLastSyncedAt() async throws {
+        let sut = makeSUT()
+        await sut.syncAll()
+        #expect(sut.syncStatus.lastSyncedAt != nil)
+
+        await sut.stop()
+
+        #expect(sut.syncStatus.lastSyncedAt == nil)
+    }
+
+    @Test func noSyncWhileStopped() async throws {
+        let remotePlace = Place(id: UUID(), name: "Remote Place", coordinates: .london, address: "London", spaceId: UUID())
+        let localPlace = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let localRepo = MockPlaceRepository(initialPlaces: [localPlace])
+        let remoteRepo = MockRemotePlaceRepository(placesToReturn: [remotePlace])
+        let reachability = MockReachabilityService(isConnected: false)
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo, reachability: reachability)
+        await sut.stop()
+
+        sut.markPlaceDirty(localPlace.id)
+        reachability.isConnected = true
+        await sut.pendingReachabilityTask?.value
+        await sut.syncAll()
+
+        // No push, no pull
+        #expect(remoteRepo.upsertedPlaces.isEmpty)
+        await #expect(throws: (any Error).self) { try await localRepo.fetch(remotePlace.id) }
+    }
+
+    @Test func startResumesSync() async throws {
+        let place = Place(id: UUID(), name: "Test Place", coordinates: .london, address: "")
+        let localRepo = MockPlaceRepository(initialPlaces: [place])
+        let remoteRepo = MockRemotePlaceRepository()
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
+        await sut.stop()
+        sut.markPlaceDirty(place.id)   // marked while stopped: kept, not pushed
+
+        sut.start()
+        await sut.syncAll()
+
+        #expect(remoteRepo.upsertedPlaces.map(\.id) == [place.id])
+    }
+
+    @Test func stopCancelsInFlightPushWithoutRequeuing() async throws {
+        let places = (0..<3).map { Place(id: UUID(), name: "Place \($0)", coordinates: .london, address: "") }
+        let localRepo = MockPlaceRepository(initialPlaces: places)
+        let remoteRepo = MockRemotePlaceRepository()
+        remoteRepo.upsertDelay = .seconds(30)
+        let sut = makeSUT(localPlaceRepo: localRepo, remotePlaceRepo: remoteRepo)
+        places.forEach { sut.markPlaceDirty($0.id) }
+
+        // Wait for the push to be stuck on the first upsert
+        var yields = 0
+        while remoteRepo.upsertStartedCount == 0, yields < 10_000 {
+            await Task.yield()
+            yields += 1
+        }
+        try #require(remoteRepo.upsertStartedCount == 1)
+
+        await sut.stop()
+
+        // The cancelled push didn't go on with the other places, and nothing was re-queued
+        #expect(remoteRepo.upsertStartedCount == 1)
+        #expect(remoteRepo.upsertedPlaces.isEmpty)
+        #expect(sut.pendingChangeCount == 0)
+    }
 }

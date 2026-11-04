@@ -24,7 +24,7 @@ final class SupabasePlaceImageRepository: RemotePlaceImageRepository {
     }
 
     func upload(imageId: UUID, placeId: UUID, full: Data, thumbnail: Data) async throws {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let fullPath  = Self.fullPath(userId: userId, placeId: placeId, imageId: imageId)
         let thumbPath = Self.thumbPath(userId: userId, placeId: placeId, imageId: imageId)
         let opts = FileOptions(contentType: "image/jpeg", upsert: true)
@@ -35,7 +35,7 @@ final class SupabasePlaceImageRepository: RemotePlaceImageRepository {
     }
 
     func delete(imageId: UUID, placeId: UUID) async throws {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let paths = [Self.fullPath(userId: userId, placeId: placeId, imageId: imageId),
                      Self.thumbPath(userId: userId, placeId: placeId, imageId: imageId)]
         // Storage remove tolerates missing paths.
@@ -44,17 +44,17 @@ final class SupabasePlaceImageRepository: RemotePlaceImageRepository {
     }
 
     func downloadThumbnail(imageId: UUID, placeId: UUID) async throws -> Data? {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         return try await download(path: Self.thumbPath(userId: userId, placeId: placeId, imageId: imageId))
     }
 
     func downloadFull(imageId: UUID, placeId: UUID) async throws -> Data? {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         return try await download(path: Self.fullPath(userId: userId, placeId: placeId, imageId: imageId))
     }
 
     func fetch(createdAfter date: Date) async throws -> [RemotePlaceImageRef] {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabasePlaceImageDTO] = try await SupabasePaginator.fetchAll { from, to in
             client
@@ -69,11 +69,6 @@ final class SupabasePlaceImageRepository: RemotePlaceImageRepository {
 
     // MARK: - Private
 
-    @MainActor
-    private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
-        return session.userId
-    }
 
     private func download(path: String) async throws -> Data? {
         do {

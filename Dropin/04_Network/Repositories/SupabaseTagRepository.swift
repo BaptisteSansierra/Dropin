@@ -22,13 +22,13 @@ final class SupabaseTagRepository: RemoteTagRepository {
     }
 
     func upsert(_ tag: Tag) async throws {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let dto = SupabaseTagDTO(from: tag, userId: userId)
         try await client.from("tags").upsert(dto, onConflict: "id").execute()
     }
 
     func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Tag] {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabaseTagDTO] = try await SupabasePaginator.fetchAll { from, to in
             var query = client
@@ -43,11 +43,5 @@ final class SupabaseTagRepository: RemoteTagRepository {
                 .range(from: from, to: to)
         }
         return dtos.map { $0.toDomain() }
-    }
-
-    @MainActor
-    private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
-        return session.userId
     }
 }

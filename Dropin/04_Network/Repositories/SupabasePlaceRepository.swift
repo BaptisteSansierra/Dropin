@@ -22,7 +22,7 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
     }
 
     func upsert(_ place: Place) async throws {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let dto = SupabasePlaceDTO(from: place, userId: userId)
         //Log.debug("UPSERT PLACE DTO with GROUP:\(dto.categoryId)")
         try await client.from("places").upsert(dto, onConflict: "id").execute()
@@ -32,7 +32,7 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
 
     // DEBUG purpose
     func fetch(placeId: UUID) async throws -> Place? {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         let dtos: [SupabasePlaceDTO] = try await client
             .from("places")
             .select()
@@ -43,7 +43,7 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
     }
 
     func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Place] {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabasePlaceDTO] = try await SupabasePaginator.fetchAll { from, to in
             var query = client
@@ -58,11 +58,5 @@ final class SupabasePlaceRepository: RemotePlaceRepository {
                 .range(from: from, to: to)
         }
         return dtos.map { $0.toDomain() }
-    }
-
-    @MainActor
-    private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
-        return session.userId
     }
 }

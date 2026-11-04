@@ -27,7 +27,8 @@ struct AppSyncing_PlaceRepository {
         func markImagesChanged() {}
         func markProfileDirty() {}
         func syncAll() async {}
-        func reset() {}
+        func start() {}
+        func stop() async {}
     }
 
     // Regression: UpdatePlace used to be suspected of needing to stamp updatedAt

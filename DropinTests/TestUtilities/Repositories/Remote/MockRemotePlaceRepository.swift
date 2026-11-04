@@ -9,6 +9,9 @@ final class MockRemotePlaceRepository: RemotePlaceRepository, @unchecked Sendabl
     private(set) var upsertedPlaces: [Place] = []
     var placesToReturn: [Place]
     var shouldThrowOnUpsert = false
+    /// Keeps `upsert` in flight (cancellable sleep), to test cancellation mid-push
+    var upsertDelay: Duration?
+    private(set) var upsertStartedCount = 0
 
     init() {
         self.placesToReturn = []
@@ -19,6 +22,8 @@ final class MockRemotePlaceRepository: RemotePlaceRepository, @unchecked Sendabl
     }
 
     func upsert(_ place: Place) async throws {
+        upsertStartedCount += 1
+        if let upsertDelay { try await Task.sleep(for: upsertDelay) }
         if shouldThrowOnUpsert { throw MockSyncError.intentional }
         upsertedPlaces.append(place)
     }

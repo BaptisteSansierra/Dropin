@@ -22,7 +22,8 @@ final class StubSyncService: SyncServiceProtocol, SyncServicePausableProtocol {
     func markImagesChanged() {}
     func markProfileDirty() {}
     func syncAll() async {}
-    func reset() {}
+    func start() {}
+    func stop() async {}
     func withPausedPushes<T>(_ body: () async throws -> T) async rethrows -> T {
         try await body()
     }

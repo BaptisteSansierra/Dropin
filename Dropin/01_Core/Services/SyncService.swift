@@ -17,7 +17,13 @@ protocol SyncServiceProtocol: AnyObject {
     func markImagesChanged()
     func markProfileDirty()
     func syncAll() async
-    func reset()
+    /// Re-enables syncing after `stop()` (next signed-in user)
+    func start()
+    /// Sign-out: blocks any new pull/push, cancels and awaits the in-flight ones,
+    /// then drops every pending change and the last sync date.
+    /// Must run before local data is wiped and before the session is cleared,
+    /// so nothing is pushed as the next user, or as anon (supabase-swift falls back to the anon key without a session).
+    func stop() async
 }
 
 /// Narrow surface for callers that only need to batch a series of mutations
@@ -64,6 +70,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     // Batch primitive: when true, mark*Dirty still accumulates IDs in the dirty
     // sets but does NOT fire a push task. Set via `withPausedPushes`.
     private var pushesPaused: Bool = false
+
+    // Set by `stop()`, cleared by `start()`: no pull or push in between.
+    private var isStopped: Bool = false
+    // In-flight `syncAll` work, tracked so `stop()` can cancel and await it.
+    private var syncTask: Task<Void, Never>?
 
     // MARK: - Pending change accounting
     var pendingChangeCount: Int {
@@ -145,7 +156,23 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     }
 
     // MARK: - SyncServiceProtocol
-    func reset() {
+    func start() {
+        isStopped = false
+    }
+
+    func stop() async {
+        isStopped = true
+        syncTask?.cancel()
+        pushTask?.cancel()
+        pendingReachabilityTask?.cancel()
+        await syncTask?.value
+        await pushTask?.value
+        await pendingReachabilityTask?.value
+        // After the awaits: a failed push re-inserts its id into the dirty sets
+        reset()
+    }
+
+    private func reset() {
         // Reset last sync date
         userDefaults.removeObject(forKey: DropinApp.userDefaultsKeys.lastSyncedAt)
         // Reset sync status
@@ -156,6 +183,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         dirtyTagIds.removeAll()
         dirtySpaceIds.removeAll()
         dirtyProfile = false
+        pendingPush = false
     }
 
     func markPlaceDirty(_ id: UUID) {
@@ -195,12 +223,18 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
 
     /// Pull remote changes then flush dirty queue. No-op if already syncing.
     func syncAll() async {
+        guard !isStopped else { return }
         guard !syncStatus.isSyncing else { return }
         guard reachability.isConnected else { return }
         syncStatus.isSyncing = true
-        defer { syncStatus.isSyncing = false }
-        await pull()
-        await pushIfOnline()
+        let task = Task {
+            await self.pull()
+            await self.pushIfOnline()
+        }
+        syncTask = task
+        await task.value
+        syncTask = nil
+        syncStatus.isSyncing = false
     }
 
     // MARK: - SyncServicePausableProtocol
@@ -231,6 +265,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     /// While `pushesPaused` is true, mark*Dirty still accumulates IDs but no
     /// push task is fired — the flush happens when the pause is lifted.
     private func schedulePush() {
+        guard !isStopped else { return }
         guard !pushesPaused else { return }
         guard pushTask == nil else { pendingPush = true; return }
         pushTask = Task {
@@ -243,10 +278,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         repeat {
             pendingPush = false
             await pushIfOnline()
-        } while pendingPush
+        } while pendingPush && !Task.isCancelled
     }
 
     private func pushIfOnline() async {
+        guard !Task.isCancelled else { return }
         guard reachability.isConnected else { return }
         await push()
     }
@@ -287,6 +323,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         let ids = dirtySpaceIds
         dirtySpaceIds.removeAll()
         for id in ids {
+            guard !Task.isCancelled else { return }
             do {
                 let space = try await localSpaceRepo.fetch(id)
                 try await remoteSpaceRepo.upsert(space)
@@ -305,6 +342,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         let ids = dirtyPlaceIds
         dirtyPlaceIds.removeAll()
         for id in ids {
+            guard !Task.isCancelled else { return }
             do {
                 let place = try await localPlaceRepo.fetch(id)
                 try await remotePlaceRepo.upsert(place)
@@ -325,6 +363,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         let ids = dirtyCategoryIds
         dirtyCategoryIds.removeAll()
         for id in ids {
+            guard !Task.isCancelled else { return }
             do {
                 let category = try await localCategoryRepo.fetch(id)
                 try await remoteCategoryRepo.upsert(category)
@@ -343,6 +382,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         let ids = dirtyTagIds
         dirtyTagIds.removeAll()
         for id in ids {
+            guard !Task.isCancelled else { return }
             do {
                 let tag = try await localTagRepo.fetch(id)
                 try await remoteTagRepo.upsert(tag)
@@ -361,6 +401,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         do {
             let refs = try await localImageRepo.fetchUnsynced()
             for ref in refs {
+                guard !Task.isCancelled else { return }
                 do {
                     try await remoteImageRepo.upload(imageId: ref.id,
                                                      placeId: ref.placeId,
@@ -382,6 +423,7 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
         do {
             let pending = try await localImageRepo.fetchPendingDelete()
             for (id, placeId) in pending {
+                guard !Task.isCancelled else { return }
                 do {
                     try await remoteImageRepo.delete(imageId: id, placeId: placeId)
                     try await localImageRepo.hardDelete(id: id)

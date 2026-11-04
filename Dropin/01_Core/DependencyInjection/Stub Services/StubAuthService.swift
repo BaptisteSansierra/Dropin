@@ -15,6 +15,12 @@ import Foundation
 final class StubAuthService: AuthServiceProtocol {
     var session: UserSession? = nil
     var isAuthenticated: Bool { session != nil }
+    var onSessionLost: (() -> Void)?
+
+    func requireUserId() async throws -> UUID {
+        guard let session else { throw AuthServiceError.notAuthenticated }
+        return session.userId
+    }
 
     func signUp(email: String, password: String) async throws {}
     func signIn(email: String, password: String) async throws {}

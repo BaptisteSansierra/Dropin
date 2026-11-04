@@ -211,7 +211,7 @@ struct DropinApp: App {
                     appContainer.createRootView()
                         .task {
                             await appContainer.loadProfile()
-                            await appContainer.syncAll()
+                            await appContainer.startSync()
                         }
                     ZStack {
                         Color.overlayAlphaLayer

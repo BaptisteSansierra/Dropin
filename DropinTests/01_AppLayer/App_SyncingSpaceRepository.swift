@@ -24,7 +24,8 @@ struct AppSyncing_SpaceRepository {
         func markImagesChanged() {}
         func markProfileDirty() {}
         func syncAll() async {}
-        func reset() {}
+        func start() {}
+        func stop() async {}
     }
 
     private func makeSpace() -> Space {

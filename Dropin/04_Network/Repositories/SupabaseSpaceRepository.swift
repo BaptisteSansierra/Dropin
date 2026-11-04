@@ -22,13 +22,13 @@ final class SupabaseSpaceRepository: RemoteSpaceRepository {
     }
 
     func upsert(_ space: Space) async throws {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         let dto = SupabaseSpaceDTO(from: space)
         try await client.from("spaces").upsert(dto, onConflict: "id").execute()
     }
 
     func fetch(updatedAfter date: Date, excludeDeleted: Bool) async throws -> [Space] {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabaseSpaceDTO] = try await SupabasePaginator.fetchAll { from, to in
             var query = client
@@ -43,11 +43,5 @@ final class SupabaseSpaceRepository: RemoteSpaceRepository {
                 .range(from: from, to: to)
         }
         return dtos.map { $0.toDomain() }
-    }
-
-    @MainActor
-    private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
-        return session.userId
     }
 }

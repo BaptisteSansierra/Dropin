@@ -127,6 +127,11 @@ final class AppContainer {
         // Not entity-specific, not wrapped: save()/rollback() act on the whole
         // shared modelContext, so there's nothing for a Syncing decorator to do.
         generalRepository = GeneralRepositoryImpl(modelContext: modelContext)
+        
+        // Handle session lost 
+        authService.onSessionLost = { [weak self] in
+            Task { await self?.handleSessionLost() }
+        }
     }
 
     #if DEBUG
@@ -180,6 +185,12 @@ final class AppContainer {
         await syncService.syncAll()
     }
 
+    /// Signed in (sign-in, sign-up or restored session): re-enables sync stopped by a previous sign-out, then syncs.
+    func startSync() async {
+        syncService.start()
+        await syncService.syncAll()
+    }
+
     /// Current user's display name, e.g. for the share-sheet message's sender attribution.
     var currentDisplayName: String? { profileService.profile?.displayName }
 
@@ -210,15 +221,12 @@ final class AppContainer {
 
     /// Signs the user out and wipes local data.
     /// - If `force == false` and there are pending changes:
-    ///   - online → attempts a sync first; if it leaves changes pending, throws
-    ///     `.syncFailedWithPendingChanges`.
+    ///   - online → attempts a sync first; if it leaves changes pending, throws `.syncFailedWithPendingChanges`.
     ///   - offline → throws `.offlineWithPendingChanges`.
-    /// - If `force == true`, skips the sync check entirely. Use after the user
-    ///   has accepted that unsynced changes will be lost.
+    /// - If `force == true`, skips the sync check entirely. Use after the user has accepted that unsynced changes will be lost.
     ///
-    /// Cleanup order (intentional): try sync → in-memory caches → local data
-    /// → session. The session flip is last so the UI only switches to the sign-in flow
-    /// once everything else is clean.
+    /// Cleanup order (intentional): try sync → in-memory caches → local data → session.
+    /// The session flip is last so the UI only switches to the sign-in flow once everything else is clean.
     func signOut(force: Bool = false, didStartClearingSession: (() -> Void)) async throws {
         Log.debug("Signout (forced:\(force)")
         if !force {
@@ -252,13 +260,28 @@ final class AppContainer {
         tagCoordinator.path.removeAll()
         groupCoordinator.path.removeAll()
         appContext.currentSideMenuContext = .main
-        // 3. Local data
+        // 3. Sync: before wiping local data and the session: nothing must be pushed in between
+        await syncService.stop()
+        // 4. Local data
         try await clearDatabase()
-        syncService.reset()
-        // 4. Session — last; AuthStatus flips → root switches to the sign-in flow
+        // 5. Session: last; AuthStatus flips → root switches to the sign-in flow
         try await authService.signOut()
         
         authStatus.isSigningOut = false
+    }
+
+    // MARK: - session lost
+
+    /// The session can't be renewed (revoked, password changed, deleted user…): forced sign-out.
+    /// Unsynced changes are lost, they can't be pushed anymore.
+    private func handleSessionLost() async {
+        guard !authStatus.isSigningOut else { return }
+        Log.warning("Session lost, forced sign-out")
+        do {
+            try await signOut(force: true, didStartClearingSession: {})
+        } catch {
+            Log.error("Sign-out after session lost failed: \(error)")
+        }
     }
 
     // MARK: - delete account
@@ -277,8 +300,8 @@ final class AppContainer {
         tagCoordinator.path.removeAll()
         groupCoordinator.path.removeAll()
         appContext.currentSideMenuContext = .main
+        await syncService.stop()
         try await clearDatabase()
-        syncService.reset()
         try await authService.signOut()
         authStatus.isSigningOut = false
     }

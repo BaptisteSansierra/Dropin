@@ -22,7 +22,7 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
     }
 
     func fetch() async throws -> Profile? {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let dtos: [SupabaseProfileDTO] = try await client
             .from("profiles")
             .select()
@@ -34,7 +34,7 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
     }
 
     func fetch(updatedAfter date: Date) async throws -> Profile? {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let dateStr = Self.dateFormatter.string(from: date)
         let dtos: [SupabaseProfileDTO] = try await client
             .from("profiles")
@@ -50,16 +50,10 @@ final class SupabaseProfileRepository: RemoteProfileRepository {
     /// display_name is the only column `authenticated` may write (cf. migration 20261029000002_profiles_lock_plan).
     /// Every other column is server-owned and comes back through the profile pull.
     func updateDisplayName(_ profile: Profile) async throws {
-        _ = try await requireUserId()
+        _ = try await auth.requireUserId()
         try await client.from("profiles")
             .update(["display_name": profile.displayName])
             .eq("id", value: profile.id)
             .execute()
-    }
-
-    @MainActor
-    private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
-        return session.userId
     }
 }

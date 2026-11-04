@@ -23,6 +23,13 @@ enum AuthServiceError: Error, Equatable {
 protocol AuthServiceProtocol: AnyObject, Sendable {
     var session: UserSession? { get }
     var isAuthenticated: Bool { get }
+    /// Called once when the session is gone for good (revoked, expired refresh token, deleted user…)
+    /// without the user signing out. The owner is expected to run the full sign-out cleanup.
+    var onSessionLost: (() -> Void)? { get set }
+
+    /// Signed-in user id, guaranteed to be backed by a valid client session (refreshed if needed).
+    /// Throws `notAuthenticated` if there's no session; network errors are rethrown as is.
+    func requireUserId() async throws -> UUID
 
     func signUp(email: String, password: String) async throws
     func signIn(email: String, password: String) async throws
@@ -43,12 +50,18 @@ final class AuthService: AuthServiceProtocol {
         }
     }
     var isAuthenticated: Bool { session != nil }
+    var onSessionLost: (() -> Void)?
     
     private let client: SupabaseClient
     private let reachability: any ReachabilityServiceProtocol
     
     private var signingIn = false
     private var signingUp = false
+    /// Set during `signOut()`: the client session is removed before `session` is cleared,
+    /// that window must not be mistaken for a lost session.
+    private var signingOut = false
+    /// `onSessionLost` is reported once, until the resulting sign-out completes.
+    private var sessionLostReported = false
     private var authStateTask: Task<Void, Never>?
     private var signInTimeoutInterval = 15
     private var signUpTimeoutInterval = 15
@@ -133,9 +146,12 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func signOut() async throws {
+        signingOut = true
         defer {
             // Success or not (maybe offline), we're clearing session locally
             session = nil
+            signingOut = false
+            sessionLostReported = false
         }
         do {
             try await signoutWithTimeout()
@@ -181,8 +197,11 @@ final class AuthService: AuthServiceProtocol {
         } catch let error as Supabase.AuthError {
             switch error {
                 case .sessionMissing:
-                    // We found a currentSession but session call says otherwise ?...
-                    Log.error("[restoreSession] currentSession defined but session says 'sessionMissing'")
+                    // Refresh rejected (revoked session, deleted user…): supabase removed the stored session,
+                    // there's nothing left to restore
+                    Log.warning("[restoreSession] session could not be refreshed, it is lost")
+                    reportSessionLost()
+                    return
                 default:
                     Log.error("[restoreSession] Supabase error(\(error.errorCode)): \(error)")
             }
@@ -207,7 +226,31 @@ final class AuthService: AuthServiceProtocol {
         }
     }
     
+    /// supabase-swift silently falls back to the anon key when it has no session
+    /// (`SupabaseClient.adapt(request:)` does `try? await auth.session.accessToken`),
+    /// so checking `session` alone isn't enough: the client must still have one too.
+    /// `client.auth.session` refreshes an expired access token; a network failure there is rethrown
+    /// as is (session still stored, the caller retries later).
+    func requireUserId() async throws -> UUID {
+        guard let session else { throw AuthServiceError.notAuthenticated }
+        do {
+            _ = try await client.auth.session
+        } catch AuthError.sessionMissing {
+            reportSessionLost()
+            throw AuthServiceError.notAuthenticated
+        }
+        return session.userId
+    }
+
     // MARK: - private methods
+    private func reportSessionLost() {
+        guard !signingOut, !sessionLostReported else { return }
+        sessionLostReported = true
+        Log.warning("Session lost, signing out")
+        DropinTracker.shared.capture("Session lost", authFlow: .session_lost)
+        onSessionLost?()
+    }
+
     private func updateTrackedUser() {
         guard let session = session else {
             DropinTracker.shared.resetUser()
@@ -236,19 +279,27 @@ final class AuthService: AuthServiceProtocol {
                         self.setSession(UserSession(userId: supaSession.user.id, email: supaSession.user.email))
                         Log.info("Auth state changed (\(event)): \(supaSession.user.email ?? "N/A")")
                     case .signedOut:
-                        // FIXME: DRO-54 :
                         /*
-   Supabase is configured so the refresh token never expires on its own (a session lasts indefinitely) and multiple sessions per user are allowed
-   .signedOut would only realistically happen from:
-     - the user actually signing out
-     - a password change
-     - account deletion/explicit revoke
+                         Supabase is configured so the refresh token never expires on its own (a session lasts indefinitely)
+                         and multiple sessions per user are allowed, .signedOut would only realistically happen from:
+                            - the user actually signing out (handled by signOut(), ignored here)
+                            - a password change
+                            - account deletion/explicit revoke
                          */
-                        self.setSession(nil)
+                        guard !self.signingOut else {
+                            Log.info(".signedOut received from Supabase while user is effectively signing out, ignore")
+                            break
+                        }
+                        guard self.session != nil else { break }
+                        self.reportSessionLost()
                     case .userDeleted:
-                        // It seems this case is never triggered by supabase
-                        // anyway FIXME: DRO-54
-                        self.setSession(nil)
+                        /*
+                         .userDeleted seems to never be triggered by supabase
+                         Not signing out ourselves: the session is lost, the owner runs the full sign-out cleanup,
+                         which clears `session` last
+                         */
+                        guard self.session != nil else { break }
+                        self.reportSessionLost()
                     case .initialSession, .passwordRecovery, .mfaChallengeVerified:
                         break
                     @unknown default:

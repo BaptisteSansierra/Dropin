@@ -29,7 +29,7 @@ final class ShareService: ShareServiceProtocol {
     }
 
     func shareURL(placeId: UUID) async throws -> URL {
-        let userId = try await requireUserId()
+        let userId = try await auth.requireUserId()
         let shareId: UUID
         if let existing = try await existingActiveShareId(placeId: placeId, userId: userId) {
             shareId = existing
@@ -83,11 +83,5 @@ final class ShareService: ShareServiceProtocol {
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
         components.queryItems = [URLQueryItem(name: "id", value: shareId.uuidString)]
         return components.url!
-    }
-
-    @MainActor
-    private func requireUserId() throws -> UUID {
-        guard let session = auth.session else { throw AuthServiceError.notAuthenticated }
-        return session.userId
     }
 }
