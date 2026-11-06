@@ -13,9 +13,16 @@ import Foundation
 
 @MainActor
 final class StubAuthService: AuthServiceProtocol {
+    
     var session: UserSession? = nil
     var isAuthenticated: Bool { session != nil }
     var onSessionLost: (() -> Void)?
+    private let restoredSession: UserSession?
+
+    /// `restoredSession`: session set by `restoreSession()` (signed-in launch), nil → sign-in flow
+    init(restoredSession: UserSession? = nil) {
+        self.restoredSession = restoredSession
+    }
 
     func requireUserId() async throws -> UUID {
         guard let session else { throw AuthServiceError.notAuthenticated }
@@ -29,7 +36,7 @@ final class StubAuthService: AuthServiceProtocol {
     func resendVerificationEmail(email: String) async throws {}
     func signOut() async throws { session = nil }
     func deleteAccount() async throws { session = nil }
-    func restoreSession() async {}
+    func restoreSession() async { session = restoredSession }
 }
 
 #endif

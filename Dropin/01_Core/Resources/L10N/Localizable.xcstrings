@@ -927,6 +927,23 @@
         }
       }
     },
+    "auth.error.invalid_credentials" : {
+      "comment" : "Sign in error: wrong email or password",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incorrect email or password. Please try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-mail ou mot de passe incorrect. Veuillez réessayer."
+          }
+        }
+      }
+    },
     "auth.error.invalid_email" : {
       "comment" : "Inline validation error on the auth screens",
       "extractionState" : "manual",
@@ -2727,6 +2744,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard"
+          }
+        }
+      }
+    },
+    "common.menu" : {
+      "comment" : "Burger button accessibility label (VoiceOver), opens the side menu",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu"
           }
         }
       }
@@ -6030,6 +6064,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rechercher un nom ou une adresse"
+          }
+        }
+      }
+    },
+    "place_sheet.menu.contact" : {
+      "comment" : "Place sheet tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact"
+          }
+        }
+      }
+    },
+    "place_sheet.menu.overview" : {
+      "comment" : "Place sheet tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overview"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperçu"
           }
         }
       }

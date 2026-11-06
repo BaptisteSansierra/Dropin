@@ -40,9 +40,11 @@ struct BurgerToolbarView: View {
     private var disabled: Bool
 
     var body: some View {
-        Button(String(""), systemImage: "line.3.horizontal") {
+        Button("common.menu", systemImage: "line.3.horizontal") {
             showingSideMenu.toggle()
         }
+        .labelStyle(.iconOnly)   // title is the VoiceOver label only (an empty title also hides the identifier)
+        .accessibilityIdentifier(AccessibilityID.Navigation.burger)
         .tint(.dropinPrimary)
         .disabled(disabled)
     }

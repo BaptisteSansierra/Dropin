@@ -92,6 +92,8 @@ struct PlaceSheetView: View {
             })
             .ignoresSafeArea()
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityID.PlaceSheet.root)
         .task {
             await viewModel.fetchAppleDataIfNeeded(for: place)
         }

@@ -17,7 +17,7 @@ final class StubProfileService: ProfileServiceProtocol {
     var profile: Profile? = nil
     func load() async {
         profile = Profile(id: UUID(),
-                                email: "john.doe@gmail.com",
+                                email: "john.doe@proton.me",
                                 displayName: "John Doe",
                                 plan: .earlyStage,
                                 createdAt: .now,

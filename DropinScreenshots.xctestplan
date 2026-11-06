@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "2F215824-EDB8-4D72-922E-EAA343234B1D",
+      "name" : "en",
+      "options" : {
+        "language" : "en",
+        "region" : "IE"
+      }
+    },
+    {
+      "id" : "8C1B6E0A-3F52-4C7D-9E21-6A4D2B7F0C13",
+      "name" : "fr",
+      "options" : {
+        "language" : "fr",
+        "region" : "FR"
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Dropin.xcodeproj",
+      "identifier" : "4D42C7392E2BFAFF00B50940",
+      "name" : "Dropin"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:Dropin.xcodeproj",
+        "identifier" : "4DB7013F309B5A7E00ABF6D7",
+        "name" : "DropinScreenshots"
+      }
+    }
+  ],
+  "version" : 1
+}

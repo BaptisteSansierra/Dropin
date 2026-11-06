@@ -17,6 +17,7 @@ enum AuthServiceError: Error, Equatable {
     case signOutTimedOut
     case notAuthenticated
     case confirmationRequired
+    case invalidCredentials
 }
 
 @MainActor
@@ -117,6 +118,9 @@ final class AuthService: AuthServiceProtocol {
             if error.errorCode == .emailNotConfirmed {
                 Log.warning("  > Email not confirmed")
                 throw AuthServiceError.confirmationRequired
+            } else if error.errorCode == .invalidCredentials {
+                    Log.warning("  > Invalid credentials")
+                    throw AuthServiceError.invalidCredentials
             } else {
                 DropinTracker.shared.capture("Unexpected Supabase error(\(error.errorCode)) \(error)", authFlow: .signin)
                 Log.warning("  > Unexpected supabase error \(error)")

@@ -131,6 +131,7 @@ struct SideMenuView: View {
                              context: .main,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
+            .accessibilityIdentifier(AccessibilityID.Sidebar.places)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
             
@@ -140,6 +141,7 @@ struct SideMenuView: View {
                              context: .categories,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
+            .accessibilityIdentifier(AccessibilityID.Sidebar.categories)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
             
@@ -149,6 +151,7 @@ struct SideMenuView: View {
                              context: .tags,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
+            .accessibilityIdentifier(AccessibilityID.Sidebar.tags)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
             
@@ -182,8 +185,10 @@ struct SideMenuView: View {
                              context: .settings,
                              showingSideMenu: $showingSideMenu,
                              currentSideMenuContext: $currentSideMenuContext)
+            .accessibilityIdentifier(AccessibilityID.Sidebar.settings)
             .frame(height: rowHeight)
             .padding(.bottom, 0)
+            
             SideMenuItemView(label: "common.about",
                              systemImage: "info.circle",
                              selectedSystemImage: "info.circle.fill",

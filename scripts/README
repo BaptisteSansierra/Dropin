@@ -1,0 +1,6 @@
+
+--- screenshots.sh
+
+Generate Appstore screenshots and frontend images.
+It runs xcodebuild on target 'DropinScreenshots' and simctl from the terminal.
+

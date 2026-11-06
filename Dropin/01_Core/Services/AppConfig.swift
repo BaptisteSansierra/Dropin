@@ -42,4 +42,25 @@ enum AppConfig {
             return dsn
         }
     }
+
+    #if DEBUG
+    /// Sign in / sign up prefill. Config.xcconfig, Debug configuration only (empty in Release builds);
+    /// the account is picked with DEBUG_SIGNIN_ACCOUNT. Empty strings when not configured.
+    enum DebugCredentials {
+        static var email: String { value("DEBUG_SIGNIN_EMAIL") }
+        static var password: String { value("DEBUG_SIGNIN_PASSWORD") }
+
+        /// "<prefix><random><suffix>", e.g. name+k3x9q2@gmail.com; empty when prefix/suffix aren't configured
+        static func signUpEmail() -> String {
+            let prefix = value("DEBUG_SIGNUP_EMAIL_PREFIX"), suffix = value("DEBUG_SIGNUP_EMAIL_SUFFIX")
+            guard !prefix.isEmpty, !suffix.isEmpty else { return "" }
+            let random = UUID().uuidString.prefix(6).lowercased()
+            return "\(prefix)\(random)\(suffix)"
+        }
+
+        private static func value(_ key: String) -> String {
+            Bundle.main.infoDictionary?[key] as? String ?? ""
+        }
+    }
+    #endif
 }

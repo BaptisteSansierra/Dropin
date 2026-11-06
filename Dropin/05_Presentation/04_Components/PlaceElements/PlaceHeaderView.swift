@@ -46,6 +46,7 @@ struct PlaceHeaderView: View {
                 }
                 VStack(alignment: .leading) {
                     TextField("placeholder.place_name", text: $place.name)
+                        .accessibilityIdentifier(AccessibilityID.PlaceHeader.name)
                         .textStyle(.body)
                         .autocorrectionDisabled()
                         .focused(isNameFocused)

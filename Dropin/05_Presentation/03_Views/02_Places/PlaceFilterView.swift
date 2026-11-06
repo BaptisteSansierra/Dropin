@@ -42,6 +42,8 @@ struct PlaceFilterView: View {
             Spacer()
             bottomView
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityID.PlaceFilter.sheet)
         .presentationBackground(.backgroundPrimary)
         .task { await viewModel.loadData() }
         .alertError(error: $viewModel.loadDataError)
@@ -145,9 +147,11 @@ struct PlaceFilterView: View {
                 let hasSelectedTags = !filter.tagIDs.isEmpty || filter.includeUntagged
                 Picker("", selection: $filter.selectedTagFilterPolicy) {
                     ForEach(PlaceFilter.TagFilterPolicy.allCases, id: \.self) { policy in
-                        Text(policy.displayName).tag(policy)
+                        Text(policy.displayName)
+                            .tag(policy)
                     }
                 }
+                .accessibilityIdentifier(AccessibilityID.PlaceFilter.tagPolicy)
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 .padding(.trailing, 5)
@@ -224,6 +228,7 @@ struct PlaceFilterView: View {
             MainButton(text: "common.apply") {
                 apply()
             }
+            .accessibilityIdentifier(AccessibilityID.PlaceFilter.apply)
         }
         .padding(.horizontal)
     }

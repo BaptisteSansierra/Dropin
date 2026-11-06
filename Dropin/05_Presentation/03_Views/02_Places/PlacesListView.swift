@@ -74,6 +74,8 @@ struct PlacesListView: View {
             }
         }
         .background(.backgroundPrimary)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityID.Places.list)
         .safeAreaPadding(.bottom, DropinApp.ui.mainTabBarHeight)
         .ignoresSafeArea(edges: .bottom)
     }

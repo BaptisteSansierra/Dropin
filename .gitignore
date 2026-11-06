@@ -14,9 +14,11 @@ TODO
 ARCHI
 CURL
 .DS_Store
+# Screenshots 
+Screenshots
 
 
-# and the default stuff...
+# and default stuff...
 
 
 # Xcode
@@ -82,4 +84,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
 

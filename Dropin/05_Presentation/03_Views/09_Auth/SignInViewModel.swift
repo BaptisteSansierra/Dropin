@@ -9,26 +9,11 @@ import Foundation
 @Observable class SignInViewModel {
 
     #if DEBUG
-
-    //var email: String = ""      // test@dropin.local
-    //var password: String = ""   // test12345
-
-    #if false
-    //var email: String = "test@dropin.local"
-    //var password: String = "test12345"
-    var email: String = "demo@dropin.local"
-    var password: String = "Test12345!"
+    var email: String = AppConfig.DebugCredentials.email          // Config.xcconfig: DEBUG_SIGNIN_ACCOUNT
+    var password: String = AppConfig.DebugCredentials.password
     #else
-    var email: String = "baptiste.sansierra@gmail.com"
-    var password: String = "Test12345!"
-    #endif
-
-    //var email: String = "test@dropin.local"
-    //var password: String = "test12345"
-
-    #else
-    var email: String = ""      // test@dropin.local
-    var password: String = ""   // test12345
+    var email: String = ""
+    var password: String = ""
     #endif
     var isSubmitting: Bool = false
     var lastError: String?
@@ -63,6 +48,9 @@ import Foundation
         } catch AuthServiceError.confirmationRequired {
             coordinator.pushVerifyEmail(email: email, password: password, context: .unconfirmedLogin)
             resetFields()
+        } catch AuthServiceError.invalidCredentials {
+            Log.error("SignInViewModel: invalid credentials")
+            lastError = String(localized: "auth.error.invalid_credentials")
         } catch AuthServiceError.signInTimedOut {
             Log.error("SignInViewModel: sign-in timeout")
             lastError = String(localized: "auth.error.timeout")

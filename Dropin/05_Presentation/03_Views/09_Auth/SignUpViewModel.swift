@@ -9,9 +9,15 @@ import Foundation
 @Observable class SignUpViewModel {
 
     var displayName: String = ""
+    #if DEBUG
+    var email: String = AppConfig.DebugCredentials.signUpEmail()  // Config.xcconfig: DEBUG_SIGNUP_EMAIL_PREFIX/SUFFIX
+    var password: String = AppConfig.DebugCredentials.password
+    var confirmPassword: String = AppConfig.DebugCredentials.password
+    #else
     var email: String = ""
     var password: String = ""
     var confirmPassword: String = ""
+    #endif
     var isSubmitting: Bool = false
     var lastError: String?
 
@@ -41,10 +47,7 @@ import Foundation
         self.coordinator = coordinator
         #if DEBUG
         let random = String.randomColor()
-        displayName = "batobat_\(random)"
-        email = "baptiste.sansierra+\(random)@gmail.com"
-        password = "Test12345!"
-        confirmPassword = "Test12345!"
+        displayName = "John_\(random)"
         #endif
     }
 

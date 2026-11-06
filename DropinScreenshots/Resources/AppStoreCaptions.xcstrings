@@ -1,0 +1,96 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "places.map" : {
+      "comment" : "App Store screenshot caption for the 'places.map' shot (scripts/screenshots.sh)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All your places, one map"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tous vos lieux, sur une seule carte"
+          }
+        }
+      }
+    },
+    "places.place.details" : {
+      "comment" : "App Store screenshot caption for the 'places.place.details' shot (scripts/screenshots.sh)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remember why you saved it"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Souvenez-vous pourquoi vous l'avez gardé"
+          }
+        }
+      }
+    },
+    "places.map.quickcreate" : {
+      "comment" : "App Store screenshot caption for the 'places.map.quickcreate' shot (scripts/screenshots.sh)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save a place in seconds"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistrez un lieu en quelques secondes"
+          }
+        }
+      }
+    },
+    "settings.import" : {
+      "comment" : "App Store screenshot caption for the 'settings.import' shot (scripts/screenshots.sh); the shot shows the import summary, presented as a Mapstr import",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from Mapstr and more"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importez depuis Mapstr et plus"
+          }
+        }
+      }
+    },
+    "places.list" : {
+      "comment" : "App Store screenshot caption for the 'places.list' shot (scripts/screenshots.sh)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find any place, fast"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retrouvez n'importe quel lieu, rapidement"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
