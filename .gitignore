@@ -16,7 +16,9 @@ CURL
 .DS_Store
 # Screenshots 
 Screenshots
-
+# Fastlane 
+fastlane/metadata
+fastlane/screenshots
 
 # and default stuff...
 
@@ -86,3 +88,8 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 
 
+
+# fastlane secrets (loaded automatically by fastlane)
+fastlane/.env*
+# deliver download_metadata writes the review contact + demo password there (deleted by scripts/appstore_metadata.sh)
+fastlane/metadata/review_information/
