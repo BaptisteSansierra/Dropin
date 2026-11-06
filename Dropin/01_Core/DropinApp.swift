@@ -148,7 +148,8 @@ struct DropinApp: App {
                                                         configurations: configuration) {
                 freshContainer.mainContext.autosaveEnabled = false
                 appContainer = AppContainer(modelContext: freshContainer.mainContext,
-                                            appContext: appContext)
+                                            appContext: appContext,
+                                            reachabilityService: reachabilityService)
                 modelContainer = freshContainer
                 Self.configureDependencies()
                 return
