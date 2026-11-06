@@ -1,12 +1,8 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
-    " " : {
-
-    },
+    "" : {},
+    " " : {},
     "about.data_yours.body" : {
       "localizations" : {
         "en" : {
@@ -19,6 +15,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vous êtes propriétaire de vos données de bout en bout, exportables à tout moment, dans un format que vous pouvez lire."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tus datos te pertenecen de principio a fin: puedes exportarlos cuando quieras, en un formato legible."
           }
         }
       }
@@ -36,6 +38,12 @@
             "state" : "translated",
             "value" : "Vos données vous appartiennent"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tus datos son tuyos"
+          }
         }
       }
     },
@@ -51,6 +59,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "© %@ Baptiste Sansierra. Tous droits réservés."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "© %@ Baptiste Sansierra. Todos los derechos reservados."
           }
         }
       }
@@ -68,6 +82,12 @@
             "state" : "translated",
             "value" : "Conçu avec soin à Barcelone."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hecho con cariño en Barcelona."
+          }
         }
       }
     },
@@ -84,6 +104,12 @@
             "state" : "translated",
             "value" : "Icônes sous licence CC BY 4.0 · fontawesome.com"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Iconos con licencia CC BY 4.0 · fontawesome.com"
+          }
         }
       }
     },
@@ -98,6 +124,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Font Awesome Free"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Font Awesome Free"
           }
         }
@@ -116,6 +148,12 @@
             "state" : "translated",
             "value" : "© Apple Inc."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "© Apple Inc."
+          }
         }
       }
     },
@@ -130,6 +168,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "SF Symbols"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "SF Symbols"
           }
         }
@@ -148,6 +192,12 @@
             "state" : "translated",
             "value" : "Aucun traceur publicitaire, aucun algorithme, aucun compte revendu à qui que ce soit."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin rastreadores publicitarios, sin algoritmos, sin vender cuentas a nadie."
+          }
         }
       }
     },
@@ -163,6 +213,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sans publicité"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin anuncios"
           }
         }
       }
@@ -180,6 +236,12 @@
             "state" : "translated",
             "value" : "Dropin est un projet indépendant, un outil simple pour créer votre propre carte des lieux qui comptent pour vous."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dropin es un proyecto independiente, una herramienta sencilla para crear tu propio mapa de los lugares que te importan."
+          }
         }
       }
     },
@@ -195,6 +257,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Politique de confidentialité"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Política de privacidad"
           }
         }
       }
@@ -212,6 +280,12 @@
             "state" : "translated",
             "value" : "Inclut les conditions d'utilisation."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Incluye las condiciones de uso."
+          }
         }
       }
     },
@@ -227,6 +301,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Contact"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Contacto"
           }
         }
       }
@@ -244,6 +324,12 @@
             "state" : "translated",
             "value" : "Mentions légales"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Legal"
+          }
         }
       }
     },
@@ -259,6 +345,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bibliothèques et ressources"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bibliotecas y recursos"
           }
         }
       }
@@ -276,6 +368,12 @@
             "state" : "translated",
             "value" : "Version %@ · Build %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Versión %@ · Compilación %@"
+          }
         }
       }
     },
@@ -291,6 +389,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Collez depuis votre appli de cartes ou saisissez latitude, longitude."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pega desde tu app de mapas o escribe latitud, longitud."
           }
         }
       }
@@ -308,6 +412,12 @@
             "state" : "translated",
             "value" : "Vous semblez hors ligne. Ajoutez le lieu quand même, l'adresse suivra."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parece que no tienes conexión. Añade el lugar de todos modos, la dirección llegará después."
+          }
         }
       }
     },
@@ -323,6 +433,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible de trouver l'adresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha encontrado la dirección"
           }
         }
       }
@@ -340,6 +456,12 @@
             "state" : "translated",
             "value" : "Recherche de l'adresse..."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Buscando dirección..."
+          }
         }
       }
     },
@@ -355,6 +477,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adresse copiée dans le presse-papiers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dirección copiada al portapapeles"
           }
         }
       }
@@ -372,6 +500,12 @@
             "state" : "translated",
             "value" : "Copié !"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¡Copiado!"
+          }
         }
       }
     },
@@ -388,6 +522,12 @@
             "state" : "translated",
             "value" : "Cette action est irréversible !\nConfirmer la suppression du lieu ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta acción no se puede deshacer.\n¿Eliminar este lugar?"
+          }
         }
       }
     },
@@ -403,6 +543,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer le lieu “%@” ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Eliminar «%@»?"
           }
         }
       }
@@ -421,6 +567,12 @@
             "state" : "translated",
             "value" : "Entrez les coordonnées suivant le format: 48.864716, 2.349014"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Introduce las coordenadas con el formato: 48.864716, 2.349014"
+          }
         }
       }
     },
@@ -438,6 +590,12 @@
             "state" : "translated",
             "value" : "Coordonnées non valides"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Coordenadas no válidas"
+          }
         }
       }
     },
@@ -453,6 +611,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donnez un nom à ce lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ponle un nombre a este nuevo lugar"
           }
         }
       }
@@ -470,6 +634,12 @@
             "state" : "translated",
             "value" : "Nom du lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ponle nombre a este lugar"
+          }
         }
       }
     },
@@ -485,6 +655,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Attention : La catégorie “%1$@” est associée à %2$lld lieux!\nCette action est irréversible.\nConfirmer la suppression de la catégorie ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Atención: la categoría «%1$@» se usa en %2$lld lugares.\nEsta acción no se puede deshacer.\n¿Confirmas que quieres eliminar la categoría?"
           }
         }
       }
@@ -502,6 +678,12 @@
             "state" : "translated",
             "value" : "Cette action est irréversible.\nConfirmer la suppression de la catégorie ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta acción no se puede deshacer.\n¿Confirmas que quieres eliminar la categoría?"
+          }
         }
       }
     },
@@ -517,6 +699,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer la catégorie ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Eliminar la categoría?"
           }
         }
       }
@@ -534,6 +722,12 @@
             "state" : "translated",
             "value" : "Attention: Le tag “%1$@” est associé à %2$lld lieux!\nCette action est irréversible.\nConfirmer la suppression du tag ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Atención: la etiqueta «%1$@» se usa en %2$lld lugares.\nEsta acción no se puede deshacer.\n¿Confirmas que quieres eliminar la etiqueta?"
+          }
         }
       }
     },
@@ -550,6 +744,12 @@
             "state" : "translated",
             "value" : "Cette action est irréversible.\nConfirmer la suppression du tag ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta acción no se puede deshacer.\n¿Confirmas que quieres eliminar la etiqueta?"
+          }
         }
       }
     },
@@ -565,6 +765,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer le tag ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Eliminar la etiqueta?"
           }
         }
       }
@@ -583,6 +789,12 @@
             "state" : "translated",
             "value" : "Cette action supprimera définitivement tous vos lieux, catégories et tags. Elle est irréversible."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se eliminarán definitivamente todos tus lugares, categorías y etiquetas. Esta acción no se puede deshacer."
+          }
         }
       }
     },
@@ -599,6 +811,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tapez “%@” pour confirmer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Escribe «%@» para confirmar"
           }
         }
       }
@@ -617,6 +835,12 @@
             "state" : "translated",
             "value" : "Réinitialiser la base de données"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Restablecer base de datos"
+          }
         }
       }
     },
@@ -633,6 +857,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple Maps n'a pas reconnu ce lieu. Cela peut se résoudre lors d'un prochain essai."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Apple Maps no ha reconocido este lugar. Es posible que se solucione en otro intento."
           }
         }
       }
@@ -651,6 +881,12 @@
             "state" : "translated",
             "value" : "Lieu non reconnu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugar no reconocido"
+          }
         }
       }
     },
@@ -667,6 +903,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur inattendue est survenue (code %d). Veuillez réessayer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se ha producido un error inesperado (código %d). Inténtalo de nuevo."
           }
         }
       }
@@ -685,6 +927,12 @@
             "state" : "translated",
             "value" : "Erreur inattendue"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Error inesperado"
+          }
         }
       }
     },
@@ -701,6 +949,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vérifiez votre connexion internet et réessayez."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comprueba tu conexión a internet e inténtalo de nuevo."
           }
         }
       }
@@ -719,6 +973,12 @@
             "state" : "translated",
             "value" : "Pas de connexion internet"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin conexión a internet"
+          }
         }
       }
     },
@@ -735,6 +995,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il semble que ce lieu ait été supprimé d'Apple Maps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parece que este lugar se ha eliminado de Apple Maps."
           }
         }
       }
@@ -753,6 +1019,12 @@
             "state" : "translated",
             "value" : "Plus disponible sur Apple Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ya no está en Apple Maps"
+          }
         }
       }
     },
@@ -769,6 +1041,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur est survenue"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal"
           }
         }
       }
@@ -787,6 +1065,12 @@
             "state" : "translated",
             "value" : "Vérifiez votre connexion internet et réessayez."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comprueba tu conexión a internet e inténtalo de nuevo."
+          }
         }
       }
     },
@@ -803,6 +1087,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible de charger ce lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido cargar este lugar"
           }
         }
       }
@@ -821,6 +1111,12 @@
             "state" : "translated",
             "value" : "Chargement des détails"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cargando detalles"
+          }
         }
       }
     },
@@ -837,6 +1133,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple Maps ne fournit pas de référence pour ce lieu. Vous pouvez tout de même le créer, mais il ne sera pas lié aux détails Apple Maps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Apple Maps no ofrece ninguna referencia para este lugar. Puedes crearlo igualmente, pero no estará vinculado a los detalles de Apple Maps."
           }
         }
       }
@@ -855,6 +1157,12 @@
             "state" : "translated",
             "value" : "Impossible de lier à Apple Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se puede vincular con Apple Maps"
+          }
         }
       }
     },
@@ -871,6 +1179,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tenu à jour par Apple Maps · Lecture seule"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Actualizado por Apple Maps · Solo lectura"
           }
         }
       }
@@ -890,6 +1204,12 @@
             "state" : "translated",
             "value" : "Vous avez déjà un compte ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Ya tienes una cuenta?"
+          }
         }
       }
     },
@@ -905,6 +1225,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fermeture de session"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cerrando sesión"
           }
         }
       }
@@ -924,6 +1250,12 @@
             "state" : "translated",
             "value" : "Créer un compte"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Crear cuenta"
+          }
         }
       }
     },
@@ -940,6 +1272,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E-mail ou mot de passe incorrect. Veuillez réessayer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Correo electrónico o contraseña incorrectos. Inténtalo de nuevo."
           }
         }
       }
@@ -959,6 +1297,12 @@
             "state" : "translated",
             "value" : "Saisissez une adresse e-mail valide."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Introduce un correo electrónico válido."
+          }
         }
       }
     },
@@ -976,6 +1320,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Les mots de passe ne correspondent pas."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Las contraseñas no coinciden."
           }
         }
       }
@@ -995,6 +1345,12 @@
             "state" : "translated",
             "value" : "Cela prend trop de temps. Vérifiez votre connexion Internet et réessayez."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Está tardando demasiado. Comprueba tu conexión a internet e inténtalo de nuevo."
+          }
         }
       }
     },
@@ -1012,6 +1368,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirmer le mot de passe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Confirmar contraseña"
           }
         }
       }
@@ -1031,6 +1393,12 @@
             "state" : "translated",
             "value" : "Nom d'affichage"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nombre visible"
+          }
         }
       }
     },
@@ -1048,6 +1416,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mot de passe oublié ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Has olvidado tu contraseña?"
           }
         }
       }
@@ -1067,6 +1441,12 @@
             "state" : "translated",
             "value" : "Nouveau sur Dropin ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Nuevo en Dropin?"
+          }
         }
       }
     },
@@ -1084,6 +1464,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mot de passe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Contraseña"
           }
         }
       }
@@ -1103,6 +1489,12 @@
             "state" : "translated",
             "value" : "Utilisez au moins 8 caractères, avec majuscule, minuscule, un chiffre et un symbole."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usa al menos 8 caracteres, con mayúsculas, minúsculas, un número y un símbolo."
+          }
         }
       }
     },
@@ -1120,6 +1512,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vous vous en souvenez ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Ya la recuerdas?"
           }
         }
       }
@@ -1139,6 +1537,12 @@
             "state" : "translated",
             "value" : "Nous avons envoyé un lien de réinitialisation à\n**%@**"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hemos enviado un enlace para restablecer la contraseña a\n**%@**"
+          }
         }
       }
     },
@@ -1156,6 +1560,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Consultez vos e-mails"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Revisa tu correo"
           }
         }
       }
@@ -1175,6 +1585,12 @@
             "state" : "translated",
             "value" : "Envoyer le lien"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enviar enlace"
+          }
         }
       }
     },
@@ -1192,6 +1608,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Saisissez l'e-mail associé à votre compte et nous vous enverrons un lien pour définir un nouveau mot de passe."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Introduce el correo electrónico de tu cuenta y te enviaremos un enlace para crear una nueva contraseña."
           }
         }
       }
@@ -1211,6 +1633,12 @@
             "state" : "translated",
             "value" : "Réinitialiser le mot de passe"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Restablecer contraseña"
+          }
         }
       }
     },
@@ -1228,6 +1656,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connexion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Iniciar sesión"
           }
         }
       }
@@ -1247,6 +1681,12 @@
             "state" : "translated",
             "value" : "Vos lieux vous attendent."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tus lugares te esperan."
+          }
         }
       }
     },
@@ -1264,6 +1704,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Commencez votre collection de lieux."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Empieza tu colección de lugares."
           }
         }
       }
@@ -1283,6 +1729,12 @@
             "state" : "translated",
             "value" : "Nous avons envoyé un lien de vérification à\n**%@**"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hemos enviado un enlace de verificación a\n**%@**"
+          }
         }
       }
     },
@@ -1300,6 +1752,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Changer d'adresse e-mail"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cambiar correo electrónico"
           }
         }
       }
@@ -1319,6 +1777,12 @@
             "state" : "translated",
             "value" : "J'ai confirmé mon e-mail"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ya he confirmado mi correo"
+          }
         }
       }
     },
@@ -1336,6 +1800,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vous ne l'avez pas reçu ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿No lo has recibido?"
           }
         }
       }
@@ -1355,6 +1825,12 @@
             "state" : "translated",
             "value" : "Pas encore confirmé\nConsultez votre boîte de réception et réessayez."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no está confirmado\nRevisa tu bandeja de entrada e inténtalo de nuevo."
+          }
         }
       }
     },
@@ -1372,6 +1848,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Renvoyer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reenviar"
           }
         }
       }
@@ -1391,6 +1873,12 @@
             "state" : "translated",
             "value" : "Renvoyer dans %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reenviar en %@"
+          }
         }
       }
     },
@@ -1408,6 +1896,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Consultez votre boîte de réception"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Revisa tu bandeja de entrada"
           }
         }
       }
@@ -1427,6 +1921,12 @@
             "state" : "translated",
             "value" : "Vous auriez dû recevoir un e-mail de confirmation lors de votre inscription."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deberías haber recibido un correo de confirmación al registrarte."
+          }
         }
       }
     },
@@ -1444,6 +1944,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Votre compte n'est pas encore confirmé"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tu cuenta aún no está confirmada"
           }
         }
       }
@@ -1463,6 +1969,12 @@
             "state" : "translated",
             "value" : "Content de vous revoir"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hola de nuevo"
+          }
         }
       }
     },
@@ -1478,6 +1990,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une catégorie avec ce nom existe déjà"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ya existe una categoría con este nombre"
           }
         }
       }
@@ -1519,6 +2037,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld lugar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld lugares"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1536,6 +2072,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categoría"
           }
         }
       }
@@ -1555,6 +2097,12 @@
             "state" : "translated",
             "value" : "Un lieu appartient à une seule catégorie."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un lugar pertenece a una sola categoría."
+          }
         }
       }
     },
@@ -1571,6 +2119,12 @@
             "state" : "translated",
             "value" : "Nouvelle catégorie"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva categoría"
+          }
         }
       }
     },
@@ -1586,6 +2140,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pas de catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin categoría"
           }
         }
       }
@@ -1605,6 +2165,12 @@
             "state" : "translated",
             "value" : "Hébergement"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alojamiento"
+          }
         }
       }
     },
@@ -1622,6 +2188,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Culture & Éducation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cultura y educación"
           }
         }
       }
@@ -1641,6 +2213,12 @@
             "state" : "translated",
             "value" : "Divertissement"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ocio"
+          }
         }
       }
     },
@@ -1658,6 +2236,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restauration"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comida y bebida"
           }
         }
       }
@@ -1677,6 +2261,12 @@
             "state" : "translated",
             "value" : "Nature et plein air"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Naturaleza y aire libre"
+          }
         }
       }
     },
@@ -1694,6 +2284,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Communauté"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comunidad"
           }
         }
       }
@@ -1713,6 +2309,12 @@
             "state" : "translated",
             "value" : "Services"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicios"
+          }
         }
       }
     },
@@ -1730,6 +2332,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shopping"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compras"
           }
         }
       }
@@ -1749,6 +2357,12 @@
             "state" : "translated",
             "value" : "Divers"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Otros"
+          }
         }
       }
     },
@@ -1766,6 +2380,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sports & Fitness"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deporte y fitness"
           }
         }
       }
@@ -1785,6 +2405,12 @@
             "state" : "translated",
             "value" : "Transport"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Transporte"
+          }
         }
       }
     },
@@ -1802,6 +2428,12 @@
             "state" : "translated",
             "value" : "À propos"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Acerca de"
+          }
         }
       }
     },
@@ -1817,6 +2449,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajouter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadir"
           }
         }
       }
@@ -1834,6 +2472,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dirección"
           }
         }
       }
@@ -1853,6 +2497,12 @@
             "state" : "translated",
             "value" : "Complément d’adresse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Línea de dirección 2"
+          }
         }
       }
     },
@@ -1871,6 +2521,12 @@
             "state" : "translated",
             "value" : "Badge"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Insignia"
+          }
         }
       }
     },
@@ -1886,6 +2542,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Détails Apple Maps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detalles de Apple Maps"
           }
         }
       }
@@ -1904,6 +2566,12 @@
             "state" : "translated",
             "value" : "Appliquer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aplicar"
+          }
         }
       }
     },
@@ -1919,6 +2587,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appeler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Llamar"
           }
         }
       }
@@ -1936,6 +2610,12 @@
             "state" : "translated",
             "value" : "Appareil photo"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cámara"
+          }
         }
       }
     },
@@ -1951,6 +2631,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cancelar"
           }
         }
       }
@@ -1968,6 +2654,12 @@
             "state" : "translated",
             "value" : "Catégories"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categorías"
+          }
         }
       }
     },
@@ -1983,6 +2675,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categoría"
           }
         }
       }
@@ -2000,6 +2698,12 @@
             "state" : "translated",
             "value" : "Couleur de la catégorie"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Color de la categoría"
+          }
         }
       }
     },
@@ -2016,6 +2720,12 @@
             "state" : "translated",
             "value" : "Nom de la catégorie"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nombre de la categoría"
+          }
         }
       }
     },
@@ -2031,6 +2741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbole de la catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Símbolo de la categoría"
           }
         }
       }
@@ -2049,6 +2765,12 @@
             "state" : "translated",
             "value" : "Changer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cambiar"
+          }
         }
       }
     },
@@ -2065,6 +2787,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choisir"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elegir"
           }
         }
       }
@@ -2083,6 +2811,12 @@
             "state" : "translated",
             "value" : "Effacer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Borrar"
+          }
         }
       }
     },
@@ -2099,6 +2833,12 @@
             "state" : "translated",
             "value" : "Tout effacer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Borrar todo"
+          }
         }
       }
     },
@@ -2114,6 +2854,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effacer la sélection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Borrar selección"
           }
         }
       }
@@ -2132,6 +2878,12 @@
             "state" : "translated",
             "value" : "Fermer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cerrar"
+          }
         }
       }
     },
@@ -2148,6 +2900,12 @@
             "state" : "translated",
             "value" : "Couleur"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Color"
+          }
         }
       }
     },
@@ -2163,6 +2921,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Continuar"
           }
         }
       }
@@ -2182,6 +2946,12 @@
             "state" : "translated",
             "value" : "Coordonnées"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Coordenadas"
+          }
         }
       }
     },
@@ -2197,6 +2967,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copier"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Copiar"
           }
         }
       }
@@ -2214,6 +2990,12 @@
             "state" : "translated",
             "value" : "Copier l’adresse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Copiar dirección"
+          }
         }
       }
     },
@@ -2229,6 +3011,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copier les coordonnées"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Copiar coordenadas"
           }
         }
       }
@@ -2246,6 +3034,12 @@
             "state" : "translated",
             "value" : "Créer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Crear"
+          }
         }
       }
     },
@@ -2261,6 +3055,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer un lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Crear lugar"
           }
         }
       }
@@ -2278,6 +3078,12 @@
             "state" : "translated",
             "value" : "Supprimer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar"
+          }
         }
       }
     },
@@ -2293,6 +3099,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer cette catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar categoría"
           }
         }
       }
@@ -2312,6 +3124,12 @@
             "state" : "translated",
             "value" : "SUPPRIMER"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ELIMINAR"
+          }
         }
       }
     },
@@ -2328,6 +3146,12 @@
             "state" : "translated",
             "value" : "Supprimer ce lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar lugar"
+          }
         }
       }
     },
@@ -2343,6 +3167,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Supprimer ce tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar etiqueta"
           }
         }
       }
@@ -2361,6 +3191,12 @@
             "state" : "translated",
             "value" : "Itinéraire"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cómo llegar"
+          }
         }
       }
     },
@@ -2378,6 +3214,12 @@
             "state" : "translated",
             "value" : "Valider"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "OK"
+          }
         }
       }
     },
@@ -2393,6 +3235,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Éditer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Editar"
           }
         }
       }
@@ -2411,6 +3259,12 @@
             "state" : "translated",
             "value" : "Éditer l’adresse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Editar dirección"
+          }
         }
       }
     },
@@ -2427,6 +3281,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Éditer les coordonnées"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Editar coordenadas"
           }
         }
       }
@@ -2446,6 +3306,12 @@
             "state" : "translated",
             "value" : "Modifier sur la carte"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Editar en el mapa"
+          }
         }
       }
     },
@@ -2462,6 +3328,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Email"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Correo electrónico"
           }
         }
       }
@@ -2480,6 +3352,12 @@
             "state" : "translated",
             "value" : "Exporter"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exportar"
+          }
         }
       }
     },
@@ -2496,6 +3374,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "filtre"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "filtro"
           }
         }
       }
@@ -2514,6 +3398,12 @@
             "state" : "translated",
             "value" : "Filtrer les lieux"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Filtrar lugares"
+          }
         }
       }
     },
@@ -2530,6 +3420,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "filtres"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "filtros"
           }
         }
       }
@@ -2548,6 +3444,12 @@
             "state" : "translated",
             "value" : "Arrondi"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Redondeado"
+          }
         }
       }
     },
@@ -2565,6 +3467,12 @@
             "state" : "translated",
             "value" : "Carré"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cuadrado"
+          }
         }
       }
     },
@@ -2581,6 +3489,12 @@
             "state" : "translated",
             "value" : "Depuis Apple Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De Apple Maps"
+          }
         }
       }
     },
@@ -2596,6 +3510,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Icône"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Icono"
           }
         }
       }
@@ -2614,6 +3534,12 @@
             "state" : "translated",
             "value" : "Importer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importar"
+          }
         }
       }
     },
@@ -2631,6 +3557,12 @@
             "state" : "translated",
             "value" : "Continuer l’édition"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguir editando"
+          }
         }
       }
     },
@@ -2646,6 +3578,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lista"
           }
         }
       }
@@ -2663,6 +3601,12 @@
             "state" : "translated",
             "value" : "Chargement…"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cargando..."
+          }
         }
       }
     },
@@ -2678,6 +3622,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accès à la localisation non autorisé"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Acceso a la ubicación no autorizado"
           }
         }
       }
@@ -2695,6 +3645,12 @@
             "state" : "translated",
             "value" : "Cette application nécessite l’accès à la localisation pour fonctionner correctement. Veuillez activer les autorisations de localisation dans Réglages."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta app necesita acceder a tu ubicación para funcionar correctamente.\nActiva los permisos de ubicación en Ajustes."
+          }
         }
       }
     },
@@ -2710,6 +3666,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mapa"
           }
         }
       }
@@ -2728,6 +3690,12 @@
             "state" : "translated",
             "value" : "Satellite"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Satélite"
+          }
         }
       }
     },
@@ -2744,6 +3712,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estándar"
           }
         }
       }
@@ -2762,6 +3736,12 @@
             "state" : "translated",
             "value" : "Menu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Menú"
+          }
         }
       }
     },
@@ -2776,6 +3756,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "N/D"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "N/D"
           }
         }
@@ -2795,6 +3781,12 @@
             "state" : "translated",
             "value" : "Nom"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nombre"
+          }
         }
       }
     },
@@ -2810,6 +3802,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Démarrer la navigation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Navegar"
           }
         }
       }
@@ -2828,6 +3826,12 @@
             "state" : "translated",
             "value" : "Nouveau"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nuevo"
+          }
         }
       }
     },
@@ -2844,6 +3848,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nouveau lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nuevo lugar"
           }
         }
       }
@@ -2862,6 +3872,12 @@
             "state" : "translated",
             "value" : "Suivant"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Siguiente"
+          }
         }
       }
     },
@@ -2878,6 +3894,12 @@
             "state" : "translated",
             "value" : "Aucun lieu apparenté"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No hay lugares relacionados"
+          }
         }
       }
     },
@@ -2893,6 +3915,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non connecté"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin conexión"
           }
         }
       }
@@ -2911,6 +3939,12 @@
             "state" : "translated",
             "value" : "Notes"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Notas"
+          }
         }
       }
     },
@@ -2928,6 +3962,12 @@
             "state" : "translated",
             "value" : "Hors connexion"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin conexión"
+          }
         }
       }
     },
@@ -2943,6 +3983,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ok"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "OK"
           }
         }
       }
@@ -2960,6 +4006,12 @@
             "state" : "translated",
             "value" : "Ouvrir les réglages"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abrir Ajustes"
+          }
         }
       }
     },
@@ -2975,6 +4027,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Catégoriser"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Organizar por categoría"
           }
         }
       }
@@ -2992,6 +4050,12 @@
             "state" : "translated",
             "value" : "Téléphone"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Teléfono"
+          }
         }
       }
     },
@@ -3008,6 +4072,12 @@
             "state" : "translated",
             "value" : "Bibliothèque de photos"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fototeca"
+          }
         }
       }
     },
@@ -3023,6 +4093,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Photos"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fotos"
           }
         }
       }
@@ -3041,6 +4117,12 @@
             "state" : "translated",
             "value" : "Lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugar"
+          }
         }
       }
     },
@@ -3056,6 +4138,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugares"
           }
         }
       }
@@ -3074,6 +4162,12 @@
             "state" : "translated",
             "value" : "+  Ajouter"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "+  Añadir"
+          }
         }
       }
     },
@@ -3090,6 +4184,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "+  Choisir"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "+  Elegir"
           }
         }
       }
@@ -3108,6 +4208,12 @@
             "state" : "translated",
             "value" : "Culture"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cultura"
+          }
         }
       }
     },
@@ -3124,6 +4230,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restauration"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comida y bebida"
           }
         }
       }
@@ -3142,6 +4254,12 @@
             "state" : "translated",
             "value" : "Santé"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salud"
+          }
         }
       }
     },
@@ -3158,6 +4276,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loisirs & Sport"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ocio y deporte"
           }
         }
       }
@@ -3176,6 +4300,12 @@
             "state" : "translated",
             "value" : "Hébergement"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alojamiento"
+          }
         }
       }
     },
@@ -3192,6 +4322,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nature"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Naturaleza"
           }
         }
       }
@@ -3210,6 +4346,12 @@
             "state" : "translated",
             "value" : "Services"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicios"
+          }
         }
       }
     },
@@ -3226,6 +4368,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shopping"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compras"
           }
         }
       }
@@ -3244,6 +4392,12 @@
             "state" : "translated",
             "value" : "Transport"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Transporte"
+          }
         }
       }
     },
@@ -3261,6 +4415,12 @@
             "state" : "translated",
             "value" : "Profil"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Perfil"
+          }
         }
       }
     },
@@ -3276,6 +4436,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aléatoire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aleatorio"
           }
         }
       }
@@ -3294,6 +4460,12 @@
             "state" : "translated",
             "value" : "Note"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Valoración"
+          }
         }
       }
     },
@@ -3310,6 +4482,12 @@
             "state" : "translated",
             "value" : "Lieux associés"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugares relacionados"
+          }
         }
       }
     },
@@ -3325,6 +4503,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Saturation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Saturación"
           }
         }
       }
@@ -3344,6 +4528,12 @@
             "state" : "translated",
             "value" : "Enregistrer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar"
+          }
         }
       }
     },
@@ -3359,6 +4549,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enregistrer un nouveau lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar un nuevo lugar"
           }
         }
       }
@@ -3376,6 +4572,12 @@
             "state" : "translated",
             "value" : "Réglages"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajustes"
+          }
         }
       }
     },
@@ -3391,6 +4593,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Partager"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir"
           }
         }
       }
@@ -3409,6 +4617,12 @@
             "state" : "translated",
             "value" : "Visualiser sur la carte"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ver en el mapa"
+          }
         }
       }
     },
@@ -3424,6 +4638,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trier"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ordenar"
           }
         }
       }
@@ -3441,6 +4661,12 @@
             "state" : "translated",
             "value" : "Par date de création"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Por fecha de creación"
+          }
         }
       }
     },
@@ -3457,6 +4683,12 @@
             "state" : "translated",
             "value" : "Par distance"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Por distancia"
+          }
         }
       }
     },
@@ -3472,6 +4704,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Par nom"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Por nombre"
           }
         }
       }
@@ -3539,6 +4777,40 @@
               }
             }
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$lld de %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "needs_review",
+                      "value" : "%arg lugar"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "needs_review",
+                      "value" : "%arg lugares"
+                    }
+                  },
+                  "zero" : {
+                    "stringUnit" : {
+                      "state" : "needs_review",
+                      "value" : "%arg lugares"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -3554,6 +4826,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couleur du tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Color de la etiqueta"
           }
         }
       }
@@ -3571,6 +4849,12 @@
             "state" : "translated",
             "value" : "Nom du tag"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nombre de la etiqueta"
+          }
         }
       }
     },
@@ -3586,6 +4870,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tags"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Etiquetas"
           }
         }
       }
@@ -3603,6 +4893,12 @@
             "state" : "translated",
             "value" : "Réessayer"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reintentar"
+          }
         }
       }
     },
@@ -3618,6 +4914,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sans catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin categoría"
           }
         }
       }
@@ -3636,6 +4938,12 @@
             "state" : "translated",
             "value" : "Dissocier"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desvincular"
+          }
         }
       }
     },
@@ -3650,6 +4958,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "URL"
           }
         }
@@ -3668,6 +4982,12 @@
             "state" : "translated",
             "value" : "Site web"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sitio web"
+          }
         }
       }
     },
@@ -3684,6 +5004,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajouter un lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadir lugar"
           }
         }
       }
@@ -3703,6 +5029,12 @@
             "state" : "translated",
             "value" : "Obtenir l’adresse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Obtener dirección"
+          }
         }
       }
     },
@@ -3719,6 +5051,12 @@
             "state" : "translated",
             "value" : "Plus d’options"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Más opciones"
+          }
         }
       }
     },
@@ -3734,6 +5072,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sauver ce lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar este lugar"
           }
         }
       }
@@ -3753,6 +5097,12 @@
             "state" : "translated",
             "value" : "Cela efface tous vos lieux, catégories, tags et photos de Dropin - sur cet appareil et sur votre compte."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se borrarán todos tus lugares, categorías, etiquetas y fotos de Dropin, en este dispositivo y en tu cuenta."
+          }
         }
       }
     },
@@ -3770,6 +5120,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une fois votre compte supprimé, il n'y a pas de retour en arrière possible."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Una vez eliminada tu cuenta, no hay vuelta atrás."
           }
         }
       }
@@ -3789,6 +5145,12 @@
             "state" : "translated",
             "value" : "Catégories et tags"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categorías y etiquetas"
+          }
         }
       }
     },
@@ -3806,6 +5168,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Photos enregistrées"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fotos guardadas"
           }
         }
       }
@@ -3825,6 +5193,12 @@
             "state" : "translated",
             "value" : "Tous vos lieux"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Todos tus lugares"
+          }
         }
       }
     },
@@ -3842,6 +5216,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur est survenue. Veuillez réessayer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal. Inténtalo de nuevo."
           }
         }
       }
@@ -3861,6 +5241,12 @@
             "state" : "translated",
             "value" : "Exporter mes lieux d'abord"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exportar primero mis lugares"
+          }
         }
       }
     },
@@ -3878,6 +5264,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "À lire avant de supprimer votre compte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lee esto antes de eliminar tu cuenta"
           }
         }
       }
@@ -3897,6 +5289,12 @@
             "state" : "translated",
             "value" : "Pour revenir plus tard, vous devrez créer un nouveau profil."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Para volver más adelante, tendrás que crear un nuevo perfil."
+          }
         }
       }
     },
@@ -3914,6 +5312,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une fois votre compte supprimé, il n'y a pas de retour en arrière possible."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Una vez eliminada tu cuenta, no hay vuelta atrás."
           }
         }
       }
@@ -3933,6 +5337,12 @@
             "state" : "translated",
             "value" : "Supprimer le compte définitivement"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar la cuenta definitivamente"
+          }
         }
       }
     },
@@ -3950,6 +5360,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Veuillez taper « %@ » pour confirmer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Escribe \"%@\" para confirmar"
           }
         }
       }
@@ -3969,6 +5385,12 @@
             "state" : "translated",
             "value" : "JE CONFIRME"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ACEPTO"
+          }
         }
       }
     },
@@ -3985,6 +5407,12 @@
             "state" : "translated",
             "value" : "Développé par %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desarrollado por %@"
+          }
         }
       }
     },
@@ -4000,6 +5428,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuler la création de ce lieu ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Seguro que quieres cancelar la creación del nuevo lugar?"
           }
         }
       }
@@ -4018,6 +5452,12 @@
             "state" : "translated",
             "value" : "Continuer l’édition"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguir editando"
+          }
         }
       }
     },
@@ -4035,6 +5475,12 @@
             "state" : "translated",
             "value" : "Annuler les modifications"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Descartar cambios"
+          }
         }
       }
     },
@@ -4051,6 +5497,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Êtes-vous sûr de vouloir annuler les modifications ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Seguro que quieres descartar los cambios?"
           }
         }
       }
@@ -4070,6 +5522,12 @@
             "state" : "translated",
             "value" : "C'est le nom affiché sur votre profil. 2 à 30 caractères."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Es el nombre que se muestra en tu perfil. De 2 a 30 caracteres."
+          }
         }
       }
     },
@@ -4087,6 +5545,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Votre nom sur Dropin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tu nombre en Dropin"
           }
         }
       }
@@ -4106,6 +5570,12 @@
             "state" : "translated",
             "value" : "Nom affiché"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nombre visible"
+          }
         }
       }
     },
@@ -4123,6 +5593,12 @@
             "state" : "translated",
             "value" : "Votre appareil n’a plus assez d’espace de stockage. Libérez de l’espace et réessayez.\n%@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tu dispositivo se está quedando sin espacio. Libera espacio e inténtalo de nuevo.\n%@"
+          }
         }
       }
     },
@@ -4138,6 +5614,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible d’enregistrer le fichier"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido guardar el archivo"
           }
         }
       }
@@ -4156,6 +5638,12 @@
             "state" : "translated",
             "value" : "Une erreur est survenue lors de l’enregistrement de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal al guardar tus datos. Inténtalo de nuevo o reinicia Dropin si el problema continúa.\n%@"
+          }
         }
       }
     },
@@ -4171,6 +5659,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible d’enregistrer les données"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se han podido guardar los datos"
           }
         }
       }
@@ -4189,6 +5683,12 @@
             "state" : "translated",
             "value" : "Une erreur est survenue lors du chargement de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal al cargar tus datos. Inténtalo de nuevo o reinicia Dropin si el problema continúa.\n%@"
+          }
         }
       }
     },
@@ -4204,6 +5704,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible de charger les données locales"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se han podido cargar los datos locales"
           }
         }
       }
@@ -4221,6 +5727,12 @@
             "state" : "translated",
             "value" : "Impossible d’obtenir l’adresse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Error al obtener los datos"
+          }
         }
       }
     },
@@ -4236,6 +5748,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choisissez une icône"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elige un icono"
           }
         }
       }
@@ -4253,6 +5771,12 @@
             "state" : "translated",
             "value" : "Entrez un nom"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Introduce un nombre"
+          }
         }
       }
     },
@@ -4269,6 +5793,12 @@
             "state" : "translated",
             "value" : "Pas de connexion internet"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin conexión a internet"
+          }
         }
       }
     },
@@ -4284,6 +5814,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun résultat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ningún resultado coincide"
           }
         }
       }
@@ -4302,6 +5838,12 @@
             "state" : "translated",
             "value" : "Une erreur inattendue s’est produite. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se ha producido un error inesperado. Inténtalo de nuevo o reinicia Dropin si el problema continúa.\n%@"
+          }
         }
       }
     },
@@ -4317,6 +5859,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur est survenue"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal"
           }
         }
       }
@@ -4335,6 +5883,12 @@
             "state" : "translated",
             "value" : "Une erreur est survenue lors de la mise à jour de vos données. Réessayez, ou redémarrez Dropin si le problème persiste.\n%@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal al actualizar tus datos. Inténtalo de nuevo o reinicia Dropin si el problema continúa.\n%@"
+          }
         }
       }
     },
@@ -4350,6 +5904,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossible de mettre à jour les données"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se han podido actualizar los datos"
           }
         }
       }
@@ -4367,6 +5927,12 @@
             "state" : "translated",
             "value" : "Certaines icônes peuvent avoir été modifiées par rapport à leur forme originale. Le texte complet de la licence est disponible sur le lien ci-dessus."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Es posible que algunos iconos se hayan modificado respecto a su forma original. El texto completo de la licencia está disponible en el enlace anterior."
+          }
         }
       }
     },
@@ -4381,6 +5947,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "fontawesome.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "fontawesome.com"
           }
         }
@@ -4399,6 +5971,12 @@
             "state" : "translated",
             "value" : "Jeu d'icônes utilisé dans toute l'application Dropin, sous licence CC BY 4.0."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Conjunto de iconos utilizado en Dropin, con licencia CC BY 4.0."
+          }
         }
       }
     },
@@ -4413,6 +5991,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Font Awesome"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Font Awesome"
           }
         }
@@ -4431,6 +6015,12 @@
             "state" : "translated",
             "value" : "Lieux importés"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugares importados"
+          }
         }
       }
     },
@@ -4446,6 +6036,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Catégories importées"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categorías importadas"
           }
         }
       }
@@ -4463,6 +6059,12 @@
             "state" : "translated",
             "value" : "Tags importés"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Etiquetas importadas"
+          }
         }
       }
     },
@@ -4478,6 +6080,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doublons ignorés"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Duplicados omitidos"
           }
         }
       }
@@ -4495,6 +6103,12 @@
             "state" : "translated",
             "value" : "Import terminé"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importación completada"
+          }
         }
       }
     },
@@ -4510,6 +6124,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import annulé."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importación cancelada."
           }
         }
       }
@@ -4527,6 +6147,12 @@
             "state" : "translated",
             "value" : "Ce fichier n'a pas pu être lu (%@)."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido leer este archivo (%@)."
+          }
         }
       }
     },
@@ -4542,6 +6168,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce fichier ne contient aucun lieu à importer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este archivo no contiene ningún lugar que importar."
           }
         }
       }
@@ -4559,6 +6191,12 @@
             "state" : "translated",
             "value" : "Échec de l'import"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Error al importar"
+          }
         }
       }
     },
@@ -4574,6 +6212,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur inattendue est survenue : %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se ha producido un error inesperado: %@"
           }
         }
       }
@@ -4591,6 +6235,12 @@
             "state" : "translated",
             "value" : "L'import %@ attend un fichier « .%@ », pas « .%@ »."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La importación de %@ espera un archivo «.%@», no «.%@»."
+          }
         }
       }
     },
@@ -4606,6 +6256,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cette source d'import n'est pas prise en charge (%@)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta fuente de importación no es compatible (%@)."
           }
         }
       }
@@ -4623,6 +6279,12 @@
             "state" : "translated",
             "value" : "Ce fichier a été exporté depuis une version plus récente de l'application (format v%lld)."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este archivo se exportó desde una versión más reciente de la app (formato v%lld)."
+          }
         }
       }
     },
@@ -4638,6 +6300,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Préparation..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Preparando..."
           }
         }
       }
@@ -4655,6 +6323,12 @@
             "state" : "translated",
             "value" : "%lld sur %lld lieux"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%lld de %lld lugares"
+          }
         }
       }
     },
@@ -4670,6 +6344,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Importation des lieux"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importando lugares"
           }
         }
       }
@@ -4687,6 +6367,12 @@
             "state" : "translated",
             "value" : "Import Dropin · %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importación de Dropin · %@"
+          }
         }
       }
     },
@@ -4702,6 +6388,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Export Mapstr · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exportación de Mapstr · %@"
           }
         }
       }
@@ -4719,6 +6411,12 @@
             "state" : "translated",
             "value" : "Impossible de charger le lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido cargar el lugar"
+          }
         }
       }
     },
@@ -4734,6 +6432,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun lieu trouvé pour cette recherche. Essayez un autre nom ou une autre adresse."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha encontrado ningún lugar para esta búsqueda. Prueba con otro nombre o dirección."
           }
         }
       }
@@ -4751,6 +6455,12 @@
             "state" : "translated",
             "value" : "Ce lieu n’a pas d’adresse sur Apple Maps. Vous pouvez tout de même l’ajouter et renseigner l’adresse vous-même."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este lugar no tiene dirección en Apple Maps. Puedes añadirlo igualmente e introducir la dirección tú mismo."
+          }
         }
       }
     },
@@ -4766,6 +6476,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vous semblez être hors ligne. Vérifiez votre connexion et réessayez."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parece que no tienes conexión. Comprueba tu conexión e inténtalo de nuevo."
           }
         }
       }
@@ -4784,6 +6500,12 @@
             "state" : "translated",
             "value" : "Une erreur est survenue : %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal: %@"
+          }
         }
       }
     },
@@ -4800,6 +6522,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utiliser cette adresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usar esta dirección"
           }
         }
       }
@@ -4818,6 +6546,12 @@
             "state" : "translated",
             "value" : "Utiliser ce lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usar este lugar"
+          }
         }
       }
     },
@@ -4834,6 +6568,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recherche..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Buscando..."
           }
         }
       }
@@ -4852,6 +6592,12 @@
             "state" : "translated",
             "value" : "Synchronisation..."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sincronizando..."
+          }
         }
       }
     },
@@ -4868,6 +6614,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Par défaut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Por defecto"
           }
         }
       }
@@ -4886,6 +6638,12 @@
             "state" : "translated",
             "value" : "Satellite"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Satélite"
+          }
         }
       }
     },
@@ -4902,6 +6660,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Masquer les points d'intérêt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ocultar puntos de interés"
           }
         }
       }
@@ -4920,6 +6684,12 @@
             "state" : "translated",
             "value" : "Afficher les points d'intérêt"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mostrar puntos de interés"
+          }
         }
       }
     },
@@ -4937,6 +6707,12 @@
             "state" : "translated",
             "value" : "Points d'intérêt"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Puntos de interés"
+          }
         }
       }
     },
@@ -4952,6 +6728,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Affichés sur la carte pour vous aider à vous repérer. Vos lieux restent toujours visibles."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se muestran en el mapa para ayudarte a orientarte. Tus lugares siempre siguen visibles."
           }
         }
       }
@@ -4970,6 +6752,12 @@
             "state" : "translated",
             "value" : "Style de carte"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estilo del mapa"
+          }
         }
       }
     },
@@ -4986,6 +6774,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Options de la carte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Opciones del mapa"
           }
         }
       }
@@ -5028,6 +6822,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "**%lld lugar** tiene más de una de estas. Se queda con la de mayor prioridad como categoría; las demás siguen como etiquetas."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "**%lld lugares** tienen más de una de estas. Cada uno se queda con la de mayor prioridad como categoría; las demás siguen como etiquetas."
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -5045,6 +6857,12 @@
             "state" : "translated",
             "value" : "Voir ›"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Revisar ›"
+          }
         }
       }
     },
@@ -5061,6 +6879,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cochez des tags ci-dessous pour les transformer en catégories."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Marca etiquetas abajo para convertirlas en categorías."
           }
         }
       }
@@ -5103,6 +6927,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Importar %lld lugar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Importar %lld lugares"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -5119,6 +6961,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mapstr n'a pas de catégories. Choisissez les tags qui doivent devenir des catégories pour donner leur propre couleur à vos épingles."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mapstr no tiene categorías. Elige las etiquetas que deben convertirse en categorías para que tus chinchetas tengan sus propios colores."
           }
         }
       }
@@ -5137,6 +6985,12 @@
             "state" : "translated",
             "value" : "Existante « %@ »"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "«%@» existente"
+          }
         }
       }
     },
@@ -5153,6 +7007,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nouvelle · icône par défaut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva · icono por defecto"
           }
         }
       }
@@ -5171,6 +7031,12 @@
             "state" : "translated",
             "value" : "Nouvelle · icône suggérée"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva · icono sugerido"
+          }
         }
       }
     },
@@ -5187,6 +7053,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deviennent des catégories"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pasan a ser categorías"
           }
         }
       }
@@ -5205,6 +7077,12 @@
             "state" : "translated",
             "value" : "Glisser pour définir la priorité"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arrastra para fijar la prioridad"
+          }
         }
       }
     },
@@ -5221,6 +7099,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restent des tags"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Siguen como etiquetas"
           }
         }
       }
@@ -5263,6 +7147,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld etiqueta"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld etiquetas"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -5280,6 +7182,12 @@
             "state" : "translated",
             "value" : "Catégories"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categorías"
+          }
         }
       }
     },
@@ -5296,6 +7204,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Categoría"
           }
         }
       }
@@ -5338,6 +7252,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld combinación"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld combinaciones"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -5354,6 +7286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus aucun conflit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No quedan conflictos"
           }
         }
       }
@@ -5372,6 +7310,12 @@
             "state" : "translated",
             "value" : "Ces lieux ont plusieurs de vos nouvelles catégories. Chacun garde la plus prioritaire, l'autre reste un tag. Échanger change l'ordre pour tous les lieux."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estos lugares tienen más de una de tus nuevas categorías. Cada uno se queda con la de mayor prioridad; la otra sigue como etiqueta. Al intercambiarlas, cambia el orden para todos los lugares."
+          }
         }
       }
     },
@@ -5388,6 +7332,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "+%lld de plus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "+%lld más"
           }
         }
       }
@@ -5430,6 +7380,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld lugar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld lugares"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -5446,6 +7414,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Définir la catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elegir categoría"
           }
         }
       }
@@ -5464,6 +7438,12 @@
             "state" : "translated",
             "value" : "Reste un tag"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sigue como etiqueta"
+          }
         }
       }
     },
@@ -5480,6 +7460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Échanger"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Intercambiar"
           }
         }
       }
@@ -5498,6 +7484,12 @@
             "state" : "translated",
             "value" : "Conflits"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Conflictos"
+          }
         }
       }
     },
@@ -5513,6 +7505,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sélectionner un marqueur"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Selecciona un marcador"
           }
         }
       }
@@ -5530,6 +7528,12 @@
             "state" : "translated",
             "value" : "Rechercher par adresse ou par nom"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Buscar por dirección o nombre"
+          }
         }
       }
     },
@@ -5545,6 +7549,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entrer les coordonnées"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Introducir coordenadas"
           }
         }
       }
@@ -5562,6 +7572,12 @@
             "state" : "translated",
             "value" : "Utiliser la position actuelle"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Usar ubicación actual"
+          }
         }
       }
     },
@@ -5577,6 +7593,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Placer un repère sur la carte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Poner una chincheta en el mapa"
           }
         }
       }
@@ -5594,6 +7616,12 @@
             "state" : "translated",
             "value" : "Apple Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ir con Apple Maps"
+          }
         }
       }
     },
@@ -5610,6 +7638,12 @@
             "state" : "translated",
             "value" : "Google Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ir con Google Maps"
+          }
         }
       }
     },
@@ -5625,6 +7659,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waze"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ir con Waze"
           }
         }
       }
@@ -5643,6 +7683,12 @@
             "state" : "translated",
             "value" : "Apple Maps ne renseigne pas encore de téléphone ou de site web pour ce lieu."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Apple Maps aún no tiene teléfono ni sitio web para este lugar."
+          }
         }
       }
     },
@@ -5659,6 +7705,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le lien de ce lieu vers Apple Maps n'est plus valide. Vos propres informations ne sont pas affectées."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El vínculo de este lugar con Apple Maps ya no es válido. Tus propios datos no se ven afectados."
           }
         }
       }
@@ -5677,6 +7729,12 @@
             "state" : "translated",
             "value" : "Le lien Apple Maps est rompu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El vínculo con Apple Maps no funciona"
+          }
         }
       }
     },
@@ -5693,6 +7751,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple a peut-être supprimé ce lieu. Réessayez dans quelques jours.\nMKError(%llu)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Es posible que Apple haya eliminado este lugar. Vuelve a intentarlo dentro de unos días.\nMKError(%llu)"
           }
         }
       }
@@ -5711,6 +7775,12 @@
             "state" : "translated",
             "value" : "Les détails Apple Maps se chargeront une fois que vous serez de nouveau en ligne."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los detalles de Apple Maps se cargarán cuando vuelvas a tener conexión."
+          }
         }
       }
     },
@@ -5727,6 +7797,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple a peut-être supprimé ce lieu. Réessayez dans quelques jours."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Es posible que Apple haya eliminado este lugar. Vuelve a intentarlo dentro de unos días."
           }
         }
       }
@@ -5745,6 +7821,12 @@
             "state" : "translated",
             "value" : "Impossible de charger les détails Apple Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se han podido cargar los detalles de Apple Maps"
+          }
         }
       }
     },
@@ -5761,6 +7843,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce lieu n’est plus disponible sur Apple Maps. Vos propres informations ne sont pas affectées."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este lugar ya no está en Apple Maps. Tus propios datos no se ven afectados."
           }
         }
       }
@@ -5779,6 +7867,12 @@
             "state" : "translated",
             "value" : "Plus disponible sur Apple Maps"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ya no está en Apple Maps"
+          }
         }
       }
     },
@@ -5795,6 +7889,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Une erreur est survenue.\nErreur : %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algo ha salido mal.\nError: %@"
           }
         }
       }
@@ -5813,6 +7913,12 @@
             "state" : "translated",
             "value" : "Le lieu ne pourra plus être associé à nouveau par la suite."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Después no se podrá volver a vincular el lugar."
+          }
         }
       }
     },
@@ -5829,6 +7935,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dissocier d’Apple Maps ?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Desvincular de Apple Maps?"
           }
         }
       }
@@ -5848,6 +7960,12 @@
             "state" : "translated",
             "value" : "Affiché dans le coin du repère sur la carte"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se muestra en la esquina de la chincheta en el mapa"
+          }
         }
       }
     },
@@ -5865,6 +7983,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajoutez des photos de ce lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añade fotos de este lugar"
           }
         }
       }
@@ -5884,6 +8008,12 @@
             "state" : "translated",
             "value" : "depuis votre photothèque ou l'appareil photo"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "desde tu fototeca o la cámara"
+          }
         }
       }
     },
@@ -5902,6 +8032,12 @@
             "state" : "translated",
             "value" : "Touchez pour noter"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Toca para valorar"
+          }
         }
       }
     },
@@ -5918,6 +8054,12 @@
             "state" : "translated",
             "value" : "Toutes les catégories sont affichées"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se muestran todas las categorías"
+          }
         }
       }
     },
@@ -5933,6 +8075,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux dans l'une de ces catégories"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugares de cualquiera de estas categorías"
           }
         }
       }
@@ -5951,6 +8099,12 @@
             "state" : "translated",
             "value" : "Tous"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Todas"
+          }
         }
       }
     },
@@ -5967,6 +8121,12 @@
             "state" : "translated",
             "value" : "« Aucun tag » n'est pas disponible quand tous les tags doivent correspondre."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "«Sin etiquetas» no está disponible al buscar coincidencias con todas las etiquetas."
+          }
         }
       }
     },
@@ -5982,6 +8142,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lieux avec tous ces tags"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugares con todas estas etiquetas"
           }
         }
       }
@@ -6000,6 +8166,12 @@
             "state" : "translated",
             "value" : "Au moins un"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alguna"
+          }
         }
       }
     },
@@ -6016,6 +8188,12 @@
             "state" : "translated",
             "value" : "Lieux avec au moins un de ces tags"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugares con al menos una de estas etiquetas"
+          }
         }
       }
     },
@@ -6031,6 +8209,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sélectionnez des tags pour filtrer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Selecciona etiquetas para filtrar"
           }
         }
       }
@@ -6049,10 +8233,17 @@
             "state" : "translated",
             "value" : "Filtrer les lieux"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Filtrar lugares"
+          }
         }
       }
     },
     "place_list.search.placeholder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6064,6 +8255,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rechercher un nom ou une adresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Buscar nombre o dirección"
           }
         }
       }
@@ -6082,6 +8279,12 @@
             "state" : "translated",
             "value" : "Contact"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Contacto"
+          }
         }
       }
     },
@@ -6098,6 +8301,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aperçu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Resumen"
           }
         }
       }
@@ -6116,11 +8325,18 @@
             "state" : "translated",
             "value" : "%1$@ a partagé un lieu avec vous : %2$@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ha compartido un lugar contigo: %2$@"
+          }
         }
       }
     },
     "place_sheet.share.error" : {
       "comment" : "Body of the alert shown when creating a share link fails",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6133,11 +8349,18 @@
             "state" : "translated",
             "value" : "Impossible de créer un lien de partage pour ce lieu. Réessayez."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido crear un enlace para compartir este lugar. Inténtalo de nuevo."
+          }
         }
       }
     },
     "place_sheet.share.error.connection" : {
       "comment" : "Body of the alert shown when creating a share link fails because the device is offline",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6149,6 +8372,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pas de connexion internet. Vérifiez votre connexion et réessayez."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin conexión a internet. Comprueba tu conexión e inténtalo de nuevo."
           }
         }
       }
@@ -6165,6 +8394,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Échec du partage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Error al compartir"
           }
         }
       }
@@ -6183,6 +8418,12 @@
             "state" : "translated",
             "value" : "Impossible de créer le lien de partage (erreur %d). Réessayez."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido crear el enlace para compartir (error %d). Inténtalo de nuevo."
+          }
         }
       }
     },
@@ -6199,6 +8440,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ a partagé un lieu avec vous sur Dropin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ ha compartido un lugar contigo en Dropin"
           }
         }
       }
@@ -6217,6 +8464,12 @@
             "state" : "translated",
             "value" : "Quelqu'un"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alguien"
+          }
         }
       }
     },
@@ -6232,6 +8485,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L'adresse sera récupérée dès que vous serez de nouveau en ligne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La dirección se obtendrá cuando vuelvas a tener conexión"
           }
         }
       }
@@ -6251,6 +8510,12 @@
             "state" : "translated",
             "value" : "Appartement, suite, unité, bâtiment, étage, etc."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Piso, puerta, escalera, edificio, etc."
+          }
         }
       }
     },
@@ -6266,6 +8531,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom à la catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ponle un nombre a la categoría"
           }
         }
       }
@@ -6284,6 +8555,12 @@
             "state" : "translated",
             "value" : "Créez des catégories en éditant un lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Crea categorías editando un lugar"
+          }
         }
       }
     },
@@ -6300,6 +8577,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune catégorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no hay categorías"
           }
         }
       }
@@ -6319,6 +8602,12 @@
             "state" : "translated",
             "value" : "Aucune catégorie"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin categoría"
+          }
         }
       }
     },
@@ -6334,6 +8623,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune information de contact disponible. Modifiez le lieu pour ajouter un numéro de téléphone, une adresse e-mail ou une URL."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Edita el lugar para añadir teléfonos, correos electrónicos o URL"
           }
         }
       }
@@ -6351,6 +8646,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune donnée de contact "
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin contacto"
           }
         }
       }
@@ -6370,6 +8671,12 @@
             "state" : "translated",
             "value" : "Aucune icône"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin icono"
+          }
         }
       }
     },
@@ -6385,6 +8692,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucune photo.\nModifiez le lieu pour en ajouter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no hay fotos.\nEdita el lugar para añadir alguna."
           }
         }
       }
@@ -6402,6 +8715,12 @@
             "state" : "translated",
             "value" : "Aucune photo"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin fotos"
+          }
         }
       }
     },
@@ -6417,6 +8736,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun lieu ne correspond à votre recherche actuelle."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ningún lugar coincide con tu búsqueda."
           }
         }
       }
@@ -6434,6 +8759,12 @@
             "state" : "translated",
             "value" : "Aucune note"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin notas"
+          }
         }
       }
     },
@@ -6449,6 +8780,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notez quelque chose quand vous voulez"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Apunta algo cuando quieras"
           }
         }
       }
@@ -6467,6 +8804,12 @@
             "state" : "translated",
             "value" : "Appuyez longuement sur la carte pour ajouter votre premier lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mantén pulsado el mapa para añadir tu primer lugar"
+          }
         }
       }
     },
@@ -6483,6 +8826,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aucun lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no hay lugares"
           }
         }
       }
@@ -6502,6 +8851,12 @@
             "state" : "translated",
             "value" : "Aucune note"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin valoración"
+          }
         }
       }
     },
@@ -6520,6 +8875,12 @@
             "state" : "translated",
             "value" : "Aucun tag"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sin etiquetas"
+          }
         }
       }
     },
@@ -6535,6 +8896,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajoutez-en en modifiant ce lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añade alguna cuando edites este lugar"
           }
         }
       }
@@ -6553,6 +8920,12 @@
             "state" : "translated",
             "value" : "Créez des tags en éditant un lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Crea etiquetas editando un lugar"
+          }
         }
       }
     },
@@ -6570,6 +8943,12 @@
             "state" : "translated",
             "value" : "Aucun tag"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aún no hay etiquetas"
+          }
         }
       }
     },
@@ -6586,6 +8965,12 @@
             "state" : "translated",
             "value" : "Ajouter des informations"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añade más información aquí"
+          }
         }
       }
     },
@@ -6601,6 +8986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Donner un nom au lieu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ponle un nombre al lugar"
           }
         }
       }
@@ -6619,6 +9010,12 @@
             "state" : "translated",
             "value" : "Impossible de créer le lieu"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se puede crear el lugar"
+          }
         }
       }
     },
@@ -6635,6 +9032,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il y a déjà un lieu nommé %@ ici."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ya hay un lugar llamado %@ aquí."
           }
         }
       }
@@ -6653,6 +9056,12 @@
             "state" : "translated",
             "value" : "Cela chevaucherait le lieu %@ à cette même position."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se superpondría con el lugar %@ en esta misma posición."
+          }
         }
       }
     },
@@ -6669,6 +9078,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aéroport"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aeropuerto"
           }
         }
       }
@@ -6687,6 +9102,12 @@
             "state" : "translated",
             "value" : "Parc d'attractions"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parque de atracciones"
+          }
         }
       }
     },
@@ -6703,6 +9124,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Service animalier"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicios para animales"
           }
         }
       }
@@ -6721,6 +9148,12 @@
             "state" : "translated",
             "value" : "Aquarium"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Acuario"
+          }
         }
       }
     },
@@ -6737,6 +9170,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Distributeur"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cajero automático"
           }
         }
       }
@@ -6755,6 +9194,12 @@
             "state" : "translated",
             "value" : "Garage auto"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Taller mecánico"
+          }
         }
       }
     },
@@ -6771,6 +9216,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boulangerie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Panadería"
           }
         }
       }
@@ -6789,6 +9240,12 @@
             "state" : "translated",
             "value" : "Banque"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Banco"
+          }
         }
       }
     },
@@ -6805,6 +9262,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Baseball"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Béisbol"
           }
         }
       }
@@ -6823,6 +9286,12 @@
             "state" : "translated",
             "value" : "Basket-ball"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Baloncesto"
+          }
         }
       }
     },
@@ -6839,6 +9308,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Playa"
           }
         }
       }
@@ -6857,6 +9332,12 @@
             "state" : "translated",
             "value" : "Beauté"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Belleza"
+          }
         }
       }
     },
@@ -6873,6 +9354,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bowling"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bolera"
           }
         }
       }
@@ -6891,6 +9378,12 @@
             "state" : "translated",
             "value" : "Brasserie"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cervecería"
+          }
         }
       }
     },
@@ -6908,6 +9401,12 @@
             "state" : "translated",
             "value" : "Café"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cafetería"
+          }
         }
       }
     },
@@ -6923,6 +9422,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Camping"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Camping"
           }
         }
@@ -6942,6 +9447,12 @@
             "state" : "translated",
             "value" : "Location de voiture"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alquiler de coches"
+          }
         }
       }
     },
@@ -6958,6 +9469,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Château"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Castillo"
           }
         }
       }
@@ -6976,6 +9493,12 @@
             "state" : "translated",
             "value" : "Centre de congrès"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Centro de convenciones"
+          }
         }
       }
     },
@@ -6992,6 +9515,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Distillerie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Destilería"
           }
         }
       }
@@ -7010,6 +9539,12 @@
             "state" : "translated",
             "value" : "Borne de recharge"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Punto de recarga"
+          }
         }
       }
     },
@@ -7026,6 +9561,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fête foraine"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Recinto ferial"
           }
         }
       }
@@ -7044,6 +9585,12 @@
             "state" : "translated",
             "value" : "Caserne de pompiers"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parque de bomberos"
+          }
         }
       }
     },
@@ -7060,6 +9607,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pêche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pesca"
           }
         }
       }
@@ -7078,6 +9631,12 @@
             "state" : "translated",
             "value" : "Salle de sport"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gimnasio"
+          }
         }
       }
     },
@@ -7094,6 +9653,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Marché alimentaire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mercado"
           }
         }
       }
@@ -7112,6 +9677,12 @@
             "state" : "translated",
             "value" : "Forteresse"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fortaleza"
+          }
         }
       }
     },
@@ -7128,6 +9699,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Station-service"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gasolinera"
           }
         }
       }
@@ -7146,6 +9723,12 @@
             "state" : "translated",
             "value" : "Karting"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Karts"
+          }
         }
       }
     },
@@ -7161,6 +9744,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Golf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Golf"
           }
         }
@@ -7180,6 +9769,12 @@
             "state" : "translated",
             "value" : "Randonnée"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Senderismo"
+          }
         }
       }
     },
@@ -7196,6 +9791,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hôpital"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hospital"
           }
         }
       }
@@ -7214,6 +9815,12 @@
             "state" : "translated",
             "value" : "Hôtel"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hotel"
+          }
         }
       }
     },
@@ -7229,6 +9836,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Kayak"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Kayak"
           }
         }
@@ -7248,6 +9861,12 @@
             "state" : "translated",
             "value" : "Site remarquable"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lugar emblemático"
+          }
         }
       }
     },
@@ -7264,6 +9883,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Laverie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lavandería"
           }
         }
       }
@@ -7282,6 +9907,12 @@
             "state" : "translated",
             "value" : "Bibliothèque"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Biblioteca"
+          }
         }
       }
     },
@@ -7298,6 +9929,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boîte aux lettres"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Buzón"
           }
         }
       }
@@ -7316,6 +9953,12 @@
             "state" : "translated",
             "value" : "Port de plaisance"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Puerto deportivo"
+          }
         }
       }
     },
@@ -7332,6 +9975,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mini-golf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Minigolf"
           }
         }
       }
@@ -7350,6 +9999,12 @@
             "state" : "translated",
             "value" : "Cinéma"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cine"
+          }
         }
       }
     },
@@ -7366,6 +10021,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Musée"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Museo"
           }
         }
       }
@@ -7384,6 +10045,12 @@
             "state" : "translated",
             "value" : "Salle de concert"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sala de conciertos"
+          }
         }
       }
     },
@@ -7400,6 +10067,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monument national"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Monumento nacional"
           }
         }
       }
@@ -7418,6 +10091,12 @@
             "state" : "translated",
             "value" : "Parc national"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parque nacional"
+          }
         }
       }
     },
@@ -7434,6 +10113,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vie nocturne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vida nocturna"
           }
         }
       }
@@ -7452,6 +10137,12 @@
             "state" : "translated",
             "value" : "Parc"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parque"
+          }
         }
       }
     },
@@ -7468,6 +10159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Parking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aparcamiento"
           }
         }
       }
@@ -7486,6 +10183,12 @@
             "state" : "translated",
             "value" : "Pharmacie"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Farmacia"
+          }
         }
       }
     },
@@ -7502,6 +10205,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planétarium"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Planetario"
           }
         }
       }
@@ -7520,6 +10229,12 @@
             "state" : "translated",
             "value" : "Police"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Policía"
+          }
         }
       }
     },
@@ -7536,6 +10251,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bureau de poste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Oficina de correos"
           }
         }
       }
@@ -7554,6 +10275,12 @@
             "state" : "translated",
             "value" : "Transport en commun"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Transporte público"
+          }
         }
       }
     },
@@ -7570,6 +10297,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restaurant"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Restaurante"
           }
         }
       }
@@ -7588,6 +10321,12 @@
             "state" : "translated",
             "value" : "Toilettes"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aseos"
+          }
         }
       }
     },
@@ -7604,6 +10343,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escalade"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Escalada"
           }
         }
       }
@@ -7622,6 +10367,12 @@
             "state" : "translated",
             "value" : "Camping-car"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Área de autocaravanas"
+          }
         }
       }
     },
@@ -7639,6 +10390,12 @@
             "state" : "translated",
             "value" : "École"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Colegio"
+          }
         }
       }
     },
@@ -7654,6 +10411,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Skatepark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Skatepark"
           }
         }
@@ -7673,6 +10436,12 @@
             "state" : "translated",
             "value" : "Patinage"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Patinaje"
+          }
         }
       }
     },
@@ -7689,6 +10458,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ski"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esquí"
           }
         }
       }
@@ -7707,6 +10482,12 @@
             "state" : "translated",
             "value" : "Football"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Fútbol"
+          }
         }
       }
     },
@@ -7722,6 +10503,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Spa"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Spa"
           }
         }
@@ -7741,6 +10528,12 @@
             "state" : "translated",
             "value" : "Stade"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estadio"
+          }
         }
       }
     },
@@ -7758,6 +10551,12 @@
             "state" : "translated",
             "value" : "Magasin"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tienda"
+          }
         }
       }
     },
@@ -7773,6 +10572,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Surf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Surf"
           }
         }
@@ -7792,6 +10597,12 @@
             "state" : "translated",
             "value" : "Natation"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Natación"
+          }
         }
       }
     },
@@ -7808,6 +10619,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tennis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tenis"
           }
         }
       }
@@ -7826,6 +10643,12 @@
             "state" : "translated",
             "value" : "Théâtre"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Teatro"
+          }
         }
       }
     },
@@ -7842,6 +10665,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Université"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Universidad"
           }
         }
       }
@@ -7860,6 +10689,12 @@
             "state" : "translated",
             "value" : "Volley-ball"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Voleibol"
+          }
         }
       }
     },
@@ -7876,6 +10711,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Domaine viticole"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bodega"
           }
         }
       }
@@ -7894,6 +10735,12 @@
             "state" : "translated",
             "value" : "Zoo"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Zoo"
+          }
         }
       }
     },
@@ -7909,6 +10756,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Si vous créez un compte, nous stockons votre e-mail et votre nom d'affichage afin de vous authentifier et de permettre la synchronisation entre appareils, rien de plus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Si creas una cuenta, guardamos tu correo electrónico y tu nombre visible para identificarte y sincronizar tus dispositivos, nada más."
           }
         }
       }
@@ -7926,6 +10779,12 @@
             "state" : "translated",
             "value" : "Données de compte."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Datos de la cuenta."
+          }
         }
       }
     },
@@ -7941,6 +10800,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dropin utilise Sentry pour détecter et diagnostiquer les plantages et les erreurs, pas pour l'analyse, la publicité ou le suivi de votre activité. Lorsque vous êtes connecté, les rapports d'erreur peuvent inclure les détails de votre compte afin que nous puissions examiner les problèmes qui vous concernent. Dropin n'utilise aucun SDK d'analyse ou de publicité tiers."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dropin usa Sentry para detectar y diagnosticar cierres inesperados y errores, no para analítica, publicidad ni para seguir tu actividad. Cuando has iniciado sesión, los informes de errores pueden incluir los datos de tu cuenta para que podamos investigar los problemas que te afectan a ti en concreto. Dropin no usa ningún SDK de analítica ni de publicidad de terceros."
           }
         }
       }
@@ -7958,6 +10823,12 @@
             "state" : "translated",
             "value" : "Rapports de plantage et d'erreurs."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informes de cierres y errores."
+          }
         }
       }
     },
@@ -7973,6 +10844,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Des questions ? Contactez %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Tienes preguntas? Escribe a %@."
           }
         }
       }
@@ -7990,6 +10867,12 @@
             "state" : "translated",
             "value" : "Dropin est fourni tel quel, pour un usage personnel. En utilisant l'application, vous acceptez de ne pas détourner le service ; nous pourrons mettre à jour ces conditions à mesure que l'application évolue."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dropin se ofrece tal cual, para uso personal. Al usar la app, te comprometes a no hacer un uso indebido del servicio; podemos actualizar estas condiciones a medida que la app evolucione."
+          }
         }
       }
     },
@@ -8005,6 +10888,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conditions d'utilisation."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condiciones de uso."
           }
         }
       }
@@ -8022,6 +10911,12 @@
             "state" : "translated",
             "value" : "Les lieux, catégories, tags et photos que vous ajoutez sont stockés sur votre appareil et sur des serveurs cloud tiers sécurisés, pouvant être situés hors de votre pays. Ces données ne sont jamais partagées, vendues, ni utilisées à des fins publicitaires."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los lugares, categorías, etiquetas y fotos que añades se guardan en tu dispositivo y en servidores en la nube seguros de terceros, que pueden estar fuera de tu país. Estos datos nunca se comparten, se venden ni se usan con fines publicitarios."
+          }
         }
       }
     },
@@ -8037,6 +10932,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ce que nous collectons."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Qué recopilamos."
           }
         }
       }
@@ -8054,6 +10955,12 @@
             "state" : "translated",
             "value" : "Vous pouvez exporter ou supprimer définitivement toutes vos données à tout moment depuis les Réglages ou votre Profil."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Puedes exportar o eliminar definitivamente todos tus datos en cualquier momento desde Ajustes o tu Perfil."
+          }
         }
       }
     },
@@ -8069,6 +10976,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vos droits."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tus derechos."
           }
         }
       }
@@ -8086,6 +10999,12 @@
             "state" : "translated",
             "value" : "Dernière mise à jour : %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Última actualización: %@"
+          }
         }
       }
     },
@@ -8101,6 +11020,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confidentialité"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacidad"
           }
         }
       }
@@ -8120,6 +11045,12 @@
             "state" : "translated",
             "value" : "Supprimer le compte"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminar cuenta"
+          }
         }
       }
     },
@@ -8136,6 +11067,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nom affiché"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nombre visible"
           }
         }
       }
@@ -8154,6 +11091,12 @@
             "state" : "translated",
             "value" : "Email"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Correo electrónico"
+          }
         }
       }
     },
@@ -8170,6 +11113,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le nom affiché ne peut pas être vide"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El nombre visible no puede estar vacío"
           }
         }
       }
@@ -8188,6 +11137,12 @@
             "state" : "translated",
             "value" : "Le nom affiché est trop long"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El nombre visible es demasiado largo"
+          }
         }
       }
     },
@@ -8204,6 +11159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Se déconnecter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cerrar sesión"
           }
         }
       }
@@ -8222,6 +11183,12 @@
             "state" : "translated",
             "value" : "Se déconnecter"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cerrar sesión"
+          }
         }
       }
     },
@@ -8238,6 +11205,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vous devrez vous reconnecter pour accéder à vos lieux."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tendrás que volver a iniciar sesión para acceder a tus lugares."
           }
         }
       }
@@ -8256,6 +11229,12 @@
             "state" : "translated",
             "value" : "Se déconnecter ?"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Cerrar sesión?"
+          }
         }
       }
     },
@@ -8272,6 +11251,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Se déconnecter et perdre les modifications"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cerrar sesión y perder los cambios"
           }
         }
       }
@@ -8290,6 +11275,12 @@
             "state" : "translated",
             "value" : "Certains lieux, catégories ou tags ont peut-être été modifiés récemment, ou pendant que votre appareil était hors-ligne, et n'ont pas encore été synchronisés avec le serveur. Pour éviter toute perte de données, connectez-vous à internet et attendez quelques secondes avant de vous déconnecter."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Es posible que algunos lugares, categorías o etiquetas se hayan modificado recientemente, o mientras tu dispositivo estaba sin conexión, y aún no se hayan sincronizado con el servidor. Para no perder datos, conéctate a internet y espera unos segundos antes de cerrar sesión."
+          }
         }
       }
     },
@@ -8307,6 +11298,12 @@
             "state" : "translated",
             "value" : "À propos des modifications non synchronisées"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sobre los cambios sin sincronizar"
+          }
         }
       }
     },
@@ -8323,6 +11320,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En savoir plus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Más información"
           }
         }
       }
@@ -8365,6 +11368,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "No tienes conexión y tienes %lld cambio sin sincronizar. Si cierras sesión, se perderá."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "No tienes conexión y tienes %lld cambios sin sincronizar. Si cierras sesión, se perderán."
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -8381,6 +11402,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Modifications non synchronisées"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cambios sin sincronizar"
           }
         }
       }
@@ -8423,6 +11450,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld cambio no se ha podido sincronizar y se perderá al cerrar sesión."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld cambios no se han podido sincronizar y se perderán al cerrar sesión."
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -8439,6 +11484,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Synchronisation incomplète"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sincronización incompleta"
           }
         }
       }
@@ -8457,6 +11508,12 @@
             "state" : "translated",
             "value" : "Formule"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Plan"
+          }
         }
       }
     },
@@ -8474,6 +11531,12 @@
             "state" : "translated",
             "value" : "Regroupement"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Agrupación"
+          }
         }
       }
     },
@@ -8489,6 +11552,12 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Google (GeoJSON)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Google (GeoJSON)"
           }
         }
@@ -8508,6 +11577,12 @@
             "state" : "translated",
             "value" : "Mapstr (GeoJSON)"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mapstr (GeoJSON)"
+          }
         }
       }
     },
@@ -8524,6 +11599,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import en cours..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importando..."
           }
         }
       }
@@ -8566,6 +11647,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Importando %lld lugar..."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Importando %lld lugares..."
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -8582,6 +11681,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Taille des repères"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tamaño de la chincheta"
           }
         }
       }
@@ -8600,6 +11705,12 @@
             "state" : "translated",
             "value" : "Style des repères"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estilo de la chincheta"
+          }
         }
       }
     },
@@ -8616,6 +11727,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réinitialiser la base de donnée"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Restablecer base de datos"
           }
         }
       }
@@ -8635,6 +11752,12 @@
             "state" : "translated",
             "value" : "Données"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Datos"
+          }
         }
       }
     },
@@ -8652,6 +11775,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Configuration de la carte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Configuración del mapa"
           }
         }
       }
@@ -8671,6 +11800,12 @@
             "state" : "translated",
             "value" : "Principal"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Personal"
+          }
         }
       }
     },
@@ -8686,6 +11821,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Un tag avec ce nom existe déjà"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ya existe una etiqueta con este nombre"
           }
         }
       }
@@ -8727,6 +11868,24 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld lugar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%lld lugares"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -8744,6 +11903,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tous les tags"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Todas las etiquetas"
           }
         }
       }
@@ -8763,6 +11928,12 @@
             "state" : "translated",
             "value" : "Tags"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Etiquetas"
+          }
         }
       }
     },
@@ -8778,6 +11949,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nouveau tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva etiqueta"
           }
         }
       }
@@ -8797,12 +11974,16 @@
             "state" : "translated",
             "value" : "Sélectionnés · %lld"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seleccionadas · %lld"
+          }
         }
       }
     },
-    "unknown" : {
-
-    }
+    "unknown" : {}
   },
   "version" : "1.0"
 }

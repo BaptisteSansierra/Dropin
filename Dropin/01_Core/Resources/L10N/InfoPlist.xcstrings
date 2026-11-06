@@ -31,6 +31,12 @@
             "state" : "translated",
             "value" : "Dropin utilise l'appareil photo pour ajouter des photos à vos lieux."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dropin usa la cámara para añadir fotos a tus lugares."
+          }
         }
       }
     },
@@ -48,6 +54,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dropin a besoin d’accéder à votre position pour fournir des services basés sur la localisation."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dropin necesita acceder a tu ubicación para ofrecerte servicios basados en la ubicación."
           }
         }
       }
