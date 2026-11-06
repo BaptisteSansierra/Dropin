@@ -1,0 +1,523 @@
+{
+  "version": 1,
+  "exportedAt": "2026-09-29T09:00:00Z",
+  "categories": [
+    {
+      "id": "50AD8BBA-5ACE-AE28-8071-9E1AD959E7D9",
+      "name": "Museum",
+      "icon": "sf:building.columns",
+      "color": "#3E6DB8",
+      "createdAt": "2026-09-29T09:00:00Z",
+      "updatedAt": "2026-09-29T09:00:00Z"
+    },
+    {
+      "id": "3E083F45-D9E7-AB99-D7B2-AA3921C02182",
+      "name": "Restaurant",
+      "icon": "sf:fork.knife",
+      "color": "#C0395A",
+      "createdAt": "2026-09-29T09:07:00Z",
+      "updatedAt": "2026-09-29T09:07:00Z"
+    },
+    {
+      "id": "326A7A42-C22D-6F31-9138-9C6B19B0FDC1",
+      "name": "Café & Bakery",
+      "icon": "sf:cup.and.saucer",
+      "color": "#C98424",
+      "createdAt": "2026-09-29T09:14:00Z",
+      "updatedAt": "2026-09-29T09:14:00Z"
+    },
+    {
+      "id": "55F31DF8-0EB9-103D-1F01-7218D5DD9327",
+      "name": "Shop",
+      "icon": "sf:bag",
+      "color": "#3E9A5B",
+      "createdAt": "2026-09-29T09:21:00Z",
+      "updatedAt": "2026-09-29T09:21:00Z"
+    },
+    {
+      "id": "2E4D75AC-02A5-31A5-128A-B39E9E563B72",
+      "name": "Viewpoint",
+      "icon": "sf:binoculars",
+      "color": "#7B5BB5",
+      "createdAt": "2026-09-29T09:28:00Z",
+      "updatedAt": "2026-09-29T09:28:00Z"
+    },
+    {
+      "id": "9B1F3C2A-6E4D-4A7B-8C51-2D7E0F9A4B36",
+      "name": "Hotel",
+      "icon": "sf:bed.double",
+      "color": "#2E7F86",
+      "createdAt": "2026-09-29T09:30:00Z",
+      "updatedAt": "2026-09-29T09:30:00Z"
+    }
+  ],
+  "tags": [
+    {
+      "id": "5911D468-4E72-41FA-D291-61A7BC3F2621",
+      "name": "Weekend",
+      "color": "#D9572F",
+      "createdAt": "2026-09-29T10:10:00Z",
+      "updatedAt": "2026-09-29T10:10:00Z"
+    },
+    {
+      "id": "F416B7FA-B337-43F0-D7A8-5E023F4476CF",
+      "name": "With kids",
+      "color": "#C9A01E",
+      "createdAt": "2026-09-29T10:17:00Z",
+      "updatedAt": "2026-09-29T10:17:00Z"
+    },
+    {
+      "id": "687B4450-1BEB-1621-910C-D706359EA370",
+      "name": "Terrace",
+      "color": "#7D962A",
+      "createdAt": "2026-09-29T10:24:00Z",
+      "updatedAt": "2026-09-29T10:24:00Z"
+    },
+    {
+      "id": "185E4156-24F1-EB5F-72E4-2C8BADF7184C",
+      "name": "Rainy day",
+      "color": "#2F97C2",
+      "createdAt": "2026-09-29T10:31:00Z",
+      "updatedAt": "2026-09-29T10:31:00Z"
+    },
+    {
+      "id": "4CBD45B5-553F-5D6D-A72B-8905D00EC2EF",
+      "name": "To try",
+      "color": "#A8449F",
+      "createdAt": "2026-09-29T10:38:00Z",
+      "updatedAt": "2026-09-29T10:38:00Z"
+    },
+    {
+      "id": "6717E9DF-50FA-A938-9CE5-E7AB5CA53572",
+      "name": "Gift ideas",
+      "color": "#8A6A52",
+      "createdAt": "2026-09-29T10:45:00Z",
+      "updatedAt": "2026-09-29T10:45:00Z"
+    },
+    {
+      "id": "C4E2A8D1-3B7F-4E19-9A62-5F0D8B1C7E43",
+      "name": "Dog friendly",
+      "color": "#B5651D",
+      "createdAt": "2026-09-29T09:30:00Z",
+      "updatedAt": "2026-09-29T09:30:00Z"
+    },
+    {
+      "id": "E7A13F90-2C5B-4D86-B4E8-91F6C03D2A75",
+      "name": "Garden",
+      "color": "#4F8A3C",
+      "createdAt": "2026-09-29T09:30:00Z",
+      "updatedAt": "2026-09-29T09:30:00Z"
+    }
+  ],
+  "places": [
+    {
+      "id": "32C957D7-1C93-7F37-8083-61B2F6EA28EE",
+      "name": "Gulbenkian Museum",
+      "coordinates": {
+        "latitude": 38.7372,
+        "longitude": -9.1545
+      },
+      "address": "Avenidas Novas, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "50AD8BBA-5ACE-AE28-8071-9E1AD959E7D9",
+      "tagIds": [
+        "185E4156-24F1-EB5F-72E4-2C8BADF7184C"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T11:20:00Z",
+      "updatedAt": "2026-09-29T11:20:00Z"
+    },
+    {
+      "id": "DACB9D24-9379-7402-4E24-4F7B94374366",
+      "name": "Tile Museum",
+      "coordinates": {
+        "latitude": 38.7247,
+        "longitude": -9.1134
+      },
+      "address": "Xabregas, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "50AD8BBA-5ACE-AE28-8071-9E1AD959E7D9",
+      "tagIds": [
+        "185E4156-24F1-EB5F-72E4-2C8BADF7184C",
+        "4CBD45B5-553F-5D6D-A72B-8905D00EC2EF"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": "Plan 2 hours. The cloister café is quiet.",
+      "createdAt": "2026-09-29T11:27:00Z",
+      "updatedAt": "2026-09-29T11:27:00Z"
+    },
+    {
+      "id": "0E45B094-27D6-08D2-AFA3-84BEEE28E406",
+      "name": "MAAT Art Museum",
+      "coordinates": {
+        "latitude": 38.6957,
+        "longitude": -9.1929
+      },
+      "address": "Belém, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "50AD8BBA-5ACE-AE28-8071-9E1AD959E7D9",
+      "tagIds": [],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T11:34:00Z",
+      "updatedAt": "2026-09-29T11:34:00Z"
+    },
+    {
+      "id": "B871B88F-344D-64D5-2136-15B3CBE167FC",
+      "name": "Santa Luzia Viewpoint",
+      "coordinates": {
+        "latitude": 38.7118,
+        "longitude": -9.1302
+      },
+      "address": "Alfama, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "2E4D75AC-02A5-31A5-128A-B39E9E563B72",
+      "tagIds": [
+        "5911D468-4E72-41FA-D291-61A7BC3F2621"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T11:41:00Z",
+      "updatedAt": "2026-09-29T11:41:00Z"
+    },
+    {
+      "id": "5326F8E8-6980-17B7-6704-E1C64480F920",
+      "name": "Senhora do Monte Viewpoint",
+      "coordinates": {
+        "latitude": 38.719,
+        "longitude": -9.1328
+      },
+      "address": "Graça, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "2E4D75AC-02A5-31A5-128A-B39E9E563B72",
+      "tagIds": [],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T11:48:00Z",
+      "updatedAt": "2026-09-29T11:48:00Z"
+    },
+    {
+      "id": "FC20FDF3-2F93-BF45-1F68-A17786E4270E",
+      "name": "Torel Garden",
+      "coordinates": {
+        "latitude": 38.7189,
+        "longitude": -9.1419
+      },
+      "address": "Santana, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "2E4D75AC-02A5-31A5-128A-B39E9E563B72",
+      "tagIds": [],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T11:55:00Z",
+      "updatedAt": "2026-09-29T11:55:00Z"
+    },
+    {
+      "id": "5E59643B-BA46-1D94-779A-CA29397EF5A7",
+      "name": "Billy's Burgers",
+      "coordinates": {
+        "latitude": 38.7128,
+        "longitude": -9.1449
+      },
+      "address": "Bairro Alto, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "3E083F45-D9E7-AB99-D7B2-AA3921C02182",
+      "tagIds": [
+        "F416B7FA-B337-43F0-D7A8-5E023F4476CF",
+        "687B4450-1BEB-1621-910C-D706359EA370",
+        "4CBD45B5-553F-5D6D-A72B-8905D00EC2EF"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": "Ask for the terrace table in the back.",
+      "createdAt": "2026-09-29T12:02:00Z",
+      "updatedAt": "2026-09-29T12:02:00Z"
+    },
+    {
+      "id": "FFBD432F-ADD1-0CF8-1B39-667D2AB5EE3A",
+      "name": "Harbour Grill",
+      "coordinates": {
+        "latitude": 38.7062,
+        "longitude": -9.1432
+      },
+      "address": "Cais do Sodré, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "3E083F45-D9E7-AB99-D7B2-AA3921C02182",
+      "tagIds": [
+        "687B4450-1BEB-1621-910C-D706359EA370",
+        "4CBD45B5-553F-5D6D-A72B-8905D00EC2EF"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:09:00Z",
+      "updatedAt": "2026-09-29T12:09:00Z"
+    },
+    {
+      "id": "03F1CAA6-2DA4-6163-25B0-B64FDE9137CB",
+      "name": "Casa Lima Tavern",
+      "coordinates": {
+        "latitude": 38.7108,
+        "longitude": -9.1286
+      },
+      "address": "Alfama, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "3E083F45-D9E7-AB99-D7B2-AA3921C02182",
+      "tagIds": [
+        "4CBD45B5-553F-5D6D-A72B-8905D00EC2EF"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:16:00Z",
+      "updatedAt": "2026-09-29T12:16:00Z"
+    },
+    {
+      "id": "E3E11700-AFBC-B768-D6B7-CFE1FCF1D5AF",
+      "name": "Riverside Food Hall",
+      "coordinates": {
+        "latitude": 38.7078,
+        "longitude": -9.1562
+      },
+      "address": "Santos, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "3E083F45-D9E7-AB99-D7B2-AA3921C02182",
+      "tagIds": [
+        "5911D468-4E72-41FA-D291-61A7BC3F2621",
+        "687B4450-1BEB-1621-910C-D706359EA370"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:23:00Z",
+      "updatedAt": "2026-09-29T12:23:00Z"
+    },
+    {
+      "id": "DBAF4A8F-4A5C-6C66-93DE-7DDEB36F2880",
+      "name": "Golden Tart Bakery",
+      "coordinates": {
+        "latitude": 38.6984,
+        "longitude": -9.2008
+      },
+      "address": "Belém, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "326A7A42-C22D-6F31-9138-9C6B19B0FDC1",
+      "tagIds": [
+        "5911D468-4E72-41FA-D291-61A7BC3F2621",
+        "F416B7FA-B337-43F0-D7A8-5E023F4476CF"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": 5.0,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": "Go before 10am, the line wraps around the block. Get them warm with cinnamon.",
+      "createdAt": "2026-09-29T12:30:00Z",
+      "updatedAt": "2026-09-29T12:30:00Z"
+    },
+    {
+      "id": "60300AA6-8953-9650-EC93-AAF6C6F73E39",
+      "name": "Nata & Co",
+      "coordinates": {
+        "latitude": 38.7104,
+        "longitude": -9.1418
+      },
+      "address": "Chiado, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "326A7A42-C22D-6F31-9138-9C6B19B0FDC1",
+      "tagIds": [],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:37:00Z",
+      "updatedAt": "2026-09-29T12:37:00Z"
+    },
+    {
+      "id": "6BE44A8F-E378-E465-120C-021E601FEF36",
+      "name": "Grind Coffee",
+      "coordinates": {
+        "latitude": 38.7163,
+        "longitude": -9.1492
+      },
+      "address": "Príncipe Real, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "326A7A42-C22D-6F31-9138-9C6B19B0FDC1",
+      "tagIds": [],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:44:00Z",
+      "updatedAt": "2026-09-29T12:44:00Z"
+    },
+    {
+      "id": "52B8C329-4688-725B-195E-35466CB170D3",
+      "name": "North Coffee Lab",
+      "coordinates": {
+        "latitude": 38.7338,
+        "longitude": -9.1468
+      },
+      "address": "Saldanha, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "326A7A42-C22D-6F31-9138-9C6B19B0FDC1",
+      "tagIds": [
+        "185E4156-24F1-EB5F-72E4-2C8BADF7184C"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:51:00Z",
+      "updatedAt": "2026-09-29T12:51:00Z"
+    },
+    {
+      "id": "D8D4B71B-C1CD-C0FF-7457-EC06EBB4B30F",
+      "name": "Tin & Salt",
+      "coordinates": {
+        "latitude": 38.7098,
+        "longitude": -9.1372
+      },
+      "address": "Baixa, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "55F31DF8-0EB9-103D-1F01-7218D5DD9327",
+      "tagIds": [
+        "6717E9DF-50FA-A938-9CE5-E7AB5CA53572",
+        "4CBD45B5-553F-5D6D-A72B-8905D00EC2EF"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T12:58:00Z",
+      "updatedAt": "2026-09-29T12:58:00Z"
+    },
+    {
+      "id": "CEA50464-BB88-7C07-CDA8-96C8B7DAEFA5",
+      "name": "Paper Harbor Books",
+      "coordinates": {
+        "latitude": 38.7112,
+        "longitude": -9.1402
+      },
+      "address": "Chiado, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "55F31DF8-0EB9-103D-1F01-7218D5DD9327",
+      "tagIds": [],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T13:05:00Z",
+      "updatedAt": "2026-09-29T13:05:00Z"
+    },
+    {
+      "id": "D6A62A82-1298-3D31-F6DD-75AD1D190A72",
+      "name": "Atelier Príncipe",
+      "coordinates": {
+        "latitude": 38.7172,
+        "longitude": -9.1481
+      },
+      "address": "Príncipe Real, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "55F31DF8-0EB9-103D-1F01-7218D5DD9327",
+      "tagIds": [
+        "6717E9DF-50FA-A938-9CE5-E7AB5CA53572"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T13:12:00Z",
+      "updatedAt": "2026-09-29T13:12:00Z"
+    },
+    {
+      "id": "0AA62BE7-2DCD-6A27-FC07-726E36C02C86",
+      "name": "Casa Azul Gifts",
+      "coordinates": {
+        "latitude": 38.7121,
+        "longitude": -9.1331
+      },
+      "address": "Alfama, Lisbon, Portugal",
+      "address2": "",
+      "categoryId": "55F31DF8-0EB9-103D-1F01-7218D5DD9327",
+      "tagIds": [
+        "6717E9DF-50FA-A938-9CE5-E7AB5CA53572"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T13:19:00Z",
+      "updatedAt": "2026-09-29T13:19:00Z"
+    }
+  ]
+}

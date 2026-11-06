@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PlaceFilter {
+public struct PlaceFilter {
     
     enum TagFilterPolicy: String, CaseIterable {
         case any

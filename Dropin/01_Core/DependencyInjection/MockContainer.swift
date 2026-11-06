@@ -45,7 +45,8 @@ final class MockContainer {
                                              locationManager: locationManager,
                                              addressLookupService: addressLookupService,
                                              reachabilityService: reachabilityService,
-                                             profileService: profileService)
+                                             profileService: profileService,
+                                             authService: StubAuthService())
 
         } catch {
             fatalError("couldn't create mock data \(error)")

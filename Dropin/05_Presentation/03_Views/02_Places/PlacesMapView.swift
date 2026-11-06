@@ -85,7 +85,8 @@ struct PlacesMapView: View {
                                isActiveTab: isActiveTab,
                                pinsOpacity: 1.0) // TODO: FIXME: lower pins opacity when address picker is presented
                                //pinsOpacity: viewModel.pickingAddress ? 0.5 : 1.0)
-                 
+                    .accessibilityIdentifier(AccessibilityID.Places.map)
+
                 if viewModel.pickingAddress {
                     pickingMarkerView
                         .allowsHitTesting(false)

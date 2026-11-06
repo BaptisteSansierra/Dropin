@@ -40,6 +40,8 @@ struct ImportStatusView: View {
                                 importingView(importStatus)
                             case .complete:
                                 resultView(importStatus)
+                                    .accessibilityElement(children: .contain)
+                                    .accessibilityIdentifier(AccessibilityID.ImportStatus.complete)
                             case .error(let error):
                                 errorView(importStatus, error)
                         }

@@ -61,6 +61,8 @@ struct TagSelectorView: View {
 
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityID.TagSelector.sheet)
         .task {
             Task {
                 do {

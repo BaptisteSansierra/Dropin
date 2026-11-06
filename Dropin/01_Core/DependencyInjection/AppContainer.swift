@@ -141,7 +141,8 @@ final class AppContainer {
          locationManager: LocationManager,
          addressLookupService: AddressLookupService,
          reachabilityService: any ReachabilityServiceProtocol,
-         profileService: StubProfileService) {
+         profileService: StubProfileService,
+         authService: StubAuthService) {
         self.appContext = appContext
         // Coordinators
         profileCoordinator = ProfileCoordinator()
@@ -156,9 +157,8 @@ final class AppContainer {
         self.reachabilityService = reachabilityService
         // Stub auth + sync
         self.supabaseService = nil
-        let authService = StubAuthService()
-        let syncService = StubSyncService()
         self.authService = authService
+        let syncService = StubSyncService()
         self.authStatus = AuthStatus(authService: authService)
         self.syncService = syncService
         self.shareService = StubShareService()
@@ -769,4 +769,33 @@ extension AppContainer {
     }
 }
 
+#endif
+
+
+#if DEBUG
+extension AppContainer {
+    // MARK: - screenshots
+    /// Imports the screenshot seed through the regular .dropin import (fresh ids, dates = now)
+    func importScreenshotSeed(from url: URL) async {
+        let service = ImportDropinService(saveContext: SaveContext(repository: generalRepository),
+                                          rollbackContext: RollbackContext(repository: generalRepository),
+                                          fetchPlaces: FetchPlaces(repository: placeRepository),
+                                          fetchCategories: FetchCategories(repository: categoryRepository),
+                                          fetchTags: FetchTags(repository: tagRepository),
+                                          upsertPlace: UpsertPlace(repository: placeRepository),
+                                          upsertCategory: UpsertCategory(repository: categoryRepository),
+                                          upsertTag: UpsertTag(repository: tagRepository))
+        do {
+            let export = try await service.read(url)
+            try await service.import(export,
+                                     progress: { _ in },
+                                     canceled: {},
+                                     completion: { places, _, categories, tags in
+                Log.info("Screenshot seed: \(places) places, \(categories) categories, \(tags) tags")
+            })
+        } catch {
+            fatalError("Screenshot seed import failed: \(error)")   // no point taking screenshots of an empty map
+        }
+    }
+}
 #endif

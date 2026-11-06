@@ -127,6 +127,7 @@ struct PlacesView: View {
                      "line.3.horizontal.decrease.circle.fill") {
                 viewModel.showingFilter.toggle()
             }
+            .accessibilityIdentifier(AccessibilityID.Places.filterButton)
             .frame(width: 44)
 
             if viewModel.selectedTab == 0 {
@@ -200,6 +201,7 @@ struct PlacesView: View {
                             .labelStyle(CenteredLabelStyle())
                             Spacer()
                         }
+                        .accessibilityIdentifier(AccessibilityID.Places.mapTab)
                         Button {
                             viewModel.selectedTab = 1
                         } label: {
@@ -215,7 +217,7 @@ struct PlacesView: View {
                             .labelStyle(CenteredLabelStyle())
                             Spacer()
                         }
-                        
+                        .accessibilityIdentifier(AccessibilityID.Places.listTab)
                     }
                     Spacer()
                         .frame(height: 15)

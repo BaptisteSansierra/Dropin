@@ -181,6 +181,13 @@ struct SettingsView: View {
                 Menu {
                     Button(DropinApp.strings.app, action: {
                         viewModel.importSource = .dropin
+                        #if DEBUG
+                        // Screenshots: import the test bundle file directly, the document picker can't be driven
+                        if ScreenshotMode.isOn, let url = ScreenshotMode.importURL {
+                            importData(url)
+                            return
+                        }
+                        #endif
                         viewModel.pickFile = true
                         viewModel.isImporting = true
                     })
@@ -204,6 +211,7 @@ struct SettingsView: View {
                     .frame(height: rowHeight)
                     .padding(.horizontal)
                 }
+                .accessibilityIdentifier(AccessibilityID.Settings.importMenu)
                 
                 rowSeparator
                 

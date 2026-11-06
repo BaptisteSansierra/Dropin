@@ -55,6 +55,8 @@ struct PlaceCreateQuickView: View {
             }
             .padding(.horizontal)
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(AccessibilityID.QuickCreate.sheet)
         .task {
             if place.address == nil {
                 await fetchAddress()
@@ -130,6 +132,7 @@ struct PlaceCreateQuickView: View {
                 .textStyle(.subheadline, color: .textSecondary)
             Spacer()
             TextButton(text: "common.add", action: editTags)
+                .accessibilityIdentifier(AccessibilityID.QuickCreate.addTags)
         }
     }
     
@@ -175,6 +178,7 @@ struct PlaceCreateQuickView: View {
                     .textStyle(.subheadline, color: .textSecondary)
                 Spacer()
                 TextButton(text: "common.choose", action: editCategory)
+                    .accessibilityIdentifier(AccessibilityID.QuickCreate.chooseCategory)
             }
             .frame(height: 40)
 

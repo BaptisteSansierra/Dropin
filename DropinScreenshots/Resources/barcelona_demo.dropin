@@ -1,0 +1,1259 @@
+{
+  "tags" : [
+    {
+      "color" : "#399A4D",
+      "name" : "Brunch",
+      "id" : "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2"
+    },
+    {
+      "id" : "A4C33AB2-D066-4B82-B139-15AB4B6D3918",
+      "name" : "Budget",
+      "color" : "#4974D2"
+    },
+    {
+      "id" : "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B",
+      "name" : "Family friendly",
+      "color" : "#56EBF4"
+    },
+    {
+      "id" : "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D",
+      "name" : "Live music",
+      "color" : "#4D7052"
+    },
+    {
+      "id" : "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+      "name" : "Local favorite",
+      "color" : "#CA5DB7"
+    },
+    {
+      "id" : "D7C44789-3FBD-4BF3-A8ED-F97FC898A880",
+      "name" : "Outdoor seating",
+      "color" : "#BED057"
+    },
+    {
+      "id" : "4832A644-998C-4F1B-8E37-22404A0B70E7",
+      "name" : "Rooftop",
+      "color" : "#71E46E"
+    },
+    {
+      "id" : "0832CE9B-676F-4D1E-AC93-020106F8DC96",
+      "name" : "Sea view",
+      "color" : "#6C5789"
+    },
+    {
+      "id" : "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+      "name" : "Tapas",
+      "color" : "#4FB364"
+    },
+    {
+      "id" : "E8090619-91A1-4484-87BD-D752D928DBA1",
+      "name" : "Vegetarian",
+      "color" : "#799B85"
+    }
+  ],
+  "categories" : [
+    {
+      "id" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "name" : "Bakeries",
+      "icon" : "sf:birthday.cake.fill",
+      "color" : "#FCBF49"
+    },
+    {
+      "color" : "#F77F00",
+      "name" : "Cafés",
+      "icon" : "sf:cup.and.saucer.fill",
+      "id" : "13990A18-9553-4A08-B036-2C9500D9EDD0"
+    },
+    {
+      "color" : "#3A86FF",
+      "name" : "Culture",
+      "icon" : "sf:building.columns.fill",
+      "id" : "E629067A-9BC4-4D26-B178-736DFC623BE6"
+    },
+    {
+      "color" : "#606389",
+      "name" : "Nanii",
+      "icon" : "sf:pianokeys",
+      "id" : "5EC690E7-6C6E-41A2-8D20-00DCB04172A5"
+    },
+    {
+      "color" : "#7B2CBF",
+      "name" : "Outdoor",
+      "icon" : "sf:leaf.fill",
+      "id" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410"
+    },
+    {
+      "color" : "#D62828",
+      "name" : "Restaurants",
+      "icon" : "sf:fork.knife",
+      "id" : "7C02D022-FFCD-4282-90CD-A15FA010DD92"
+    },
+    {
+      "color" : "#06A77D",
+      "name" : "Shops",
+      "icon" : "sf:bag.fill",
+      "id" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202"
+    }
+  ],
+  "exportedAt" : "2026-10-29T15:35:49Z",
+  "version" : 1,
+  "places" : [
+    {
+      "notes" : "Can get crowded on weekends.",
+      "url" : [
+
+      ],
+      "address" : "Carrer de Verdi, 145, Gràcia, 08012 Barcelona, Spain",
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "name" : "La Taula d'en Jordi",
+      "phone" : [
+        "{\"id\":\"39E36AB0-4EA2-4CB7-BEA4-5C8522450DFC\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 689089901\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1504491,
+        "latitude" : 41.3998384
+      },
+      "email" : [
+        "{\"id\":\"48EB87C7-70AE-4951-AB4C-3579C2CA8747\",\"label\":{\"kind\":\"email\",\"value\":{\"work\":{}}},\"value\":\"jordi@latauladen.cat\"}"
+      ],
+      "tagIds" : [
+        "A4C33AB2-D066-4B82-B139-15AB4B6D3918"
+      ]
+    },
+    {
+      "email" : [
+
+      ],
+      "phone" : [
+        "{\"id\":\"5B00D7A7-8AD4-4525-B623-08A4869DABAB\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 656164955\"}"
+      ],
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "rating" : 4.9,
+      "notes" : "Cash only, small place.",
+      "tagIds" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1869577,
+        "latitude" : 41.3805438
+      },
+      "url" : [
+
+      ],
+      "name" : "Forn i Cafè Gràcia",
+      "address" : "Carrer de Balmes, 28, El Born, 08003 Barcelona, Spain"
+    },
+    {
+      "email" : [
+
+      ],
+      "phone" : [
+        "{\"id\":\"A4F166C4-EBE5-41FD-B796-13E0BE8465DA\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 648840994\"}"
+      ],
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "rating" : 3.9,
+      "notes" : "Ask for the daily special.",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1924352,
+        "latitude" : 41.3796163
+      },
+      "url" : [
+
+      ],
+      "name" : "Pastisseria Dolça",
+      "address" : "Carrer de Petritxol, 149, Barceloneta, 08003 Barcelona, Spain"
+    },
+    {
+      "email" : [
+        "{\"id\":\"432423F8-5A8C-4E8D-8603-3DC783E15DDC\",\"label\":{\"kind\":\"email\",\"value\":{\"home\":{}}},\"value\":\"calders@llibreria.cat\"}"
+      ],
+      "phone" : [
+
+      ],
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "rating" : 4.9,
+      "tagIds" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1625761,
+        "latitude" : 41.3906614
+      },
+      "url" : [
+        "{\"id\":\"A4B3BB6F-BAE9-4451-92BD-F7DE05E0D403\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/llibreriacalders.example.com\"}"
+      ],
+      "name" : "Llibreria Calders",
+      "address" : "Carrer de la Riera Baixa, 176, Eixample, 08037 Barcelona, Spain"
+    },
+    {
+      "notes" : "Cash only, small place.",
+      "tagIds" : [
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96",
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D"
+      ],
+      "coordinates" : {
+        "longitude" : 2.165308,
+        "latitude" : 41.3763428
+      },
+      "rating" : 3.3,
+      "phone" : [
+        "{\"id\":\"AD3C7CEA-FB85-4861-8C34-B56110D1FF96\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 652235350\"}"
+      ],
+      "email" : [
+        "{\"id\":\"20EAE2B9-CC58-4E89-B1FB-FC378FDB01E3\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"espaisud@galeria.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "address" : "Carrer Major de Sarrià, 10, Poble Sec, 08004 Barcelona, Spain",
+      "name" : "Galeria Espai Sud"
+    },
+    {
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2",
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1758952,
+        "latitude" : 41.3864826
+      },
+      "phone" : [
+        "{\"id\":\"6636E0AD-0D1E-4BF5-BB48-D451FAC1095D\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 666661351\"}"
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "address" : "Carrer Major de Sarrià, 37, Barri Gòtic, 08002 Barcelona, Spain",
+      "name" : "Jardins del Turó"
+    },
+    {
+      "notes" : "Ask for the daily special.",
+      "tagIds" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1639862,
+        "latitude" : 41.3794686
+      },
+      "rating" : 3.3,
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"B1C786FE-B245-4D27-ABE8-D064458EF904\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/restaurantcanboix.example.com\"}"
+      ],
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "address" : "Carrer de Verdi, 176, Sant Antoni, 08011 Barcelona, Spain",
+      "name" : "Restaurant Can Boix"
+    },
+    {
+      "notes" : "Great terrace in summer.",
+      "tagIds" : [
+        "4832A644-998C-4F1B-8E37-22404A0B70E7",
+        "A4C33AB2-D066-4B82-B139-15AB4B6D3918"
+      ],
+      "coordinates" : {
+        "longitude" : 2.2064957,
+        "latitude" : 41.4073751
+      },
+      "rating" : 4,
+      "phone" : [
+        "{\"id\":\"47CE093C-22F7-4532-87CC-C8CC20E63BB9\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 682394227\"}"
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "address" : "Carrer de Blai, 162, Poblenou, 08005 Barcelona, Spain",
+      "name" : "Café Menta"
+    },
+    {
+      "notes" : "Best in the neighborhood for this.",
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "url" : [
+
+      ],
+      "email" : [
+        "{\"id\":\"D1DAB827-A78C-4623-BACD-043B1D375350\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"lafarina@forn.cat\"}"
+      ],
+      "address" : "Carrer de Muntaner, 63, Sarrià, 08017 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"75ECD9C9-A40D-42D5-9301-BB4ED66C7986\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 620570592\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1240533,
+        "latitude" : 41.4019298
+      },
+      "tagIds" : [
+
+      ],
+      "name" : "Forn La Farina"
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "rating" : 4,
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "address" : "Carrer de la Riera Baixa, 137, El Raval, 08001 Barcelona, Spain",
+      "coordinates" : {
+        "longitude" : 2.1703984,
+        "latitude" : 41.3799023
+      },
+      "phone" : [
+
+      ],
+      "tagIds" : [
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+        "4832A644-998C-4F1B-8E37-22404A0B70E7",
+        "A4C33AB2-D066-4B82-B139-15AB4B6D3918"
+      ],
+      "name" : "Botiga Papel i Tinta"
+    },
+    {
+      "notes" : "Ask for the daily special.",
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "rating" : 3.6,
+      "url" : [
+
+      ],
+      "email" : [
+        "{\"id\":\"EBA199A2-D6D0-49B6-B149-31718A64451D\",\"label\":{\"kind\":\"email\",\"value\":{\"work\":{}}},\"value\":\"llum@galeria.cat\"}"
+      ],
+      "address" : "Carrer Major de Sarrià, 152, Gràcia, 08012 Barcelona, Spain",
+      "coordinates" : {
+        "longitude" : 2.1514047,
+        "latitude" : 41.4013976
+      },
+      "phone" : [
+        "{\"id\":\"F26B63EB-1494-493B-87C2-7BEA33EE6A63\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 617901903\"}"
+      ],
+      "tagIds" : [
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0"
+      ],
+      "name" : "Galeria Llum"
+    },
+    {
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "notes" : "Great terrace in summer.",
+      "phone" : [
+        "{\"id\":\"75311006-AEF3-4B1B-BE71-34DD87EBDD86\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 657553014\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1850868,
+        "latitude" : 41.3836139
+      },
+      "address" : "Carrer de la Mercè, 64, El Born, 08003 Barcelona, Spain",
+      "name" : "Jardins de la Tamarita",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2",
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D",
+        "4832A644-998C-4F1B-8E37-22404A0B70E7"
+      ]
+    },
+    {
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "email" : [
+        "{\"id\":\"477D2951-0CF6-40DA-9A57-F7FD4C3D6628\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"elrac\\u00f3@restaurant.cat\"}"
+      ],
+      "url" : [
+        "{\"id\":\"8B39BB08-217B-4710-9802-F3EFCA6577D8\",\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"value\":\"https:\/\/restaurantelrac\\u00f3.example.com\"}"
+      ],
+      "notes" : "Cash only, small place.",
+      "phone" : [
+        "{\"id\":\"66E15F7A-A5B4-4E87-B891-C70AD18A8DBF\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 666623995\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1916257,
+        "latitude" : 41.3756849
+      },
+      "name" : "Restaurant El Racó",
+      "address" : "Carrer de Blai, 65, Barceloneta, 08003 Barcelona, Spain",
+      "tagIds" : [
+        "4832A644-998C-4F1B-8E37-22404A0B70E7"
+      ]
+    },
+    {
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "notes" : "Can get crowded on weekends.",
+      "rating" : 5,
+      "phone" : [
+        "{\"id\":\"67A284B5-5786-4546-ABDC-E1678735C7D8\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 638688676\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1652247,
+        "latitude" : 41.3929172
+      },
+      "name" : "Café Cometa",
+      "address" : "Carrer de Verdi, 25, Eixample, 08037 Barcelona, Spain",
+      "tagIds" : [
+        "E8090619-91A1-4484-87BD-D752D928DBA1"
+      ]
+    },
+    {
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"3FE32E68-924D-4538-A300-91AEE605ABBC\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/pastisseriaelsucre.example.com\"}"
+      ],
+      "notes" : "Great terrace in summer.",
+      "rating" : 4,
+      "phone" : [
+        "{\"id\":\"6493388E-FB5B-4BDF-916D-966676D8B81D\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 687736262\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1646727,
+        "latitude" : 41.371882
+      },
+      "name" : "Pastisseria El Sucre",
+      "address" : "Carrer de la Mercè, 41, Poble Sec, 08004 Barcelona, Spain",
+      "tagIds" : [
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96"
+      ]
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "email" : [
+        "{\"id\":\"1C0311F3-883B-4722-AD8C-EE4E238DECBB\",\"label\":{\"kind\":\"email\",\"value\":{\"work\":{}}},\"value\":\"vintagegr\\u00e0cia@botiga.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "notes" : "Quiet during the week.",
+      "rating" : 4.2,
+      "phone" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1733409,
+        "latitude" : 41.3869862
+      },
+      "name" : "Botiga Vintage Gràcia",
+      "address" : "Carrer del Parlament, 19, Barri Gòtic, 08002 Barcelona, Spain",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"F557ED68-0275-4CCC-89C0-2C39E860224A\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/galeriaespaisud.example.com\"}"
+      ],
+      "notes" : "Ask for the daily special.",
+      "rating" : 4.2,
+      "phone" : [
+        "{\"id\":\"8A453749-72CA-4820-AC26-C049A505607E\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 627566185\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1616218,
+        "latitude" : 41.376959
+      },
+      "name" : "Galeria Espai Sud 2",
+      "address" : "Carrer de Balmes, 68, Sant Antoni, 08011 Barcelona, Spain",
+      "tagIds" : [
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B"
+      ]
+    },
+    {
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"8FC505B0-ECC0-4A97-9986-E91CEE4FAF22\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/miradordelpoblesec.example.com\"}"
+      ],
+      "notes" : "Quiet during the week.",
+      "phone" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.2044471,
+        "latitude" : 41.4039011
+      },
+      "name" : "Mirador del Poble Sec",
+      "address" : "Carrer d'Avinyó, 91, Poblenou, 08005 Barcelona, Spain",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "email" : [
+        "{\"id\":\"E5F71914-E733-4465-A00E-AE3393C1B903\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"elrac\\u00f3@restaurant.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "rating" : 4.3,
+      "phone" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1218368,
+        "latitude" : 41.4002429
+      },
+      "name" : "Restaurant El Racó 2",
+      "address" : "Carrer de Blai, 36, Sarrià, 08017 Barcelona, Spain",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2",
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407"
+      ]
+    },
+    {
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"C6443290-FD96-4196-A9A5-680F51906BA2\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/fornicaf\\u00e8gr\\u00e0cia.example.com\"}"
+      ],
+      "notes" : "Best in the neighborhood for this.",
+      "phone" : [
+        "{\"id\":\"5A5E9DF4-7B99-464D-91E8-A8843AEA4ED9\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 695511909\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1732653,
+        "latitude" : 41.378109
+      },
+      "name" : "Forn i Cafè Gràcia 2",
+      "address" : "Carrer del Rec, 25, El Raval, 08001 Barcelona, Spain",
+      "tagIds" : [
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96",
+        "A4C33AB2-D066-4B82-B139-15AB4B6D3918"
+      ]
+    },
+    {
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "email" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"9FEF145F-1CC5-4EAD-BBD2-2D6F97B66014\",\"label\":{\"kind\":\"url\",\"value\":{\"url\":{}}},\"value\":\"https:\/\/fornsantjordi.example.com\"}"
+      ],
+      "notes" : "Great terrace in summer.",
+      "rating" : 4.8,
+      "phone" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1557649,
+        "latitude" : 41.400202
+      },
+      "name" : "Forn Sant Jordi",
+      "address" : "Carrer d'Avinyó, 141, Gràcia, 08012 Barcelona, Spain",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "rating" : 4.5,
+      "phone" : [
+
+      ],
+      "coordinates" : {
+        "longitude" : 2.1812962,
+        "latitude" : 41.3809806
+      },
+      "name" : "Botiga La Central",
+      "address" : "Carrer de Blai, 92, El Born, 08003 Barcelona, Spain",
+      "tagIds" : [
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+        "E8090619-91A1-4484-87BD-D752D928DBA1",
+        "4832A644-998C-4F1B-8E37-22404A0B70E7"
+      ]
+    },
+    {
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "email" : [
+        "{\"id\":\"F8FF3D05-EFB6-4AFE-9167-5BFE349FEF5A\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"lasedeta@centrecultural.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "notes" : "Good for a quick lunch.",
+      "rating" : 4.3,
+      "phone" : [
+        "{\"id\":\"1627D27F-F4B8-4E1F-9697-A58E4B566DFB\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 673174945\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1927125,
+        "latitude" : 41.3816179
+      },
+      "name" : "Centre Cultural La Sedeta",
+      "address" : "Carrer Major de Sarrià, 70, Barceloneta, 08003 Barcelona, Spain",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2"
+      ]
+    },
+    {
+      "tagIds" : [
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B",
+        "A4C33AB2-D066-4B82-B139-15AB4B6D3918"
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "notes" : "Great terrace in summer.",
+      "rating" : 3.9,
+      "phone" : [
+        "{\"id\":\"82458899-9E58-45D5-B359-40AC30E9BCD4\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 633966966\"}"
+      ],
+      "coordinates" : {
+        "latitude" : 41.3899288,
+        "longitude" : 2.1614554
+      },
+      "name" : "Jardins del Turó 2",
+      "address" : "Carrer de la Riera Baixa, 91, Eixample, 08037 Barcelona, Spain",
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410"
+    },
+    {
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "notes" : "Good for a quick lunch.",
+      "rating" : 3.1,
+      "phone" : [
+        "{\"id\":\"E661CBCD-5FD7-4916-A460-CF97BF45F976\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 610226999\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.1669739,
+        "latitude" : 41.3730912
+      },
+      "name" : "Restaurant Can Boix 2",
+      "address" : "Carrer de Blai, 100, Poble Sec, 08004 Barcelona, Spain",
+      "tagIds" : [
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96"
+      ]
+    },
+    {
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "email" : [
+        "{\"id\":\"B26BFBEC-7162-4558-913B-450DB96A1827\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"gr\\u00e0cia@fornicaf\\u00e8.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "phone" : [
+        "{\"id\":\"01E4EF60-ECC5-4723-A223-12D5F81E90DA\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 684411983\"}"
+      ],
+      "coordinates" : {
+        "longitude" : 2.173697,
+        "latitude" : 41.3846071
+      },
+      "name" : "Forn i Cafè Gràcia 3",
+      "address" : "Carrer de Muntaner, 131, Barri Gòtic, 08002 Barcelona, Spain",
+      "tagIds" : [
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B",
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D"
+      ]
+    },
+    {
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "coordinates" : {
+        "longitude" : 2.1637698,
+        "latitude" : 41.3749486
+      },
+      "address" : "Carrer de Muntaner, 75, Sant Antoni, 08011 Barcelona, Spain",
+      "rating" : 3.4,
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "name" : "Forn La Farina 2",
+      "notes" : "Cash only, small place.",
+      "tagIds" : [
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D"
+      ]
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "coordinates" : {
+        "longitude" : 2.2026703,
+        "latitude" : 41.4048708
+      },
+      "address" : "Carrer de Balmes, 25, Poblenou, 08005 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"2CBF8F4E-B329-42C1-803F-A43403190652\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 629777514\"}"
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+        "{\"id\":\"A0B8260A-4393-4507-AA22-E00A2EB87C53\",\"label\":{\"kind\":\"email\",\"value\":{\"work\":{}}},\"value\":\"calders@llibreria.cat\"}"
+      ],
+      "name" : "Llibreria Calders 2",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96"
+      ]
+    },
+    {
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "coordinates" : {
+        "longitude" : 2.1224381,
+        "latitude" : 41.3982155
+      },
+      "address" : "Rambla del Poblenou, 180, Sarrià, 08017 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"342B4B47-5B87-4644-9902-77EC4950EF09\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 610744212\"}"
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Galeria Espai Sud 3",
+      "notes" : "Ask for the daily special.",
+      "tagIds" : [
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880",
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D",
+        "4832A644-998C-4F1B-8E37-22404A0B70E7"
+      ]
+    },
+    {
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "coordinates" : {
+        "longitude" : 2.1715673,
+        "latitude" : 41.3825329
+      },
+      "address" : "Passeig de Gràcia, 14, El Raval, 08001 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"C943CDB8-A38D-44DC-B462-D1D5A9622A23\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 699600766\"}"
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Mirador del Poble Sec 2",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2"
+      ]
+    },
+    {
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "coordinates" : {
+        "longitude" : 2.1864442,
+        "latitude" : 41.3819868
+      },
+      "address" : "Passeig del Born, 37, El Born, 08003 Barcelona, Spain",
+      "rating" : 3.4,
+      "phone" : [
+        "{\"id\":\"8E089CEA-E622-4394-AD8F-FBF0904DE2C2\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 638716269\"}"
+      ],
+      "email" : [
+        "{\"id\":\"71218049-BA1E-433F-AD20-7A8C8A62C99E\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"menta@caf\\u00e9.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "name" : "Café Menta 2",
+      "notes" : "Cash only, small place.",
+      "tagIds" : [
+        "4832A644-998C-4F1B-8E37-22404A0B70E7"
+      ]
+    },
+    {
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "coordinates" : {
+        "longitude" : 2.1904726,
+        "latitude" : 41.3824387
+      },
+      "address" : "Carrer de Verdi, 149, Barceloneta, 08003 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"21CE5824-E81A-4942-8AEA-D9CDFFC08512\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 666240084\"}"
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Pastisseria El Sucre 2",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B",
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880"
+      ]
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "coordinates" : {
+        "longitude" : 2.1647851,
+        "latitude" : 41.3898835
+      },
+      "address" : "Carrer de Mallorca, 88, Eixample, 08037 Barcelona, Spain",
+      "rating" : 3.1,
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "name" : "Llibreria Calders 3",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+        "E8090619-91A1-4484-87BD-D752D928DBA1",
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880"
+      ]
+    },
+    {
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "coordinates" : {
+        "longitude" : 2.1605538,
+        "latitude" : 41.3765348
+      },
+      "address" : "Carrer de la Riera Baixa, 99, Poble Sec, 08004 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"70CE0DEB-8CFF-408E-8507-F37F5A64C23F\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 647346970\"}"
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Centre Cultural El Born",
+      "notes" : "Nice spot to bring friends visiting.",
+      "tagIds" : [
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880",
+        "4832A644-998C-4F1B-8E37-22404A0B70E7"
+      ]
+    },
+    {
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "coordinates" : {
+        "longitude" : 2.1731167,
+        "latitude" : 41.3852922
+      },
+      "address" : "Carrer de Petritxol, 59, Barri Gòtic, 08002 Barcelona, Spain",
+      "rating" : 3,
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "name" : "Jardins de la Tamarita 2",
+      "notes" : "Good for a quick lunch.",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "coordinates" : {
+        "longitude" : 2.1624557,
+        "latitude" : 41.3727098
+      },
+      "address" : "Rambla del Poblenou, 121, Sant Antoni, 08011 Barcelona, Spain",
+      "phone" : [
+
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Cal Toni",
+      "notes" : "Can get crowded on weekends.",
+      "tagIds" : [
+        "E8090619-91A1-4484-87BD-D752D928DBA1",
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B"
+      ]
+    },
+    {
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "coordinates" : {
+        "longitude" : 2.2050064,
+        "latitude" : 41.4070311
+      },
+      "address" : "Carrer de Mallorca, 103, Poblenou, 08005 Barcelona, Spain",
+      "phone" : [
+
+      ],
+      "url" : [
+        "{\"id\":\"03688F6D-5BBA-4A16-8A5F-073E83AD5D65\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/caf\\u00e9cometa.example.com\"}"
+      ],
+      "email" : [
+
+      ],
+      "name" : "Café Cometa 2",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2"
+      ]
+    },
+    {
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "coordinates" : {
+        "longitude" : 2.1226922,
+        "latitude" : 41.399162
+      },
+      "address" : "Passeig del Born, 131, Sarrià, 08017 Barcelona, Spain",
+      "phone" : [
+
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+        "{\"id\":\"8B5DD0D3-4510-4E7C-93A7-ECC30257E757\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"lafarina@forn.cat\"}"
+      ],
+      "name" : "Forn La Farina 3",
+      "notes" : "Cash only, small place.",
+      "tagIds" : [
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D"
+      ]
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "coordinates" : {
+        "longitude" : 2.1737238,
+        "latitude" : 41.3819704
+      },
+      "address" : "Carrer de la Riera Baixa, 159, El Raval, 08001 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"C81073EE-7740-416E-B815-D72963FB1F36\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 621631697\"}"
+      ],
+      "url" : [
+        "{\"id\":\"1796E5E8-C672-4852-8B98-6C9E24FDB5B7\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/llibreriacalders.example.com\"}"
+      ],
+      "email" : [
+        "{\"id\":\"F2FAC46D-2C0C-45E3-954D-FB33FEAE5F9E\",\"label\":{\"kind\":\"email\",\"value\":{\"personal\":{}}},\"value\":\"calders@llibreria.cat\"}"
+      ],
+      "name" : "Llibreria Calders 4",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96",
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880",
+        "361C6B3C-2CDD-4B40-94B0-7CCE3C53574D"
+      ]
+    },
+    {
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "coordinates" : {
+        "longitude" : 2.1555076,
+        "latitude" : 41.3998296
+      },
+      "address" : "Carrer del Parlament, 126, Gràcia, 08012 Barcelona, Spain",
+      "rating" : 4,
+      "phone" : [
+
+      ],
+      "email" : [
+        "{\"id\":\"D660806B-9FE3-4F99-8C12-A111FF8C6751\",\"label\":{\"kind\":\"email\",\"value\":{\"home\":{}}},\"value\":\"lasedeta@centrecultural.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "name" : "Centre Cultural La Sedeta 2",
+      "notes" : "Nice spot to bring friends visiting.",
+      "tagIds" : [
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B"
+      ]
+    },
+    {
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "coordinates" : {
+        "longitude" : 2.1825514,
+        "latitude" : 41.3812308
+      },
+      "address" : "Carrer Major de Sarrià, 178, El Born, 08003 Barcelona, Spain",
+      "rating" : 4.1,
+      "phone" : [
+        "{\"id\":\"5C6664FC-6C76-47A7-9798-C61479539093\",\"label\":{\"kind\":\"phone\",\"value\":{\"mobile\":{}}},\"value\":\"+34 664277800\"}"
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "name" : "Mirador del Poble Sec 3",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880"
+      ]
+    },
+    {
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "coordinates" : {
+        "longitude" : 2.1902031,
+        "latitude" : 41.3831731
+      },
+      "address" : "Carrer de Petritxol, 118, Barceloneta, 08003 Barcelona, Spain",
+      "rating" : 4.5,
+      "phone" : [
+        "{\"id\":\"159D5526-AB82-478E-9B47-E0E1F748976A\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 635848226\"}"
+      ],
+      "email" : [
+        "{\"id\":\"6B084A83-1D3F-4232-937B-ECF2A4462200\",\"label\":{\"kind\":\"email\",\"value\":{\"home\":{}}},\"value\":\"marc@latauladen.cat\"}"
+      ],
+      "url" : [
+
+      ],
+      "name" : "La Taula d'en Marc 2",
+      "notes" : "Can get crowded on weekends.",
+      "tagIds" : [
+        "EDBF0ADC-DB54-4DEB-A06F-261B47E42407",
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96"
+      ]
+    },
+    {
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "coordinates" : {
+        "longitude" : 2.167561,
+        "latitude" : 41.3955441
+      },
+      "address" : "Carrer de Muntaner, 60, Eixample, 08037 Barcelona, Spain",
+      "phone" : [
+        "{\"id\":\"BFD339DC-CB08-4237-8FCE-121D52197364\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 626989677\"}"
+      ],
+      "url" : [
+
+      ],
+      "email" : [
+        "{\"id\":\"569CE6E4-9E55-4EA6-B604-F3D179C7C15B\",\"label\":{\"kind\":\"email\",\"value\":{\"work\":{}}},\"value\":\"gr\\u00e0cia@fornicaf\\u00e8.cat\"}"
+      ],
+      "name" : "Forn i Cafè Gràcia 4",
+      "notes" : "Can get crowded on weekends.",
+      "tagIds" : [
+        "E8090619-91A1-4484-87BD-D752D928DBA1",
+        "0832CE9B-676F-4D1E-AC93-020106F8DC96"
+      ]
+    },
+    {
+      "categoryId" : "BFAD6A37-03E6-4347-92AA-E4B491EEDDBB",
+      "coordinates" : {
+        "longitude" : 2.1636925,
+        "latitude" : 41.3765818
+      },
+      "address" : "Carrer de la Mercè, 124, Poble Sec, 08004 Barcelona, Spain",
+      "rating" : 4.4,
+      "phone" : [
+        "{\"id\":\"F9FF5E12-B10D-4266-AD07-60AA39234654\",\"label\":{\"kind\":\"phone\",\"value\":{\"work\":{}}},\"value\":\"+34 625312516\"}"
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "name" : "Pastisseria Dolça 2",
+      "notes" : "Ask for the daily special.",
+      "tagIds" : [
+        "E8090619-91A1-4484-87BD-D752D928DBA1",
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "78F07854-9E45-4FD6-BBEC-F9DA2BA33F4B"
+      ]
+    },
+    {
+      "categoryId" : "BE3A50F3-E61A-4A8D-9B1B-B969592D0202",
+      "coordinates" : {
+        "longitude" : 2.180293,
+        "latitude" : 41.3857891
+      },
+      "address" : "Passeig del Born, 65, Barri Gòtic, 08002 Barcelona, Spain",
+      "rating" : 4,
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "url" : [
+
+      ],
+      "name" : "Botiga Vintage Gràcia 2",
+      "notes" : "Quiet during the week.",
+      "tagIds" : [
+
+      ]
+    },
+    {
+      "address" : "Carrer de Provença, 80, Sant Antoni, 08011 Barcelona, Spain",
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "categoryId" : "E629067A-9BC4-4D26-B178-736DFC623BE6",
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "notes" : "Good for a quick lunch.",
+      "name" : "Centre Cultural La Sedeta 3",
+      "coordinates" : {
+        "longitude" : 2.1618082,
+        "latitude" : 41.3740788
+      }
+    },
+    {
+      "address" : "Passeig del Born, 42, Poblenou, 08005 Barcelona, Spain",
+      "url" : [
+        "{\"id\":\"3533A6F0-4392-4E3A-B22A-373AC22F5D18\",\"label\":{\"kind\":\"url\",\"value\":{\"homepage\":{}}},\"value\":\"https:\/\/jardinsdelatamarita.example.com\"}"
+      ],
+      "tagIds" : [
+
+      ],
+      "categoryId" : "8A6D2EBB-C3B5-4E93-9E22-AB4586096410",
+      "phone" : [
+        "{\"id\":\"4473945D-AD11-4953-A3F7-D0FC6EC3D92B\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 689699989\"}"
+      ],
+      "email" : [
+
+      ],
+      "notes" : "Nice spot to bring friends visiting.",
+      "name" : "Jardins de la Tamarita 3",
+      "coordinates" : {
+        "longitude" : 2.2017905,
+        "latitude" : 41.4008565
+      }
+    },
+    {
+      "notes" : "Ask for the daily special.",
+      "address" : "Rambla del Poblenou, 110, Sarrià, 08017 Barcelona, Spain",
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "categoryId" : "7C02D022-FFCD-4282-90CD-A15FA010DD92",
+      "phone" : [
+        "{\"id\":\"63942CE7-BDDD-4874-B6DB-A5F936638576\",\"label\":{\"kind\":\"phone\",\"value\":{\"home\":{}}},\"value\":\"+34 629997018\"}"
+      ],
+      "rating" : 4.6,
+      "email" : [
+
+      ],
+      "name" : "La Taula d'en Jordi 2",
+      "coordinates" : {
+        "latitude" : 41.4003991,
+        "longitude" : 2.1247913
+      }
+    },
+    {
+      "notes" : "Great terrace in summer.",
+      "address" : "Carrer de Mallorca, 71, El Raval, 08001 Barcelona, Spain",
+      "url" : [
+
+      ],
+      "tagIds" : [
+        "7275B1BC-7F5F-470D-B291-FA0E2AFF2BD2",
+        "574A7A33-9B3F-4045-97F4-9CA03AF3BAA0",
+        "D7C44789-3FBD-4BF3-A8ED-F97FC898A880"
+      ],
+      "categoryId" : "13990A18-9553-4A08-B036-2C9500D9EDD0",
+      "phone" : [
+
+      ],
+      "rating" : 4.9,
+      "email" : [
+
+      ],
+      "name" : "Forn i Cafè Gràcia 5",
+      "coordinates" : {
+        "longitude" : 2.1715094,
+        "latitude" : 41.3770948
+      }
+    },
+    {
+      "address" : "Carrer Tagamanent, 5\n08012 Barcelone Barcelona\nEspagne",
+      "url" : [
+
+      ],
+      "tagIds" : [
+
+      ],
+      "categoryId" : "5EC690E7-6C6E-41A2-8D20-00DCB04172A5",
+      "phone" : [
+
+      ],
+      "email" : [
+
+      ],
+      "name" : "Popoo",
+      "coordinates" : {
+        "latitude" : 41.4010919168837,
+        "longitude" : 2.16137471389912
+      }
+    }
+  ]
+}

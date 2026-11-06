@@ -32,6 +32,13 @@
 			remoteGlobalIDString = 4D42C7392E2BFAFF00B50940;
 			remoteInfo = Dropin;
 		};
+		4DB70146309B5A7E00ABF6D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D42C7322E2BFAFF00B50940 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D42C7392E2BFAFF00B50940;
+			remoteInfo = Dropin;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +46,8 @@
 		4D42C74A2E2BFB0100B50940 /* DropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D42C7542E2BFB0100B50940 /* DropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		4DB70140309B5A7E00ABF6D7 /* DropinScreenshots.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropinScreenshots.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DB70150309B654500ABF6D7 /* Dropin.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Dropin.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -68,6 +77,16 @@
 		4D42C7572E2BFB0100B50940 /* DropinUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DropinUITests;
+			sourceTree = "<group>";
+		};
+		4DB70141309B5A7E00ABF6D7 /* DropinScreenshots */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DropinScreenshots;
+			sourceTree = "<group>";
+		};
+		4DB70151309B687600ABF6D7 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -102,15 +121,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4DB7013D309B5A7E00ABF6D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		4D42C7312E2BFAFF00B50940 = {
 			isa = PBXGroup;
 			children = (
+				4DB70151309B687600ABF6D7 /* Shared */,
+				4DB70150309B654500ABF6D7 /* Dropin.xctestplan */,
 				4D42C73C2E2BFAFF00B50940 /* Dropin */,
 				4D42C74D2E2BFB0100B50940 /* DropinTests */,
 				4D42C7572E2BFB0100B50940 /* DropinUITests */,
+				4DB70141309B5A7E00ABF6D7 /* DropinScreenshots */,
 				4D90AA7E2F432177003614A2 /* Frameworks */,
 				4D42C73B2E2BFAFF00B50940 /* Products */,
 				4D8E968D2FB4BA4E00DC59D9 /* Config.xcconfig */,
@@ -123,6 +152,7 @@
 				4D42C73A2E2BFAFF00B50940 /* Dropin.app */,
 				4D42C74A2E2BFB0100B50940 /* DropinTests.xctest */,
 				4D42C7542E2BFB0100B50940 /* DropinUITests.xctest */,
+				4DB70140309B5A7E00ABF6D7 /* DropinScreenshots.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -152,6 +182,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4D42C73C2E2BFAFF00B50940 /* Dropin */,
+				4DB70151309B687600ABF6D7 /* Shared */,
 			);
 			name = Dropin;
 			packageProductDependencies = (
@@ -214,6 +245,30 @@
 			productReference = 4D42C7542E2BFB0100B50940 /* DropinUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		4DB7013F309B5A7E00ABF6D7 /* DropinScreenshots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4DB7014A309B5A7E00ABF6D7 /* Build configuration list for PBXNativeTarget "DropinScreenshots" */;
+			buildPhases = (
+				4DB7013C309B5A7E00ABF6D7 /* Sources */,
+				4DB7013D309B5A7E00ABF6D7 /* Frameworks */,
+				4DB7013E309B5A7E00ABF6D7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4DB70147309B5A7E00ABF6D7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4DB70141309B5A7E00ABF6D7 /* DropinScreenshots */,
+				4DB70151309B687600ABF6D7 /* Shared */,
+			);
+			name = DropinScreenshots;
+			packageProductDependencies = (
+			);
+			productName = DropinScreenshots;
+			productReference = 4DB70140309B5A7E00ABF6D7 /* DropinScreenshots.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -221,7 +276,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1640;
+				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					4D42C7392E2BFAFF00B50940 = {
@@ -233,6 +288,10 @@
 					};
 					4D42C7532E2BFB0100B50940 = {
 						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 4D42C7392E2BFAFF00B50940;
+					};
+					4DB7013F309B5A7E00ABF6D7 = {
+						CreatedOnToolsVersion = 26.4;
 						TestTargetID = 4D42C7392E2BFAFF00B50940;
 					};
 				};
@@ -262,6 +321,7 @@
 				4D42C7392E2BFAFF00B50940 /* Dropin */,
 				4D42C7492E2BFB0100B50940 /* DropinTests */,
 				4D42C7532E2BFB0100B50940 /* DropinUITests */,
+				4DB7013F309B5A7E00ABF6D7 /* DropinScreenshots */,
 			);
 		};
 /* End PBXProject section */
@@ -282,6 +342,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4D42C7522E2BFB0100B50940 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4DB7013E309B5A7E00ABF6D7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -335,6 +402,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4DB7013C309B5A7E00ABF6D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -347,6 +421,11 @@
 			isa = PBXTargetDependency;
 			target = 4D42C7392E2BFAFF00B50940 /* Dropin */;
 			targetProxy = 4D42C7552E2BFB0100B50940 /* PBXContainerItemProxy */;
+		};
+		4DB70147309B5A7E00ABF6D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D42C7392E2BFAFF00B50940 /* Dropin */;
+			targetProxy = 4DB70146309B5A7E00ABF6D7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -520,6 +599,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 				SWIFT_UPCOMING_FEATURE_INFER_SENDABLE_FROM_CAPTURES = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
@@ -567,6 +647,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 				SWIFT_UPCOMING_FEATURE_INFER_SENDABLE_FROM_CAPTURES = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
@@ -670,6 +751,55 @@
 			};
 			name = Release;
 		};
+		4DB70148309B5A7E00ABF6D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HT3SFSF7CQ;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.batsansierra.DropinScreenshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Dropin;
+			};
+			name = Debug;
+		};
+		4DB70149309B5A7E00ABF6D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HT3SFSF7CQ;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.batsansierra.DropinScreenshots;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Dropin;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -705,6 +835,15 @@
 			buildConfigurations = (
 				4D42C7652E2BFB0100B50940 /* Debug */,
 				4D42C7662E2BFB0100B50940 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4DB7014A309B5A7E00ABF6D7 /* Build configuration list for PBXNativeTarget "DropinScreenshots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4DB70148309B5A7E00ABF6D7 /* Debug */,
+				4DB70149309B5A7E00ABF6D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -75,6 +75,14 @@
     <string>$(SUPABASE_ANON_KEY)</string>
     <key>SENTRY_DSN</key>
     <string>$(SENTRY_DSN)</string>
+    <key>DEBUG_SIGNIN_EMAIL</key>
+    <string>$(DEBUG_SIGNIN_EMAIL)</string>
+    <key>DEBUG_SIGNIN_PASSWORD</key>
+    <string>$(DEBUG_SIGNIN_PASSWORD)</string>
+    <key>DEBUG_SIGNUP_EMAIL_PREFIX</key>
+    <string>$(DEBUG_SIGNUP_EMAIL_PREFIX)</string>
+    <key>DEBUG_SIGNUP_EMAIL_SUFFIX</key>
+    <string>$(DEBUG_SIGNUP_EMAIL_SUFFIX)</string>
 
     <key>NSCameraUsageDescription</key>
     <string>Dropin uses the camera to add photos to your places.</string>

@@ -33,6 +33,25 @@ struct DropinApp: App {
     // MARK: - init
     init() {
         
+        #if DEBUG
+        if ScreenshotMode.isOn {
+            let schema = Schema([PlaceRecord.self, TagRecord.self, CategoryRecord.self, PlaceImageRecord.self, ProfileRecord.self, SpaceRecord.self])
+            let container = try! ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+            container.mainContext.autosaveEnabled = false
+            let locationManager = LocationManager()
+            modelContainer = container
+            appContainer = AppContainer(modelContext: container.mainContext,
+                                        appContext: appContext,
+                                        locationManager: locationManager,
+                                        addressLookupService: AddressLookupService(locationManager: locationManager),
+                                        reachabilityService: StubReachabilityService(),
+                                        profileService: StubProfileService(),
+                                        authService: StubAuthService(restoredSession: .johnDoe))
+            Self.configureDependencies()
+            return
+        }
+        #endif
+        
         // Init Sentry
         DropinTracker.shared.start()
                 
@@ -153,6 +172,18 @@ struct DropinApp: App {
 
             rootContent
                 .task {
+                    
+                    #if DEBUG
+                    if ScreenshotMode.isOn {
+                        if let seedURL = ScreenshotMode.seedURL {
+                            await appContainer.importScreenshotSeed(from: seedURL)
+                        }
+                        appContainer.startLocationManager()   // authorized + positioned by scripts/screenshots.sh (simctl)
+                        await appContainer.restoreSession()
+                        return
+                    }
+                    #endif
+                    
                     appContainer.startLocationManager()
                     await appContainer.restoreSession()
 
@@ -194,7 +225,9 @@ struct DropinApp: App {
                     }
                 }
                 .environment(appSettings)
-            
+                #if DEBUG
+                .preferredColorScheme(ScreenshotMode.isOn ? ScreenshotMode.colorScheme : nil)
+                #endif
             #endif
         }
     }
@@ -297,7 +330,20 @@ extension DropinApp {
         static let declutterRefreshDebounce: Double = 0.2 // seconds of no camera movement before pin/dot + label state is refreshed
         static let usePinPromotionLogic = false
         // When set, the map always launches on this region instead of centering on the user. Used for app screenshots
-        static let hardStartRegion: MKCoordinateRegion? = nil
+        //static let hardStartRegion: MKCoordinateRegion? = nil
+        static let hardStartRegion: MKCoordinateRegion? = {
+            #if DEBUG
+            // "lat,lon,latDelta,lonDelta"
+            guard let value = ProcessInfo.processInfo.environment["HARD_START_REGION"] else { return nil }
+            let v = value.split(separator: ",").compactMap { Double($0) }
+            guard v.count == 4 else { return nil }
+            return MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: v[0], longitude: v[1]),
+                                      span: MKCoordinateSpan(latitudeDelta: v[2], longitudeDelta: v[3]))
+            #else
+            return nil
+            #endif
+        }()
+        
         /* Lisbon center : used for screenshots generation
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 38.71108482247233, longitude: -9.137567732050831),

@@ -20,11 +20,11 @@ import MapKit
         var label: String {
             switch self {
                 case .overview:
-                    "Overview"
+                    String(localized: "place_sheet.menu.overview")
                 case .contact:
-                    "Contact"
+                    String(localized: "place_sheet.menu.contact")
                 case .images:
-                    "Photos"
+                    String(localized: "common.photos")
             }
         }
     }
