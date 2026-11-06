@@ -2,90 +2,82 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
-    <key>UIFileSharingEnabled</key>
-    <true/>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-
-    <key>CFBundleDocumentTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeName</key>
-            <string>Dropin Export</string>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>LSItemContentTypes</key>
-            <array>
-                <string>com.dropin.export</string>
-            </array>
-        </dict>
-    </array>
-    
-    <!-- Declare the type itself -->
-    <key>UTExportedTypeDeclarations</key>
-    <array>
-        <dict>
-            <key>UTTypeIdentifier</key>
-            <string>com.dropin.export</string>
-            <key>UTTypeDescription</key>
-            <string>Dropin Export</string>
-            <key>UTTypeConformsTo</key>
-            <array>
-                <string>public.json</string>
-            </array>
-            <key>UTTypeTagSpecification</key>
-            <dict>
-                <key>public.filename-extension</key>
-                <array>
-                    <string>dropin</string>
-                </array>
-                <key>public.mime-type</key>
-                <string>application/vnd.dropin+json</string>
-            </dict>
-        </dict>
-    </array>
-    
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLName</key>
-            <string>com.batsansierra.Dropin.auth</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>dropin</string>
-            </array>
-        </dict>
-    </array>
-
-    <key>NSAppTransportSecurity</key>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Dropin Export</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.dropin.export</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.dropin.export</string>
+			<key>UTTypeDescription</key>
+			<string>Dropin Export</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>dropin</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/vnd.dropin+json</string>
+			</dict>
+		</dict>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.batsansierra.Dropin.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>dropin</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-    
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-
-    <key>SUPABASE_URL</key>
-    <string>$(SUPABASE_URL)</string>
-    <key>SUPABASE_ANON_KEY</key>
-    <string>$(SUPABASE_ANON_KEY)</string>
-    <key>SENTRY_DSN</key>
-    <string>$(SENTRY_DSN)</string>
-    <key>DEBUG_SIGNIN_EMAIL</key>
-    <string>$(DEBUG_SIGNIN_EMAIL)</string>
-    <key>DEBUG_SIGNIN_PASSWORD</key>
-    <string>$(DEBUG_SIGNIN_PASSWORD)</string>
-    <key>DEBUG_SIGNUP_EMAIL_PREFIX</key>
-    <string>$(DEBUG_SIGNUP_EMAIL_PREFIX)</string>
-    <key>DEBUG_SIGNUP_EMAIL_SUFFIX</key>
-    <string>$(DEBUG_SIGNUP_EMAIL_SUFFIX)</string>
-
-    <key>NSCameraUsageDescription</key>
-    <string>Dropin uses the camera to add photos to your places.</string>
-
+	<key>SUPABASE_URL</key>
+	<string>$(SUPABASE_URL)</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>$(SUPABASE_ANON_KEY)</string>
+	<key>SENTRY_DSN</key>
+	<string>$(SENTRY_DSN)</string>
+	<key>DEBUG_SIGNIN_EMAIL</key>
+	<string>$(DEBUG_SIGNIN_EMAIL)</string>
+	<key>DEBUG_SIGNIN_PASSWORD</key>
+	<string>$(DEBUG_SIGNIN_PASSWORD)</string>
+	<key>DEBUG_SIGNUP_EMAIL_PREFIX</key>
+	<string>$(DEBUG_SIGNUP_EMAIL_PREFIX)</string>
+	<key>DEBUG_SIGNUP_EMAIL_SUFFIX</key>
+	<string>$(DEBUG_SIGNUP_EMAIL_SUFFIX)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Dropin uses the camera to add photos to your places.</string>
 </dict>
 </plist>

@@ -8,6 +8,7 @@
 # exports the XCTAttachments from the result bundle, then writes:
 #   Screenshots/appstore/<configuration>/NN_<shot>.png APPSTORE_SHOTS, every configuration, framed:
 #                                                     caption (AppStoreCaptions.xcstrings) above the shot
+#   fastlane/screenshots/<locale>/N_<shot>.png        the framed App Store shots, for fastlane deliver
 #   Screenshots/website/<file name>.webp              WEBSITE_SHOTS, en only, resized
 #   Screenshots/last.xcresult                         full report: open Screenshots/last.xcresult
 # Failed tests are listed; screenshots of the passing ones are still exported.
@@ -35,6 +36,13 @@ APPSTORE_SHOTS=(
     places.list
 )
 CAPTIONS="$ROOT/DropinScreenshots/Resources/AppStoreCaptions.xcstrings"
+# Test plan configuration → App Store locale (fastlane/screenshots/<locale>, same as fastlane/metadata/<locale>)
+typeset -A FASTLANE_LOCALES=(
+    en en-US
+    fr fr-FR
+    es es-ES
+)
+FASTLANE_SCREENSHOTS="$ROOT/fastlane/screenshots"
 # Framed image: 6.9" size, screenshot scaled down under its caption
 FRAME_SIZE=(1320 2868)
 FRAME_BACKGROUND="#588B8B"
@@ -101,7 +109,7 @@ print(devices[0]["udid"] if devices else "")' "$DEVICE_NAME")
         -destination "platform=iOS Simulator,id=$udid" \
         -parallel-testing-enabled NO \
         -resultBundlePath "$RESULT" \
-        -quiet 2>&1 | { grep -v "IDELaunchParametersSnapshot" || true; }   # drop Xcode's debugger-version noise
+        -quiet 2>&1 | { grep -v -e "IDELaunchParametersSnapshot" -e "Upload Debug Symbols to Sentry" || true; }   # drop Xcode's debugger-version noise + the Sentry phase note (it exits unless archiving)
     TEST_STATUS=${pipestatus[1]}
     set -e
 
@@ -168,6 +176,25 @@ processAppstore() {
                 echo "  ✗ no caption for $shot in ${CAPTIONS:t}" >&2; MISSING=1; continue
             fi
             frameShot "$config/$shot.png" "$text" "$OUT/appstore/$lang/$(printf %02d $index)_$shot.png"
+        done
+    done
+}
+
+# Screenshots/appstore/<configuration>/NN_<shot>.png → fastlane/screenshots/<locale>/N_<shot>.png
+# deliver uploads them in file name order, its device type comes from the image size
+processFastlane() {
+    local config lang locale file
+    echo "▸ fastlane"
+    for config in "$OUT/appstore"/*(/N); do
+        lang=${config:t}
+        locale=${FASTLANE_LOCALES[$lang]:-}
+        if [[ -z "$locale" ]]; then
+            echo "  ✗ no locale for configuration '$lang' in FASTLANE_LOCALES" >&2; MISSING=1; continue
+        fi
+        rm -rf "$FASTLANE_SCREENSHOTS/$locale"   # only the locales generated here, other folders are kept
+        mkdir -p "$FASTLANE_SCREENSHOTS/$locale"
+        for file in "$config"/*.png(N); do
+            cp "$file" "$FASTLANE_SCREENSHOTS/$locale/${${file:t}#0}"   # 01_places.map.png → 1_places.map.png
         done
     done
 }
@@ -266,10 +293,11 @@ main() {
     fi
     retrieveSnapshots
     processAppstore
+    processFastlane
     processWeb
 
     echo "▸ Done → $OUT"
-    find "$OUT/appstore" "$OUT/website" -type f | sort | sed "s|^$ROOT/||"
+    find "$OUT/appstore" "$OUT/website" "$FASTLANE_SCREENSHOTS" -type f -name "*.*" | sort | sed "s|^$ROOT/||"
     (( TEST_STATUS == 0 && MISSING == 0 )) || exit 1
 }
 

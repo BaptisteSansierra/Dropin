@@ -15,6 +15,14 @@
         "language" : "fr",
         "region" : "FR"
       }
+    },
+    {
+      "id" : "1A54382C-BC62-4B6F-9CA8-931B73AB1C9B",
+      "name" : "es",
+      "options" : {
+        "language" : "es",
+        "region" : "ES"
+      }
     }
   ],
   "defaultOptions" : {

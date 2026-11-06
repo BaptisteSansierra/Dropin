@@ -1,0 +1,20 @@
+
+##  Create a TF
+fastlane beta
+
+
+##  Upload Appstore Screenshots
+ - If a language has been added :
+   - retrieve the country code (See: Upload Appstore Metadata)
+   - Update script ascreenshots.sh to handle the new language
+ - ./scripts/screenshots.sh 
+ - fastlane store_screenshots
+
+
+##  Upload Appstore Metadata
+ - Add release not for specific version in fastlane/AppStoreMetadata.xcstrings>release_notes.x.x.x
+ - If a language has been added :
+   - retrieve the country code by fetching metadata : fastlane deliver download_metadata
+   - Update script appstore_metadata.sh to handle the new language
+ - translate AppStoreMetadata.xcstrings
+ - fastlane metadata
