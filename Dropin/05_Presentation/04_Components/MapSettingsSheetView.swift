@@ -116,7 +116,33 @@ struct MapSettingsSheetView: View {
     }}
 
 
+#if DEBUG
+
+struct MOCKMapSettingsSheetView: View {
+    @State private var present: Bool = false
+    
+    var body: some View {
+        VStack {
+            Button(action: {
+                present.toggle()
+            }, label: {
+                Text(verbatim: "Present")
+            })
+        }
+        .sheet(isPresented: $present) {
+            MapSettingsSheetView()
+                .presentationDetents([.height(500)])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.surface1)
+        }
+    }
+}
+
 #Preview {
-    MapSettingsSheetView()
+    MOCKMapSettingsSheetView()
         .environment(AppSettings())
 }
+
+
+
+#endif
