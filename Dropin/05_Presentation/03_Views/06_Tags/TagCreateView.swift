@@ -166,6 +166,7 @@ struct TagCreateView: View {
                  createdTagColor.hex)
         createdTagName = ""
         createdTagColor = Color.random()
+        isNameFieldFocused = false
     }
     
     private func sanityCheck() -> Bool {

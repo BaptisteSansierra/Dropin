@@ -232,6 +232,7 @@ struct CategoryCreateView: View {
         onCreate(createdCategoryName,
                  createdCategoryColor.hex,
                  createdCategoryIcon ?? Icon(rawValue: "sf:folder")!)
+        isNameFieldFocused = false
         createdCategoryName = ""
         createdCategoryColor = Color.random()
         createdCategoryIcon = nil
