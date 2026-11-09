@@ -8,19 +8,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your places. Your map.\n\nDropin is a simple way to build your own map of the places that matter to you: the restaurant a friend recommended, the viewpoint you found on holiday, the café you keep meaning to try.\n\nSAVE PLACES IN SECONDS\nTap a point of interest or drop a pin anywhere, and it's on your map.\n\nORGANIZE THEM YOUR WAY\nSort places with your own categories and tags, and give your pins their own colors.\n\nFIND THE RIGHT ONE FAST\nBrowse your places on the map or in a list. Search and filter by category or tag to find what you need.\n\nBRING YOUR PLACES WITH YOU\nImport your places from Mapstr and other supported files. \n\nYOUR DATA IS YOURS\n• No ads\n• No third-party analytics or advertising SDKs\n• Your data is never sold or shared\n• Not a social network\n• Export or permanently delete your data at any time\n\nCreate an account to sync across your devices.\n\nDropin is an independent project, made with care in Barcelona."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Vos lieux. Votre carte.\n\nDropin est une façon simple de créer votre propre carte des lieux qui comptent pour vous : le restaurant qu'un ami vous a conseillé, le point de vue découvert en vacances, le café que vous voulez essayer depuis longtemps.\n\nENREGISTREZ UN LIEU EN QUELQUES SECONDES\nTouchez un point d'intérêt ou posez une épingle n'importe où, et le voilà sur votre carte.\n\nORGANISEZ-LES À VOTRE FAÇON\nClassez vos lieux avec vos propres catégories et tags, et donnez à vos épingles leurs propres couleurs.\n\nTROUVEZ LE BON, RAPIDEMENT\nParcourez vos lieux sur la carte ou dans une liste. Recherchez et filtrez par catégorie ou par tag pour trouver ce qu'il vous faut.\n\nEMPORTEZ VOS LIEUX AVEC VOUS\nImportez vos lieux depuis Mapstr et d'autres fichiers compatibles.\n\nVOS DONNÉES VOUS APPARTIENNENT\n• Aucune publicité\n• Aucun SDK d'analyse ou de publicité tiers\n• Vos données ne sont jamais vendues ni partagées\n• Pas un réseau social\n• Exportez ou supprimez définitivement vos données à tout moment\n\nCréez un compte pour synchroniser vos appareils.\n\nDropin est un projet indépendant, conçu avec soin à Barcelone."
+            "value" : "Your places. Your map.\n\nDropin is a simple way to build your own map of the places that matter to you: the restaurant a friend recommended, the viewpoint you found on holiday, the café you keep meaning to try.\n\nSAVE PLACES IN SECONDS\nTap a point of interest or drop a pin anywhere, and it's on your map.\nSaved points of interest keep their Apple Maps details, so you can always open them there.\nAdd photos and notes to remember why it mattered.\n\nORGANIZE THEM YOUR WAY\nSort places with your own categories and tags, and give your pins their own colors and icons.\n\nFIND THE RIGHT ONE FAST\nBrowse your places on the map or in a list. Search and filter by category or tag to find what you need.\n\nBRING YOUR PLACES WITH YOU\nImport your places from a Mapstr export in a few taps.\n\nWORKS OFFLINE\nYour map and places are always available, even without a connection.\n\nYOUR DATA IS YOURS\n• Open source: anyone can check how it works\n• No ads\n• No third-party analytics or advertising SDKs\n• Your data is never sold or shared\n• Not a social network\n• Export or permanently delete your data at any time\n\nCreate an account to sync across your devices.\n\nDropin is an independent project, made with care in Barcelona."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tus lugares. Tu mapa.\n\nDropin es una forma sencilla de crear tu propio mapa de los lugares que te importan: el restaurante que te recomendó un amigo, el mirador que descubriste en vacaciones, la cafetería que siempre quieres probar.\n\nGUARDA LUGARES EN SEGUNDOS\nToca un punto de interés o pon una chincheta en cualquier sitio, y ya está en tu mapa.\n\nORGANÍZALOS A TU MANERA\nClasifica tus lugares con tus propias categorías y etiquetas, y dale a cada chincheta su propio color.\n\nENCUENTRA EL QUE BUSCAS, RÁPIDO\nExplora tus lugares en el mapa o en una lista. Busca y filtra por categoría o etiqueta para encontrar lo que necesitas.\n\nLLÉVATE TUS LUGARES\nImporta tus lugares desde Mapstr y otros archivos compatibles.\n\nTUS DATOS SON TUYOS\n• Sin anuncios\n• Sin SDK de analítica ni de publicidad de terceros\n• Tus datos nunca se venden ni se comparten\n• No es una red social\n• Exporta o elimina definitivamente tus datos en cualquier momento\n\nCrea una cuenta para sincronizar tus dispositivos.\n\nDropin es un proyecto independiente, hecho con cariño en Barcelona."
+            "state" : "translated",
+            "value" : "Tus lugares. Tu mapa.\n\nDropin es una forma sencilla de crear tu propio mapa de los lugares que te importan: el restaurante que te recomendó un amigo, el mirador que descubriste en vacaciones, la cafetería que siempre quieres probar.\n\nGUARDA LUGARES EN SEGUNDOS\nToca un punto de interés o coloca un pin en cualquier sitio, y ya está en tu mapa.\nLos puntos de interés guardados conservan sus datos de Apple Mapas, para que siempre puedas abrirlos allí.\nAñade fotos y notas para recordar por qué era especial.\n\nORGANÍZALOS A TU MANERA\nOrdena tus lugares con tus propias categorías y etiquetas, y dale a cada pin su propio color e icono.\n\nENCUENTRA EL QUE BUSCAS AL INSTANTE\nExplora tus lugares en el mapa o en una lista. Busca y filtra por categoría o etiqueta para encontrar lo que necesitas.\n\nLLÉVATE TUS LUGARES\nImporta tus lugares desde una exportación de Mapstr en pocos toques.\n\nFUNCIONA SIN CONEXIÓN\nTu mapa y tus lugares siempre disponibles, incluso sin conexión.\n\nTUS DATOS SON TUYOS\n\nCódigo abierto: cualquiera puede comprobar cómo funciona\nSin anuncios\nSin SDK de terceros de analítica ni publicidad\nTus datos nunca se venden ni se comparten\nNo es una red social\nExporta o elimina definitivamente tus datos en cualquier momento\n\nInicia sesión para mantener tus lugares seguros y sincronizados en todos tus dispositivos.\n\nDropin es un proyecto independiente, hecho con cariño en Barcelona."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos lieux. Votre carte.\n\nDropin est une façon simple de créer votre propre carte des lieux qui comptent pour vous : le restaurant qu’un ami vous a recommandé, le point de vue découvert en vacances, le café que vous voulez tester depuis longtemps.\n\nENREGISTREZ UN LIEU EN QUELQUES SECONDES\nTouchez un point d’intérêt ou placez une épingle n’importe où : il est sur votre carte.\nLes points d’intérêt enregistrés conservent leurs informations Apple Plans, pour que vous puissiez toujours les y ouvrir.\nAjoutez des photos et des notes pour vous souvenir de ce qui le rendait spécial.\n\nORGANISEZ-LES À VOTRE FAÇON\nClassez vos lieux avec vos propres catégories et étiquettes, et donnez à vos épingles leurs propres couleurs et icônes.\n\nRETROUVEZ LE BON LIEU EN UN INSTANT\nParcourez vos lieux sur la carte ou en liste. Recherchez et filtrez par catégorie ou étiquette pour trouver ce qu’il vous faut.\n\nEMPORTEZ VOS LIEUX AVEC VOUS\nImportez vos lieux depuis un export Mapstr en quelques gestes.\n\nFONCTIONNE HORS LIGNE\nVotre carte et vos lieux restent accessibles, même sans connexion.\n\nVOS DONNÉES VOUS APPARTIENNENT\n\nOpen source : chacun peut vérifier son fonctionnement\nPas de publicité\nAucun SDK tiers d’analyse ou de publicité\nVos données ne sont jamais vendues ni partagées\nPas un réseau social\nExportez ou supprimez définitivement vos données à tout moment\n\nConnectez-vous pour garder vos lieux en sécurité et synchronisés sur tous vos appareils.\n\nDropin est un projet indépendant, fait avec soin à Barcelone."
           }
         }
       }
@@ -32,19 +32,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "places,map,pins,favorites,restaurants,travel,poi,list,tags,notes,spots,private,personal,bookmark"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "adresses,favoris,restaurants,bars,voyage,épingles,liste,tags,notes,bons plans,privé,perso,signets"
+            "value" : "collection,list,bookmark,pin,library,notebook,tag,personal,wishlist,restaurant,travel,bar,favorite"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "sitios,favoritos,restaurantes,bares,viajes,chinchetas,lista,etiquetas,notas,privado,marcadores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "adresses,favoris,restaurants,bars,voyage,épingles,liste,tags,notes,bons plans,privé,perso,signets"
           }
         }
       }
@@ -59,16 +59,16 @@
             "value" : "Dropin: Places Map"
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dropin : Carte de lieux"
-          }
-        },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dropin: Mapa de lugares"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropin : Bonnes adresses"
           }
         }
       }
@@ -80,19 +80,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save the places that matter to you on your own private map. No ads, no trackers, no social feed. Moving from Mapstr? Bring your places with you."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Gardez les lieux qui comptent pour vous sur votre propre carte privée. Sans pub, sans traceurs, sans fil social. Vous venez de Mapstr ? Emportez vos lieux avec vous."
+            "value" : "Save the places that matter to you on your own private map. Open source. No ads, no trackers, no social feed. Coming from another app? Bring your places."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Guarda los lugares que te importan en tu propio mapa privado. Sin anuncios, sin rastreadores, sin red social. ¿Vienes de Mapstr? Tráete tus lugares."
+            "state" : "translated",
+            "value" : "Guarda los lugares que te importan en tu propio mapa privado. Código abierto. Sin anuncios, sin rastreadores, sin red social. ¿Vienes de otra app? Tráete tus lugares."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gardez les lieux qui comptent sur votre propre carte privée. Open source. Sans pub, sans traceurs, sans fil social. Vous venez d’une autre app ? Emportez vos lieux."
           }
         }
       }
@@ -108,19 +108,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save and organize your places"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Gardez et organisez vos lieux"
+            "value" : "Save the spots you love"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Guarda y organiza tus lugares"
+            "state" : "translated",
+            "value" : "Guarda tus sitios favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les lieux que vous aimez"
           }
         }
       }
