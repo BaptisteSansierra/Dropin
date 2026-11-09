@@ -616,11 +616,11 @@ struct PlaceSheetView: View {
     
     // MARK: private methods
     private func phoneItemCount() -> Int {
-        viewModel.applePhoneNumber == nil ? 0 : 1 + place.phone.count
+        viewModel.applePhoneNumber == nil ? place.phone.count : 1 + place.phone.count
     }
 
     private func urlItemCount() -> Int {
-        viewModel.appleURL == nil ? 0 : 1 + place.url.count
+        viewModel.appleURL == nil ? place.url.count : 1 + place.url.count
     }
 
     private func contactItemCount() -> Int {
@@ -729,9 +729,14 @@ struct PlaceSheetView: View {
 
 #if DEBUG
 
+
 struct MockPlaceDetailSheetView: View {
+    enum Purpose {
+        case place(Int)
+        case missingAddress
+    }
+    
     var mock: MockContainer
-    var index: Int
     @State var place: PlaceUIModel
     @State var detailSheetDetent: PresentationDetent = .medium
     @State var presentedSheet: Bool = false
@@ -754,26 +759,37 @@ struct MockPlaceDetailSheetView: View {
         }
     }
     
-    init(_ index: Int) {
-        self.index = index
+    init(_ purpose: Purpose) {
         let mock = MockContainer()
         self.mock = mock
-        //self.place = mock.getPlaceUIModel(index)
-        self.place = mock.getNoAddressPlaceUIModel()
+        switch purpose {
+            case .place(let idx):
+                self.place = mock.getPlaceUIModel(idx)
+            case .missingAddress:
+                self.place = mock.getNoAddressPlaceUIModel()
+        }
         
         // Link to an Apple POI
+        #if false
         //self.place.applePlaceID = UUID().uuidString
         self.place.applePlaceID = "IFDEE26634A4EFE23"
+        #endif
     }
 }
 
 #Preview {
-    // With contacts
-    MockPlaceDetailSheetView(6)
-}
 
-#Preview {
-    MockPlaceDetailSheetView(1)
+    // With contacts
+    MockPlaceDetailSheetView(.place(6))
+
+#if false
+
+    MockPlaceDetailSheetView(.place(1))
+
+    MockPlaceDetailSheetView(.missingAddress)
+
+#endif
+    
 }
 
 #endif
