@@ -77,9 +77,16 @@ struct TagSelectorView: View {
 
     // MARK: - Subviews
     private var headerView: some View {
-        Text("tag_selector.header")
-            .textStyle(.bodySemibold)
-            .frame(maxWidth: .infinity)
+        ZStack {
+            Text("tag_selector.header")
+                .textStyle(.bodySemibold)
+                .frame(maxWidth: .infinity)
+            HStack {
+                Spacer()
+                TextButton(text: "common.done", action: { dismiss() } )
+            }
+            .padding(.horizontal, 20)
+        }
     }
 
     @ViewBuilder
