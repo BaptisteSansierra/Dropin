@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// TagRecord UI representation: colored rounded rect text 
+/// TagRecord UI representation: colored rounded rect text
 struct TagView: View {
 
     enum Style {
@@ -22,7 +22,6 @@ struct TagView: View {
     private var style: Style
     private var alphaBgColor: Color
     private var textColor: Color
-    private let cornerRadius: CGFloat = 6
 
     // MARK: - init
     init(name: String, color: Color, style: Style = .plain) {
@@ -70,11 +69,8 @@ struct TagView: View {
             .foregroundStyle(textColor)
             .textStyle(.tagSticker)
             .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .background(color)
-            .cornerRadius(cornerRadius)
             .background {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(textColor, style: .init(lineWidth: 1))
+                TagCapsuleView(style: style, color: color)
             }
     }
 
@@ -89,11 +85,8 @@ struct TagView: View {
                 .textStyle(.tagSticker, color: textColor)
         }
         .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-        .background(color)
-        .cornerRadius(cornerRadius)
         .background {
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(textColor, style: .init(lineWidth: 1))
+            TagCapsuleView(style: style, color: color)
         }
 
         /*
@@ -134,12 +127,10 @@ struct TagView: View {
                 //}
         }
         .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-        .cornerRadius(cornerRadius)
         .background {
             let shdOff: CGFloat = 0.25
             let shdCol = alphaBgColor.opacity(0.3)
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(color, style: .init(lineWidth: 1))
+            TagCapsuleView(style: style, color: color)
                 .shadow(color: shdCol, radius: 0, x: shdOff, y: 0)
                 .shadow(color: shdCol, radius: 0, x: -shdOff, y: 0)
                 .shadow(color: shdCol, radius: 0, x: 0, y: shdOff)
@@ -147,6 +138,54 @@ struct TagView: View {
         }
     }
 }
+
+// Background
+private struct TagCapsuleView: View {
+    private var style: TagView.Style
+    private var color: Color
+    private let cornerRadius: CGFloat = 6
+    private let height: CGFloat = 23
+
+    init(style: TagView.Style, color: Color) {
+        self.style = style
+        self.color = color
+    }
+    
+    var body: some View {
+        switch style {
+            case .plain, .selected:
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(color)
+                    .stroke(color, style: .init(lineWidth: 1))
+                    .frame(height: height)
+            case .unselected:
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(.clear)
+                    .stroke(color, style: .init(lineWidth: 1))
+                    .frame(height: height)
+        }
+    }
+}
+
+// A tag presenting overflow counter
+struct TagOverflowView: View {
+    private var count: Int
+
+    init(count: Int) {
+        self.count = count
+    }
+    
+    var body: some View {
+        Text(verbatim: "+ \(count)")
+            .foregroundStyle(.textPrimary)
+            .textStyle(.tagSticker)
+            .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+            .background {
+                TagCapsuleView(style: .plain, color: .backgroundPrimary)
+            }
+    }
+}
+
 
 #if DEBUG
 
@@ -184,7 +223,7 @@ struct MockTagView: View {
             plainView
                 .tabItem {
                     Label {
-                        Text("Plain")
+                        Text(verbatim: "Plain")
                     } icon: {
                         Image(systemName: "capsule")
                     }
@@ -193,9 +232,25 @@ struct MockTagView: View {
             selectorView
                 .tabItem {
                     Label {
-                        Text("Selector")
+                        Text(verbatim: "Selector")
                     } icon: {
                         Image(systemName: "circle.grid.2x2.topleft.checkmark.filled")
+                    }
+                }
+            VStack {
+                HStack {
+                    Text("xscxc")
+                    TagOverflowView(count: 1)
+                    Text("xscxc")
+                }
+                TagOverflowView(count: 10)
+                TagOverflowView(count: 999)
+            }
+                .tabItem {
+                    Label {
+                        Text(verbatim: "Overflow")
+                    } icon: {
+                        Image(systemName: "light.overhead.right")
                     }
                 }
         }
@@ -246,7 +301,7 @@ struct MockTagView: View {
     private var content: some View {
         VStack {
             ForEach(shades, id: \.1.hashValue) { c in
-                TagView(name: c.0, color: c.1, style: .selected)
+                TagView(name: c.0, color: c.1)
             }
             Divider()
             ForEach(cols1, id: \.hashValue) { c in

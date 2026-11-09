@@ -149,7 +149,7 @@ struct PlaceCreateQuickView: View {
                         TagView(name: tag.name, color: tag.color)
                     }
                     if place.tags.count > 2 {
-                        TagView(name: "+ \(place.tags.count - 2)", color: .backgroundPrimary)
+                        TagOverflowView(count: place.tags.count - 2)
                     }
                 }
             }
