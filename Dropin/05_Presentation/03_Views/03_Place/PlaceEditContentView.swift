@@ -21,35 +21,7 @@ struct PlaceEditContentView: View {
     @Environment(AppSettings.self) private var appSettings
     @Environment(RootView.ActionBus.self) private var actionBus
 
-    // To be moved in VM
-//    @State private var confirmCancel: Bool = false
-//    @State private var edited: Bool = false // true if contains some edits
-    /*
-    @State private var scrollY: CGFloat = 0
-    //@State private var headerOpacity: CGFloat = 0
-    @State private var headerBackgroundOffsetY: CGFloat = 0
-    @State private var annotationSize: CGFloat = 50
-    @State private var annotationBottomPading: CGFloat = 40
-    @State private var headerNameOpacity: CGFloat = 0
-    @State private var showingCategorySelector: Bool = false
-    @State private var showingTagSelector: Bool = false
-    @State private var showingMarkerList: Bool = false
-    @State private var showEditAddressMenu: Bool = false
-    // We use UI models for contact presentation
-    @State private var phones: [ContactItemUI] = []
-    @State private var emails: [ContactItemUI] = []
-    @State private var urls: [ContactItemUI] = []
-    @State private var showingImagePicker: Bool = false
-    @State private var showingCamera: Bool = false
-    @State private var showingImageSourceMenu: Bool = false
-    @State private var selectedImageId: UUID? = nil
-    // NoFlyZone states
-    @State private var noFlyZoneEnabled: Bool = false
-    @State private var noFlyAuthorizedZones: [NoFlyZoneData] = []
-    @State private var noFlyZoneCompletionStatus: NoFlyZoneCompletionStatus = .undefined
-    @State private var showDeleteWarning = false
-     */
-
+    // MARK: - private properties
     private let scrollCoordinateSpace = "scroll"
     private let topLayerHeight: CGFloat = 200
     private let nameFieldKey = "nameField"
@@ -577,22 +549,11 @@ extension PlaceEditContentView {
     @ViewBuilder
     private var groupCardView: some View {
         Group {
+            let action = { viewModel.showingCategorySelector.toggle() }
             if let category = place.category {
-                cardView(title: "common.category",
-                         headerActionTitle: "common.change",
-                         headerAction: {
-                    viewModel.showingCategorySelector.toggle()
-                }) {
-                    HStack {
-                        CategoryView(category: category,
-                                  action: { place.category = nil })
-                        .padding(.vertical, 20)
-                        .padding(.leading, 0)
-                        Spacer()
-                    }
-                }
+                groupCardContentView(category, action)
             } else {
-                emptyCategoryContentView
+                emptyCategoryContentView(action)
             }
         }
         .sheet(isPresented: $viewModel.showingCategorySelector) {
@@ -602,13 +563,28 @@ extension PlaceEditContentView {
                 .presentationBackground(.backgroundPrimary)
         }
     }
+    
+    private func groupCardContentView(_ category: CategoryUIModel,
+                                      _ action: @escaping () -> Void) -> some View {
+        cardView(title: "common.category",
+                 headerActionTitle: "common.change",
+                 headerAction: action) {
+            HStack {
+                CategoryView(category: category,
+                          action: { place.category = nil })
+                .padding(.vertical, 20)
+                .padding(.leading, 0)
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
+        }
+    }
 
-    private var emptyCategoryContentView: some View {
+    private func emptyCategoryContentView(_ action: @escaping () -> Void) -> some View {
         cardView(title: "common.category",
                  headerActionTitle: "common.choose",
-                 headerAction: {
-            viewModel.showingCategorySelector.toggle()
-        }) {
+                 headerAction: action) {
             HStack {
                 Text("placeholder.no_category")
                     .textStyle(.cardPlaceholder)
@@ -617,6 +593,8 @@ extension PlaceEditContentView {
                     .padding(.bottom, inCardBottomMargin)
                 Spacer()
             }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
         }
     }
 }
@@ -626,10 +604,11 @@ extension PlaceEditContentView {
     
     private var tagCardView: some View {
         Group {
+            let action = { viewModel.showingTagSelector.toggle() }
             if place.tags.count > 0 {
-                tagCardContentView
+                tagCardContentView(action)
             } else {
-                noTagsCardContentView
+                noTagsCardContentView(action)
             }
         }
         .sheet(isPresented: $viewModel.showingTagSelector) {
@@ -639,28 +618,27 @@ extension PlaceEditContentView {
                 .presentationBackground(.backgroundPrimary)
         }
     }
-        
-    private var tagCardContentView: some View {
+    
+    @ViewBuilder
+    private func tagCardContentView(_ action: @escaping () -> Void) -> some View {
         cardView(title: "common.tags",
                  headerActionTitle: "common.edit",
-                 headerAction: {
-            viewModel.showingTagSelector.toggle()
-        }) {
+                 headerAction: action) {
             PlaceTagsView(place: $place,
                           showingTagsSelector: $viewModel.showingTagSelector,
                           editEnabled: false,
                           presentationMode: .form)
             .padding(.top, inCardTopMargin)
             .padding(.bottom, inCardBottomMargin)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
         }
     }
         
-    private var noTagsCardContentView: some View {
+    private func noTagsCardContentView(_ action: @escaping () -> Void) -> some View {
         cardView(title: "common.tags",
                  headerActionTitle: "common.add",
-                 headerAction: {
-            viewModel.showingTagSelector.toggle()
-        }) {
+                 headerAction: action) {
             HStack {
                 Text("placeholder.no_tags")
                     .textStyle(.cardPlaceholder)
@@ -669,6 +647,8 @@ extension PlaceEditContentView {
                     .padding(.bottom, inCardBottomMargin)
                 Spacer()
             }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
         }
     }
 }
@@ -678,10 +658,11 @@ extension PlaceEditContentView {
     
     private var iconCardView: some View {
         Group {
+            let action = { viewModel.showingMarkerList.toggle() }
             if let icon = place.icon {
-                iconCardContentView(icon)
+                iconCardContentView(icon, action)
             } else {
-                noIconCardContentView
+                noIconCardContentView(action)
             }
         }
         .fullScreenCover(isPresented: $viewModel.showingMarkerList) {
@@ -689,10 +670,11 @@ extension PlaceEditContentView {
         }
     }
     
-    private func iconCardContentView(_ icon: Icon) -> some View {
+    private func iconCardContentView(_ icon: Icon,
+                                     _ action: @escaping () -> Void) -> some View {
         cardView(title: "common.annotation_icon",
                  headerActionTitle: "common.change",
-                 headerAction: { viewModel.showingMarkerList.toggle() }) {
+                 headerAction: action) {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -711,13 +693,15 @@ extension PlaceEditContentView {
             }
             .padding(.top, inCardTopMargin)
             .padding(.bottom, inCardBottomMargin)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
         }
     }
 
-    private var noIconCardContentView: some View {
+    private func noIconCardContentView(_ action: @escaping () -> Void) -> some View {
         cardView(title: "common.annotation_icon",
                  headerActionTitle: "common.choose",
-                 headerAction: { viewModel.showingMarkerList.toggle() }) {
+                 headerAction: action) {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -739,6 +723,8 @@ extension PlaceEditContentView {
             }
             .padding(.top, inCardTopMargin)
             .padding(.bottom, inCardBottomMargin)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
         }
     }
     
