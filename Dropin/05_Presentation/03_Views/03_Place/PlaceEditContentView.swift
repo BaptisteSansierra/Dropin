@@ -18,6 +18,7 @@ struct PlaceEditContentView: View {
     @Binding private var place: PlaceUIModel
     @Binding private var showMissingName: Bool
     @FocusState private var isNameFocused
+    @FocusState private var isFocused
     @Environment(AppSettings.self) private var appSettings
     @Environment(RootView.ActionBus.self) private var actionBus
 
@@ -72,6 +73,21 @@ struct PlaceEditContentView: View {
                                 proxy.scrollTo(nameFieldKey, anchor: .center)
                             }
                         })
+                        .toolbar {
+                            ToolbarItem(placement: .keyboard) {
+                                HStack {
+                                    Spacer()
+                                    TextButton(text: "common.close") {
+                                        isNameFocused = false
+                                        isFocused = false
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                            }
+                        }
+
                 }
                 headerView
             }
@@ -539,6 +555,7 @@ extension PlaceEditContentView {
                 .submitLabel(.done)
                 .padding(.top, 10)
                 .padding(.bottom, inCardBottomMargin)
+                .focused($isFocused)
         }
     }
 }
@@ -1219,6 +1236,7 @@ extension PlaceEditContentView {
                 .multilineTextAlignment(.leading)
                 .padding(.vertical)
                 .frame(minHeight: 100, alignment: .top)
+                .focused($isFocused)
             }
         }
     }
