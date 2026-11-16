@@ -56,6 +56,10 @@ struct DropinApp: App {
                 SplashView()
             case .signedOut:
                 vm.appContainer.createSignInView()
+                    // A file opened during the session restore can't be imported
+                    .onAppear {
+                        vm.signedOutAppeared()
+                    }
             case .signedIn(let signingOut):
                 ZStack {
                     vm.appContainer.createRootView()
@@ -70,12 +74,12 @@ struct DropinApp: App {
                     .ignoresSafeArea()
                     .opacity(signingOut ? 1 : 0)
                 }
-                // A file opened before the sign in (cold launch from Files...) is presented now
+                // A file opened during the session restore (cold launch from Files...) is presented now
                 .onAppear {
-                    vm.updateImportPresentation()
+                    vm.signedInAppeared()
                 }
                 .onChange(of: signingOut) {
-                    vm.updateImportPresentation()
+                    if signingOut { vm.signOutStarted() }
                 }
         }
     }

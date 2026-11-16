@@ -52,6 +52,11 @@ protocol ImportsEventProvider {
         overlay?.present()
     }
 
+    /// Sign out: stops and closes whatever is presented
+    func cancel() {
+        window?.cancelImport()
+    }
+
     // MARK: - Private
     private var overlay: ImportOverlayWindow? {
         if window == nil, let scene = Self.activeWindowScene {

@@ -17,10 +17,9 @@ import ContactFieldKit
     @ObservationIgnored private let appContext: AppContext
     @ObservationIgnored private let modelContainer: ModelContainer
 
-    /// File opened from outside the app (Files, AirDrop, Mail...) before the sign in, presented once the user is signed in
-    //@ObservationIgnored private var waitingImport: PendingImport?
+    /// File opened from outside the app (Files, AirDrop, Mail...) while the session restore is in flight (cold launch):
+    /// presented once signed in, refused if the restore ends signed out
     @ObservationIgnored private var waitingImportURL: URL?
-
 
     private var isSignedIn: Bool {
         if case .signedIn(signingOut: false) = appContainer.authState { return true }
@@ -199,17 +198,24 @@ import ContactFieldKit
     }
 
     // MARK: - Opened file
-    /// Called on sign in / sign out: an import waiting since a cold launch is presented to a signed in user only,
-    /// a sign out closes the presented one
-    func updateImportPresentation() {
-        guard isSignedIn else {
-            //appContainer.importPresenter.cancel()
-            appContainer.importPresenter.presentError(.loggedOut)
-            return
-        }
-        guard let pendingImport = waitingImportURL else { return }
+    /// `.signedIn` root appeared (restore or sign in completed): presents the file opened during the restore if there is
+    func signedInAppeared() {
+        guard let url = waitingImportURL else { return }
         waitingImportURL = nil
-        appContainer.importPresenter.presentFile(pendingImport)
+        appContainer.importPresenter.presentFile(url)
+    }
+
+    /// `.signedOut` root appeared: if a file was opened during the restore, refuse it, there is no session to import it to
+    func signedOutAppeared() {
+        guard waitingImportURL != nil else { return }
+        discardOpenedFile()
+        presentImportError(.loggedOut)
+    }
+
+    /// Sign out started: closes whatever import is presented, nothing waits anymore
+    func signOutStarted() {
+        appContainer.importPresenter.cancel()
+        discardOpenedFile()
     }
 
     // MARK: - Private
@@ -223,13 +229,30 @@ import ContactFieldKit
             do {
                 // Off the main thread: an iCloud file may need to be downloaded first
                 let copy = try await Task.detached { try Self.copyToImportInbox(url) }.value
-                waitingImportURL = copy
-                updateImportPresentation()
+                handleOpenedFile(copy)
             } catch {
                 Log.error("Couldn't copy the opened file \(url.lastPathComponent): \(error)")
                 presentImportError(.unreadable(url.lastPathComponent))
             }
         }
+    }
+
+    private func handleOpenedFile(_ copy: URL) {
+        switch appContainer.authState {
+            case .signedIn(signingOut: false):
+                appContainer.importPresenter.presentFile(copy)
+            case .loading:
+                // Restore in flight: decided by signedInAppeared / signedOutAppeared
+                waitingImportURL = copy
+            case .signedIn(signingOut: true), .signedOut:
+                discardOpenedFile()
+                presentImportError(.loggedOut)
+        }
+    }
+
+    private func discardOpenedFile() {
+        waitingImportURL = nil
+        try? FileManager.default.removeItem(at: Self.importInbox)
     }
 
     private func presentImportError(_ error: OpenFileError) {
@@ -247,6 +270,8 @@ import ContactFieldKit
     }
 
     // MARK: - static private methods
+    nonisolated private static let importInbox = FileManager.default.temporaryDirectory.appending(path: "ImportInbox",
+                                                                                                  directoryHint: .isDirectory)
 
     /// iOS hands over the user's own file (LSSupportsOpeningDocumentsInPlace), readable only while its security scope is open:
     /// work on a local copy, kept until the next opened file
@@ -255,7 +280,7 @@ import ContactFieldKit
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
 
-        let inbox = FileManager.default.temporaryDirectory.appending(path: "ImportInbox", directoryHint: .isDirectory)
+        let inbox = importInbox
         try? FileManager.default.removeItem(at: inbox)   // one pending import at a time
         try FileManager.default.createDirectory(at: inbox, withIntermediateDirectories: true)
         let copy = inbox.appending(path: url.lastPathComponent)
