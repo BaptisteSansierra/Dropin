@@ -16,10 +16,6 @@ protocol ShareServiceProtocol: Sendable {
 
 final class ShareService: ShareServiceProtocol {
 
-    /// Mirrors Dropin_frontend's live domain (see its CLAUDE.md) — not derived from
-    /// AppConfig.Supabase, which points at the backend project, not the static site.
-    private static let baseURL = URL(string: "https://dropin.lat/p.html")!
-
     private let client: SupabaseClient
     private let auth: any AuthServiceProtocol
 
@@ -80,7 +76,7 @@ final class ShareService: ShareServiceProtocol {
     }
 
     private static func url(for shareId: UUID) -> URL {
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
+        var components = URLComponents(url: DropinApp.urls.shareBaseURL, resolvingAgainstBaseURL: false)!
         components.queryItems = [URLQueryItem(name: "id", value: shareId.uuidString)]
         return components.url!
     }

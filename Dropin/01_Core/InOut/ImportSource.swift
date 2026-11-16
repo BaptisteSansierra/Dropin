@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ImportSource: String, Codable, CustomStringConvertible {
     case dropin
@@ -19,6 +20,14 @@ enum ImportSource: String, Codable, CustomStringConvertible {
             case .mapstr: "Mapstr"
             //case .google: "Google"
             case .unknown: "Unknown"
+        }
+    }
+    
+    var displayName: LocalizedStringKey {
+        switch self {
+            case .dropin: "import_source.dropin"
+            case .mapstr: "import_source.mapstr"
+            case .unknown: "import_source.other"
         }
     }
 }

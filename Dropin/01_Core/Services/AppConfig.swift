@@ -12,6 +12,15 @@ import Foundation
 
 enum AppConfig {
 
+    static var scheme: String {
+        guard let str = Bundle.main.infoDictionary?["APP_URL_SCHEME"] as? String,
+              !str.isEmpty else {
+            fatalError("APP_URL_SCHEME missing or invalid — fill in Config.xcconfig")
+        }
+        Log.debug("scheme: \(str)")
+        return str
+    }
+    
     enum Supabase {
         static var url: URL {
             guard let str = Bundle.main.infoDictionary?["SUPABASE_URL"] as? String,

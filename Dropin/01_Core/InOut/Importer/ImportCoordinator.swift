@@ -19,12 +19,16 @@ final class ImportCoordinator {
 
     private let source: ImportSource
     private let url: URL
+    private let tagImport: Bool
+    private let tagName: String
     private let dropinService: ImportDropinService?
     private let mapstrService: ImportMapstrService?
     private let sync: any SyncServicePausableProtocol
 
     init(source: ImportSource,
          url: URL,
+         tagImport: Bool,
+         tagName: String,
          saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
@@ -36,6 +40,8 @@ final class ImportCoordinator {
          sync: any SyncServicePausableProtocol) throws {
         self.source = source
         self.url = url
+        self.tagImport = tagImport
+        self.tagName = tagName
         self.sync = sync
         switch source {
             case .dropin:
@@ -92,9 +98,20 @@ final class ImportCoordinator {
         try await sync.withPausedPushes {
             switch plan {
                 case .dropin(let export):
-                    try await dropinService!.import(export, progress: progress, canceled: canceled, completion: completion)
+                    try await dropinService!.import(export,
+                                                    tagImport: tagImport,
+                                                    tagName: tagName,
+                                                    progress: progress,
+                                                    canceled: canceled,
+                                                    completion: completion)
                 case .mapstr(let mapstrPlan):
-                    try await mapstrService!.import(mapstrPlan, mapping: mapping, progress: progress, canceled: canceled, completion: completion)
+                    try await mapstrService!.import(mapstrPlan,
+                                                    mapping: mapping,
+                                                    tagImport: tagImport,
+                                                    tagName: tagName,
+                                                    progress: progress,
+                                                    canceled: canceled,
+                                                    completion: completion)
             }
         }
     }

@@ -74,9 +74,11 @@ actor ImportDropinService: ImportServiceProtocol {
 
     // MARK: - Phase 2: import (writes)
     func `import`(_ export: DropinInOut,
-                 progress: @MainActor @Sendable (Int) -> Void,
-                 canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
+                  tagImport: Bool,
+                  tagName: String,
+                  progress: @MainActor @Sendable (Int) -> Void,
+                  canceled: @MainActor @Sendable () -> Void,
+                  completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
         // Fetch existing
         existingHardPlaces = try await fetchPlaces()
             .filter { $0.isActive }
@@ -87,7 +89,10 @@ actor ImportDropinService: ImportServiceProtocol {
 
         // Create items
         do {
-            try await createLocalItems(export, progress: progress)
+            try await createLocalItems(export,
+                                       tagImport: tagImport,
+                                       tagName: tagName,
+                                       progress: progress)
         } catch is CancellationError {
             await cancel(canceled);
         }
@@ -114,7 +119,10 @@ actor ImportDropinService: ImportServiceProtocol {
         }
     }
 
-    private func createLocalItems(_ export: DropinInOut, progress: @MainActor @Sendable (Int) -> Void) async throws {
+    private func createLocalItems(_ export: DropinInOut,
+                                  tagImport: Bool,
+                                  tagName: String,
+                                  progress: @MainActor @Sendable (Int) -> Void) async throws {
 
         // Every entity created by this import run shares the same instant.
         // The .dropin wire format carries no ids/dates of its own:
@@ -148,6 +156,15 @@ actor ImportDropinService: ImportServiceProtocol {
                 createdTagsCount += 1
             }
         }
+        
+        // Create importTag if needed: all created places will be tagged
+        var importTag: Tag?
+        if tagImport {
+            let importTagTmp = Tag(name: tagName, color: String.randomColor())
+            importTag = importTagTmp
+            try await upsertTag(importTagTmp, shouldSave: false)
+            createdTagsCount += 1
+        }
 
         // Upsert places, resolving their file-local category / tags references
         var upsertCount = 0
@@ -155,7 +172,10 @@ actor ImportDropinService: ImportServiceProtocol {
             try Task.checkCancellation()
 
             let category = placeDTO.categoryId.flatMap { categoriesByFileId[$0] }
-            let tags = placeDTO.tagIds.compactMap { tagsByFileId[$0] }
+            var tags = placeDTO.tagIds.compactMap { tagsByFileId[$0] }
+            if let importTag = importTag {
+                tags.append(importTag)
+            }
             let place = placeDTO.toDomain(tags: tags, category: category, importDate: importDate)
             try await processPlace(place)
 

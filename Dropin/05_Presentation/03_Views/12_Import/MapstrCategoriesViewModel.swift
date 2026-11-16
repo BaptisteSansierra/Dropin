@@ -2,6 +2,8 @@
 //  MapstrCategoriesViewModel.swift
 //  Dropin
 //
+//  Created by baptiste sansierra on 14/10/26.
+//
 
 import SwiftUI
 
@@ -24,8 +26,8 @@ import SwiftUI
     }
 
     /// One combination of converted tags shared by 2+ places (a resolve() conflict).
-    /// `id` is a stable key (tagIDs sorted independently of priority) so cards keep their
-    /// identity — and animate correctly — across swaps, which change `tagIDs`' order.
+    /// `id` is a stable key (tagIDs sorted independently of priority) so cards keep their identity (and animate correctly)
+    /// across swaps, which change `tagIDs`' order.
     struct ConflictGroup: Identifiable {
         let id: String
         /// In current priority order: index 0 is the winner (becomes the category).

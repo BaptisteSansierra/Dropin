@@ -92,6 +92,11 @@ struct PlacesView: View {
                     await reloadPlaces()
                 }
             }
+            .onChange(of: viewModel.importsEventProvider.lastImportedAt) {
+                Task {
+                    await reloadPlaces()
+                }
+            }
         }
         .onReceive(actionBus.actionPublisher) { handleAction($0) }
         .task {

@@ -21,10 +21,13 @@ enum ScreenshotMode {
     }
 
     /// Absolute path of the file imported from Settings instead of picking one (it lives in the test bundle)
-    static var importURL: URL? {
-        ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.importPath].map { URL(fileURLWithPath: $0) }
+    static var dropinImportURL: URL? {
+        ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.dropinImportPath].map { URL(fileURLWithPath: $0) }
     }
-    
+    static var mapstrImportURL: URL? {
+        ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.mapstrImportPath].map { URL(fileURLWithPath: $0) }
+    }
+
     static var colorScheme: ColorScheme? {
         switch ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.colorScheme] {
             case "dark": .dark

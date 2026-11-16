@@ -140,7 +140,7 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func resetPassword(email: String) async throws {
-        try await client.auth.resetPasswordForEmail(email, redirectTo: DropinApp.strings.resetPasswordURL)
+        try await client.auth.resetPasswordForEmail(email, redirectTo: DropinApp.urls.resetPasswordURL)
         Log.info("Password reset link requested for \(email)")
     }
     
@@ -317,7 +317,7 @@ final class AuthService: AuthServiceProtocol {
         let (stream, continuation) = AsyncThrowingStream<Session, Error>.makeStream()
         let work = Task {
             do {
-                let response = try await self.client.auth.signUp(email: email, password: password, redirectTo: DropinApp.strings.emailConfirmedURL)
+                let response = try await self.client.auth.signUp(email: email, password: password, redirectTo: DropinApp.urls.emailConfirmedURL)
                 // When the Supabase project requires email confirmation, `session` is nil (only `user` is returned)
                 // don't mark the user as authenticated until they've confirmed and actually signed in.
                 guard let supaSession = response.session else {

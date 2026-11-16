@@ -15,6 +15,8 @@ private enum Region {
     static let bellavista = "38.67686943509181,-9.206906491199476,0.02649615024206753,0.020133175667885084"
 }
 
+private enum ImportSource { case dropin, mapstr }
+
 /// Attachment names, exported as file names by scripts/screenshots.sh (prefix = App Store order)
 private enum Shot: String {
     case map = "places.map"
@@ -24,7 +26,9 @@ private enum Shot: String {
     case filterOn = "places.filter.on"
     case list = "places.list"
     case mapPlaceDetails = "places.place.details"
-    case importMapstr = "settings.import"
+    case importMapstr = "settings.import.mapstr"
+    case importMapstrMapper = "settings.import.mapstr.mapper"
+    case importDropin = "settings.import.dropin"
     case mapQuickCreate = "places.map.quickcreate"
 }
 
@@ -101,27 +105,50 @@ final class DropinScreenshots: XCTestCase {
         sleep(2)   // pins update
         snapshot(app, .mapFiltered)
     }
+
+    @MainActor
+    func testSettingsImportMapstr() throws {
+        let file = try XCTUnwrap(Bundle(for: Self.self).path(forResource: "mapstr_germany_30", ofType:"geojson"))
+        let app = try launch(appearance: .light, importSource: (.mapstr, file))
+        waitForMap(app)
+        try goImport(app)
+        
+        // Select tag rows to convert
+        let tagRow6 = element(app, "\(AccessibilityID.MapstrTagMapper.tagRow)_\(6)")
+        let tagRow8 = element(app, "\(AccessibilityID.MapstrTagMapper.tagRow)_\(8)")
+        let tagRow10 = element(app, "\(AccessibilityID.MapstrTagMapper.tagRow)_\(10)")
+        XCTAssertTrue(tagRow10.waitForExistence(timeout: 5))
+        tagRow10.tap()
+        tagRow8.tap()
+        tagRow6.tap()
+        
+        let scrollView = element(app, AccessibilityID.MapstrTagMapper.scrollView)
+        scrollView.swipeDown(velocity: .fast)
+
+        sleep(2) // wait for the scroll indicator to disappear
+        snapshot(app, .importMapstrMapper)
+
+        let continueBt = element(app, AccessibilityID.MapstrTagMapper.continueButton)
+        XCTAssertTrue(continueBt.waitForExistence(timeout: 0))
+        continueBt.tap()
+
+
+        // Snapshot ImportResultView
+        XCTAssertTrue(element(app, AccessibilityID.ImportStatus.complete).waitForExistence(timeout: 30))
+        sleep(1)
+        snapshot(app, .importMapstr)
+    }
     
     @MainActor
-    func testSettingsImport() throws {
-        let app = try launch(appearance: .light)
+    func testSettingsImportDropin() throws {
+        let file = try XCTUnwrap(Bundle(for: Self.self).path(forResource: "barcelona_demo", ofType: "dropin"))
+        let app = try launch(appearance: .light, importSource: (.dropin, file))
         waitForMap(app)
-
-        element(app, AccessibilityID.Navigation.burger).tap()
-        sleep(1)
-        element(app, AccessibilityID.Sidebar.settings).tap()
-
-        // Import ▸ Dropin: ScreenshotMode.importURL bypasses the document picker
-        let importMenu = element(app, AccessibilityID.Settings.importMenu)
-        XCTAssertTrue(importMenu.waitForExistence(timeout: 5))
-        importMenu.tap()
-        let dropin = app.buttons["Dropin"]   // DropinApp.strings.app, not localized
-        XCTAssertTrue(dropin.waitForExistence(timeout: 5))
-        dropin.tap()
-
+        try goImport(app)
+        // Snapshot ImportResultView
         XCTAssertTrue(element(app, AccessibilityID.ImportStatus.complete).waitForExistence(timeout: 30))
-        sleep(1)   // result view animation
-        snapshot(app, .importMapstr)
+        sleep(1)
+        snapshot(app, .importDropin)
     }
 
     @MainActor
@@ -178,18 +205,49 @@ final class DropinScreenshots: XCTestCase {
         snapshot(app, .mapQuickCreate)
     }
 
-    // MARK: - helpers
-
+    // MARK: - Navigation
     @MainActor
-    private func launch(appearance: XCUIDevice.Appearance, region: String = Region.lisbon) throws -> XCUIApplication {
+    private func goSettings(_ app: XCUIApplication) throws {
+        element(app, AccessibilityID.Navigation.burger).tap()
+        sleep(1)
+        element(app, AccessibilityID.Sidebar.settings).tap()
+    }
+    
+    @MainActor
+    private func goImport(_ app: XCUIApplication) throws {
+        try goSettings(app)
+        
+        let importMenu = element(app, AccessibilityID.Settings.importButton)
+        XCTAssertTrue(importMenu.waitForExistence(timeout: 5))
+        importMenu.tap()
+
+        // next button is configured to automatically launch the import for the provided file + source
+        // bypassing the file picker which cannot be handled here
+        let importSelectorContinue = element(app, AccessibilityID.ImportSelector.continueButton)
+        XCTAssertTrue(importSelectorContinue.waitForExistence(timeout: 5))
+        importSelectorContinue.tap()
+    }
+    
+    // MARK: - helpers
+    @MainActor
+    private func launch(appearance: XCUIDevice.Appearance,
+                        region: String = Region.lisbon,
+                        importSource: (ImportSource, String)? = nil) throws -> XCUIApplication {
         let seed = try XCTUnwrap(Bundle(for: Self.self).path(forResource: "lisbon_screenshot_seed", ofType: "dropin"))
         let app = XCUIApplication()
         app.launchArguments += [ScreenshotLaunchKeys.argument,
                                 "-space.current", ""]   // UserDefaults override: main space, whatever the simulator stored
         app.launchEnvironment[ScreenshotLaunchKeys.seedPath] = seed
-        app.launchEnvironment[ScreenshotLaunchKeys.importPath] = try XCTUnwrap(Bundle(for: Self.self).path(forResource: "barcelona_demo", ofType: "dropin"))
         app.launchEnvironment[ScreenshotLaunchKeys.hardStartRegion] = region
         app.launchEnvironment[ScreenshotLaunchKeys.colorScheme] = appearance == .dark ? "dark" : "light"
+        if let importSource {
+            switch importSource.0 {
+                case .dropin:
+                    app.launchEnvironment[ScreenshotLaunchKeys.dropinImportPath] = importSource.1
+                case .mapstr:
+                    app.launchEnvironment[ScreenshotLaunchKeys.mapstrImportPath] = importSource.1
+            }
+        }
         app.launch()
         return app
     }

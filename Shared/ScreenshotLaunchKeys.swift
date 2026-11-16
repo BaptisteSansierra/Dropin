@@ -12,7 +12,9 @@ enum ScreenshotLaunchKeys {
     /// Environment: absolute path of the .dropin seed file (lives in the test bundle)
     static let seedPath = "SCREENSHOT_SEED_PATH"
     /// Environment: absolute path of the .dropin file imported from Settings, bypassing the document picker
-    static let importPath = "SCREENSHOT_IMPORT_PATH"
+    static let dropinImportPath = "SCREENSHOT_DROPIN_IMPORT_PATH"
+    /// Environment: absolute path of the .mapstr file imported from Settings, bypassing the document picker
+    static let mapstrImportPath = "SCREENSHOT_MAPSTR_IMPORT_PATH"
     /// Environment: map start region, "lat,lon,latDelta,lonDelta"
     static let hardStartRegion = "HARD_START_REGION"
     /// Environment: forced color scheme, "light" | "dark"

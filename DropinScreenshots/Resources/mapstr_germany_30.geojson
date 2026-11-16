@@ -1,0 +1,763 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.40913,
+          52.522735
+        ]
+      },
+      "properties": {
+        "name": "Lantern Chapel",
+        "address": "Mühlenweg 81, 10091 Berlin, Germany",
+        "icon": "worship",
+        "tags": [
+          {
+            "name": "Must see",
+            "color": "#3392ff"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.578689,
+          48.145499
+        ]
+      },
+      "properties": {
+        "name": "Golden Diner",
+        "address": "Schulstraße 10, 80013 München, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          },
+          {
+            "name": "Must see",
+            "color": "#3392ff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.998877,
+          53.55907
+        ]
+      },
+      "properties": {
+        "name": "Velvet Woods",
+        "address": "Bergstraße 113, 20093 Hamburg, Germany",
+        "icon": "forest",
+        "tags": [
+          {
+            "name": "Park",
+            "color": "#17d470"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.962335,
+          50.910812
+        ]
+      },
+      "properties": {
+        "name": "Blue Eatery",
+        "address": "Schulstraße 86, 50015 Köln, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Late night",
+            "color": "#9933ff"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.445463,
+          52.53067
+        ]
+      },
+      "properties": {
+        "name": "Old Dance Hall",
+        "address": "Lindenstraße 101, 10094 Berlin, Germany",
+        "icon": "nightclub",
+        "tags": [
+          {
+            "name": "Bar",
+            "color": "#9933ff"
+          }
+        ],
+        "userComment": "A bit touristy but worth it."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.58857,
+          48.111229
+        ]
+      },
+      "properties": {
+        "name": "Little Grocery",
+        "address": "Lindenstraße 117, 80072 München, Germany",
+        "icon": "supermarket",
+        "tags": [
+          {
+            "name": "Shopping",
+            "color": "#ff3369"
+          },
+          {
+            "name": "Rooftop",
+            "color": "#ffbb33"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.999297,
+          53.570545
+        ]
+      },
+      "properties": {
+        "name": "Blue Woods",
+        "address": "Mühlenweg 113, 20032 Hamburg, Germany",
+        "icon": "forest",
+        "tags": [
+          {
+            "name": "Park",
+            "color": "#17d470"
+          },
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.998478,
+          50.94181
+        ]
+      },
+      "properties": {
+        "name": "Lantern Café",
+        "address": "Rosenweg 83, 50092 Köln, Germany",
+        "icon": "cafe",
+        "tags": [
+          {
+            "name": "Café",
+            "color": "#ffa033"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.372762,
+          52.508302
+        ]
+      },
+      "properties": {
+        "name": "Silent Tavern",
+        "address": "Mühlenweg 10, 10007 Berlin, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Quiet",
+            "color": "#608040"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.566525,
+          48.130771
+        ]
+      },
+      "properties": {
+        "name": "Hidden Grocery",
+        "address": "Schulstraße 18, 80045 München, Germany",
+        "icon": "supermarket",
+        "tags": [
+          {
+            "name": "Shopping",
+            "color": "#ff3369"
+          },
+          {
+            "name": "Sightseeing",
+            "color": "#c17bff"
+          }
+        ],
+        "userComment": "Book ahead on weekends."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.033429,
+          53.562191
+        ]
+      },
+      "properties": {
+        "name": "Amber Eatery",
+        "address": "Brunnenstraße 109, 20030 Hamburg, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Quiet",
+            "color": "#608040"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.930321,
+          50.92265
+        ]
+      },
+      "properties": {
+        "name": "Little Memorial",
+        "address": "Rosenweg 24, 50009 Köln, Germany",
+        "icon": "monument",
+        "tags": [
+          {
+            "name": "Sightseeing",
+            "color": "#c17bff"
+          },
+          {
+            "name": "Quiet",
+            "color": "#608040"
+          },
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.367428,
+          52.527595
+        ]
+      },
+      "properties": {
+        "name": "Copper Market Hall",
+        "address": "Bergstraße 51, 10056 Berlin, Germany",
+        "icon": "shopping",
+        "tags": [
+          {
+            "name": "Shopping",
+            "color": "#ff3369"
+          },
+          {
+            "name": "Rooftop",
+            "color": "#ffbb33"
+          },
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          }
+        ],
+        "userComment": "Nice staff, relaxed atmosphere."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.569799,
+          48.15032
+        ]
+      },
+      "properties": {
+        "name": "Crooked Park",
+        "address": "Schulstraße 84, 80084 München, Germany",
+        "icon": "park",
+        "tags": [
+          {
+            "name": "Park",
+            "color": "#17d470"
+          },
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.988548,
+          53.547794
+        ]
+      },
+      "properties": {
+        "name": "Lantern Wine Bar",
+        "address": "Brunnenstraße 5, 20036 Hamburg, Germany",
+        "icon": "wine",
+        "tags": [
+          {
+            "name": "Bar",
+            "color": "#9933ff"
+          }
+        ],
+        "userComment": "Book ahead on weekends."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.956367,
+          50.951331
+        ]
+      },
+      "properties": {
+        "name": "Amber Memorial",
+        "address": "Rosenweg 2, 50058 Köln, Germany",
+        "icon": "monument",
+        "tags": [
+          {
+            "name": "Sightseeing",
+            "color": "#c17bff"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          },
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          }
+        ],
+        "userComment": "Closed on Mondays."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.379886,
+          52.541816
+        ]
+      },
+      "properties": {
+        "name": "Golden Park",
+        "address": "Gartenweg 73, 10012 Berlin, Germany",
+        "icon": "park",
+        "tags": [
+          {
+            "name": "Park",
+            "color": "#17d470"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          }
+        ],
+        "userComment": "Perfect for a quick stop."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.567187,
+          48.139623
+        ]
+      },
+      "properties": {
+        "name": "Lantern Boutique",
+        "address": "Lindenstraße 4, 80030 München, Germany",
+        "icon": "shopping",
+        "tags": [
+          {
+            "name": "Shopping",
+            "color": "#ff3369"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          },
+          {
+            "name": "Late night",
+            "color": "#9933ff"
+          }
+        ],
+        "userComment": "Perfect for a quick stop."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.972111,
+          53.54398
+        ]
+      },
+      "properties": {
+        "name": "Amber Tea Room",
+        "address": "Gartenweg 70, 20051 Hamburg, Germany",
+        "icon": "cafe",
+        "tags": [
+          {
+            "name": "Café",
+            "color": "#ffa033"
+          },
+          {
+            "name": "Must see",
+            "color": "#3392ff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.963089,
+          50.947865
+        ]
+      },
+      "properties": {
+        "name": "Hidden Grill",
+        "address": "Bergstraße 98, 50055 Köln, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Must see",
+            "color": "#3392ff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.393082,
+          52.503566
+        ]
+      },
+      "properties": {
+        "name": "Salt Grocery",
+        "address": "Bergstraße 20, 10007 Berlin, Germany",
+        "icon": "supermarket",
+        "tags": [
+          {
+            "name": "Shopping",
+            "color": "#ff3369"
+          }
+        ],
+        "userComment": "Nice staff, relaxed atmosphere."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.565704,
+          48.153862
+        ]
+      },
+      "properties": {
+        "name": "Lantern Picture House",
+        "address": "Gartenweg 57, 80058 München, Germany",
+        "icon": "movies",
+        "tags": [
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          },
+          {
+            "name": "Quiet",
+            "color": "#608040"
+          }
+        ],
+        "userComment": "Recommended by a friend, not tried yet."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.037302,
+          53.553065
+        ]
+      },
+      "properties": {
+        "name": "Green Tavern",
+        "address": "Schulstraße 88, 20008 Hamburg, Germany",
+        "icon": "restaurant",
+        "tags": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.944312,
+          50.953698
+        ]
+      },
+      "properties": {
+        "name": "Northern Coffee House",
+        "address": "Mühlenweg 57, 50072 Köln, Germany",
+        "icon": "cafe",
+        "tags": [
+          {
+            "name": "Café",
+            "color": "#ffa033"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.426846,
+          52.515538
+        ]
+      },
+      "properties": {
+        "name": "Willow Tavern",
+        "address": "Schulstraße 33, 10051 Berlin, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.60853,
+          48.142351
+        ]
+      },
+      "properties": {
+        "name": "Sunny Market Hall",
+        "address": "Mühlenweg 32, 80006 München, Germany",
+        "icon": "shopping",
+        "tags": [
+          {
+            "name": "Sightseeing",
+            "color": "#c17bff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.97996,
+          53.535106
+        ]
+      },
+      "properties": {
+        "name": "Silent Roastery",
+        "address": "Gartenweg 63, 20094 Hamburg, Germany",
+        "icon": "cafe",
+        "tags": [
+          {
+            "name": "Café",
+            "color": "#ffa033"
+          },
+          {
+            "name": "Brunch",
+            "color": "#337aff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.99444,
+          50.953489
+        ]
+      },
+      "properties": {
+        "name": "Honey Market Hall",
+        "address": "Gartenweg 90, 50019 Köln, Germany",
+        "icon": "shopping",
+        "tags": [
+          {
+            "name": "Shopping",
+            "color": "#ff3369"
+          },
+          {
+            "name": "Rooftop",
+            "color": "#ffbb33"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.414066,
+          52.52301
+        ]
+      },
+      "properties": {
+        "name": "Willow Café",
+        "address": "Rosenweg 52, 10066 Berlin, Germany",
+        "icon": "cafe",
+        "tags": [
+          {
+            "name": "Café",
+            "color": "#ffa033"
+          },
+          {
+            "name": "Rooftop",
+            "color": "#ffbb33"
+          },
+          {
+            "name": "Must see",
+            "color": "#3392ff"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.570873,
+          48.130577
+        ]
+      },
+      "properties": {
+        "name": "Little Tavern",
+        "address": "Schulstraße 57, 80014 München, Germany",
+        "icon": "restaurant",
+        "tags": [
+          {
+            "name": "Restaurant",
+            "color": "#ff5161"
+          },
+          {
+            "name": "Must see",
+            "color": "#3392ff"
+          },
+          {
+            "name": "Date night",
+            "color": "#c17bff"
+          }
+        ]
+      }
+    }
+  ]
+}

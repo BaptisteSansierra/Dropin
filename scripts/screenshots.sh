@@ -32,7 +32,7 @@ APPSTORE_SHOTS=(
     places.map
     places.place.details
     places.map.quickcreate
-    settings.import
+    settings.import.mapstr
     places.list
 )
 CAPTIONS="$ROOT/DropinScreenshots/Resources/AppStoreCaptions.xcstrings"
@@ -60,16 +60,17 @@ SHOT_SHADOW_MARGIN=56             # transparent margin -shadow adds around the i
 
 # <shot> <file name> <width> <height>: 3x of the CSS width the site displays them at
 WEBSITE_SHOTS=(
-    "places.map              places.map              855 1858"   # 285px
-    "places.map              places.map.220          660 1434"   # 220px
-    "places.map.dark         places.map.dark         696 1512"   # 232px
-    "places.list             places.list             855 1858"   # 285px
-    "places.place.details    places.place.details    780 1695"   # 260px
-    "places.map.filtered     places.map.filtered     660 1434"   # 220px
-    "places.filter.off       places.filter.off       660 1434"   # 220px
-    "places.filter.on        places.filter.on        660 1434"   # 220px
-    "settings.import         settings.import         780 1695"   # 260px
-    "places.map.quickcreate  places.map.quickcreate  780 1695"   # 260px
+    "places.map                     places.map                      855 1858"   # 285px
+    "places.map                     places.map.220                  660 1434"   # 220px
+    "places.map.dark                places.map.dark                 696 1512"   # 232px
+    "places.list                    places.list                     855 1858"   # 285px
+    "places.place.details           places.place.details            780 1695"   # 260px
+    "places.map.filtered            places.map.filtered             660 1434"   # 220px
+    "places.filter.off              places.filter.off               660 1434"   # 220px
+    "places.filter.on               places.filter.on                660 1434"   # 220px
+    "settings.import.mapstr         settings.import.mapstr          780 1695"   # 260px
+    "settings.import.mapstr.mapper  settings.import.mapstr.mapper  780 1695"   # 260px
+    "places.map.quickcreate         places.map.quickcreate          780 1695"   # 260px
 )
 WEBSITE_LANGUAGE="en"
 WEBP_QUALITY=85
