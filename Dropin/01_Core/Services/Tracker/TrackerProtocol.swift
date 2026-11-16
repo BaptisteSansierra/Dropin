@@ -17,6 +17,8 @@ enum TrackerAuthFlow: String {
     case signup
     case restore_session
     case session_lost
+    case refresh_rate_limited
+    case anon_request
 }
 
 enum TrackerFlow: String {

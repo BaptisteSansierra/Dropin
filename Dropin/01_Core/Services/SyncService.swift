@@ -320,9 +320,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     }
 
     private func pushDirtySpaces() async {
-        let ids = dirtySpaceIds
+        let ids = Array(dirtySpaceIds)
         dirtySpaceIds.removeAll()
-        for id in ids {
+        for (index, id) in ids.enumerated() {
             guard !Task.isCancelled else { return }
             do {
                 let space = try await localSpaceRepo.fetch(id)
@@ -330,6 +330,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
                 Log.debug("Remote upsert SPACE \(space.name)")
             } catch DataError.notFound(_) {
                 Log.debug("SyncService: dropping dirty space \(id) — no longer exists locally")
+            } catch where error.isAuthUnavailable {
+                // Every next space would fail the same way: keep them all for the next push
+                dirtySpaceIds.formUnion(ids[index...])
+                Log.warning("SyncService: push space stopped, no usable session: \(error)")
+                return
             } catch {
                 dirtySpaceIds.insert(id)
                 assertNoBug(error)
@@ -339,9 +344,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     }
 
     private func pushDirtyPlaces() async {
-        let ids = dirtyPlaceIds
+        let ids = Array(dirtyPlaceIds)
         dirtyPlaceIds.removeAll()
-        for id in ids {
+        for (index, id) in ids.enumerated() {
             guard !Task.isCancelled else { return }
             do {
                 let place = try await localPlaceRepo.fetch(id)
@@ -351,6 +356,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
                 // No longer exists locally (e.g. rolled back) — nothing to
                 // push, and retrying would never succeed. Drop it.
                 Log.debug("SyncService: dropping dirty place \(id) — no longer exists locally")
+            } catch where error.isAuthUnavailable {
+                // Every next place would fail the same way: keep them all for the next push
+                dirtyPlaceIds.formUnion(ids[index...])
+                Log.warning("SyncService: push place stopped, no usable session: \(error)")
+                return
             } catch {
                 dirtyPlaceIds.insert(id)
                 assertNoBug(error)
@@ -360,9 +370,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     }
 
     private func pushDirtyCategories() async {
-        let ids = dirtyCategoryIds
+        let ids = Array(dirtyCategoryIds)
         dirtyCategoryIds.removeAll()
-        for id in ids {
+        for (index, id) in ids.enumerated() {
             guard !Task.isCancelled else { return }
             do {
                 let category = try await localCategoryRepo.fetch(id)
@@ -370,6 +380,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
                 Log.debug("Remote upsert GROUP \(category.name)")
             } catch DataError.notFound(_) {
                 Log.debug("SyncService: dropping dirty category \(id) — no longer exists locally")
+            } catch where error.isAuthUnavailable {
+                // Every next category would fail the same way: keep them all for the next push
+                dirtyCategoryIds.formUnion(ids[index...])
+                Log.warning("SyncService: push category stopped, no usable session: \(error)")
+                return
             } catch {
                 dirtyCategoryIds.insert(id)
                 assertNoBug(error)
@@ -379,9 +394,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
     }
 
     private func pushDirtyTags() async {
-        let ids = dirtyTagIds
+        let ids = Array(dirtyTagIds)
         dirtyTagIds.removeAll()
-        for id in ids {
+        for (index, id) in ids.enumerated() {
             guard !Task.isCancelled else { return }
             do {
                 let tag = try await localTagRepo.fetch(id)
@@ -389,6 +404,11 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
                 Log.debug("Remote upsert TAG \(tag.name)")
             } catch DataError.notFound(_) {
                 Log.debug("SyncService: dropping dirty tag \(id) — no longer exists locally")
+            } catch where error.isAuthUnavailable {
+                // Every next tag would fail the same way: keep them all for the next push
+                dirtyTagIds.formUnion(ids[index...])
+                Log.warning("SyncService: push tag stopped, no usable session: \(error)")
+                return
             } catch {
                 dirtyTagIds.insert(id)
                 assertNoBug(error)
@@ -408,6 +428,10 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
                                                      full: ref.full,
                                                      thumbnail: ref.thumbnail)
                     try await localImageRepo.markSynced(id: ref.id)
+                } catch where error.isAuthUnavailable {
+                    // Still unsynced locally, picked up by the next push
+                    Log.warning("SyncService: push image stopped, no usable session: \(error)")
+                    return
                 } catch {
                     assertNoBug(error)
                     Log.error("SyncService: push image \(ref.id) failed: \(error)")
@@ -427,6 +451,10 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
                 do {
                     try await remoteImageRepo.delete(imageId: id, placeId: placeId)
                     try await localImageRepo.hardDelete(id: id)
+                } catch where error.isAuthUnavailable {
+                    // Still pending delete locally, picked up by the next push
+                    Log.warning("SyncService: delete image stopped, no usable session: \(error)")
+                    return
                 } catch {
                     assertNoBug(error)
                     Log.error("SyncService: delete image \(id) failed: \(error)")

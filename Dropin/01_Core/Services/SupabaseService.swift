@@ -18,7 +18,8 @@ final class SupabaseService {
     
     init() {
         let options = SupabaseClientOptions(auth: SupabaseClientOptions.AuthOptions(emitLocalSessionAsInitialSession: true),
-                                            global: .init(logger: DRPSupabaseLogger()))
+                                            global: .init(session: URLSession(configuration: AnonRequestGuard.sessionConfiguration()),
+                                                          logger: DRPSupabaseLogger()))
         client = SupabaseClient(supabaseURL: AppConfig.Supabase.url,
                                 supabaseKey: AppConfig.Supabase.anonKey,
                                 options: options)
