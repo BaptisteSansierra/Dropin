@@ -20,7 +20,9 @@ protocol ImportServiceProtocol: Sendable {
     func read(_ data: Data) async throws -> Plan
 
     func `import`(_ plan: Plan,
-                 progress: @MainActor @Sendable (Int) -> Void,
-                 canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws
+                  tagImport: Bool,
+                  tagName: String,
+                  progress: @MainActor @Sendable (Int) -> Void,
+                  canceled: @MainActor @Sendable () -> Void,
+                  completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws
 }

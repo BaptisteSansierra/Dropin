@@ -32,6 +32,9 @@ final class AppContainer {
     private let groupCoordinator: CategoryCoordinator
     private let authCoordinator: AuthCoordinator
     private let aboutCoordinator: AboutCoordinator
+    private let settingsCoordinator: SettingsCoordinator
+    /// Import flow, in its own window: from opened files and Settings
+    private(set) lazy var importPresenter = ImportPresenter(appContainer: self)
     // Services
     private let locationManager: LocationManager
     private let addressLookupService: AddressLookupService
@@ -66,6 +69,7 @@ final class AppContainer {
         groupCoordinator = CategoryCoordinator()
         authCoordinator = AuthCoordinator()
         aboutCoordinator = AboutCoordinator()
+        settingsCoordinator = SettingsCoordinator()
         // Services
         locationManager = LocationManager()
         addressLookupService = AddressLookupService(locationManager: locationManager)
@@ -151,6 +155,7 @@ final class AppContainer {
         groupCoordinator = CategoryCoordinator()
         authCoordinator = AuthCoordinator()
         aboutCoordinator = AboutCoordinator()
+        settingsCoordinator = SettingsCoordinator()
         // Services
         self.locationManager = locationManager
         self.addressLookupService = addressLookupService
@@ -368,11 +373,12 @@ final class AppContainer {
     
     func createPlacesView(showingSideMenu: Binding<Bool>) -> PlacesView {
         let vm = PlacesViewModel(self,
-                               coordinator: placeCoordinator,
-                               locationManager: locationManager,
-                               fetchPlaces: FetchPlaces(repository: placeRepository),
-                               syncStatus: syncService.syncStatus,
-                               reachabilityService: reachabilityService)
+                                 coordinator: placeCoordinator,
+                                 locationManager: locationManager,
+                                 fetchPlaces: FetchPlaces(repository: placeRepository),
+                                 syncStatus: syncService.syncStatus,
+                                 reachabilityService: reachabilityService,
+                                 importsEventProvider: importPresenter)
         return PlacesView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
@@ -599,26 +605,49 @@ final class AppContainer {
         return PlaceFilterView(viewModel: vm)
     }
     
-    
-    // MARK: - settings views
-    func createSettingsView(showingSideMenu: Binding<Bool>) -> SettingsView {
-        let vm = SettingsViewModel(self,
-                                   coordinator: placeCoordinator,
-                                   saveContext: SaveContext(repository: generalRepository),
-                                   rollbackContext: RollbackContext(repository: generalRepository),
-                                   fetchPlaces: FetchPlaces(repository: placeRepository),
-                                   fetchCategories: FetchCategories(repository: categoryRepository),
-                                   fetchTags: FetchTags(repository: tagRepository),
-                                   upsertPlace: UpsertPlace(repository: placeRepository),
-                                   upsertCategory: UpsertCategory(repository: categoryRepository),
-                                   upsertTag: UpsertTag(repository: tagRepository),
-                                   deleteLibrary: DeleteLibrary(generalRepository: generalRepository,
-                                                                spaceRepository: spaceRepository,
-                                                                placeRepository: placeRepository,
-                                                                categoryRepository: categoryRepository,
-                                                                tagRepository: tagRepository),
-                                   sync: syncService)
-        return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
+    // MARK: - Import views
+    /// The overlay window keeps the view model: it asks it whether an import is running
+    func createImportOverlayViewModel(coordinatorMode: ImportFlowCoordinator.Mode,
+                                      onIdle: @escaping () -> Void,
+                                      onImportEnded: @escaping () -> Void) -> ImportOverlayViewModel {
+        ImportOverlayViewModel(self,
+                               coordinatorMode: coordinatorMode,
+                               saveContext: SaveContext(repository: generalRepository),
+                               rollbackContext: RollbackContext(repository: generalRepository),
+                               fetchPlaces: FetchPlaces(repository: placeRepository),
+                               fetchCategories: FetchCategories(repository: categoryRepository),
+                               fetchTags: FetchTags(repository: tagRepository),
+                               upsertPlace: UpsertPlace(repository: placeRepository),
+                               upsertCategory: UpsertCategory(repository: categoryRepository),
+                               upsertTag: UpsertTag(repository: tagRepository),
+                               sync: syncService,
+                               onIdle: onIdle,
+                               onImportEnded: onImportEnded)
+    }
+
+    func createImportSelectorView(coordinator: ImportFlowCoordinator,
+                                  onContinue: @escaping (URL, ImportSource, Bool, String) -> Void,
+                                  onCancel: @escaping () -> Void,
+                                  resolveDestination: @escaping (ImportNavigationItem) -> AnyView) -> ImportSelectorView {
+        let vm = ImportSelectorViewModel(self,
+                                         coordinator: coordinator,
+                                         availableTagName: AvailableTagName(repository: tagRepository),
+                                         onContinue: onContinue,
+                                         onCancel: onCancel,
+                                         resolveDestination: resolveDestination)
+        return ImportSelectorView(viewModel: vm)
+    }
+
+    func createImportPrepareView(coordinator: ImportFlowCoordinator,
+                                 onContinue: @escaping (URL, ImportSource, Bool, String) -> Void,
+                                 onCancel: @escaping () -> Void,
+                                 resolveDestination: @escaping (ImportNavigationItem) -> AnyView) -> ImportPrepareView {
+        let vm = ImportPrepareViewModel(coordinator: coordinator,
+                                        availableTagName: AvailableTagName(repository: tagRepository),
+                                        onContinue: onContinue,
+                                        onCancel: onCancel,
+                                        resolveDestination: resolveDestination)
+        return ImportPrepareView(viewModel: vm)
     }
 
     func createMapstrCategoriesView(plan: MapstrImportPlan,
@@ -626,6 +655,24 @@ final class AppContainer {
         let vm = MapstrCategoriesViewModel(plan: plan,
                                            fetchCategories: FetchCategories(repository: categoryRepository))
         return MapstrCategoriesView(viewModel: vm, onImport: onImport)
+    }
+
+    
+    // MARK: - settings views
+    func createSettingsView(showingSideMenu: Binding<Bool>) -> SettingsView {
+        let vm = SettingsViewModel(self,
+                                   coordinator: settingsCoordinator,
+                                   importPresenter: importPresenter,
+                                   fetchPlaces: FetchPlaces(repository: placeRepository),
+                                   fetchCategories: FetchCategories(repository: categoryRepository),
+                                   fetchTags: FetchTags(repository: tagRepository),
+                                   deleteLibrary: DeleteLibrary(generalRepository: generalRepository,
+                                                                spaceRepository: spaceRepository,
+                                                                placeRepository: placeRepository,
+                                                                categoryRepository: categoryRepository,
+                                                                tagRepository: tagRepository),
+                                   sync: syncService)
+        return SettingsView(viewModel: vm, showingSideMenu: showingSideMenu)
     }
 
     // MARK: - about views
@@ -788,6 +835,8 @@ extension AppContainer {
         do {
             let export = try await service.read(url)
             try await service.import(export,
+                                     tagImport: false,
+                                     tagName: "",
                                      progress: { _ in },
                                      canceled: {},
                                      completion: { places, _, categories, tags in

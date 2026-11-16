@@ -19,7 +19,8 @@ enum AccessibilityID {
         static let filterButton = "places.filterButton"
     }
     enum Settings {
-        static let importMenu = "settings.importMenu"
+        static let importButton = "settings.importButton"
+        //static let importMenu = "settings.importMenu"
     }
     enum ImportStatus {
         static let complete = "importStatus.complete"
@@ -48,5 +49,13 @@ enum AccessibilityID {
         static let categories = "settings.categories"
         static let tags = "settings.tags"
         static let settings = "sidebar.settings"
+    }
+    enum ImportSelector {
+        static let continueButton = "import.selector.continue"
+    }
+    enum MapstrTagMapper {
+        static let scrollView = "mapstr_tag_mapper.scrollview"
+        static let tagRow = "mapstr_tag_mapper.tag_row"
+        static let continueButton = "mapstr_tag_mapper.continue"
     }
 }

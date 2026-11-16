@@ -100,6 +100,10 @@ extension ShapeStyle where Self == Color {
     static var shade4: Color { Color(light: light4, dark: dark4) }
     static var shade5: Color { Color(light: light5, dark: dark5) }
     static var shade6: Color { Color(light: light6, dark: dark6) }
+    
+    // MARK: - Others
+    static var mapstrPrimary: Color { Color(rgba: "#ffc122") }
+    static var tileNeutral: Color { Color(rgba: "#8A8073") }
 }
 
 #if DEBUG

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// A tag to category converter (Mapstr has no categories)
 struct MapstrCategoriesView: View {
 
     // MARK: - States & Bindings
@@ -27,67 +28,65 @@ struct MapstrCategoriesView: View {
 
     // MARK: - Body
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                
-                #if false
-                List {
-                    Section {
-                        Text("mapstr_categories.intro")
-                            .textStyle(.body, color: .textSecondary)
-                    }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-
-                    categoriesSection
-                    tagsSection
-                }
-//                .listStyle(.plain)
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-                .environment(\.editMode, .constant(.active))
-                
-                #else
-                
-                ScrollView {
+        VStack(spacing: 0) {
+            
+            #if false
+            List {
+                Section {
                     Text("mapstr_categories.intro")
-                        .textStyle(.subheadline, color: .textSecondary)
-                    
-                    categoriesSection
-                    
-                    tagsSection
-
+                        .textStyle(.body, color: .textSecondary)
                 }
-                .padding(.horizontal)
-                .padding(.top)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
 
-                #endif
+                categoriesSection
+                tagsSection
+            }
+//                .listStyle(.plain)
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .environment(\.editMode, .constant(.active))
+            
+            #else
+            
+            ScrollView {
+                Text("mapstr_categories.intro")
+                    .textStyle(.subheadline, color: .textSecondary)
                 
+                categoriesSection
+                
+                tagsSection
 
-                bottomBar
             }
-            .background(.backgroundPrimary)
-            .navigationTitle("mapstr_categories.title")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("common.cancel") { dismiss() }
-                        .tint(.dropinPrimary)
-                }
-            }
-            .fullScreenCover(item: $editingIcon) { item in
-                MarkerListView(selected: Binding(
-                    get: { viewModel.icon(for: item.id) ?? .sf("folder") },
-                    set: { viewModel.setUserIcon($0, for: item.id) }
-                ))
-            }
-            .navigationDestination(isPresented: $showConflicts) {
-                MapstrConflictsView(conflictPlaceCount: viewModel.conflictingPlacesCount,
-                                    getConflictGroups: { viewModel.conflictGroups },
-                                    getRow: viewModel.row,
-                                    swap: viewModel.swap,
-                                    setWinner: viewModel.setWinner)
-            }
+            .padding(.horizontal)
+            .padding(.top)
+            .accessibilityIdentifier(AccessibilityID.MapstrTagMapper.scrollView)
+
+            #endif
+            
+            bottomBar
+        }
+        .background(.backgroundPrimary)
+        .navigationTitle("mapstr_categories.title")
+        .navigationBarTitleDisplayMode(.inline)
+//        .toolbar {
+//            ToolbarItem(placement: .cancellationAction) {
+//                Button("common.cancel") { dismiss() }
+//                    .tint(.dropinPrimary)
+//            }
+//        }
+        .fullScreenCover(item: $editingIcon) { item in
+            MarkerListView(selected: Binding(
+                get: { viewModel.icon(for: item.id) ?? .sf("folder") },
+                set: { viewModel.setUserIcon($0, for: item.id) }
+            ))
+        }
+        .navigationDestination(isPresented: $showConflicts) {
+            MapstrConflictsView(conflictPlaceCount: viewModel.conflictingPlacesCount,
+                                getConflictGroups: { viewModel.conflictGroups },
+                                getRow: viewModel.row,
+                                swap: viewModel.swap,
+                                setWinner: viewModel.setWinner)
         }
         .task {
             await viewModel.load()
@@ -172,30 +171,8 @@ struct MapstrCategoriesView: View {
 
     private func categoryRow(_ row: MapstrCategoriesViewModel.TagRow, priority: Int) -> some View {
         HStack(spacing: 0) {
-            // Checkbox
-            Button {
-                #if true
-                viewModel.setChecked(false, for: row.id)
-                #else
-                var t = Transaction()
-                t.disablesAnimations = true
-                withTransaction(t) {
-                    viewModel.setChecked(false, for: row.id)
-                }
-                #endif
-                
-            } label: {
-                Circle()
-                    .fill(.dropinPrimary)
-                    .frame(width: 24, height: 24)
-                    .overlay {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.white)
-                    }
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, 10)
+            RadioView(selected: true)
+                .padding(.trailing, 10)
             // Priority
             Text(priority, format: .number)
                 .textStyle(.caption, color: .textTertiary)
@@ -232,6 +209,10 @@ struct MapstrCategoriesView: View {
                     .fill(.textTertiary)
                     .frame(width: 15, height: 1)
             }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.setChecked(false, for: row.id)
         }
     }
 
@@ -307,12 +288,13 @@ struct MapstrCategoriesView: View {
             VStack(spacing: 0) {
                 ForEach(Array(viewModel.stayingRows.enumerated()), id: \.offset) { idx, row in
                     stayingTagRow(row)
+                        .accessibilityIdentifier("\(AccessibilityID.MapstrTagMapper.tagRow)_\(idx)")
                     if idx < viewModel.stayingRows.count - 1 {
                         Rectangle()
                             .fill(.hairline)
                             .frame(height: 1)
                             .padding(.trailing, -15)
-                            .padding(.leading, 31)
+                            .padding(.leading, 45)
                     }
                 }
             }
@@ -327,17 +309,9 @@ struct MapstrCategoriesView: View {
 
     private func stayingTagRow(_ row: MapstrCategoriesViewModel.TagRow) -> some View {
         HStack(spacing: 0) {
-            Button {
-                viewModel.setChecked(true, for: row.id)
-            } label: {
-                Circle()
-                    .strokeBorder(.textTertiary.opacity(0.5), lineWidth: 1.5)
-                    .frame(width: 22, height: 22)
-            }
-            .buttonStyle(.plain)
-            .frame(width: 44, height: 40)
-            .padding(.leading, 4)
-
+            RadioView(selected: false)
+                .padding(.leading, 15)
+                .padding(.trailing, 10)
             Image(systemName: "tag")
                 .foregroundStyle(Color(rgba: row.color))
                 .padding(.trailing, 10)
@@ -351,6 +325,10 @@ struct MapstrCategoriesView: View {
         }
         .frame(height: 40)
         .padding(.vertical, 6)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.setChecked(true, for: row.id)
+        }
     }
 
     // MARK: - Subviews : bottom bar
@@ -391,6 +369,7 @@ struct MapstrCategoriesView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 10)
+            .accessibilityIdentifier(AccessibilityID.MapstrTagMapper.continueButton)
         }
         .background(.backgroundPrimary)
     }

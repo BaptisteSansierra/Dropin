@@ -36,35 +36,24 @@ struct SettingsView: View {
                     dataSection
                 }
                 .padding(.horizontal)
-                
-                ImportStatusView(importStatus: $viewModel.importStatus,
-                                 cancelCb: viewModel.cancelImport,
-                                 closeCb: viewModel.closeImport)
             }
-            .disabled(viewModel.importing)
+            //.disabled(viewModel.importing)  // FIXME: (DRO-76) this should happen when deleting
             .navigationTitle("common.settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                DropinToolbar.Burger(showingSideMenu: $showingSideMenu,
-                                     disabled: viewModel.importStatus != nil)
+            .navigationDestination(for: SettingsNavigationItem.self) { item in
+                resolveDestination(item)
             }
-            .sheet(isPresented: $viewModel.pickFile, content: importSheetContent)
+            .toolbar {
+                DropinToolbar.Burger(showingSideMenu: $showingSideMenu)
+                
+                // FIXME: (DRO-76) this should happen when deleting
+                //DropinToolbar.Burger(showingSideMenu: $showingSideMenu,
+                //                                     disabled: viewModel.importStatus != nil)
+            }
             .sheet(item: $viewModel.exportedTemporaryFile, content: exportSheetContent)
-            .fullScreenCover(isPresented: Binding(
-                get: { viewModel.mapstrImportPlan != nil },
-                set: { if !$0 { viewModel.cancelMapstrCategories() } }
-            ), content: mapstrCategoriesSheetContent)
             .overlay(content: deleteDatabaseOverlay)
         }
         .alertError(error: $viewModel.genericError)
-        /*
-        .onAppear {
-            // DEBUGLY display ImportStatusView
-            viewModel.importStatus = ImportStatus(filename: "pipo.jhy",
-                                                  source: .dropin)
-            viewModel.importStatus?.setCount(100)
-        }
-         */
     }
     
     // MARK: - subviews
@@ -102,7 +91,6 @@ struct SettingsView: View {
                             .padding(.horizontal)
                 
                 rowSeparator
-                
                 
                 // Pin size row
                 settingsRow(icon: "ruler",
@@ -145,7 +133,6 @@ struct SettingsView: View {
     }
     
     private var dataSection: some View {
-        
         VStack(spacing: 0) {
             Text("settings.section.data")
                 .textStyle(.formSectionTitle)
@@ -154,7 +141,6 @@ struct SettingsView: View {
                 .padding(.bottom, 10)
             
             VStack(spacing: 0) {
-                
                 // Export
                 Button {
                     exportData()
@@ -178,24 +164,8 @@ struct SettingsView: View {
                 rowSeparator
                 
                 // Import
-                Menu {
-                    Button(DropinApp.strings.app, action: {
-                        viewModel.importSource = .dropin
-                        #if DEBUG
-                        // Screenshots: import the test bundle file directly, the document picker can't be driven
-                        if ScreenshotMode.isOn, let url = ScreenshotMode.importURL {
-                            importData(url)
-                            return
-                        }
-                        #endif
-                        viewModel.pickFile = true
-                        viewModel.isImporting = true
-                    })
-                    Button(String(localized: "settings.import.mapstr"), action: {
-                        viewModel.importSource = .mapstr
-                        viewModel.pickFile = true
-                        viewModel.isImporting = true
-                    })
+                Button {
+                    viewModel.presentImport()
                 } label: {
                     HStack(spacing: 12) {
                         iconBadge(systemName: "square.and.arrow.down",
@@ -203,15 +173,12 @@ struct SettingsView: View {
                                   badgeColor: .dropinPrimary)
                         Text("common.import")
                             .textStyle(.settingTitleAction)
-                        Spacer()
-                        Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(size: 12))
-                            .foregroundStyle(TextStyle.settingTitle.color)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .frame(height: rowHeight)
                     .padding(.horizontal)
                 }
-                .accessibilityIdentifier(AccessibilityID.Settings.importMenu)
+                .accessibilityIdentifier(AccessibilityID.Settings.importButton)
                 
                 rowSeparator
                 
@@ -236,7 +203,6 @@ struct SettingsView: View {
                     .fill(.surface1)
                     .stroke(.hairline)
             }
-            
         }
     }
     
@@ -279,17 +245,6 @@ struct SettingsView: View {
     }
     
     @ViewBuilder
-    private func mapstrCategoriesSheetContent() -> some View {
-        viewModel.createMapstrCategoriesView { mapping in
-            viewModel.confirmMapstrCategories(mapping)
-        }
-    }
-    
-    private func importSheetContent() -> some View {
-        ImportPicker(source: viewModel.importSource, onPick: importData)
-    }
-    
-    @ViewBuilder
     private func exportSheetContent(url: IdentifiableURL) -> some View {
         ShareSheet(url: url.url) { complete in
             viewModel.isExporting = false
@@ -310,20 +265,14 @@ struct SettingsView: View {
     }
     
     // MARK: - private methods
-    private func importData(_ url: URL) {
-        Task {
-            switch viewModel.importSource {
-                case .dropin: viewModel.importDropin(url)
-                case .mapstr: viewModel.importMapstr(url)
-                default: break
-            }
-        }
-    }
-    
     private func exportData() {
         Task {
             await viewModel.export()
         }
+    }
+    
+    @ViewBuilder
+    private func resolveDestination(_ item: SettingsNavigationItem) -> some View {
     }
 }
 

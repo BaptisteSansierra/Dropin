@@ -17,6 +17,9 @@
     "Dropin Export" : {
       "shouldTranslate" : false
     },
+    "Geojson from Mapstr or other apps" : {
+
+    },
     "NSCameraUsageDescription" : {
       "comment" : "Privacy - Camera Usage Description",
       "localizations" : {
@@ -26,16 +29,16 @@
             "value" : "Dropin uses the camera to add photos to your places."
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dropin utilise l'appareil photo pour ajouter des photos à vos lieux."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Dropin usa la cámara para añadir fotos a tus lugares."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropin utilise l'appareil photo pour ajouter des photos à vos lieux."
           }
         }
       }
@@ -50,16 +53,16 @@
             "value" : "Dropin needs access to your location to provide location-based services."
           }
         },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dropin a besoin d’accéder à votre position pour fournir des services basés sur la localisation."
-          }
-        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Dropin necesita acceder a tu ubicación para ofrecerte servicios basados en la ubicación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropin a besoin d’accéder à votre position pour fournir des services basés sur la localisation."
           }
         }
       }

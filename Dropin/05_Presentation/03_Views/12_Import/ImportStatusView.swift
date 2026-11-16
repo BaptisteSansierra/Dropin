@@ -46,6 +46,7 @@ struct ImportStatusView: View {
                                 errorView(importStatus, error)
                         }
                     }
+                    .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
                     .background {
                         RoundedRectangle(cornerRadius: 18)
@@ -53,6 +54,7 @@ struct ImportStatusView: View {
                             .ignoresSafeArea(edges: .bottom)
                     }
                 }
+                .padding(.horizontal, 5)
             }
         } else {
             Color(.clear)
@@ -159,8 +161,16 @@ struct ImportStatusView: View {
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(.backgroundPrimary)
             }
-            Text("import.complete.title")
-                .textStyle(.bodySemibold)
+            switch importStatus.source {
+                case .dropin:
+                    Text("import.complete.dropin.title")
+                        .textStyle(.bodySemibold)
+                case .mapstr:
+                    Text("import.complete.mapstr.title")
+                        .textStyle(.bodySemibold)
+                case .unknown:
+                    EmptyView()
+            }
             
             resultDetailsView(importStatus)
             

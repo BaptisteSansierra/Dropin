@@ -2,13 +2,14 @@
 //  MapstrConflictsView.swift
 //  Dropin
 //
-//  Pushed from the conflict note on MapstrCategoriesView ("Review ›"). Reuses the same
-//  MapstrCategoriesViewModel — reads and mutates its CategoryMapping — so swapping here is
-//  immediately reflected back on MapstrCategoriesView.
+//  Created by baptiste sansierra on 14/10/26.
 //
+
 
 import SwiftUI
 
+/// Pushed from the conflict note on MapstrCategoriesView.
+/// It reuses the same MapstrCategoriesViewModel, reads and mutates its CategoryMapping.
 struct MapstrConflictsView: View {
 
     typealias ConflictGroup = MapstrCategoriesViewModel.ConflictGroup

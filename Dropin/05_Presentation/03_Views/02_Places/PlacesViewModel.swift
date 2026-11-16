@@ -27,6 +27,7 @@ import MapKit
 
     var syncStatus: SyncStatus
     var reachabilityService: any ReachabilityServiceProtocol
+    var importsEventProvider: any ImportsEventProvider
 
     /// Filter active places (aka not deleted)
     var activePlaces: [PlaceUIModel] {
@@ -85,13 +86,15 @@ import MapKit
          locationManager: LocationManager,
          fetchPlaces: FetchPlaces,
          syncStatus: SyncStatus,
-         reachabilityService: any ReachabilityServiceProtocol) {
+         reachabilityService: any ReachabilityServiceProtocol,
+         importsEventProvider: any ImportsEventProvider) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.locationManager = locationManager
         self.fetchPlaces = fetchPlaces
         self.syncStatus = syncStatus
         self.reachabilityService = reachabilityService
+        self.importsEventProvider = importsEventProvider
     }
 
     // MARK: actions

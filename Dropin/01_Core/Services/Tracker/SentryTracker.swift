@@ -15,9 +15,9 @@ final class SentryTracker: TrackerProtocol, Sendable {
     func start() {
         SentrySDK.start { options in
             options.dsn = AppConfig.Sentry.dsn
-            options.debug = true // Enabled debug when first installing is always helpful
+            options.debug = false // Enabled debug when first installing is always helpful
+            options.diagnosticLevel = .info     // .debug, .info, .warning, .error, .fatal
             // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-            // We recommend adjusting this value in production.
 #if DEBUG
             options.tracesSampleRate = 1.0
 #else

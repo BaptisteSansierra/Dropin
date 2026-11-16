@@ -99,17 +99,25 @@ actor ImportMapstrService: ImportServiceProtocol {
     // MARK: - Phase 2: import (writes)
 
     func `import`(_ plan: MapstrImportPlan,
-                 progress: @MainActor @Sendable (Int) -> Void,
-                 canceled: @MainActor @Sendable () -> Void,
-                 completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
-        try await `import`(plan, mapping: [], progress: progress, canceled: canceled, completion: completion)
+                  tagImport: Bool,
+                  tagName: String,
+                  progress: @MainActor @Sendable (Int) -> Void,
+                  canceled: @MainActor @Sendable () -> Void,
+                  completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
+        try await `import`(plan, mapping: [],
+                           tagImport: tagImport,
+                           tagName: tagName,
+                           progress: progress,
+                           canceled: canceled,
+                           completion: completion)
     }
 
-    /// Richer entry point used when the file has tags: `mapping` is the user's
-    /// tag-to-category choices from MapstrCategoriesView (empty mapping = the
-    /// protocol-level `import` above, i.e. no tags or none converted).
+    /// Richer entry point used when the file has tags: `mapping` is the user's tag-to-category choices from MapstrCategoriesView
+    /// (empty mapping = the protocol-level `import` above, i.e. no tags or none converted).
     func `import`(_ plan: MapstrImportPlan,
                   mapping: CategoryMapping,
+                  tagImport: Bool,
+                  tagName: String,
                   progress: @MainActor @Sendable (Int) -> Void,
                   canceled: @MainActor @Sendable () -> Void,
                   completion: @MainActor @Sendable (Int, Int, Int, Int) -> Void) async throws {
@@ -122,7 +130,11 @@ actor ImportMapstrService: ImportServiceProtocol {
         guard !Task.isCancelled else { await cancel(canceled); return }
 
         do {
-            try await createLocalItems(plan, mapping: mapping, progress: progress)
+            try await createLocalItems(plan,
+                                       mapping: mapping,
+                                       tagImport: tagImport,
+                                       tagName: tagName,
+                                       progress: progress)
         } catch is CancellationError {
             await cancel(canceled)
         }
@@ -179,6 +191,8 @@ actor ImportMapstrService: ImportServiceProtocol {
 
     private func createLocalItems(_ plan: MapstrImportPlan,
                                   mapping: CategoryMapping,
+                                  tagImport: Bool,
+                                  tagName: String,
                                   progress: @MainActor @Sendable (Int) -> Void) async throws {
         // Every entity created by this import run shares the same instant.
         let importDate = Date()
@@ -224,6 +238,15 @@ actor ImportMapstrService: ImportServiceProtocol {
                 tagByID[tagID] = tag
             }
         }
+        
+        // Create importTag if needed: all created places will be tagged
+        var importTag: Tag?
+        if tagImport {
+            let importTagTmp = Tag(name: tagName, color: String.randomColor())
+            importTag = importTagTmp
+            try await upsertTag(importTagTmp, shouldSave: false)
+            createdTagsCount += 1
+        }
 
         // Create all places
         var upsertCount = 0
@@ -234,6 +257,7 @@ actor ImportMapstrService: ImportServiceProtocol {
                                    resolution: resolution,
                                    categoryByTagID: categoryByTagID,
                                    tagByID: tagByID,
+                                   importTag: importTag,
                                    importDate: importDate)
             upsertCount += 1
             await progress(upsertCount)
@@ -244,6 +268,7 @@ actor ImportMapstrService: ImportServiceProtocol {
                               resolution: PlaceResolution,
                               categoryByTagID: [String: Category],
                               tagByID: [String: Tag],
+                              importTag: Tag?,
                               importDate: Date) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
@@ -254,7 +279,10 @@ actor ImportMapstrService: ImportServiceProtocol {
         }
 
         let category = resolution.categoryTagID.flatMap { categoryByTagID[$0] }
-        let tags = resolution.keptTagIDs.compactMap { tagByID[$0] }
+        var tags = resolution.keptTagIDs.compactMap { tagByID[$0] }
+        if let importTag = importTag {
+            tags.append(importTag)
+        }
 
         let newPlace = Place(id: UUID(),
                              name: place.name,
