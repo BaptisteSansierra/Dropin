@@ -13,7 +13,7 @@ struct PlaceSheetView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: PlaceSheetViewModel
-    @Binding private var place: PlaceUIModel
+    @Bindable private var place: PlaceUIModel
     @Binding private var currentDetent: PresentationDetent
     @Environment(\.dismiss) private var dismiss
     @Namespace private var menuNamespace
@@ -62,11 +62,11 @@ struct PlaceSheetView: View {
 
     // MARK: - init
     init(viewModel: PlaceSheetViewModel,
-         place: Binding<PlaceUIModel>,
+         place: PlaceUIModel,
          mapAction: (() -> Void)?,
          detent: Binding<PresentationDetent>) {
         self._viewModel = State(initialValue: viewModel)
-        self._place = place
+        self.place = place
         self.mapAction = mapAction
         self._currentDetent = detent
         
@@ -750,7 +750,7 @@ struct MockPlaceDetailSheetView: View {
         }
         .sheet(isPresented: $presentedSheet) {
             
-            mock.appContainer.createPlaceSheetView(place: $place,
+            mock.appContainer.createPlaceSheetView(place: place,
                                                    mapAction: { print("go do some stuff") },
                                                    detent: $detailSheetDetent)
                 .presentationDetents([.medium, .large], selection: $detailSheetDetent)

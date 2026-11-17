@@ -16,11 +16,15 @@ struct CreateCategory {
     }
     
     func callAsFunction(_ category: Category) async throws {
-        guard category.name.count > 0 else {
+        let category = category.trimmingName()
+        guard !category.name.isEmpty else {
             throw DomainError.Category.missingName
         }
         if try await repository.exists(category) {
             throw DomainError.Category.alreadyExists
+        }
+        if try await repository.nameExists(category.name, excluding: nil) {
+            throw DomainError.Category.nameAlreadyExists
         }
 //        if !category.icon.isValid {
 //            throw DomainError.Category.undefinedMarker

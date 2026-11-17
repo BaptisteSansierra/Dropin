@@ -196,6 +196,9 @@ struct CategoryCreateView: View {
             .textStyle(.body)
             .autocorrectionDisabled()
             .focused($isNameFieldFocused)
+            .onSubmit {
+                createdCategoryName = createdCategoryName.trimmedName
+            }
             .overlay {
                 if isShowingNameWarn {
                     ZStack(alignment: .leading) {
@@ -228,6 +231,7 @@ struct CategoryCreateView: View {
     
     // MARK: - private methods
     private func createCategory() {
+        createdCategoryName = createdCategoryName.trimmedName
         guard sanityCheck() else { return }
         onCreate(createdCategoryName,
                  createdCategoryColor.hex,
@@ -304,8 +308,8 @@ struct CategoryCreateView: View {
     
     private func alreadyExists() -> Bool {
         guard !createdCategoryName.isTrimmedEmpty else { return false }
-        let low = createdCategoryName.lowercased()
-        guard let _ = existing.firstIndex(where: { $0.lowercased() == low }) else {
+        let key = createdCategoryName.nameKey
+        guard let _ = existing.firstIndex(where: { $0.nameKey == key }) else {
             return false
         }
         return true

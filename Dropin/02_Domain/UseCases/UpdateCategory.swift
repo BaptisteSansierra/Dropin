@@ -16,11 +16,15 @@ struct UpdateCategory {
     }
     
     func callAsFunction(_ category: Category) async throws {
-        guard category.name.count > 0 else {
+        let category = category.trimmingName()
+        guard !category.name.isEmpty else {
             throw DomainError.Category.missingName
         }
         if try await !repository.exists(category) {
             throw DomainError.Category.notFound
+        }
+        if try await repository.nameExists(category.name, excluding: category.id) {
+            throw DomainError.Category.nameAlreadyExists
         }
         return try await repository.update(category)
     }

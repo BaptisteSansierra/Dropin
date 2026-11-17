@@ -5807,11 +5807,7 @@
         }
       }
     },
-    "error.import.tag_import.exists" : {
-
-    },
     "error.import.tag_import.exists_%@" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

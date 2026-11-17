@@ -17,7 +17,8 @@ struct CreatePlace {
     }
 
     func callAsFunction(_ place: Place) async throws {
-        guard place.name.count > 0 else {
+        let place = place.trimmingName()
+        guard !place.name.isEmpty else {
             throw DomainError.Place.missingName
         }
         if try await repository.exists(place) {

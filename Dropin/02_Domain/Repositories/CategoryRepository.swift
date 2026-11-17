@@ -10,6 +10,8 @@ import Foundation
 @MainActor
 protocol CategoryRepository {
     func exists(_ category: Category) async throws -> Bool
+    /// True if an active category of the current space is named `name` (compared with `nameKey`), the one with `excluding` id aside
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool
     func create(_ category: Category) async throws
     //func delete(_ category: Category) async throws
     func update(_ category: Category) async throws

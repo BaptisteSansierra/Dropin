@@ -16,15 +16,15 @@ final class MockContainer {
     var mockModelContainer: ModelContainer
     var mockModelContext: ModelContext
     var appContainer: AppContainer
-
+    
     let locationManager: LocationManager = LocationManager()
     let addressLookupService: AddressLookupService
     let reachabilityService: any ReachabilityServiceProtocol = StubReachabilityService()
     let profileService: StubProfileService = StubProfileService()
-
+    
     init() {
         addressLookupService = AddressLookupService(locationManager: locationManager)
-
+        
         do {
             // Create a mock database
             let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: true)
@@ -32,14 +32,14 @@ final class MockContainer {
                                                         configurations: modelConfiguration)
             let mockModelContext = mockModelContainer.mainContext
             mockModelContext.autosaveEnabled = false
-
+            
             self.mockModelContainer = mockModelContainer
             self.mockModelContext = mockModelContext
-
+            
             // Must seed the main Space (and other mock data) before constructing
             // AppContainer, which resolves the main space synchronously at init time.
             try AppContainer.insertMockData(modelContext: mockModelContext)
-
+            
             self.appContainer = AppContainer(modelContext: mockModelContext,
                                              appContext: AppContext(),
                                              locationManager: locationManager,
@@ -47,7 +47,7 @@ final class MockContainer {
                                              reachabilityService: reachabilityService,
                                              profileService: profileService,
                                              authService: StubAuthService())
-
+            
         } catch {
             fatalError("couldn't create mock data \(error)")
         }
@@ -62,7 +62,7 @@ final class MockContainer {
             await profileService.load()
         }
     }
-
+    
     func getAllPlaceUIModel() -> [PlaceUIModel] {
         do {
             let sorts = [SortDescriptor(\PlaceRecord.name), SortDescriptor(\PlaceRecord.createdAt)]
@@ -73,7 +73,7 @@ final class MockContainer {
             fatalError("couldn't retrieve place mock data \(error)")
         }
     }
-
+    
     func getAllCategoryUIModel() -> [CategoryUIModel] {
         do {
             let sorts = [SortDescriptor(\CategoryRecord.name), SortDescriptor(\CategoryRecord.createdAt)]
@@ -84,7 +84,7 @@ final class MockContainer {
             fatalError("couldn't retrieve place mock data \(error)")
         }
     }
-
+    
     func getAllTagUI() -> [TagUIModel] {
         do {
             let sorts = [SortDescriptor(\TagRecord.name), SortDescriptor(\TagRecord.createdAt)]

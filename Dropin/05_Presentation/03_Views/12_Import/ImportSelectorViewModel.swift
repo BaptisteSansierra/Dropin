@@ -87,7 +87,9 @@ import SwiftUI
             // No need to check, import won't be tagged
             return true
         }
-        guard !tagName.isTrimmedEmpty else {
+        // The import gets the name as stored
+        tagName = tagName.trimmedName
+        guard !tagName.isEmpty else {
             tagErrorMessage = "error.import.tag_import.missing"
             tagNameProposal = await getAvailableTagName()
             return false
@@ -95,7 +97,7 @@ import SwiftUI
         do {
             let isAvailable = try await availableTagName.isAvailable(tagName)
             guard isAvailable else {
-                tagErrorMessage = "error.import.tag_import.exists"
+                tagErrorMessage = "error.import.tag_import.exists_\(tagName)"
                 tagNameProposal = await getAvailableTagName(base: tagName)
                 return false
             }

@@ -63,16 +63,17 @@ import MapKit
     }
 
     // MARK: UI Childs
-    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
+    func createTagSelectorView(place: PlaceUIModel) -> TagSelectorView {
         return appContainer.createTagSelectorView(place: place)
     }
     
-    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+    func createCategorySelectorView(place: PlaceUIModel) -> CategorySelectorView {
         return appContainer.createCategorySelectorView(place: place)
     }
 
     // MARK: Use cases
     func save(place: PlaceUIModel) async throws {
+        place.name = place.name.trimmedName
         let placeEntity = PlaceMapper.toDomain(place)
         // The Apple-POI quick-create flow can attach a suggested category (or
         // newly-typed tags) that only exist in memory so far — make sure both

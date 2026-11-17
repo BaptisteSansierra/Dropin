@@ -68,12 +68,12 @@ struct PlaceCreateQuickView: View {
         }
         .alertError(error: $viewModel.genericError)
         .sheet(isPresented: $viewModel.showingTagsSelector) {
-            viewModel.createTagSelectorView(place: $place)
+            viewModel.createTagSelectorView(place: place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $viewModel.showingCategorySelector) {
-            viewModel.createCategorySelectorView(place: $place)
+            viewModel.createCategorySelectorView(place: place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }

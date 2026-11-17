@@ -56,7 +56,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
@@ -135,7 +135,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
@@ -190,7 +190,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)   // Check created places counter
@@ -248,7 +248,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
@@ -306,7 +306,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
@@ -373,7 +373,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 0)    // Check created places counter
@@ -419,7 +419,7 @@ struct App_ImportDropin {
         let export = try await importDropinService.read(data)
         #expect(export.places.count == 1)    // Check found places count counter
 
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
@@ -462,6 +462,22 @@ struct App_ImportDropin {
 
         await #expect(throws: ImportError.emptyFile) {
             _ = try await importDropinService.read(data)
+        }
+    }
+
+    ///
+    /// Test ImportDropinService file with tags / categories but no place
+    ///  check error at phase 1 (read): they're only created for imported places
+    ///
+    @Test func importDropinServiceNoPlaces() async throws {
+        let dropinExport = DropinInOut(exportedAt: Date(),
+                                       places: [],
+                                       categories: [Dropin.Category(name: "group1", color: String.randomColor(), icon: Icon.mock)],
+                                       tags: [Dropin.Tag(name: "tag1", color: String.randomColor())])
+        let data = try ExportService.encoder.encode(dropinExport)
+
+        await #expect(throws: ImportError.emptyFile) {
+            _ = try await importService().read(data)
         }
     }
 
@@ -609,7 +625,7 @@ struct App_ImportDropin {
 
         let importDropinService = importService()
         let export = try await importDropinService.read(data)
-        try await importDropinService.import(export) { _ in
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { _, _, createdCategoriesCount, createdTagsCount in
             #expect(createdCategoriesCount == 1)
@@ -630,4 +646,226 @@ struct App_ImportDropin {
         #expect(places[0].category?.id != g1Local.id)
     }
 
+    /// 2 places: place1 tagged with tag1, place2 without tag
+    private func tagImportExport() -> (DropinInOut, Dropin.Tag) {
+        let t1 = Dropin.Tag(name: "tag1", color: String.randomColor())
+        let p1 = Place(id: UUID(), name: "place1", coordinates: CLLocationCoordinate2D.barcelona, address: "xxx", tags: [t1])
+        let p2 = Place(id: UUID(), name: "place2", coordinates: CLLocationCoordinate2D.abbeyRoad, address: "yyy")
+        return (DropinInOut(exportedAt: Date(), places: [p1, p2], categories: [], tags: [t1]), t1)
+    }
+
+    ///
+    /// Test ImportDropinService with tagImport off:
+    ///  no import tag is created, even though a tag name is provided
+    ///
+    @Test func importDropinServiceTagImportOff() async throws {
+        let tagName = "Dropin import"
+        let (dropinExport, _) = tagImportExport()
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: false, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, _, _, createdTagsCount in
+            #expect(createdPlacesCount == 2)
+            #expect(createdTagsCount == 1)      // Only the file's tag
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check no import tag on disk
+        #expect(tags.count == 1)
+        #expect(!tags.contains { $0.name == tagName })
+        // Check no place got the import tag
+        #expect(places.count == 2)
+        #expect(places.allSatisfy { place in !place.tags.contains { $0.name == tagName } })
+    }
+
+    ///
+    /// Test ImportDropinService with tagImport on:
+    ///  a single import tag is created and added to every imported place, with or without tags of their own
+    ///
+    @Test func importDropinServiceTagImportOn() async throws {
+        let tagName = "Dropin import"
+        let (dropinExport, t1) = tagImportExport()
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, _, _, createdTagsCount in
+            #expect(createdPlacesCount == 2)
+            #expect(createdTagsCount == 2)      // The file's tag + the import tag
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check a single import tag on disk
+        let importTags = tags.filter { $0.name == tagName }
+        #expect(tags.count == 2)
+        #expect(importTags.count == 1)
+        guard let importTag = importTags.first else { return }
+        // Check every imported place got it
+        #expect(places.count == 2)
+        #expect(places.allSatisfy { place in place.tags.contains { $0.id == importTag.id } })
+        // Check place1 kept its own tag next to it
+        guard let place1 = places.first(where: { $0.name == "place1" }) else {
+            Issue.record("place1 not found")
+            return
+        }
+        #expect(place1.tags.count == 2)
+        #expect(place1.tags.contains { $0.name == t1.name })
+    }
+
+    ///
+    /// Test ImportDropinService with tagImport on, the import tag named like a tag of the file:
+    ///  no two tags share the name, every imported place has it once
+    ///
+    @Test func importDropinServiceTagImportNameInFile() async throws {
+        let (dropinExport, t1) = tagImportExport()
+        let tagName = t1.name           // place1 already has it in the file, place2 doesn't
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { _, _, _, _ in
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check a single tag with that name on disk
+        #expect(tags.filter { $0.name.lowercased() == tagName.lowercased() }.count == 1)
+        // Check every imported place has it, once
+        #expect(places.count == 2)
+        for place in places {
+            #expect(place.tags.filter { $0.name.lowercased() == tagName.lowercased() }.count == 1, "\(place.name)")
+        }
+    }
+
+    ///
+    /// Test ImportDropinService with tagImport on, the import tag named like an existing local tag:
+    ///  the local tag is used, no second tag with that name
+    ///
+    @Test func importDropinServiceTagImportNameExists() async throws {
+        let tagName = "Dropin import"
+        let localTag = Dropin.Tag(name: tagName, color: String.randomColor())
+        try await UpsertTag(repository: localTagRepo)(localTag)
+
+        let (dropinExport, _) = tagImportExport()
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { _, _, _, createdTagsCount in
+            #expect(createdTagsCount == 1)      // Only the file's tag: the import tag already existed
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check a single tag with that name on disk: the local one
+        let namedTags = tags.filter { $0.name.lowercased() == tagName.lowercased() }
+        #expect(namedTags.map(\.id) == [localTag.id])
+        // Check every imported place has the local tag
+        #expect(places.count == 2)
+        #expect(places.allSatisfy { place in place.tags.contains { $0.id == localTag.id } })
+    }
+
+    ///
+    /// Test ImportDropinService with tagImport on, every place being a duplicate:
+    ///  nothing is imported, so no import tag is created
+    ///
+    @Test func importDropinServiceTagImportAllDuplicates() async throws {
+        let tagName = "Dropin import"
+        let (dropinExport, _) = tagImportExport()
+        // Fill the local database with both places (see tagImportExport)
+        try await UpsertPlace(repository: localPlaceRepo)(Place(id: UUID(), name: "place1", coordinates: .barcelona, address: "xxx"))
+        try await UpsertPlace(repository: localPlaceRepo)(Place(id: UUID(), name: "place2", coordinates: .abbeyRoad, address: "yyy"))
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, duplicatePlacesCount, _, _ in
+            #expect(createdPlacesCount == 0)
+            #expect(duplicatePlacesCount == 2)
+        }
+        let tags = try await localTagRepo.fetch()
+        // Check no import tag on disk
+        #expect(!tags.contains { $0.name == tagName })
+    }
+
+    ///
+    /// Test ImportDropinService creates tags / categories on the fly:
+    ///  one only referenced by a duplicate place, or by no place, is never created
+    ///
+    @Test func importDropinServiceCreatesOnlyUsedTagsAndCategories() async throws {
+        // place1 is a duplicate: its category and tag must not be created
+        try await UpsertPlace(repository: localPlaceRepo)(Place(id: UUID(), name: "place1", coordinates: .barcelona, address: "xxx"))
+
+        let usedTag = Dropin.Tag(name: "used", color: String.randomColor())
+        let duplicateTag = Dropin.Tag(name: "duplicate", color: String.randomColor())
+        let unusedTag = Dropin.Tag(name: "unused", color: String.randomColor())
+        let duplicateCategory = Dropin.Category(name: "duplicate", color: String.randomColor(), icon: Icon.mock)
+        let unusedCategory = Dropin.Category(name: "unused", color: String.randomColor(), icon: Icon.mock)
+        let p1 = Place(id: UUID(), name: "place1", coordinates: .barcelona, address: "xxx",
+                       tags: [duplicateTag], category: duplicateCategory)
+        let p2 = Place(id: UUID(), name: "place2", coordinates: .abbeyRoad, address: "yyy", tags: [usedTag])
+        let dropinExport = DropinInOut(exportedAt: Date(),
+                                       places: [p1, p2],
+                                       categories: [duplicateCategory, unusedCategory],
+                                       tags: [usedTag, duplicateTag, unusedTag])
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
+            #expect(createdPlacesCount == 1)
+            #expect(duplicatePlacesCount == 1)
+            #expect(createdCategoriesCount == 0)
+            #expect(createdTagsCount == 1)
+        }
+        let tags = try await localTagRepo.fetch()
+        let categories = try await localCategoryRepo.fetch()
+        #expect(tags.map(\.name) == ["used"])
+        #expect(categories.isEmpty)
+    }
+
+    ///
+    /// Test ImportDropinService matches names with `nameKey`:
+    ///  case and surrounding whitespaces ignored, within the file and against existing ones
+    ///
+    @Test func importDropinServiceMatchesNamesStrictly() async throws {
+        let localTag = Dropin.Tag(name: "Rooftop", color: String.randomColor())
+        try await UpsertTag(repository: localTagRepo)(localTag)
+
+        let t1 = Dropin.Tag(name: " rooftop ", color: String.randomColor())     // Same as the local one
+        let t2 = Dropin.Tag(name: "Brunch", color: String.randomColor())
+        let t3 = Dropin.Tag(name: "brunch  ", color: String.randomColor())     // Same as t2 in the file
+        let t4 = Dropin.Tag(name: "Rooftops", color: String.randomColor())     // Not the same: no lemma
+        let p1 = Place(id: UUID(), name: "place1", coordinates: .barcelona, address: "xxx", tags: [t1, t2])
+        let p2 = Place(id: UUID(), name: "place2", coordinates: .abbeyRoad, address: "yyy", tags: [t3, t4])
+        let dropinExport = DropinInOut(exportedAt: Date(), places: [p1, p2], categories: [], tags: [t1, t2, t3, t4])
+        let data = try ExportService.encoder.encode(dropinExport)
+        let importDropinService = importService()
+        let export = try await importDropinService.read(data)
+
+        try await importDropinService.import(export, tagImport: false, tagName: "") { _ in
+        } canceled: {
+        } completion: { _, _, _, createdTagsCount in
+            #expect(createdTagsCount == 2)      // Brunch + Rooftops
+        }
+        let tags = try await localTagRepo.fetch()
+        #expect(Set(tags.map(\.name)) == ["Rooftop", "Brunch", "Rooftops"])
+        let places = try await localPlaceRepo.fetch()
+        guard let place1 = places.first(where: { $0.name == "place1" }) else {
+            Issue.record("place1 not found")
+            return
+        }
+        #expect(place1.tags.contains { $0.id == localTag.id })
+    }
 }

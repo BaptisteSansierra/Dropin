@@ -22,7 +22,7 @@ struct RootView: View {
         enum Action {
             case reloadMainPlaces
             //case updateMapAnnotations
-            case selectPlace(placeId: UUID)
+            //case selectPlace(placeId: UUID)
             case showOnMap(placeId: UUID)
         }
         

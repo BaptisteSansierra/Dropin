@@ -10,29 +10,33 @@ import SwiftUI
 @MainActor
 @Observable class TagCoordinator: PlaceNavigationCoordinator {
     
-    var path: [TagNavigationItem] = [] {
-        didSet {
-            //Log.info("TAG COORDINATOR path : \(path.map({ "\($0)" }).joined(separator: "/"))")
-        }
-    }
+    var path: [TagNavigationItem] = []
     
     // MARK: navigation methods
     func pushPlaceEditView(placeRef: PlaceUIModelRef) {
-        path.append(TagNavigationItem.tagPlace(placeRef: placeRef))
+        path.append(TagNavigationItem.tagPlaceEdit(placeRef: placeRef))
     }
 
     func pushTagDetailsView(tagId: UUID) {
         path.append(TagNavigationItem.tagDetails(tagId: tagId))
     }
     
-    func pushTagMapView(tagId: UUID) {
-        path.append(TagNavigationItem.tagMap(tagId: tagId))
+    func pushTagMapView(tagId: UUID, places: [PlaceUIModelRef]) {
+        path.append(TagNavigationItem.tagMap(tagId: tagId, places: places))
+    }
+
+    func pushLookupPlacesEditView(placeRef: PlaceUIModelRef) {
+        path.append(TagNavigationItem.lookupPlacesEditView(placeRef: placeRef))
     }
 
     func pushUndefinedDummyView() {
         path.append(TagNavigationItem.undefinedDummyView)
     }
-    
+        
+    func popToRoot() {
+        path.removeAll()
+    }
+
     func pop() {
         _ = path.popLast()
     }
@@ -40,8 +44,9 @@ import SwiftUI
 
 enum TagNavigationItem: Hashable {
     case tagDetails(tagId: UUID)
-    case tagMap(tagId: UUID)
-    case tagPlace(placeRef: PlaceUIModelRef)
+    case tagMap(tagId: UUID, places: [PlaceUIModelRef])
+    case tagPlaceEdit(placeRef: PlaceUIModelRef)
+    case lookupPlacesEditView(placeRef: PlaceUIModelRef)
     // development
     case undefinedDummyView
 }

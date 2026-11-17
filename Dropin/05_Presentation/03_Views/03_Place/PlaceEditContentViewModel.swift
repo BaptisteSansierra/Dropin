@@ -51,7 +51,7 @@ import NoFlyZone
     var isUnlinkConfirmationPresented = false
 
     @ObservationIgnored var mode: Mode
-    @ObservationIgnored private var coordinator: PlaceCoordinator
+    @ObservationIgnored private var coordinator: any PlaceNavigationCoordinator
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private let markPlacePOINotFound: MarkPlacePOINotFound
     @ObservationIgnored private let unmarkPlacePOINotFound: UnmarkPlacePOINotFound
@@ -62,7 +62,7 @@ import NoFlyZone
     @ObservationIgnored private let applePOIService: any ApplePOIServiceProtocol
 
     init(_ appContainer: AppContainer,
-         coordinator: PlaceCoordinator,
+         coordinator: any PlaceNavigationCoordinator,
          reachabilityService: any ReachabilityServiceProtocol,
          markPlacePOINotFound: MarkPlacePOINotFound,
          unmarkPlacePOINotFound: UnmarkPlacePOINotFound,
@@ -90,21 +90,22 @@ import NoFlyZone
         coordinator.pop()
     }
 
-    func pushLookupPlacesView(placeId: UUID) {
-        coordinator.pushLookupPlacesEditView(placeId: placeId)
+    func pushLookupPlacesView(placeRef: PlaceUIModelRef) {
+        coordinator.pushLookupPlacesEditView(placeRef: placeRef)
     }
 
     // MARK: UI Childs
-    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
+    func createTagSelectorView(place: PlaceUIModel) -> TagSelectorView {
         return appContainer.createTagSelectorView(place: place)
     }
 
-    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+    func createCategorySelectorView(place: PlaceUIModel) -> CategorySelectorView {
         return appContainer.createCategorySelectorView(place: place)
     }
 
     // MARK: Use cases
     func updatePlace(_ place: PlaceUIModel) async throws {
+        place.name = place.name.trimmedName
         let placeEntity = PlaceMapper.toDomain(place)
         try await updatePlace(placeEntity)
     }

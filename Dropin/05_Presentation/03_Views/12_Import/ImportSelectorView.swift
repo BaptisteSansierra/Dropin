@@ -224,6 +224,9 @@ struct ImportSelectorView: View {
                             .lineLimit(1)
                             .textStyle(.subheadline)
                             .autocorrectionDisabled()
+                            .onSubmit {
+                                viewModel.tagName = viewModel.tagName.trimmedName
+                            }
                     }
                     .frame(height: 50)
                 }

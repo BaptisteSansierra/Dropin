@@ -239,13 +239,6 @@ struct PlacesView: View {
         }
         return viewModel.createPlaceEditView(place: viewModel.places[index])
     }
-
-    private func createLookupPlacesView(placeId: UUID) -> LookupPlacesView {
-        guard let index = viewModel.places.firstIndex(where: { $0.id == placeId }) else {
-            fatalError("couldn't find any place '\(placeId)' in list")
-        }
-        return viewModel.createLookupPlacesView(place: $viewModel.places[index])
-    }
     
     @ViewBuilder
     private func resolveDestination(navigationItem: NavigationItem) -> some View {
@@ -253,12 +246,9 @@ struct PlacesView: View {
             case .placeEditView(let placeId):
                 createPlaceEditView(placeId: placeId)
             case .lookupPlacesView:
-                viewModel.createLookupPlacesView(draftPlace: $viewModel.draftPlace,
-                                                 draftPlacePoiCategory: $viewModel.draftPlacePoiCategory,
-                                                 draftPlacePoiColor: $viewModel.draftPlacePoiColor)
-                
-            case .lookupPlacesEditView(let placeId):
-                createLookupPlacesView(placeId: placeId)
+                viewModel.createLookupPlacesView()
+            case .lookupPlacesEditView(let placeRef):
+                viewModel.createLookupPlacesView(place: placeRef.place)
                     .onDisappear {
                         Task {
                             try await viewModel.loadPlaces()
@@ -344,7 +334,7 @@ extension PlacesView {
         guard let index = viewModel.places.firstIndex(where: { $0.id == selectedPlaceId }) else {
             fatalError("couldn't find place with id \(selectedPlaceId)")
         }
-        return viewModel.createPlaceSheetView(place: $viewModel.places[index],
+        return viewModel.createPlaceSheetView(place: viewModel.places[index],
                                               detent: $viewModel.detailSheetDetent)
     }
 }

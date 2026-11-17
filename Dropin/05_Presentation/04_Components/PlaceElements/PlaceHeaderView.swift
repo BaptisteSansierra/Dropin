@@ -50,6 +50,9 @@ struct PlaceHeaderView: View {
                         .textStyle(.body)
                         .autocorrectionDisabled()
                         .focused(isNameFocused)
+                        .onSubmit {
+                            place.name = place.name.trimmedName
+                        }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 10)
                         .background {

@@ -16,9 +16,6 @@ struct PlaceCreateView: View {
     @State private var showMissingName: Bool = false
     @Environment(RootView.ActionBus.self) private var actionBus
 
-    //private var tagIds: [UUID]?
-    //private var categoryId: UUID?
-
     // MARK: - Init
     init(viewModel: PlaceCreateViewModel,
          place: PlaceUIModel) {
@@ -28,17 +25,9 @@ struct PlaceCreateView: View {
 
     
     var body: some View {
-        viewModel.body(place: $place, showMissingName: $showMissingName)
+        viewModel.body(place: place, showMissingName: $showMissingName)
             .navigationBarBackButtonHidden(true)
             .toolbar { toolbar }
-            .task {
-//                if let tagIds = tagIds {
-//                    place.tags = await viewModel.retrieveTags(tagIds: tagIds)
-//                }
-//                if let categoryId = categoryId {
-//                    place.category = await viewModel.retrieveCategory(categoryId: categoryId)
-//                }
-            }
     }
     
     // MARK: - Subviews

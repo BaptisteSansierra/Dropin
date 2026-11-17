@@ -16,6 +16,7 @@ struct UpsertPlace {
     }
     
     func callAsFunction(_ place: Place, shouldSave: Bool = true) async throws {
+        let place = place.trimmingName()
         guard !place.name.isEmpty else {
             throw DomainError.Place.missingName
         }

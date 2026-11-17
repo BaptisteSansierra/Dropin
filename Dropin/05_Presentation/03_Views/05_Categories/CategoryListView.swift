@@ -163,26 +163,17 @@ struct CategoryListView: View {
         return viewModel.createCategoryDetailsView(category: viewModel.categories[index])
     }
 
-    private func createCategoryMapView(_ categoryId: UUID) -> CategoryMapView {
-        //guard let _ = categories.firstIndex(where: { $0.id == categoryId }) else {
-        //    fatalError("couldn't find any category id '\(categoryId)' in list")
-        //}
-        return viewModel.createCategoryMapView(categoryId: categoryId)
-    }
-    
-    private func createPlaceEditView(_ placeRef: PlaceUIModelRef) -> PlaceEditView {
-        return viewModel.createPlaceEditView(place: placeRef.place)
-    }
-
     @ViewBuilder
     private func resolveDestination(navigationItem: CategoryNavigationItem) -> some View {
         switch navigationItem {
             case .groupDetails(let categoryId):
                 createCategoryDetailsView(categoryId)
-            case .groupMap(let categoryId):
-                createCategoryMapView(categoryId)
-            case .groupPlace(let placeRef):
-                createPlaceEditView(placeRef)
+            case .groupMap(let categoryId, let placeRefs):
+                viewModel.createCategoryMapView(categoryId: categoryId, places: placeRefs.map({ $0.place }))
+            case .groupPlaceEdit(let placeRef):
+                viewModel.createPlaceEditView(place: placeRef.place)
+            case .lookupPlacesEditView(let placeRef):
+                viewModel.createLookupPlacesView(place: placeRef.place)
             case .undefinedDummyView:
                 ZStack {
                     Color.orange

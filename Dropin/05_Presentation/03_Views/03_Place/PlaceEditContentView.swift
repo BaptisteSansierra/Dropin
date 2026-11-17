@@ -15,14 +15,15 @@ struct PlaceEditContentView: View {
     // MARK: - States & Bindings
     @State private var viewModel: PlaceEditContentViewModel
     @State private var keyboardObserver = KeyboardObserver()
-    @Binding private var place: PlaceUIModel
     @Binding private var showMissingName: Bool
     @FocusState private var isNameFocused
     @FocusState private var isFocused
     @Environment(AppSettings.self) private var appSettings
     @Environment(RootView.ActionBus.self) private var actionBus
+    @Bindable private var place: PlaceUIModel
 
     // MARK: - private properties
+    private let onDelete: (() -> Void)?
     private let scrollCoordinateSpace = "scroll"
     private let topLayerHeight: CGFloat = 200
     private let nameFieldKey = "nameField"
@@ -38,21 +39,23 @@ struct PlaceEditContentView: View {
 
     // MARK: - Init
     init(viewModel: PlaceEditContentViewModel,
-         place: Binding<PlaceUIModel>,
-         showMissingName: Binding<Bool>) {
+         place: PlaceUIModel,
+         showMissingName: Binding<Bool>,
+         onDelete: (() -> Void)? = nil) {
 
         self.viewModel = viewModel
-        self._place = place
+        self.place = place
         self._showMissingName = showMissingName
+        self.onDelete = onDelete
 
         // Create UI models from Domain models
-        let phones = place.wrappedValue.phone.map { ContactItemUI(contactItem: $0) }
+        let phones = place.phone.map { ContactItemUI(contactItem: $0) }
         viewModel.phones = phones
         
-        let emails = place.wrappedValue.email.map { ContactItemUI(contactItem: $0) }
+        let emails = place.email.map { ContactItemUI(contactItem: $0) }
         viewModel.emails = emails
         
-        let urls = place.wrappedValue.url.map { ContactItemUI(contactItem: $0) }
+        let urls = place.url.map { ContactItemUI(contactItem: $0) }
         viewModel.urls = urls
         
         // local ContactFieldKit config override
@@ -74,17 +77,8 @@ struct PlaceEditContentView: View {
                             }
                         })
                         .toolbar {
-                            ToolbarItem(placement: .keyboard) {
-                                HStack {
-                                    Spacer()
-                                    TextButton(text: "common.close") {
-                                        isNameFocused = false
-                                        isFocused = false
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 44)
+                            if isNameFocused || isFocused {
+                                keyboardHeaderView
                             }
                         }
 
@@ -199,6 +193,21 @@ struct PlaceEditContentView: View {
         .frame(height: topLayerHeight)
         .offset(x: 0, y: viewModel.headerBackgroundOffsetY)
         .ignoresSafeArea()
+    }
+    
+    private var keyboardHeaderView: some ToolbarContent {
+        ToolbarItem(placement: .keyboard) {
+            HStack {
+                Spacer()
+                TextButton(text: "common.close") {
+                    isNameFocused = false
+                    isFocused = false
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+        }
     }
     
     private var scrollView: some View {
@@ -340,7 +349,13 @@ struct PlaceEditContentView: View {
             // TODO: add a 'turn the wheel to delete' popup
             
             Button(role: .destructive) {
-                performDelete()
+                guard let onDelete = onDelete else {
+                    assertionFailure("onDelete is supposed to be provided if delete button is displayed")
+                    viewModel.popView()
+                    return
+                }
+                onDelete()
+                viewModel.popView()
             } label: {
                 Text("common.delete")
             }
@@ -354,7 +369,7 @@ struct PlaceEditContentView: View {
     @ViewBuilder
     private func editAddressActionsView() -> some View {
         Button("common.edit_address") {
-            viewModel.pushLookupPlacesView(placeId: place.id)
+            viewModel.pushLookupPlacesView(placeRef: PlaceUIModelRef(place: place))
         }
         // TODO: DRO-19 Edit place: edit address options
         Button("common.edit_coordinates") {
@@ -445,29 +460,6 @@ struct PlaceEditContentView: View {
     private func onPressDelete() {
         viewModel.showDeleteWarning.toggle()
     }
-    
-    private func performDelete() {
-        
-        // Delay the hard deletion so the parentview navigation path does not contain a stale model
-        // Parent view needs to be able to 'resolveNavigationDestination' til child is not fully dismissed
-        // soft deleted meanwhile
-        place.deletedAt = Date()
-        viewModel.popView()
-
-
-        Task {
-            do {
-                // Push the modification to DB
-                try await viewModel.updatePlace(place)
-
-                // Update main places list
-                actionBus.send(.reloadMainPlaces)
-
-                // TODO: DRO-24 implement delete stategy
-                // Some database cleaner should remove all deleted items older than x
-            }
-        }
-    }
 }
 
 // MARK: - PLACE Card
@@ -496,7 +488,7 @@ extension PlaceEditContentView {
                     .submitLabel(.done)
                     .focused($isNameFocused)
                     .onSubmit {
-                        //updateCategory()
+                        place.name = place.name.trimmedName
                     }
             }
 
@@ -574,7 +566,7 @@ extension PlaceEditContentView {
             }
         }
         .sheet(isPresented: $viewModel.showingCategorySelector) {
-            viewModel.createCategorySelectorView(place: $place)
+            viewModel.createCategorySelectorView(place: place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.backgroundPrimary)
@@ -629,7 +621,7 @@ extension PlaceEditContentView {
             }
         }
         .sheet(isPresented: $viewModel.showingTagSelector) {
-            viewModel.createTagSelectorView(place: $place)
+            viewModel.createTagSelectorView(place: place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.backgroundPrimary)
@@ -641,7 +633,7 @@ extension PlaceEditContentView {
         cardView(title: "common.tags",
                  headerActionTitle: "common.edit",
                  headerAction: action) {
-            PlaceTagsView(place: $place,
+            PlaceTagsView(place: place,
                           showingTagsSelector: $viewModel.showingTagSelector,
                           editEnabled: false,
                           presentationMode: .form)
@@ -1243,7 +1235,6 @@ extension PlaceEditContentView {
 }
 
 
-
 #if DEBUG
 
 struct MockPlaceEditContentView: View {
@@ -1253,9 +1244,10 @@ struct MockPlaceEditContentView: View {
     @State var showMissingName: Bool = false
 
     var body: some View {
-        mock.appContainer.createPlaceEditContentView(place: $place,
+        mock.appContainer.createPlaceEditContentView(place: place,
                                                      mode: .edit,
-                                                     showMissingName: $showMissingName)
+                                                     showMissingName: $showMissingName,
+                                                     onDelete: { print("DELETE") })
         .task {
             // In case we're testing '.notConnected'
             // reconnect after a few seconds so we can also test the retry works

@@ -51,8 +51,10 @@ struct CategoryDetailsView: View {
             }
             deleteButton
         }
-        .task { await viewModel.fetchPlaces() }
+        .taskOnce { await viewModel.fetchPlaces() }
         .alertError(error: $viewModel.genericError)
+        .alertOk(isPresented: $viewModel.showingNameExistsAlert,
+                 title: "category_form.error.name_duplicate")
         .ignoresSafeArea(edges: .bottom)
         .background(.backgroundSecondary)
         .toolbar {
@@ -316,7 +318,7 @@ struct CategoryDetailsView: View {
         guard let index = viewModel.places.firstIndex(where: { $0.id == selectedPlaceId }) else {
             fatalError("couldn't find place with id \(selectedPlaceId)")
         }
-        return viewModel.createPlaceSheetView(place: $viewModel.places[index])
+        return viewModel.createPlaceSheetView(place: viewModel.places[index])
     }
 }
 

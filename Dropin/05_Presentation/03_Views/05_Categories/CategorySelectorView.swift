@@ -8,46 +8,19 @@
 import SwiftUI
 import SwiftData
 
-
-
-
 // TODO: fix animation when keboard appears
 struct CategorySelectorView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: CategorySelectorViewModel
-    @Binding private var place: PlaceUIModel
-
-
-
-
-    
-    
-    
-//    @State private var createdCategoryName: String = ""
-//    @State private var createdCategoryColor: Color
-//    @State private var createdCategoryIcon: Icon?
-//    @State private var markerPlaceholderColor: Color
-//    @State private var markerPlaceholderFont: Font
-//    @FocusState private var isNameFieldFocused: Bool
-//    @State private var markerCircleOpacity: CGFloat = 1
-//    @State private var markerPlaceholderOpacity: CGFloat
-
-    
-    
-    
-    // MARK: - Dependencies
+    @Bindable private var place: PlaceUIModel
     @Environment(\.dismiss) private var dismiss
 
-
     // MARK: - init
-    init(viewModel: CategorySelectorViewModel, place: Binding<PlaceUIModel>) {
+    init(viewModel: CategorySelectorViewModel,
+         place: PlaceUIModel) {
         self._viewModel = State(initialValue: viewModel)
-        self._place = place
-//        _createdCategoryColor = State(initialValue: Color.random())
-//        markerPlaceholderOpacity = markerPlaceholderOpacityDefault
-//        markerPlaceholderColor = markerPlaceholderColorDefault
-//        markerPlaceholderFont = markerPlaceholderFontDefault
+        self.place = place
     }
 
     // MARK: - Body
@@ -197,7 +170,7 @@ struct MockCategorySelectorView: View {
         }
         .padding()
         .sheet(isPresented: $present) {
-            mock.appContainer.createCategorySelectorView(place: $place)
+            mock.appContainer.createCategorySelectorView(place: place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }

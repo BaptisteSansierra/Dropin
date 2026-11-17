@@ -360,7 +360,12 @@ extension PlacesMKMapVCR {
         var opacity: CGFloat { annotationViewFactory.pinsOpacity }
 
         // Annotation update guard
-        var lastActiveIds: Set<UUID> = []
+        
+        //var lastTokens: [UUID: Int] = [:]
+        //var lastActiveIds: Set<UUID> { Set(lastTokens.keys) }
+        var lastActiveIds: Set<UUID> = []   // TODO: replace ids by tokens (PlaceUIModel.annotationToken) to fix maps refresh
+        
+        
         // Label visibility state
         private var labelsVisible: Bool = true
         // IDs currently backed by a live MKPlacePromotedAnnotation.

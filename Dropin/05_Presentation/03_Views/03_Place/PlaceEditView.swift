@@ -31,7 +31,9 @@ struct PlaceEditView: View {
     
     // MARK: - Body
     var body: some View {
-        viewModel.body(place: $editedPlace, showMissingName: $showMissingName)
+        viewModel.body(place: editedPlace,
+                       showMissingName: $showMissingName,
+                       onDelete: performDelete)
             .navigationBarBackButtonHidden(true)
             // Issue: iOS<26 NavigationBar bg is transparent but become visible when view is scrolled
             // Fix: if iOS<26 : hide nav bar, add overlay buttons
@@ -126,6 +128,7 @@ struct PlaceEditView: View {
                                                 deleteImageIds: imageIdsToDelete,
                                                 completion: {
                     // Reload map after the place is updated on disk
+                    // TODO: try another update strategy. See PlaceUIModel.annotationToken
                     actionBus.send(.reloadMainPlaces)
                 })
                 
@@ -144,6 +147,24 @@ struct PlaceEditView: View {
         }
         // Ask confirmation if there's some edits
         confirmCancel = true
+    }
+    
+    private func performDelete() {
+        let deletedAt = Date()
+        srcPlace.deletedAt = deletedAt
+
+        Task {
+            do {
+                // Push the modification to DB
+                try await viewModel.deletePlace(editedPlace, deletedAt: deletedAt)
+
+                // Update main places list
+                actionBus.send(.reloadMainPlaces)
+
+                // TODO: DRO-24 implement delete stategy
+                // Some database cleaner should remove all deleted items older than x
+            }
+        }
     }
 }
 

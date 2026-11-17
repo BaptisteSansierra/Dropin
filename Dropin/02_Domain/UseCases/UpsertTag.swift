@@ -16,6 +16,7 @@ struct UpsertTag {
     }
     
     func callAsFunction(_ tag: Tag, shouldSave: Bool = true) async throws {
+        let tag = tag.trimmingName()
         guard !tag.name.isEmpty else {
             throw DomainError.Tag.missingName
         }

@@ -52,14 +52,16 @@ import CoreLocation
     }
 
     // MARK: UI Childs
-    func body(place: Binding<PlaceUIModel>, showMissingName: Binding<Bool>) -> some View {
+    func body(place: PlaceUIModel, showMissingName: Binding<Bool>) -> some View {
         return appContainer.createPlaceEditContentView(place: place,
                                                        mode: .creation,
-                                                       showMissingName: showMissingName)
+                                                       showMissingName: showMissingName,
+                                                       onDelete: nil)
     }
 
     // MARK: Use cases
     func save(place: PlaceUIModel) async throws {
+        place.name = place.name.trimmedName
         let placeEntity = PlaceMapper.toDomain(place)
         try await ensureCategoryExists(placeEntity.category)
         try await ensureTagsExist(placeEntity.tags)

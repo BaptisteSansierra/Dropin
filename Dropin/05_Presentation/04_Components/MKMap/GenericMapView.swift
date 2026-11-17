@@ -20,35 +20,29 @@ import SwiftUI
     var detailSheetDetent: PresentationDetent = .medium
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var fetchPlaces: () async throws -> [Place]
     
     init(_ appContainer: AppContainer,
-         fetchPlaces: @escaping () async throws -> [Place]) {
+         places: [PlaceUIModel]) {
         self.appContainer = appContainer
-        self.fetchPlaces = fetchPlaces
+        self.places = places
         self.mapController = MapController()
     }
     
     // MARK: UI Child
-    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+    func createPlaceSheetView(place: PlaceUIModel, detent: Binding<PresentationDetent>) -> PlaceSheetView {
         return appContainer.createPlaceSheetView(place: place, mapAction: nil, detent: detent)
-    }
-    
-    // MARK: use cases
-    func fetchPlace() async throws {
-        loadingPlaces = true
-        places = try await fetchPlaces()
-            .map({ PlaceMapper.toUI($0) })
-        loadingPlaces = false
     }
 }
 
 struct GenericMapView: View {
     
     @State private var viewModel: GenericMapViewModel
+    @Binding private var mapReloadGen: Int
 
-    init(viewModel: GenericMapViewModel) {
+    init(viewModel: GenericMapViewModel,
+         mapReloadGen: Binding<Int> = .constant(0)) {
         self.viewModel = viewModel
+        self._mapReloadGen = mapReloadGen
     }
     
     var body: some View {
@@ -59,9 +53,9 @@ struct GenericMapView: View {
                        selectedApplePOI: .constant(nil),
                        onLongPress: nil,
                        onMapCameraUpdate: nil,
-                       interactionStatus: { .all })
+                       interactionStatus: { .all },
+                       mapReloadGen: mapReloadGen)
         .taskOnce {
-            try? await viewModel.fetchPlace()
             try? await Task.sleep(for: .seconds(0.5))
             viewModel.mapController.fitAll(animated: true)
         }
@@ -96,7 +90,7 @@ struct GenericMapView: View {
         guard let index = viewModel.places.firstIndex(where: { $0.id == selectedPlaceId }) else {
             fatalError("couldn't find place with id \(selectedPlaceId)")
         }
-        return viewModel.createPlaceSheetView(place: $viewModel.places[index],
+        return viewModel.createPlaceSheetView(place: viewModel.places[index],
                                               detent: $viewModel.detailSheetDetent)
     }
 }
