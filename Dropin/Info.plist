@@ -48,6 +48,8 @@
 	<string>$(DEBUG_SIGNIN_PASSWORD)</string>
 	<key>DEBUG_SIGNUP_EMAIL_PREFIX</key>
 	<string>$(DEBUG_SIGNUP_EMAIL_PREFIX)</string>
+	<key>APP_URL_SCHEME</key>
+	<string>$(APP_URL_SCHEME)</string>
 	<key>DEBUG_SIGNUP_EMAIL_SUFFIX</key>
 	<string>$(DEBUG_SIGNUP_EMAIL_SUFFIX)</string>
 	<key>NSAppTransportSecurity</key>

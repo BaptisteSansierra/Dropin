@@ -20,6 +20,10 @@ enum AuthServiceError: Error, Equatable {
     case refreshRateLimited
     case confirmationRequired
     case invalidCredentials
+    /// An auth email link already used or expired
+    case linkExpired
+    /// The new password is the current one
+    case samePassword
 }
 
 @MainActor
@@ -40,6 +44,15 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
     func signInWithApple() async throws   // FIXME: DRO-56 > implement when Apple Sign-In is added
     func resetPassword(email: String) async throws
     func resendVerificationEmail(email: String) async throws
+    /// Email confirmation link: confirms the email and signs the user in. Throws `linkExpired` for a used/expired link
+    func confirmEmail(tokenHash: String) async throws
+    /// Password reset link: opens a recovery session, only used to choose a new password (the user isn't signed in).
+    /// Returns the account email. Throws `linkExpired` for a used/expired link
+    func beginPasswordRecovery(tokenHash: String) async throws -> String
+    /// Saves the new password with the recovery session, then signs the user in. Throws `samePassword`
+    func completePasswordRecovery(newPassword: String) async throws
+    /// Drops the recovery session, the password is unchanged
+    func cancelPasswordRecovery() async
     func signOut() async throws
     func deleteAccount() async throws
     func restoreSession() async
@@ -73,6 +86,12 @@ final class AuthService: AuthServiceProtocol {
     private var refreshBlockedUntil: Date?
     private let refreshCooldown: TimeInterval = 60
     private var authStateTask: Task<Void, Never>?
+    /// Set while a recovery session is open: Supabase stores it like any session, it must not be restored as
+    /// a signed-in one if the app is killed before the new password is saved
+    private var recoveryPending: Bool {
+        get { UserDefaults.standard.bool(forKey: DropinApp.userDefaultsKeys.passwordRecoveryPending) }
+        set { UserDefaults.standard.set(newValue, forKey: DropinApp.userDefaultsKeys.passwordRecoveryPending) }
+    }
     private var signInTimeoutInterval = 15
     private var signUpTimeoutInterval = 15
     private var signOutTimeoutInterval = 3
@@ -157,7 +176,57 @@ final class AuthService: AuthServiceProtocol {
         try await client.auth.resend(email: email, type: .signup)
         Log.info("Verification email resent to \(email)")
     }
-    
+
+    func confirmEmail(tokenHash: String) async throws {
+        let response = try await verifyLink(tokenHash: tokenHash, type: .signup)
+        guard let s = response.session else {
+            Log.warning("Email confirmed without a session")
+            throw AuthServiceError.linkExpired
+        }
+        setSession(UserSession(userId: s.user.id, email: s.user.email))
+        Log.info("Email confirmed, signed in")
+    }
+
+    func beginPasswordRecovery(tokenHash: String) async throws -> String {
+        // Set first: Supabase stores the recovery session as soon as the link is verified
+        recoveryPending = true
+        do {
+            let response = try await verifyLink(tokenHash: tokenHash, type: .recovery)
+            guard let email = response.user.email else {
+                Log.warning("Recovery link verified for a user without email")
+                await cancelPasswordRecovery()
+                throw AuthServiceError.linkExpired
+            }
+            Log.info("Password recovery started")
+            return email
+        } catch {
+            recoveryPending = false
+            throw error
+        }
+    }
+
+    func completePasswordRecovery(newPassword: String) async throws {
+        let user: User
+        do {
+            user = try await client.auth.update(user: UserAttributes(password: newPassword))
+        } catch let error as Supabase.AuthError where error.errorCode == .samePassword {
+            throw AuthServiceError.samePassword
+        } catch AuthError.sessionMissing {
+            recoveryPending = false
+            throw AuthServiceError.linkExpired
+        }
+        recoveryPending = false
+        setSession(UserSession(userId: user.id, email: user.email))
+        Log.info("Password updated, signed in")
+    }
+
+    func cancelPasswordRecovery() async {
+        recoveryPending = false
+        // Removes the stored session first, the server call failing (offline) doesn't matter
+        try? await client.auth.signOut(scope: .local)
+        Log.info("Password recovery canceled")
+    }
+
     func signOut() async throws {
         signingOut = true
         defer {
@@ -188,6 +257,11 @@ final class AuthService: AuthServiceProtocol {
         guard session == nil else {
             assertionFailure("restoreSession called while session is already defined")
             return
+        }
+        // The app was killed while choosing a new password: the stored session is a recovery one, not a sign in
+        if recoveryPending {
+            Log.info("[restoreSession] Dropping an unfinished password recovery")
+            await cancelPasswordRecovery()
         }
         // Check Supabase has a sessions to restore
         guard let cachedSession = client.auth.currentSession else {
@@ -268,6 +342,16 @@ final class AuthService: AuthServiceProtocol {
     }
 
     // MARK: - private methods
+    /// Verifies an auth email link's token. A used, expired or unknown token throws `linkExpired`
+    private func verifyLink(tokenHash: String, type: EmailOTPType) async throws -> AuthResponse {
+        do {
+            return try await client.auth.verifyOTP(tokenHash: tokenHash, type: type)
+        } catch let error as Supabase.AuthError where error.errorCode == .otpExpired {
+            Log.warning("Auth link (\(type)) expired or already used")
+            throw AuthServiceError.linkExpired
+        }
+    }
+
     private func startRefreshCooldown() {
         // Set after `session` in restoreSession: its didSet clears it
         refreshBlockedUntil = .now + refreshCooldown

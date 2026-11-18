@@ -275,6 +275,22 @@ final class AppContainer {
         authStatus.isSigningOut = false
     }
 
+    // MARK: - auth links
+
+    /// Email confirmation link: confirms the email and signs the user in
+    func confirmEmail(tokenHash: String) async throws {
+        try await authService.confirmEmail(tokenHash: tokenHash)
+        // The auth flow is left behind (Verify email...), it must start from Sign in after a sign out
+        authCoordinator.popToRoot()
+    }
+
+    /// Password reset link: opens a recovery session and shows New password over Sign in
+    func beginPasswordRecovery(tokenHash: String) async throws {
+        let email = try await authService.beginPasswordRecovery(tokenHash: tokenHash)
+        authCoordinator.popToRoot()
+        authCoordinator.pushNewPassword(email: email)
+    }
+
     // MARK: - session lost
 
     /// The session can't be renewed (revoked, password changed, deleted user…): forced sign-out.
@@ -332,6 +348,11 @@ final class AppContainer {
     func createVerifyEmailView(email: String, password: String, context: VerifyEmailContext) -> VerifyEmailView {
         let vm = VerifyEmailViewModel(email: email, password: password, context: context, authService: authService, coordinator: authCoordinator)
         return VerifyEmailView(viewModel: vm)
+    }
+
+    func createNewPasswordView(email: String) -> NewPasswordView {
+        let vm = NewPasswordViewModel(email: email, authService: authService, coordinator: authCoordinator)
+        return NewPasswordView(viewModel: vm)
     }
 
     func createProfileView() -> ProfileView {

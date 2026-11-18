@@ -8,7 +8,7 @@ import Foundation
 @MainActor
 @Observable class SignInViewModel {
 
-    #if DEBUG
+    #if false 
     var email: String = AppConfig.DebugCredentials.email          // Config.xcconfig: DEBUG_SIGNIN_ACCOUNT
     var password: String = AppConfig.DebugCredentials.password
     #else
@@ -84,5 +84,9 @@ import Foundation
 
     func createVerifyEmailView(email: String, password: String, context: VerifyEmailContext) -> VerifyEmailView {
         appContainer.createVerifyEmailView(email: email, password: password, context: context)
+    }
+
+    func createNewPasswordView(email: String) -> NewPasswordView {
+        appContainer.createNewPasswordView(email: email)
     }
 }

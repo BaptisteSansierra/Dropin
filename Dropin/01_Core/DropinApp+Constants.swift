@@ -24,6 +24,7 @@ extension DropinApp {
         // redirectTo/emailRedirectTo targets for Supabase auth emails.
         // Web pages for now; will move to the dropin:// scheme (registered in
         // Info.plist's CFBundleURLTypes) once in-app handling is implemented.
+        // Opened in the app as Universal Links when it's installed (AuthLink, applinks:dropin.lat)
         static let resetPasswordURL = URL(string: "https://dropin.lat/reset-password.html")!
         static let emailConfirmedURL = URL(string: "https://dropin.lat/email-confirmed.html")!
         // Mapstr export/import instructions 
@@ -86,5 +87,6 @@ extension DropinApp {
         static let clustering = "settings.map.clustering"
         static let lastSyncedAt = "service.sync.last"
         static let currentSpaceId = "space.current"
+        static let passwordRecoveryPending = "service.auth.recovery_pending"
     }
 }

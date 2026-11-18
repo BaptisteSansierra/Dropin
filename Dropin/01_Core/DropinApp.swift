@@ -38,6 +38,7 @@ struct DropinApp: App {
                 .onOpenURL { url in
                     vm.open(url)
                 }
+                .alertError(error: $vm.authLinkAlert)
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                     vm.willEnterForeground()
                 }
@@ -60,6 +61,16 @@ struct DropinApp: App {
                     .onAppear {
                         vm.signedOutAppeared()
                     }
+                    // Auth email link (confirmation, password reset) being verified
+                    .overlay {
+                        if vm.isVerifyingAuthLink {
+                            ZStack {
+                                Color.overlayAlphaLayer
+                                DropinLoader(style: .overlay, caption: "auth.link.verifying")
+                            }
+                            .ignoresSafeArea()
+                        }
+                    }
             case .signedIn(let signingOut):
                 ZStack {
                     vm.appContainer.createRootView()
@@ -80,6 +91,11 @@ struct DropinApp: App {
                 }
                 .onChange(of: signingOut) {
                     if signingOut { vm.signOutStarted() }
+                }
+                .onAppear {
+                    // The sign-in field can still hold the keyboard (password manager fill) when the auth flow is swapped out
+                    UIApplication.dismissKeyboard()
+                    vm.signedInAppeared()
                 }
         }
     }
