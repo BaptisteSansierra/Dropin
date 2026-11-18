@@ -10,6 +10,8 @@ import Foundation
 @MainActor
 protocol TagRepository {
     func exists(_ tag: Tag) async throws -> Bool
+    /// True if an active tag of the current space is named `name` (compared with `nameKey`), the one with `excluding` id aside
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool
     func create(_ tag: Tag) async throws
     //func delete(_ tag: Tag) async throws
     func update(_ tag: Tag) async throws

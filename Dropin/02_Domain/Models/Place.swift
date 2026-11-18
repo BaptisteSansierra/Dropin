@@ -11,7 +11,7 @@ import ContactFieldKit
 
 struct Place: Hashable, Sendable {
     let id: UUID
-    let name: String
+    private(set) var name: String
     let coordinates: CLLocationCoordinate2D
     let address: String?
     let address2: String?
@@ -140,6 +140,13 @@ struct Place: Hashable, Sendable {
     func updated() -> Place {
         var copy = self
         copy.updatedAt = Date()
+        return copy
+    }
+
+    /// Same place, with its name stripped of surrounding whitespaces (see `String.trimmedName`)
+    func trimmingName() -> Place {
+        var copy = self
+        copy.name = name.trimmedName
         return copy
     }
 

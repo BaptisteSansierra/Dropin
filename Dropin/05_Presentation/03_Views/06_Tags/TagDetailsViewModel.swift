@@ -17,7 +17,10 @@ import SwiftUI
     var tagColor: Color
     var showingRemoveAlert: Bool = false
     var genericError: GenericError? = nil
+    var showingNameExistsAlert = false
     
+    /// Last saved name: restored when a rename is refused
+    @ObservationIgnored private var storedName: String
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored private var coordinator: TagCoordinator
     @ObservationIgnored var locationManager: LocationManager
@@ -40,6 +43,7 @@ import SwiftUI
         self.fetchTagPlaces = fetchTagPlaces
         self.updatePlace = updatePlace
         self.tagColor = tag.color
+        self.storedName = tag.name
     }
     
     // MARK: Actions
@@ -55,11 +59,11 @@ import SwiftUI
     
     // MARK: Navigation
     func pushTagMapView(tagId: UUID) {
-        coordinator.pushTagMapView(tagId: tagId)
+        coordinator.pushTagMapView(tagId: tagId, places: places.map({ PlaceUIModelRef(place: $0) }))
     }
     
     // MARK: UI Child
-    func createPlaceSheetView(place: Binding<PlaceUIModel>) -> PlaceSheetView {
+    func createPlaceSheetView(place: PlaceUIModel) -> PlaceSheetView {
         return appContainer.createPlaceSheetView(place: place,
                                                  mapAction: nil,  // TODO: DRO-34 Allow "Map" action from a category/tag detail
                                                  detent: .constant(.medium))
@@ -67,18 +71,24 @@ import SwiftUI
     
     // MARK: use cases
     func updateTag(shouldUpdatePlaces: Bool = true) async throws {
+        tag.name = tag.name.trimmedName
         do {
             try await updateTag(TagMapper.toDomain(tag))
+            storedName = tag.name
             if shouldUpdatePlaces {
                 updateCachedPlaces()
             }
+        } catch DomainError.Tag.nameAlreadyExists {
+            tag.name = storedName
+            showingNameExistsAlert = true
+            throw DomainError.Tag.nameAlreadyExists
         } catch {
             genericError = .updateDatabase(error)
             throw error
         }
     }
     
-    func fetchPlace() async {
+    func fetchPlaces() async {
         loadingPlaces = true
         defer { loadingPlaces = false }
         do {

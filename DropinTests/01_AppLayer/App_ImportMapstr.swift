@@ -123,7 +123,7 @@ struct App_ImportMapstr {
 
         // Phase 2: write with an empty mapping
         var counter = 0
-        try await importMapstrService.import(plan, mapping: []) { count in
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: "") { count in
             #expect(count == counter + 1)    // Check progress counter
             counter += 1
         } canceled: {
@@ -207,7 +207,7 @@ struct App_ImportMapstr {
         let plan = try await importMapstrService.read(Data(dataStr.utf8))
         #expect(plan.places.count == 2)    // Check found places count counter
 
-        try await importMapstrService.import(plan, mapping: []) { _ in
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
@@ -260,7 +260,7 @@ struct App_ImportMapstr {
         let plan = try await importMapstrService.read(Data(dataStr.utf8))
         #expect(plan.places.count == 2)    // Check found places count counter
 
-        try await importMapstrService.import(plan, mapping: []) { _ in
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
@@ -309,13 +309,13 @@ struct App_ImportMapstr {
         let plan = try await importMapstrService.read(Data(dataStr.utf8))
         #expect(plan.places.count == 2)    // Check found places count counter
 
-        try await importMapstrService.import(plan, mapping: []) { _ in
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 1)    // Check created places counter
             #expect(duplicatePlacesCount == 1)  // Check duplicated places counter
             #expect(createdCategoriesCount == 0)    // Check created categories counter
-            #expect(createdTagsCount == 5)      // Check created tags counter
+            #expect(createdTagsCount == 4)      // Judy's tags only: the duplicate Madeleine's "Restaurant" isn't created
         }
         let places = try await localPlaceRepo.fetch()
         // Check we have 3 places on disk
@@ -339,7 +339,7 @@ struct App_ImportMapstr {
         let plan = try await importMapstrService.read(Data(dataStr.utf8))
         #expect(plan.places.count == 2)    // Check found places count counter
 
-        try await importMapstrService.import(plan, mapping: []) { _ in
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)    // Check created places counter
@@ -369,7 +369,7 @@ struct App_ImportMapstr {
             CategoryConversion(tagID: "Restaurant", target: .new(name: "Restaurant", color: "FF5161", icon: .sf("fork.knife")))
         ]
 
-        try await importMapstrService.import(plan, mapping: mapping) { _ in
+        try await importMapstrService.import(plan, mapping: mapping, tagImport: false, tagName: "") { _ in
         } canceled: {
         } completion: { createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount in
             #expect(createdPlacesCount == 2)
@@ -407,5 +407,178 @@ struct App_ImportMapstr {
         #expect(judy.importedAt == categories.first?.importedAt)
         #expect(madeleine.importSrc == ImportSource.mapstr)
         #expect(judy.importSrc == ImportSource.mapstr)
+    }
+
+    ///
+    /// Test ImportMapstrService with tagImport off:
+    ///  no import tag is created, even though a tag name is provided
+    ///
+    @Test func importMapstrServiceTagImportOff() async throws {
+        let tagName = "Mapstr import"
+        let importMapstrService = importService()
+        let plan = try await importMapstrService.read(Data(dataStr.utf8))
+
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, _, _, createdTagsCount in
+            #expect(createdPlacesCount == 2)
+            #expect(createdTagsCount == 5)      // Only the file's tags
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check no import tag on disk
+        #expect(tags.count == 5)
+        #expect(!tags.contains { $0.name == tagName })
+        // Check no place got the import tag
+        #expect(places.count == 2)
+        #expect(places.allSatisfy { place in !place.tags.contains { $0.name == tagName } })
+    }
+
+    ///
+    /// Test ImportMapstrService with tagImport on:
+    ///  a single import tag is created and added to every imported place, duplicates (not imported) stay untouched
+    ///
+    @Test func importMapstrServiceTagImportOn() async throws {
+        let tagName = "Mapstr import"
+        // Fill the local database: madeleine is a duplicate, it won't be imported
+        let madeleineCoords = CLLocationCoordinate2D(latitude: 48.86985199999999, longitude: 2.324822)
+        let madeleineLocal = Place(id: UUID(), name: madeleineName, coordinates: madeleineCoords, address: "nop")
+        try await UpsertPlace(repository: localPlaceRepo)(madeleineLocal)
+
+        let importMapstrService = importService()
+        let plan = try await importMapstrService.read(Data(dataStr.utf8))
+
+        try await importMapstrService.import(plan, mapping: [], tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, duplicatePlacesCount, _, createdTagsCount in
+            #expect(createdPlacesCount == 1)
+            #expect(duplicatePlacesCount == 1)
+            #expect(createdTagsCount == 5)      // Judy's 4 tags + the import tag (the duplicate Madeleine's "Restaurant" isn't created)
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check a single import tag on disk
+        let importTags = tags.filter { $0.name == tagName }
+        #expect(tags.count == 5)
+        #expect(importTags.count == 1)
+        guard let importTag = importTags.first else { return }
+        // Check the imported place got it, next to its own tags
+        guard let judy = places.first(where: { $0.name == judyName }) else {
+            Issue.record("judy not found")
+            return
+        }
+        #expect(judy.tags.count == 5)
+        #expect(judy.tags.contains { $0.id == importTag.id })
+        // Check the local duplicate didn't
+        guard let madeleine = places.first(where: { $0.id == madeleineLocal.id }) else {
+            Issue.record("local madeleine not found")
+            return
+        }
+        #expect(!madeleine.tags.contains { $0.id == importTag.id })
+    }
+
+    ///
+    /// Test ImportMapstrService with tagImport on, the import tag named like a tag of the file:
+    ///  no two tags share the name, every imported place has it once
+    ///
+    @Test func importMapstrServiceTagImportNameInFile() async throws {
+        let tagName = "Restaurant"      // Madeleine already has it in the file, Judy doesn't
+        let importMapstrService = importService()
+        let plan = try await importMapstrService.read(Data(dataStr.utf8))
+
+        try await importMapstrService.import(plan, mapping: [], tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { _, _, _, _ in
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check a single tag with that name on disk
+        #expect(tags.filter { $0.name.lowercased() == tagName.lowercased() }.count == 1)
+        // Check every imported place has it, once
+        #expect(places.count == 2)
+        for place in places {
+            #expect(place.tags.filter { $0.name.lowercased() == tagName.lowercased() }.count == 1, "\(place.name)")
+        }
+    }
+
+    ///
+    /// Test ImportMapstrService with tagImport on, the import tag named like an existing local tag:
+    ///  the local tag is used, no second tag with that name
+    ///
+    @Test func importMapstrServiceTagImportNameExists() async throws {
+        let tagName = "Mapstr import"
+        let localTag = Dropin.Tag(name: tagName, color: String.randomColor())
+        try await UpsertTag(repository: localTagRepo)(localTag)
+
+        let importMapstrService = importService()
+        let plan = try await importMapstrService.read(Data(dataStr.utf8))
+
+        try await importMapstrService.import(plan, mapping: [], tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { _, _, _, createdTagsCount in
+            #expect(createdTagsCount == 5)      // Only the file's tags: the import tag already existed
+        }
+        let tags = try await localTagRepo.fetch()
+        let places = try await localPlaceRepo.fetch()
+        // Check a single tag with that name on disk: the local one
+        let namedTags = tags.filter { $0.name.lowercased() == tagName.lowercased() }
+        #expect(namedTags.map(\.id) == [localTag.id])
+        // Check every imported place has the local tag
+        #expect(places.count == 2)
+        #expect(places.allSatisfy { place in place.tags.contains { $0.id == localTag.id } })
+    }
+
+    ///
+    /// Test ImportMapstrService with tagImport on, every place being a duplicate:
+    ///  nothing is imported, so no import tag is created
+    ///
+    @Test func importMapstrServiceTagImportAllDuplicates() async throws {
+        let tagName = "Mapstr import"
+        // Fill the local database with both places
+        let madeleineCoords = CLLocationCoordinate2D(latitude: 48.86985199999999, longitude: 2.324822)
+        let judyCoords = CLLocationCoordinate2D(latitude: 48.862383, longitude: 2.3405099)
+        try await UpsertPlace(repository: localPlaceRepo)(Place(id: UUID(), name: madeleineName, coordinates: madeleineCoords, address: "nop"))
+        try await UpsertPlace(repository: localPlaceRepo)(Place(id: UUID(), name: judyName, coordinates: judyCoords, address: "nop"))
+
+        let importMapstrService = importService()
+        let plan = try await importMapstrService.read(Data(dataStr.utf8))
+
+        try await importMapstrService.import(plan, mapping: [], tagImport: true, tagName: tagName) { _ in
+        } canceled: {
+        } completion: { createdPlacesCount, duplicatePlacesCount, _, _ in
+            #expect(createdPlacesCount == 0)
+            #expect(duplicatePlacesCount == 2)
+        }
+        let tags = try await localTagRepo.fetch()
+        // Check no import tag on disk
+        #expect(!tags.contains { $0.name == tagName })
+    }
+
+    ///
+    /// Test ImportMapstrService matches tags with `nameKey`, no lemma / diacritic folding:
+    ///  "cafe " reuses an existing "Cafe", "Cafés" doesn't
+    ///
+    @Test func importMapstrServiceMatchesTagsStrictly() async throws {
+        let localCafe = Dropin.Tag(name: "cafe ", color: String.randomColor())
+        let localCafes = Dropin.Tag(name: "Cafés", color: String.randomColor())
+        try await UpsertTag(repository: localTagRepo)(localCafe)
+        try await UpsertTag(repository: localTagRepo)(localCafes)
+
+        let importMapstrService = importService()
+        let plan = try await importMapstrService.read(Data(dataStr.utf8))
+
+        try await importMapstrService.import(plan, mapping: [], tagImport: false, tagName: "") { _ in
+        } canceled: {
+        } completion: { _, _, _, createdTagsCount in
+            #expect(createdTagsCount == 4)      // The file's 5 tags but "Cafe"
+        }
+        let tags = try await localTagRepo.fetch()
+        #expect(tags.filter { $0.name.nameKey == "cafe" }.count == 1)
+        guard let judy = try await localPlaceRepo.fetch().first(where: { $0.name == judyName }) else {
+            Issue.record("judy not found")
+            return
+        }
+        #expect(judy.tags.contains { $0.id == localCafe.id })
+        #expect(!judy.tags.contains { $0.id == localCafes.id })
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 struct Category: Hashable, Sendable {
     let id: UUID
-    let name: String
+    private(set) var name: String
     let icon: Icon
     let color: String
     let createdAt: Date
@@ -75,6 +75,13 @@ struct Category: Hashable, Sendable {
     func updated() -> Category {
         var copy = self
         copy.updatedAt = Date()
+        return copy
+    }
+
+    /// Same category, with its name stripped of surrounding whitespaces (see `String.trimmedName`)
+    func trimmingName() -> Category {
+        var copy = self
+        copy.name = name.trimmedName
         return copy
     }
 

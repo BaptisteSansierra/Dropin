@@ -66,7 +66,8 @@ actor ImportDropinService: ImportServiceProtocol {
             throw ImportError.corrupted(error.localizedDescription)
         }
         Log.info("Found \(export.places.count) places, \(export.tags.count) tags, \(export.categories.count) categories")
-        guard export.places.count + export.tags.count + export.categories.count > 0 else {
+        // Tags and categories are only created for imported places: no place, nothing to import
+        guard export.places.count > 0 else {
             throw ImportError.emptyFile
         }
         return export
@@ -129,76 +130,80 @@ actor ImportDropinService: ImportServiceProtocol {
         // this importer assigns a fresh identity and stamps every date with importDate.
         let importDate = Date()
 
-        // File-local ids -> local entities (either existing ones with the same name, or newly created)
-        var categoriesByFileId = [UUID: Category]()
-        var tagsByFileId = [UUID: Tag]()
+        // File-local ids, only referenced by the places
+        let categoriesByFileId = Dictionary(export.categories.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let tagsByFileId = Dictionary(export.tags.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let importTagName = tagImport ? tagName.trimmedName.nonEmpty : nil
 
-        // Upsert categories and tags first (places depend on them)
-        for categoryDTO in export.categories {
-            try Task.checkCancellation()
-            if let existingCategory = existingCategories.first(where: { $0.name == categoryDTO.name && $0.isActive }) {
-                categoriesByFileId[categoryDTO.id] = existingCategory
-            } else {
-                let category = categoryDTO.toDomain(importDate: importDate)
-                try await upsertCategory(category, shouldSave: false)
-                categoriesByFileId[categoryDTO.id] = category
-                createdCategoriesCount += 1
-            }
-        }
-        for tagDTO in export.tags {
-            try Task.checkCancellation()
-            if let existingTag = existingTags.first(where: { $0.name == tagDTO.name && $0.isActive }) {
-                tagsByFileId[tagDTO.id] = existingTag
-            } else {
-                let tag = tagDTO.toDomain(importDate: importDate)
-                try await upsertTag(tag, shouldSave: false)
-                tagsByFileId[tagDTO.id] = tag
-                createdTagsCount += 1
-            }
-        }
-        
-        // Create importTag if needed: all created places will be tagged
-        var importTag: Tag?
-        if tagImport {
-            let importTagTmp = Tag(name: tagName, color: String.randomColor())
-            importTag = importTagTmp
-            try await upsertTag(importTagTmp, shouldSave: false)
-            createdTagsCount += 1
-        }
-
-        // Upsert places, resolving their file-local category / tags references
         var upsertCount = 0
         for placeDTO in export.places {
             try Task.checkCancellation()
-
-            let category = placeDTO.categoryId.flatMap { categoriesByFileId[$0] }
-            var tags = placeDTO.tagIds.compactMap { tagsByFileId[$0] }
-            if let importTag = importTag {
-                tags.append(importTag)
-            }
-            let place = placeDTO.toDomain(tags: tags, category: category, importDate: importDate)
-            try await processPlace(place)
-
+            try await processPlace(placeDTO,
+                                   categoriesByFileId: categoriesByFileId,
+                                   tagsByFileId: tagsByFileId,
+                                   importTagName: importTagName,
+                                   importDate: importDate)
             upsertCount += 1
             await progress(upsertCount)
         }
     }
 
-    private func processPlace(_ place: Place) async throws {
+    private func processPlace(_ placeDTO: DropinPlaceDTO,
+                              categoriesByFileId: [UUID: DropinCategoryDTO],
+                              tagsByFileId: [UUID: DropinTagDTO],
+                              importTagName: String?,
+                              importDate: Date) async throws {
         // Avoid creating duplicates
-        guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
+        guard firstPlaceDuplicate(name: placeDTO.name, coordinates: placeDTO.coordinates) == nil else {
             duplicatePlacesCount += 1
             // NOTE: the place from import is ignored as an existing place was found
             //       The existing place is NOT updated with the imported place attributed
             return
         }
 
+        // Category and tags are resolved for created places only: an unused one is never created
+        var category: Category?
+        if let categoryDTO = placeDTO.categoryId.flatMap({ categoriesByFileId[$0] }) {
+            category = try await resolveCategory(categoryDTO.toDomain(importDate: importDate))
+        }
+        var tags: [Tag] = []
+        for tagDTO in placeDTO.tagIds.compactMap({ tagsByFileId[$0] }) {
+            let tag = try await resolveTag(tagDTO.toDomain(importDate: importDate))
+            if !tags.contains(tag) { tags.append(tag) }
+        }
+        if let importTagName {
+            let tag = try await resolveTag(Tag(name: importTagName, color: String.randomColor(),
+                                               importedAt: importDate, importSrc: .dropin))
+            if !tags.contains(tag) { tags.append(tag) }
+        }
+
+        let place = placeDTO.toDomain(tags: tags, category: category, importDate: importDate)
         // Created place is added to existing places array so we ensure there's no duplicates in the file
         existingHardPlaces.append(place)
 
         // Add to database
         try await upsertPlace(place, shouldSave: false)
         createdPlacesCount += 1
+    }
+
+    /// The active category named like `candidate` (`nameKey`), else `candidate` once created
+    private func resolveCategory(_ candidate: Category) async throws -> Category {
+        if let existing = existingCategories.firstActive(named: candidate.name) { return existing }
+        let category = candidate.trimmingName()
+        try await upsertCategory(category, shouldSave: false)
+        existingCategories.append(category)
+        createdCategoriesCount += 1
+        return category
+    }
+
+    /// The active tag named like `candidate` (`nameKey`), else `candidate` once created
+    private func resolveTag(_ candidate: Tag) async throws -> Tag {
+        if let existing = existingTags.firstActive(named: candidate.name) { return existing }
+        let tag = candidate.trimmingName()
+        try await upsertTag(tag, shouldSave: false)
+        existingTags.append(tag)
+        createdTagsCount += 1
+        return tag
     }
 
     private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Place? {

@@ -23,6 +23,10 @@ final class MockCategoryRepository: CategoryRepository {
         self.categories = initialCategories
     }
 
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool {
+        categories.contains { $0.isActive && $0.id != id && $0.name.nameKey == name.nameKey }
+    }
+
     func exists(_ place: Dropin.Category) async throws -> Bool {
         if let _ = categories.first(where: { $0.id == place.id }) {
             return true
@@ -45,6 +49,10 @@ final class MockCategoryRepository: CategoryRepository {
      */
     
     func update(_ category: Dropin.Category) async throws {
+        guard let index = categories.firstIndex(where: { $0.id == category.id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        categories[index] = category
     }
     
     func fetch() async throws -> [Dropin.Category] {

@@ -10,14 +10,25 @@ import SwiftUI
 struct CategoryMapView: View {
     
     @State private var viewModel: CategoryMapViewModel
+    @State private var mapReloadGen: Int = 0
+    @Environment(RootView.ActionBus.self) private var actionBus
 
     init(viewModel: CategoryMapViewModel) {
         self.viewModel = viewModel
     }
     
     var body: some View {
-        viewModel.createGenericMapView()
+        viewModel.createGenericMapView(mapReloadGen: $mapReloadGen)
             .ignoresSafeArea()
+            .onReceive(actionBus.actionPublisher) { handleAction($0) }
+    }
+    
+    private func handleAction(_ action: RootView.ActionBus.Action) {
+        switch action {
+            case .reloadMainPlaces:
+                mapReloadGen += 1
+            default: ()
+        }
     }
 }
 
@@ -29,7 +40,7 @@ struct MockCategoryMapView: View {
     @State private var category: CategoryUIModel
 
     var body: some View {
-        mock.appContainer.createCategoryMapView(categoryId: category.id)
+        mock.appContainer.createCategoryMapView(categoryId: category.id, places: category.places)
     }
     
     init() {

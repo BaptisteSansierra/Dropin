@@ -19,21 +19,29 @@ import SwiftUI
     // MARK: navigation methods
     
     func pushPlaceEditView(placeRef: PlaceUIModelRef) {
-        path.append(CategoryNavigationItem.groupPlace(placeRef: placeRef))
+        path.append(.groupPlaceEdit(placeRef: placeRef))
     }
 
     func pushCategoryDetailsView(categoryId: UUID) {
-        path.append(CategoryNavigationItem.groupDetails(categoryId: categoryId))
+        path.append(.groupDetails(categoryId: categoryId))
     }
 
-    func pushCategoryMapView(categoryId: UUID) {
-        path.append(CategoryNavigationItem.groupMap(categoryId: categoryId))
+    func pushCategoryMapView(categoryId: UUID, places: [PlaceUIModelRef]) {
+        path.append(.groupMap(categoryId: categoryId, places: places))
+    }
+
+    func pushLookupPlacesEditView(placeRef: PlaceUIModelRef) {
+        path.append(.lookupPlacesEditView(placeRef: placeRef))
     }
 
     func pushUndefinedDummyView() {
-        path.append(CategoryNavigationItem.undefinedDummyView)
+        path.append(.undefinedDummyView)
     }
     
+    func popToRoot() {
+        path.removeAll()
+    }
+
     func pop() {
         _ = path.popLast()
     }
@@ -41,8 +49,9 @@ import SwiftUI
 
 enum CategoryNavigationItem: Hashable {
     case groupDetails(categoryId: UUID)
-    case groupMap(categoryId: UUID)
-    case groupPlace(placeRef: PlaceUIModelRef)
+    case groupMap(categoryId: UUID, places: [PlaceUIModelRef])
+    case groupPlaceEdit(placeRef: PlaceUIModelRef)
+    case lookupPlacesEditView(placeRef: PlaceUIModelRef)
     // development
     case undefinedDummyView
 }

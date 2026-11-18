@@ -198,55 +198,9 @@ actor ImportMapstrService: ImportServiceProtocol {
         let importDate = Date()
         let resolutions = plan.resolve(mapping)
         let resolutionByPlaceID = Dictionary(uniqueKeysWithValues: resolutions.map { ($0.placeID, $0) })
-
-        // Resolve (existing or newly-created) categories for every converted tag.
-        var categoryByTagID: [String: Category] = [:]
-        for conversion in mapping {
-            try Task.checkCancellation()
-            switch conversion.target {
-                case .existing(let categoryID):
-                    if let category = existingCategories.first(where: { $0.id == categoryID }) {
-                        categoryByTagID[conversion.tagID] = category
-                    } else {
-                        Log.warning("MAPSTR import: existing category \(categoryID) not found for tag \(conversion.tagID)")
-                    }
-                case .new(let name, let color, let icon):
-                    let category = Category(name: name, color: color, icon: icon,
-                                            importedAt: importDate, importSrc: .mapstr)
-                    try await upsertCategory(category, shouldSave: false)
-                    existingCategories.append(category)
-                    createdCategoriesCount += 1
-                    categoryByTagID[conversion.tagID] = category
-            }
-        }
-
-        // A tag is only ever created/reused if at least one place keeps it
-        // (a converted tag that never loses creates no tag).
-        let keptTagIDs = Set(resolutions.flatMap(\.keptTagIDs))
-        var tagByID: [String: Tag] = [:]
-        for tagID in keptTagIDs {
-            try Task.checkCancellation()
-            guard let mapstrTag = plan.tags.first(where: { $0.id == tagID }) else { continue }
-            if let existingTag = existingTags.first(where: { $0.name.lemmaNormalized == mapstrTag.name.lemmaNormalized && $0.isActive }) {
-                tagByID[tagID] = existingTag
-            } else {
-                let tag = Tag(name: mapstrTag.name, color: mapstrTag.color,
-                              importedAt: importDate, importSrc: .mapstr)
-                try await upsertTag(tag, shouldSave: false)
-                existingTags.append(tag)
-                createdTagsCount += 1
-                tagByID[tagID] = tag
-            }
-        }
-        
-        // Create importTag if needed: all created places will be tagged
-        var importTag: Tag?
-        if tagImport {
-            let importTagTmp = Tag(name: tagName, color: String.randomColor())
-            importTag = importTagTmp
-            try await upsertTag(importTagTmp, shouldSave: false)
-            createdTagsCount += 1
-        }
+        let targetByTagID = Dictionary(mapping.map { ($0.tagID, $0.target) }, uniquingKeysWith: { first, _ in first })
+        let tagByID = Dictionary(plan.tags.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let importTagName = tagImport ? tagName.trimmedName.nonEmpty : nil
 
         // Create all places
         var upsertCount = 0
@@ -255,9 +209,9 @@ actor ImportMapstrService: ImportServiceProtocol {
             guard let resolution = resolutionByPlaceID[place.id] else { continue }
             try await processPlace(place,
                                    resolution: resolution,
-                                   categoryByTagID: categoryByTagID,
+                                   targetByTagID: targetByTagID,
                                    tagByID: tagByID,
-                                   importTag: importTag,
+                                   importTagName: importTagName,
                                    importDate: importDate)
             upsertCount += 1
             await progress(upsertCount)
@@ -266,9 +220,9 @@ actor ImportMapstrService: ImportServiceProtocol {
 
     private func processPlace(_ place: MapstrPlace,
                               resolution: PlaceResolution,
-                              categoryByTagID: [String: Category],
-                              tagByID: [String: Tag],
-                              importTag: Tag?,
+                              targetByTagID: [String: CategoryConversion.Target],
+                              tagByID: [String: MapstrTag],
+                              importTagName: String?,
                               importDate: Date) async throws {
         // Avoid creating duplicates
         guard firstPlaceDuplicate(name: place.name, coordinates: place.coordinates) == nil else {
@@ -278,10 +232,30 @@ actor ImportMapstrService: ImportServiceProtocol {
             return
         }
 
-        let category = resolution.categoryTagID.flatMap { categoryByTagID[$0] }
-        var tags = resolution.keptTagIDs.compactMap { tagByID[$0] }
-        if let importTag = importTag {
-            tags.append(importTag)
+        // Category and tags are resolved for created places only: an unused one is never created
+        var category: Category?
+        if let target = resolution.categoryTagID.flatMap({ targetByTagID[$0] }) {
+            switch target {
+                case .existing(let categoryID):
+                    category = existingCategories.first(where: { $0.id == categoryID })
+                    if category == nil {
+                        Log.warning("MAPSTR import: existing category \(categoryID) not found for place \(place.name)")
+                    }
+                case .new(let name, let color, let icon):
+                    category = try await resolveCategory(Category(name: name, color: color, icon: icon,
+                                                                  importedAt: importDate, importSrc: .mapstr))
+            }
+        }
+        var tags: [Tag] = []
+        for mapstrTag in resolution.keptTagIDs.compactMap({ tagByID[$0] }) {
+            let tag = try await resolveTag(Tag(name: mapstrTag.name, color: mapstrTag.color,
+                                               importedAt: importDate, importSrc: .mapstr))
+            if !tags.contains(tag) { tags.append(tag) }
+        }
+        if let importTagName {
+            let tag = try await resolveTag(Tag(name: importTagName, color: String.randomColor(),
+                                               importedAt: importDate, importSrc: .mapstr))
+            if !tags.contains(tag) { tags.append(tag) }
         }
 
         let newPlace = Place(id: UUID(),
@@ -300,6 +274,26 @@ actor ImportMapstrService: ImportServiceProtocol {
 
         try await upsertPlace(newPlace, shouldSave: false)
         createdPlacesCount += 1
+    }
+
+    /// The active category named like `candidate` (`nameKey`), else `candidate` once created
+    private func resolveCategory(_ candidate: Category) async throws -> Category {
+        if let existing = existingCategories.firstActive(named: candidate.name) { return existing }
+        let category = candidate.trimmingName()
+        try await upsertCategory(category, shouldSave: false)
+        existingCategories.append(category)
+        createdCategoriesCount += 1
+        return category
+    }
+
+    /// The active tag named like `candidate` (`nameKey`), else `candidate` once created
+    private func resolveTag(_ candidate: Tag) async throws -> Tag {
+        if let existing = existingTags.firstActive(named: candidate.name) { return existing }
+        let tag = candidate.trimmingName()
+        try await upsertTag(tag, shouldSave: false)
+        existingTags.append(tag)
+        createdTagsCount += 1
+        return tag
     }
 
     private func firstPlaceDuplicate(name: String, coordinates: CLLocationCoordinate2D) -> Place? {

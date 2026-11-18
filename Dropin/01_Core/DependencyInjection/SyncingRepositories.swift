@@ -73,6 +73,7 @@ final class SyncingCategoryRepository: CategoryRepository {
     }
     
     func exists(_ category: Category) async throws -> Bool { try await wrapped.exists(category) }
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool { try await wrapped.nameExists(name, excluding: id) }
     func fetch() async throws -> [Category] { try await wrapped.fetch() }
     func fetchWithPlaceCount() async throws -> [(Category, Int)] { try await wrapped.fetchWithPlaceCount() }
     func fetch(_ id: UUID) async throws -> Category { try await wrapped.fetch(id) }
@@ -247,6 +248,7 @@ final class SyncingTagRepository: TagRepository {
     }
     
     func exists(_ tag: Tag) async throws -> Bool { try await wrapped.exists(tag) }
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool { try await wrapped.nameExists(name, excluding: id) }
     func fetch() async throws -> [Tag] { try await wrapped.fetch() }
     func fetchWithPlaceCount() async throws -> [(Tag, Int)] { try await wrapped.fetchWithPlaceCount() }
     func fetch(_ id: UUID) async throws -> Tag { try await wrapped.fetch(id) }

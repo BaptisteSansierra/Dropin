@@ -48,8 +48,8 @@ import CoreLocation
 //        push(NavigationItem.dropAPin)
 //    }
 
-    func pushLookupPlacesEditView(placeId: UUID) {
-        push(NavigationItem.lookupPlacesEditView(placeId: placeId))
+    func pushLookupPlacesEditView(placeRef: PlaceUIModelRef) {
+        push(NavigationItem.lookupPlacesEditView(placeRef: placeRef))
     }
 
     func pushCreatePlaceFullView() {
@@ -100,7 +100,8 @@ enum NavigationItem: Hashable {
     
     case placeEditView(placeId: UUID)
     case lookupPlacesView
-    case lookupPlacesEditView(placeId: UUID)
+    //case lookupPlacesEditView(placeId: UUID)
+    case lookupPlacesEditView(placeRef: PlaceUIModelRef)
     case placeCreateView
     //case dropAPin
     

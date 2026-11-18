@@ -148,6 +148,9 @@ struct TagCreateView: View {
             .textStyle(.body)
             .autocorrectionDisabled()
             .focused($isNameFieldFocused)
+            .onSubmit {
+                createdTagName = createdTagName.trimmedName
+            }
             .overlay {
                 if isShowingNameWarn {
                     ZStack(alignment: .leading) {
@@ -161,6 +164,7 @@ struct TagCreateView: View {
 
     // MARK: - private methods
     private func createTag() {
+        createdTagName = createdTagName.trimmedName
         guard sanityCheck() else { return }
         onCreate(createdTagName,
                  createdTagColor.hex)
@@ -214,8 +218,8 @@ struct TagCreateView: View {
     
     private func alreadyExists() -> Bool {
         guard !createdTagName.isTrimmedEmpty else { return false }
-        let low = createdTagName.lowercased()
-        guard let _ = existing.firstIndex(where: { $0.lowercased() == low }) else {
+        let key = createdTagName.nameKey
+        guard let _ = existing.firstIndex(where: { $0.nameKey == key }) else {
             return false
         }
         return true

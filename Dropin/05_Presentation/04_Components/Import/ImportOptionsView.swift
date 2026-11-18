@@ -50,7 +50,10 @@ struct ImportOptionsView: View {
                             .lineLimit(1)
                             .textStyle(.subheadline)
                             .autocorrectionDisabled()
-                            .onSubmit(onSubmit)
+                            .onSubmit {
+                                tagName = tagName.trimmedName
+                                onSubmit()
+                            }
                     }
                     .frame(height: 50)
                 }

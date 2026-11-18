@@ -30,6 +30,11 @@ public final class CategoryRepositoryImpl: CategoryRepository {
         }
     }
 
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool {
+        let key = name.nameKey
+        return try await fetch().contains { $0.isActive && $0.id != id && $0.name.nameKey == key }
+    }
+
     func create(_ category: Category) async throws {
         let sdCategory = CategoryMapper.toData(category, spaceId: spaceContext.currentSpaceId)
         modelContext.insert(sdCategory)
@@ -72,7 +77,10 @@ public final class CategoryRepositoryImpl: CategoryRepository {
                                             sortBy: [SortDescriptor(\CategoryRecord.name),
                                                      SortDescriptor(\CategoryRecord.createdAt)])
         let sdCategories = try modelContext.fetch(desc)
-        return sdCategories.map { (CategoryMapper.toDomain($0), $0.places.count) }
+        return sdCategories.map { (CategoryMapper.toDomain($0),
+                                   $0.places
+                                       .filter { $0.deletedAt == nil }
+                                       .count) }
     }
 
     func fetch(_ id: UUID) async throws -> Category {

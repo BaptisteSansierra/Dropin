@@ -17,12 +17,16 @@ enum DomainError: Error {
     }
     enum Tag: Error {
         case alreadyExists
+        /// Another active tag has the same name (case-insensitive, surrounding whitespaces ignored)
+        case nameAlreadyExists
         case missingName
         case invalidColor
         case notFound
     }
     enum Category: Error {
         case alreadyExists
+        /// Another active category has the same name (case-insensitive, surrounding whitespaces ignored)
+        case nameAlreadyExists
         case missingName
         //case undefinedMarker  // fixed by making Icon an enum
         case invalidColor

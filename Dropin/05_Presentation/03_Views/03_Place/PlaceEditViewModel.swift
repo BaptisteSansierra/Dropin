@@ -36,17 +36,26 @@ import CoreLocation
     }
 
     // MARK: UI Childs
-    func body(place: Binding<PlaceUIModel>, showMissingName: Binding<Bool>) -> some View {
+    func body(place: PlaceUIModel,
+              showMissingName: Binding<Bool>,
+              onDelete: @escaping () -> Void) -> some View {
         return appContainer.createPlaceEditContentView(place: place,
                                                        mode: .edit,
-                                                       showMissingName: showMissingName)
+                                                       showMissingName: showMissingName,
+                                                       onDelete: onDelete)
     }
 
     // MARK: Use cases
+    func deletePlace(_ place: PlaceUIModel, deletedAt: Date) async throws {
+        place.deletedAt = deletedAt
+        try await updatePlace(PlaceMapper.toDomain(place))
+    }
+    
     func updatePlace(_ place: PlaceUIModel,
                      addImages: [PlaceImageUIModel],
                      deleteImageIds: [UUID],
                      completion: () -> Void) async throws {
+        place.name = place.name.trimmedName
         for img in addImages {
             guard let uiImage = img.fullImage else { continue }
             _ = try await addPlaceImage(placeId: place.id, image: uiImage)

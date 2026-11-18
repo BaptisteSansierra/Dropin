@@ -18,4 +18,6 @@ protocol NavigationCoordinator {
 @MainActor
 protocol PlaceNavigationCoordinator: NavigationCoordinator {
     func pushPlaceEditView(placeRef: PlaceUIModelRef)
+    func pushLookupPlacesEditView(placeRef: PlaceUIModelRef)
+    func popToRoot()
 }

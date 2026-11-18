@@ -16,11 +16,15 @@ struct UpdateTag {
     }
     
     func callAsFunction(_ tag: Tag) async throws {
-        guard tag.name.count > 0 else {
+        let tag = tag.trimmingName()
+        guard !tag.name.isEmpty else {
             throw DomainError.Tag.missingName
         }
         if try await !repository.exists(tag) {
             throw DomainError.Tag.notFound
+        }
+        if try await repository.nameExists(tag.name, excluding: tag.id) {
+            throw DomainError.Tag.nameAlreadyExists
         }
         return try await repository.update(tag)
     }

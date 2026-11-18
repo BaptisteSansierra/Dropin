@@ -175,7 +175,7 @@ import MapKit
                                                  filter: bindingFilter)
     }
 
-    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
+    func createPlaceSheetView(place: PlaceUIModel, detent: Binding<PresentationDetent>) -> PlaceSheetView {
         // Display the "Show on map" button only if view is presented from list
         let mapAction = {
             self.selectedTab = 0
@@ -189,25 +189,55 @@ import MapKit
     func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
         return appContainer.createPlaceEditView(place: place)
     }
-
-    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>,
-                                draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
-                                draftPlacePoiColor: Binding<Color?>) -> LookupPlacesView {
-        return appContainer.createLookupPlacesView(draftPlace: draftPlace,
-                                                   draftPlacePoiCategory: draftPlacePoiCategory,
-                                                   draftPlacePoiColor: draftPlacePoiColor)
-    }
     
-    func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
-        return appContainer.createLookupPlacesView(place: place)
+    func createLookupPlacesView(place: PlaceUIModel) -> LookupPlacesView {
+        return appContainer.createLookupPlacesView(editedPlace: place) { item in
+            // Apply change on the existing place
+            // This VM is not in charge of propagating to database (PlaceEditView is in charge)
+            place.address = item.address
+            place.coordinates = item.coordinates
+            // And pop address lookup view
+            self.coordinator.pop()
+            #if DEBUG
+            // Check the navigation path is correct
+            guard let lastNavItem = self.coordinator.path.last else {
+                assertionFailure("Empty navigation path")
+                return
+            }
+            switch lastNavItem {
+                case .placeEditView: ()
+                default: assertionFailure("Unexpected navigation path, '.placeEditView' is supposed to be last")
+            }
+            #endif
+        }
     }
 
-//    func createPlaceCreateView(coordinates: CLLocationCoordinate2D,
-//                               address: String?,
-//                               name: String,
-//                               marker: String?,
-//                               tags: [UUID],
-//                               category: UUID?) -> PlaceCreateView {
+    func createLookupPlacesView() -> LookupPlacesView {
+        return appContainer.createLookupPlacesView { item in
+            // Create a draftPlace from picked item
+            if let mapItemID = item.mapItem.identifier {
+                self.draftPlace = PlaceUIModel(name: item.mapItem.name,
+                                               coordinates: item.coordinates,
+                                               address: item.address,
+                                               applePlaceID: mapItemID.rawValue)
+                if let poiCategory = item.mapItem.pointOfInterestCategory {
+                    self.draftPlacePoiCategory = poiCategory
+                    if let tint = poiCategory.tint {
+                        self.draftPlacePoiColor = tint
+                    } else {
+                        self.draftPlacePoiColor = Color.random()
+                    }
+                }
+            } else {
+                self.draftPlace = PlaceUIModel(name: item.mapItem.name,
+                                               coordinates: item.coordinates,
+                                               address: item.address)
+            }
+            // Pop to root
+            self.coordinator.popToRoot()
+        }
+    }
+
     func createPlaceCreateView() -> PlaceCreateView {
         guard let draftPlace = draftPlace else {
             fatalError("undefined draftPlace")

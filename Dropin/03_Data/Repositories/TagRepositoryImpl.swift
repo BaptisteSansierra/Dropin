@@ -30,6 +30,11 @@ public final class TagRepositoryImpl: TagRepository {
         }
     }
 
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool {
+        let key = name.nameKey
+        return try await fetch().contains { $0.isActive && $0.id != id && $0.name.nameKey == key }
+    }
+
     func create(_ tag: Tag) async throws {
         let sdTag = TagMapper.toData(tag, spaceId: spaceContext.currentSpaceId)
         modelContext.insert(sdTag)
@@ -71,7 +76,10 @@ public final class TagRepositoryImpl: TagRepository {
                                           sortBy: [SortDescriptor(\TagRecord.name),
                                                    SortDescriptor(\TagRecord.createdAt)])
         let sdTags = try modelContext.fetch(desc)
-        return sdTags.map { (TagMapper.toDomain($0), $0.places.count) }
+        return sdTags.map { (TagMapper.toDomain($0),
+                             $0.places
+                                 .filter { $0.deletedAt == nil }
+                                 .count) }
     }
 
     func fetch(_ id: UUID) async throws -> Tag {

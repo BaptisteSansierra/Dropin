@@ -18,6 +18,10 @@ import SwiftUI
     var showingRemoveAlert: Bool = false
     var showingMarkerList: Bool = false
     var genericError: GenericError?
+    var showingNameExistsAlert = false
+
+    /// Last saved name: restored when a rename is refused
+    @ObservationIgnored private var storedName: String
 
     @ObservationIgnored private var appContainer: AppContainer
     @ObservationIgnored var locationManager: LocationManager
@@ -37,6 +41,7 @@ import SwiftUI
         self.locationManager = locationManager
         self.coordinator = coordinator
         self.category = category
+        self.storedName = category.name
         self.updateCategory = updateCategory
         self.fetchCategoryPlaces = fetchCategoryPlaces
         self.updatePlace = updatePlace
@@ -55,11 +60,11 @@ import SwiftUI
 
     // MARK: Navigation
     func pushCategoryMapView() {
-        coordinator.pushCategoryMapView(categoryId: category.id)
+        coordinator.pushCategoryMapView(categoryId: category.id, places: places.map({ PlaceUIModelRef(place: $0) }))
     }
     
     // MARK: UI Child
-    func createPlaceSheetView(place: Binding<PlaceUIModel>) -> PlaceSheetView {
+    func createPlaceSheetView(place: PlaceUIModel) -> PlaceSheetView {
         return appContainer.createPlaceSheetView(place: place,
                                                  mapAction: nil,  // TODO: DRO-34 Allow "Map" action from a category/tag detail (AKA open the map centered on place)
                                                  detent: .constant(.medium))
@@ -67,11 +72,17 @@ import SwiftUI
     
     // MARK: use cases
     func updateCategory(shouldUpdatePlaces: Bool = true) async throws {
+        category.name = category.name.trimmedName
         do {
             try await updateCategory(CategoryMapper.toDomain(category))
+            storedName = category.name
             if shouldUpdatePlaces {
                 updateCachedPlaces()
             }
+        } catch DomainError.Category.nameAlreadyExists {
+            category.name = storedName
+            showingNameExistsAlert = true
+            throw DomainError.Category.nameAlreadyExists
         } catch is CancellationError {
         } catch {
             genericError = .updateDatabase(error)

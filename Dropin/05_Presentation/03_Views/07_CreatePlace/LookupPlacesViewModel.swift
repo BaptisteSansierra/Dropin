@@ -60,38 +60,21 @@ import MapKit
 
     // MARK: un-tracked properties
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var coordinator: PlaceCoordinator
+    @ObservationIgnored private var coordinator: any PlaceNavigationCoordinator
     @ObservationIgnored private var addressLookupService: AddressLookupService
     @ObservationIgnored private var locationManager: LocationManager
-    @ObservationIgnored private var updatePlace: UpdatePlace
 
     // MARK: - init
     init(_ appContainer: AppContainer,
-         coordinator: PlaceCoordinator,
+         coordinator: any PlaceNavigationCoordinator,
          addressLookupService: AddressLookupService,
          locationManager: LocationManager,
-         reachabilityService: any ReachabilityServiceProtocol,
-         updatePlace: UpdatePlace) {
+         reachabilityService: any ReachabilityServiceProtocol) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.addressLookupService = addressLookupService
         self.locationManager = locationManager
         self.reachabilityService = reachabilityService
-        self.updatePlace = updatePlace
-    }
-    
-    // MARK: - Navigation
-    func popToRoot() {
-        coordinator.popToRoot()
-    }
-
-    func isEditMode() -> Bool {
-        coordinator.path.contains(.placeEditView)
-    }
-    
-    // MARK: Use cases
-    func updatePlace(_ place: PlaceUIModel) async throws {
-        try await updatePlace(PlaceMapper.toDomain(place))
     }
 
     // MARK: - public methods

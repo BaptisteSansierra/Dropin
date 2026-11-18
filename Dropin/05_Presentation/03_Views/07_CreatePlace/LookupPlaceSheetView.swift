@@ -8,6 +8,8 @@
 import SwiftUI
 import MapKit
 
+/// Present a place details with a map preview
+/// When editing an existing place, use the provided place to display the relevant place annotation
 struct LookupPlaceSheetView: View {
     
     enum PresentationStatus: Equatable {
@@ -31,19 +33,20 @@ struct LookupPlaceSheetView: View {
     
     // MARK: - States & Bindings
     @Binding private var status: PresentationStatus
-    @Binding private var editedPlace: PlaceUIModel?
     @Environment(\.dismiss) private var dismiss
     @State private var camera: MapCameraPosition = .automatic
     @State private var cameraDistance: Double = 1000
 
-    var lookupResolvedItem: LookupResolvedItem
+    // MARK: - Private properties
+    private var lookupResolvedItem: LookupResolvedItem
+    private var editedPlace: PlaceUIModel?
     
     // MARK: - init
     init(lookupResolvedItem: LookupResolvedItem,
-         place: Binding<PlaceUIModel?>,
-         status: Binding<PresentationStatus>) {
+         status: Binding<PresentationStatus>,
+         place: PlaceUIModel?) {
         self.lookupResolvedItem = lookupResolvedItem
-        self._editedPlace = place
+        self.editedPlace = place
         self._status = status
     }
     
@@ -253,7 +256,7 @@ struct MockLookupPlaceSheetView: View {
     @State private var lookupResolvedItemADR: LookupResolvedItem?
     @State private var lookupError: Error?
     @State private var status: LookupPlaceSheetView.PresentationStatus = .pending
-    @State private var place: PlaceUIModel? = nil
+    //@State private var place: PlaceUIModel? = nil
 
     @State private var isPOISheet = false
     @State private var isAddressSheet = false
@@ -284,15 +287,15 @@ struct MockLookupPlaceSheetView: View {
         }
         .sheet(isPresented: $isPOISheet, onDismiss: {print("STATUS = \(status)")}) {
             LookupPlaceSheetView(lookupResolvedItem: lookupResolvedItemPOI!,
-                                 place: $place,
-                                 status: $status)
+                                 status: $status,
+                                 place: nil)
             .presentationBackground(.surface1)
             .presentationDetents([.medium])
         }
         .sheet(isPresented: $isAddressSheet, onDismiss: {print("STATUS = \(status)")}) {
             LookupPlaceSheetView(lookupResolvedItem: lookupResolvedItemADR!,
-                                 place: $place,
-                                 status: $status)
+                                 status: $status,
+                                 place: nil)
             .presentationBackground(.surface1)
             .presentationDetents([.medium])
         }
@@ -317,10 +320,10 @@ struct MockLookupPlaceSheetView: View {
                     }
                     // Return resolved item
                     lookupResolvedItemPOI = LookupResolvedItem(mapItem: item,
-                                                            isPOI: true,
-                                                            address: item.resolvedAddress() ?? "N/A",
-                                                            coordinates: item.resolvedCoordinates(),
-                                                            distance: "N/A")
+                                                               isPOI: true,
+                                                               address: item.resolvedAddress() ?? "N/A",
+                                                               coordinates: item.resolvedCoordinates(),
+                                                               distance: "N/A")
                                         
                 } catch {
                     lookupError = error
@@ -337,10 +340,10 @@ struct MockLookupPlaceSheetView: View {
                 }
                 // Return resolved item
                 lookupResolvedItemADR = LookupResolvedItem(mapItem: item,
-                                                        isPOI: false,
-                                                        address: item.resolvedAddress() ?? "N/A",
-                                                        coordinates: item.resolvedCoordinates(),
-                                                        distance: "N/A")
+                                                           isPOI: false,
+                                                           address: item.resolvedAddress() ?? "N/A",
+                                                           coordinates: item.resolvedCoordinates(),
+                                                           distance: "N/A")
 
                 
             } else {

@@ -15,7 +15,7 @@ struct PlaceTagsView: View {
     }
     
     // MARK: - States & Bindings
-    @Binding private var place: PlaceUIModel
+    @Bindable private var place: PlaceUIModel
     @Binding private var showingTagsSelector: Bool
 
     // MARK: - private vars
@@ -23,11 +23,11 @@ struct PlaceTagsView: View {
     private var presentationMode: PresentationMode
 
     // MARK: - init
-    init(place: Binding<PlaceUIModel>,
+    init(place: PlaceUIModel,
          showingTagsSelector: Binding<Bool>,
          editEnabled: Bool,
          presentationMode: PresentationMode = .inline) {
-        self._place = place
+        self.place = place
         self._showingTagsSelector = showingTagsSelector
         self.editEnabled = editEnabled
         self.presentationMode = presentationMode
@@ -129,7 +129,7 @@ struct MockPlaceTagsView: View {
 
                 Text("INLINE")
                 Divider()
-                PlaceTagsView(place: $place,
+                PlaceTagsView(place: place,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true)
                 Spacer()
@@ -143,7 +143,7 @@ struct MockPlaceTagsView: View {
                     .font(.caption)
                     .padding(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                PlaceTagsView(place: $place,
+                PlaceTagsView(place: place,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
@@ -155,7 +155,7 @@ struct MockPlaceTagsView: View {
                     .font(.caption)
                     .padding(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                PlaceTagsView(place: $place1,
+                PlaceTagsView(place: place1,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
@@ -167,7 +167,7 @@ struct MockPlaceTagsView: View {
                     .font(.caption)
                     .padding(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                PlaceTagsView(place: $place2,
+                PlaceTagsView(place: place2,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)
@@ -178,7 +178,7 @@ struct MockPlaceTagsView: View {
                     .font(.caption)
                     .padding(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                PlaceTagsView(place: $place3,
+                PlaceTagsView(place: place3,
                               showingTagsSelector: $showingTagsSelector,
                               editEnabled: true,
                               presentationMode: .form)

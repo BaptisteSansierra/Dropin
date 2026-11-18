@@ -12,15 +12,14 @@ struct TagSelectorView: View {
 
     // MARK: - State & Bindings
     @State private var viewModel: TagSelectorViewModel
-    @Binding private var place: PlaceUIModel
-
-    // MARK: - Dependencies
+    @Bindable private var place: PlaceUIModel
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Init
-    init(viewModel: TagSelectorViewModel, place: Binding<PlaceUIModel>) {
+    init(viewModel: TagSelectorViewModel,
+         place: PlaceUIModel) {
         self._viewModel = State(initialValue: viewModel)
-        self._place = place
+        self.place = place
     }
 
     // MARK: - Body
@@ -135,7 +134,7 @@ struct MockTagSelectorView: View {
         }
         .padding()
         .sheet(isPresented: $present) {
-            mock.appContainer.createTagSelectorView(place: $place)
+            mock.appContainer.createTagSelectorView(place: place)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }

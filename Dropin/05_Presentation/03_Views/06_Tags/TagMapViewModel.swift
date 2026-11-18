@@ -11,28 +11,21 @@ import SwiftUI
 @Observable class TagMapViewModel {
     
     var tagId: UUID
+    var places: [PlaceUIModel] = []
 
     @ObservationIgnored private var appContainer: AppContainer
-    @ObservationIgnored private var fetchTagPlaces: FetchTagPlaces
     
     init(_ appContainer: AppContainer,
          tagId: UUID,
-         fetchTagPlaces: FetchTagPlaces) {
+         places: [PlaceUIModel]) {
         self.appContainer = appContainer
         self.tagId = tagId
-        self.fetchTagPlaces = fetchTagPlaces
+        self.places = places
     }
     
     // MARK: UI Child
-    func createGenericMapView() -> GenericMapView {
-        let vm = GenericMapViewModel(appContainer) {
-            try await self.fetchTagPlaces(self.tagId)
-                .filter({ $0.isActive })
-        }
-        return GenericMapView(viewModel: vm)
+    func createGenericMapView(mapReloadGen: Binding<Int>) -> GenericMapView {
+        let vm = GenericMapViewModel(appContainer, places: places)
+        return GenericMapView(viewModel: vm, mapReloadGen: mapReloadGen)
     }
-
-//    func createPlaceSheetView(place: Binding<PlaceUIModel>, detent: Binding<PresentationDetent>) -> PlaceSheetView {
-//        return appContainer.createPlaceSheetView(place: place, detent: detent)
-//    }
 }

@@ -12,15 +12,11 @@ struct LookupPlacesView: View {
     
     // MARK: - States & Bindings
     @State private var viewModel: LookupPlacesViewModel
+    
+    // MARK: - Private properties
     // editedPlace is provided when (and only when) the user is editing address from an existing place
-    @Binding private var editedPlace: PlaceUIModel?
-    // draftPlace is provided when credating a place from scratch
-    // it arrives nil and a place is effectively created if validated by user
-    @Binding private var draftPlace: PlaceUIModel?
-    @Binding private var draftPlacePoiCategory: MKPointOfInterestCategory?
-    @Binding private var draftPlacePoiColor: Color?
-
-    private var initialAddress = ""
+    private var editedPlace: PlaceUIModel?
+    private let onSelect: (LookupResolvedItem) -> Void
     private var presentingResolveError: Binding<Bool> {
         Binding {
             viewModel.resolveError != nil
@@ -31,34 +27,12 @@ struct LookupPlacesView: View {
 
     // MARK: - init
     init(viewModel: LookupPlacesViewModel,
-         draftPlace: Binding<PlaceUIModel?>,
-         draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
-         draftPlacePoiColor: Binding<Color?>) {
+         editedPlace: PlaceUIModel?,
+         onSelect: @escaping (LookupResolvedItem) -> Void ) {
         viewModel.resultOffset = UIScreen.main.bounds.height
         self.viewModel = viewModel
-        self._editedPlace = .constant(nil)
-        self._draftPlace = draftPlace
-        self._draftPlacePoiCategory = draftPlacePoiCategory
-        self._draftPlacePoiColor = draftPlacePoiColor
-        #if DEBUG
-        initialAddress = "la grange"
-        #endif
-    }
-
-    init(viewModel: LookupPlacesViewModel, place: Binding<PlaceUIModel>) {
-        viewModel.resultOffset = UIScreen.main.bounds.height
-        self.viewModel = viewModel
-        self._editedPlace = Binding<PlaceUIModel?>(get: {
-            place.wrappedValue
-        }, set: { value in
-            guard value != nil else { return }
-            place.wrappedValue = value!
-        })
-        self._draftPlace = .constant(nil)
-        self._draftPlacePoiCategory = .constant(nil)
-        self._draftPlacePoiColor = .constant(nil)
-        Log.debug("LOOKUP FROM PLACE => Set address to '\(place.wrappedValue.address ?? "")'")
-        self.initialAddress = place.wrappedValue.address ?? ""
+        self.editedPlace = editedPlace
+        self.onSelect = onSelect
     }
 
     // MARK: - Body
@@ -91,9 +65,19 @@ struct LookupPlacesView: View {
                 Spacer()
             }
         }
-        .navigationTitle(viewModel.isEditMode() ? "common.edit_address" : "common.save_new_place")
+        .navigationTitle(editedPlace != nil ? "common.edit_address" : "common.save_new_place")
         .navigationBarTitleDisplayMode(.inline)
-        .task {
+        .taskOnce {
+            // Get the initial address if a place is provided
+            var initialAddress: String = ""
+            if let editedPlace = editedPlace {
+                initialAddress = editedPlace.address ?? ""
+            }
+            #if DEBUG
+            if initialAddress.isEmpty {
+                initialAddress = "Pipot"
+            }
+            #endif
             viewModel.query = initialAddress
         }
         .onChange(of: viewModel.resolvedPlaceComputed) { oldValue, newValue in
@@ -168,8 +152,8 @@ struct LookupPlacesView: View {
             completeLookup(viewModel.resultStatus)
         } content: { resolvedPlace in
             LookupPlaceSheetView(lookupResolvedItem: resolvedPlace,
-                                 place: $editedPlace,
-                                 status: $viewModel.resultStatus)
+                                 status: $viewModel.resultStatus,
+                                 place: editedPlace)
             .presentationBackground(.surface1)
             .presentationDetents([.medium])
         }
@@ -254,41 +238,7 @@ struct LookupPlacesView: View {
                 hideDetailView()
             case .validated(let item):
                 hideDetailView()
-                if viewModel.isEditMode() {
-                    // Apply change on the existing place and pop
-                    guard let editedPlace = editedPlace else { return }
-                    editedPlace.address = item.address
-                    editedPlace.coordinates = item.coordinates
-                    Task {
-                        do {
-                            try await viewModel.updatePlace(editedPlace)
-                        } catch {
-                            assertionFailure("Couldn't update place \(editedPlace.name)")
-                        }
-                    }
-                    viewModel.popToRoot()
-                } else {
-                    // Create a draftPlace and push CreatePlaceFullView
-                    if let mapItemID = item.mapItem.identifier {
-                        draftPlace = PlaceUIModel(name: item.mapItem.name,
-                                                  coordinates: item.coordinates,
-                                                  address: item.address,
-                                                  applePlaceID: mapItemID.rawValue)
-                        if let poiCategory = item.mapItem.pointOfInterestCategory {
-                            draftPlacePoiCategory = poiCategory
-                            if let tint = poiCategory.tint {
-                                draftPlacePoiColor = tint
-                            } else {
-                                draftPlacePoiColor = Color.random()
-                            }
-                        }
-                    } else {
-                        draftPlace = PlaceUIModel(name: item.mapItem.name,
-                                                  coordinates: item.coordinates,
-                                                  address: item.address)
-                    }
-                    viewModel.popToRoot()
-                }
+                onSelect(item)
             case .pending:
                 () // pending means pending...
         }
@@ -315,9 +265,14 @@ struct MockLookupPlacesView: View {
     @State var draftPlaceColor: Color?
 
     var body: some View {
-        mock.appContainer.createLookupPlacesView(draftPlace: $draftPlace,
-                                                 draftPlacePoiCategory: $draftPlacePOI,
-                                                 draftPlacePoiColor: $draftPlaceColor)
+        mock.appContainer.createLookupPlacesView { item in
+            print("Address: \(item.address)")
+            if let poiCategory = item.mapItem.pointOfInterestCategory {
+                print("POI: \(poiCategory.displayName)")
+            } else {
+                print("POI: N/A")
+            }
+        }
     }
     
     init() {

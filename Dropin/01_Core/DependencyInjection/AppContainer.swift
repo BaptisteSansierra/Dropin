@@ -445,21 +445,21 @@ final class AppContainer {
         return PlaceCreateQuickView(viewModel: vm, place: place, result: result)
     }
     
-    func createTagSelectorView(place: Binding<PlaceUIModel>) -> TagSelectorView {
+    func createTagSelectorView(place: PlaceUIModel) -> TagSelectorView {
         let vm = TagSelectorViewModel(self,
                                       fetchTags: FetchTags(repository: tagRepository),
                                       createTags: CreateTag(repository: tagRepository))
         return TagSelectorView(viewModel: vm, place: place)
     }
     
-    func createCategorySelectorView(place: Binding<PlaceUIModel>) -> CategorySelectorView {
+    func createCategorySelectorView(place: PlaceUIModel) -> CategorySelectorView {
         let vm = CategorySelectorViewModel(self,
                                         fetchCategories: FetchCategories(repository: categoryRepository),
                                         createCategory: CreateCategory(repository: categoryRepository))
         return CategorySelectorView(viewModel: vm, place: place)
     }
     
-    func createPlaceSheetView(place: Binding<PlaceUIModel>,
+    func createPlaceSheetView(place: PlaceUIModel,
                               mapAction: (() -> Void)?,
                               detent: Binding<PresentationDetent>) -> PlaceSheetView {
         let vm = PlaceSheetViewModel(self,
@@ -477,11 +477,12 @@ final class AppContainer {
                               detent: detent)
     }
 
-    func createPlaceEditContentView(place: Binding<PlaceUIModel>,
+    func createPlaceEditContentView(place: PlaceUIModel,
                                     mode: PlaceEditContentViewModel.Mode,
-                                    showMissingName: Binding<Bool>) -> PlaceEditContentView {
+                                    showMissingName: Binding<Bool>,
+                                    onDelete: (() -> Void)?) -> PlaceEditContentView {
         let vm = PlaceEditContentViewModel(self,
-                                           coordinator: placeCoordinator,
+                                           coordinator: currentPlaceCoordinator(),
                                            reachabilityService: reachabilityService,
                                            markPlacePOINotFound: MarkPlacePOINotFound(repository: placeRepository),
                                            unmarkPlacePOINotFound: UnmarkPlacePOINotFound(repository: placeRepository),
@@ -491,7 +492,10 @@ final class AppContainer {
                                            getPlaceImage: GetPlaceImage(loader: imageLoader),
                                            applePOIService: applePOIService,
                                            mode: mode)
-        return PlaceEditContentView(viewModel: vm, place: place, showMissingName: showMissingName)
+        return PlaceEditContentView(viewModel: vm,
+                                    place: place,
+                                    showMissingName: showMissingName,
+                                    onDelete: onDelete)
     }
 
     func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
@@ -537,10 +541,10 @@ final class AppContainer {
         return TagDetailsView(viewModel: vm)
     }
     
-    func createTagMapView(tagId: UUID) -> TagMapView {
+    func createTagMapView(tagId: UUID, places: [PlaceUIModel]) -> TagMapView {
         let vm = TagMapViewModel(self,
                                  tagId: tagId,
-                                 fetchTagPlaces: FetchTagPlaces(repository: placeRepository))
+                                 places: places)
         return TagMapView(viewModel: vm)
     }
 
@@ -565,37 +569,34 @@ final class AppContainer {
         return CategoryDetailsView(viewModel: vm)
     }
 
-    func createCategoryMapView(categoryId: UUID) -> CategoryMapView {
+    func createCategoryMapView(categoryId: UUID, places: [PlaceUIModel]) -> CategoryMapView {
         let vm = CategoryMapViewModel(self,
-                                   categoryId: categoryId,
-                                   fetchCategoryPlaces: FetchCategoryPlaces(repository: placeRepository))
+                                      categoryId: categoryId,
+                                      places: places)
         return CategoryMapView(viewModel: vm)
     }
 
-    func createLookupPlacesView(draftPlace: Binding<PlaceUIModel?>,
-                                draftPlacePoiCategory: Binding<MKPointOfInterestCategory?>,
-                                draftPlacePoiColor: Binding<Color?>) -> LookupPlacesView {
+    func createLookupPlacesView(editedPlace: PlaceUIModel? = nil,
+                                onSelect: @escaping (LookupResolvedItem) -> Void) -> LookupPlacesView {
         let vm = LookupPlacesViewModel(self,
-                                       coordinator: placeCoordinator,
+                                       coordinator: currentPlaceCoordinator(),
                                        addressLookupService: addressLookupService,
                                        locationManager: locationManager,
-                                       reachabilityService: reachabilityService,
-                                       updatePlace: UpdatePlace(repository: placeRepository))
+                                       reachabilityService: reachabilityService)
         return LookupPlacesView(viewModel: vm,
-                                draftPlace: draftPlace,
-                                draftPlacePoiCategory: draftPlacePoiCategory,
-                                draftPlacePoiColor: draftPlacePoiColor)
+                                editedPlace: editedPlace,
+                                onSelect: onSelect)
     }
 
-    func createLookupPlacesView(place: Binding<PlaceUIModel>) -> LookupPlacesView {
-        let vm = LookupPlacesViewModel(self,
-                                       coordinator: placeCoordinator,
-                                       addressLookupService: addressLookupService,
-                                       locationManager: locationManager,
-                                       reachabilityService: reachabilityService,
-                                       updatePlace: UpdatePlace(repository: placeRepository))
-        return LookupPlacesView(viewModel: vm, place: place)
-    }
+//    func createLookupPlacesView(placeRef: PlaceUIModelRef) -> LookupPlacesView {
+//        let vm = LookupPlacesViewModel(self,
+//                                       coordinator: currentPlaceCoordinator(),
+//                                       addressLookupService: addressLookupService,
+//                                       locationManager: locationManager,
+//                                       reachabilityService: reachabilityService,
+//                                       updatePlace: UpdatePlace(repository: placeRepository))
+//        return LookupPlacesView(viewModel: vm, placeRef: placeRef)
+//    }
     
     func createPlaceFilterView(filter: Binding<PlaceFilter?>) -> PlaceFilterView {
         let vm = PlaceFilterViewModel(self,

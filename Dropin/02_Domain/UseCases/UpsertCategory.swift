@@ -16,6 +16,7 @@ struct UpsertCategory {
     }
     
     func callAsFunction(_ category: Category, shouldSave: Bool = true) async throws {
+        let category = category.trimmingName()
         guard !category.name.isEmpty else {
             throw DomainError.Category.missingName
         }

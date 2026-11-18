@@ -10,7 +10,7 @@ import MapKit
 
 // Apply modifiers
 extension View {
-    
+
     func onFirstAppear(_ action: @escaping () -> ()) -> some View {
         modifier(FirstAppear(action: action))
     }

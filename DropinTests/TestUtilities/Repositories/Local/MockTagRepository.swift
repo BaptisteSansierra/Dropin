@@ -18,6 +18,10 @@ final class MockTagRepository: TagRepository {
         self.tags = initialTags
     }
     
+    func nameExists(_ name: String, excluding id: UUID?) async throws -> Bool {
+        tags.contains { $0.isActive && $0.id != id && $0.name.nameKey == name.nameKey }
+    }
+
     func exists(_ place: Dropin.Tag) async throws -> Bool {
         if let _ = tags.first(where: { $0.id == place.id }) {
             return true
@@ -40,6 +44,10 @@ final class MockTagRepository: TagRepository {
      */
     
     func update(_ tag: Dropin.Tag) async throws {
+        guard let index = tags.firstIndex(where: { $0.id == tag.id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        tags[index] = tag
     }
     
     func fetch() async throws -> [Dropin.Tag] {

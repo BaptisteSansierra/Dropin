@@ -9,6 +9,8 @@ import SwiftUI
 import CoreLocation
 import ContactFieldKit
 
+/// Used by navigation items (See coordinators)
+/// Avoid making PlaceUIModel Hashable itself as the == operator by id would be misleading 
 struct PlaceUIModelRef: Hashable {
     let place: PlaceUIModel
     static func == (lhs: Self, rhs: Self) -> Bool { lhs.place.id == rhs.place.id }
@@ -80,6 +82,7 @@ struct PlaceImageUIModel: Identifiable {
         (address ?? "").isEmpty
     }
 
+    /// Used to detect any modification on the place
     var changeToken: Int {
         var hasher = Hasher()
         hasher.combine(id)
@@ -98,6 +101,20 @@ struct PlaceImageUIModel: Identifiable {
         hasher.combine(notes)
         hasher.combine(applePlaceID)
         hasher.combine(appleNotFoundAt)
+        return hasher.finalize()
+    }
+    
+    /// Used to detect a modification in any parameter affecting how the place's pin is displayed on the map
+    /// Not used currently s
+    // TODO: To be used instead of actionBus in order to update maps annotations
+    var annotationToken: Int {
+        var hasher = Hasher()
+        hasher.combine(name);
+        hasher.combine(coordinates);
+        hasher.combine(icon?.rawValue)
+        hasher.combine(category?.id);
+        hasher.combine(categoryColor);
+        hasher.combine(isActive)
         return hasher.finalize()
     }
     

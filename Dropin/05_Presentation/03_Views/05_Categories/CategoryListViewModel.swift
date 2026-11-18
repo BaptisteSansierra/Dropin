@@ -51,8 +51,8 @@ import SwiftUI
         return appContainer.createCategoryDetailsView(category: category)
     }
 
-    func createCategoryMapView(categoryId: UUID) -> CategoryMapView {
-        return appContainer.createCategoryMapView(categoryId: categoryId)
+    func createCategoryMapView(categoryId: UUID, places: [PlaceUIModel]) -> CategoryMapView {
+        return appContainer.createCategoryMapView(categoryId: categoryId, places: places)
     }
     
     func createPlaceEditView(place: PlaceUIModel) -> PlaceEditView {
@@ -62,6 +62,28 @@ import SwiftUI
     // MARK: Navigation
     func pushCategoryDetailsView(categoryId: UUID) {
         coordinator.pushCategoryDetailsView(categoryId: categoryId)
+    }
+
+    func createLookupPlacesView(place: PlaceUIModel) -> LookupPlacesView {
+        return appContainer.createLookupPlacesView(editedPlace: place) { item in
+            // Apply change on the existing place
+            // This VM is not in charge of propagating to database (PlaceEditView is in charge)
+            place.address = item.address
+            place.coordinates = item.coordinates
+            // And pop address lookup view
+            self.coordinator.pop()
+            #if DEBUG
+            // Check the navigation path is correct
+            guard let lastNavItem = self.coordinator.path.last else {
+                assertionFailure("Empty navigation path")
+                return
+            }
+            switch lastNavItem {
+                case .groupPlaceEdit: ()
+                default: assertionFailure("Unexpected navigation path, '.groupPlaceEdit' is supposed to be last")
+            }
+            #endif
+        }
     }
 
     // MARK: use cases
