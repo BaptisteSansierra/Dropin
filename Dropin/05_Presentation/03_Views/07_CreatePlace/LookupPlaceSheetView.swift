@@ -340,10 +340,10 @@ struct MockLookupPlaceSheetView: View {
                 }
                 // Return resolved item
                 lookupResolvedItemADR = LookupResolvedItem(mapItem: item,
-                                                        isPOI: false,
-                                                        address: item.resolvedAddress() ?? "N/A",
-                                                        coordinates: item.resolvedCoordinates(),
-                                                        distance: "N/A")
+                                                           isPOI: false,
+                                                           address: item.resolvedAddress() ?? "N/A",
+                                                           coordinates: item.resolvedCoordinates(),
+                                                           distance: "N/A")
 
                 
             } else {

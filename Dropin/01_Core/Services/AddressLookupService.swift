@@ -157,14 +157,14 @@ final class AddressLookupService: NSObject {
             return
         }
         // Merge results from 2 requests
-        let results: [LookupResult] = allResults.map { localSearchCompletion in
-            if let _ = poiResults.firstIndex(where: {
-                localSearchCompletion.title == $0.title && localSearchCompletion.subtitle == $0.subtitle
-            }) {
-                return LookupResult(localSearchCompletion: localSearchCompletion, isPOI: true)
-            }
-            return LookupResult(localSearchCompletion: localSearchCompletion)
+        var results: [LookupResult] = allResults.map { completion in
+            LookupResult(localSearchCompletion: completion,
+                         isPOI: poiResults.contains { $0.isIdentical(to: completion) })
         }
+        // poiResults sometimes contains results not available in allResults, append them
+        results += poiResults
+            .filter { poi in !allResults.contains { $0.isIdentical(to: poi) } }
+            .map { LookupResult(localSearchCompletion: $0, isPOI: true) }
         queryContinuation = nil
         continuation.resume(returning: results)
     }

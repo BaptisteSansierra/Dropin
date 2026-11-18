@@ -249,12 +249,6 @@ struct PlacesView: View {
                 viewModel.createLookupPlacesView()
             case .lookupPlacesEditView(let placeRef):
                 viewModel.createLookupPlacesView(place: placeRef.place)
-                    .onDisappear {
-                        Task {
-                            try await viewModel.loadPlaces()
-                        }
-                    }
-
             case .placeCreateView:
                 // WARN: Here we expect to have a draftPace defined already
                 //       PlaceCreateView rely on it

@@ -75,7 +75,7 @@ struct LookupPlacesView: View {
             }
             #if DEBUG
             if initialAddress.isEmpty {
-                initialAddress = "la grange"
+                initialAddress = "Pipot"
             }
             #endif
             viewModel.query = initialAddress
@@ -268,7 +268,7 @@ struct MockLookupPlacesView: View {
         mock.appContainer.createLookupPlacesView { item in
             print("Address: \(item.address)")
             if let poiCategory = item.mapItem.pointOfInterestCategory {
-                print("POI: \(poiCategory)")
+                print("POI: \(poiCategory.displayName)")
             } else {
                 print("POI: N/A")
             }
