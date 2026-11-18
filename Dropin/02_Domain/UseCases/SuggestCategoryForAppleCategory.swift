@@ -23,6 +23,7 @@ struct SuggestCategoryForAppleCategory {
         let target = appleCategoryDisplayName.lemmaNormalized
         guard !target.isEmpty else { return nil }
         let categories = try await repository.fetch()
+            .filter { $0.deletedAt == nil }
         return categories.first { $0.name.lemmaNormalized == target }
     }
 }
