@@ -16,6 +16,8 @@ enum AuthServiceError: Error, Equatable {
     case signUpTimedOut
     case signOutTimedOut
     case notAuthenticated
+    /// The session is still stored, but refreshing it is rate-limited by Supabase: retry later
+    case refreshRateLimited
     case confirmationRequired
     case invalidCredentials
 }
@@ -29,7 +31,8 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
     var onSessionLost: (() -> Void)? { get set }
 
     /// Signed-in user id, guaranteed to be backed by a valid client session (refreshed if needed).
-    /// Throws `notAuthenticated` if there's no session; network errors are rethrown as is.
+    /// Throws `notAuthenticated` if there's no session, `refreshRateLimited` while refreshing is rate-limited;
+    /// network errors are rethrown as is.
     func requireUserId() async throws -> UUID
 
     func signUp(email: String, password: String) async throws
@@ -48,6 +51,7 @@ final class AuthService: AuthServiceProtocol {
     private(set) var session: UserSession? = nil {
         didSet {
             updateTrackedUser()
+            refreshBlockedUntil = nil
         }
     }
     var isAuthenticated: Bool { session != nil }
@@ -63,6 +67,11 @@ final class AuthService: AuthServiceProtocol {
     private var signingOut = false
     /// `onSessionLost` is reported once, until the resulting sign-out completes.
     private var sessionLostReported = false
+    /// Set when a refresh got rate-limited (429 over_request_rate_limit). Until then, `requireUserId` throws
+    /// right away: a failed refresh isn't remembered by supabase-swift, every caller would retry it
+    /// (and count against the limit again).
+    private var refreshBlockedUntil: Date?
+    private let refreshCooldown: TimeInterval = 60
     private var authStateTask: Task<Void, Never>?
     private var signInTimeoutInterval = 15
     private var signUpTimeoutInterval = 15
@@ -206,6 +215,12 @@ final class AuthService: AuthServiceProtocol {
                     Log.warning("[restoreSession] session could not be refreshed, it is lost")
                     reportSessionLost()
                     return
+                case _ where error.errorCode == .overRequestRateLimit:
+                    // Not a bug: the session is still stored, keep it like offline and let the cooldown pass
+                    Log.warning("[restoreSession] refresh rate-limited, use cached session")
+                    session = UserSession(userId: cachedSession.user.id, email: cachedSession.user.email)
+                    startRefreshCooldown()
+                    return
                 default:
                     Log.error("[restoreSession] Supabase error(\(error.errorCode)): \(error)")
             }
@@ -237,16 +252,29 @@ final class AuthService: AuthServiceProtocol {
     /// as is (session still stored, the caller retries later).
     func requireUserId() async throws -> UUID {
         guard let session else { throw AuthServiceError.notAuthenticated }
+        if let refreshBlockedUntil, refreshBlockedUntil > .now {
+            throw AuthServiceError.refreshRateLimited
+        }
         do {
             _ = try await client.auth.session
         } catch AuthError.sessionMissing {
             reportSessionLost()
             throw AuthServiceError.notAuthenticated
+        } catch let error as AuthError where error.errorCode == .overRequestRateLimit {
+            startRefreshCooldown()
+            throw AuthServiceError.refreshRateLimited
         }
         return session.userId
     }
 
     // MARK: - private methods
+    private func startRefreshCooldown() {
+        // Set after `session` in restoreSession: its didSet clears it
+        refreshBlockedUntil = .now + refreshCooldown
+        Log.warning("Session refresh rate-limited, no remote call for \(Int(refreshCooldown))s")
+        DropinTracker.shared.capture("Session refresh rate-limited", authFlow: .refresh_rate_limited)
+    }
+
     private func reportSessionLost() {
         guard !signingOut, !sessionLostReported else { return }
         sessionLostReported = true

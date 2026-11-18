@@ -33,6 +33,18 @@ extension Error {
         }
     }
     
+    /// No usable session right now (signed out, session lost, refresh rate-limited):
+    /// every next remote call would fail the same way
+    var isAuthUnavailable: Bool {
+        guard let authError = self as? AuthServiceError else { return false }
+        switch authError {
+            case .notAuthenticated, .refreshRateLimited:
+                return true
+            default:
+                return false
+        }
+    }
+
     var isTimeout: Bool {
         guard let urlError = self as? URLError else { return false }
         switch urlError.code {
