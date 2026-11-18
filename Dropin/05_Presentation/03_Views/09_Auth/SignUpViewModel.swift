@@ -9,7 +9,7 @@ import Foundation
 @Observable class SignUpViewModel {
 
     var displayName: String = ""
-    #if DEBUG
+    #if false // DEBUG
     var email: String = AppConfig.DebugCredentials.signUpEmail()  // Config.xcconfig: DEBUG_SIGNUP_EMAIL_PREFIX/SUFFIX
     var password: String = AppConfig.DebugCredentials.password
     var confirmPassword: String = AppConfig.DebugCredentials.password

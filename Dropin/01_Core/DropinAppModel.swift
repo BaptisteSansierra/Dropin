@@ -20,6 +20,13 @@ import ContactFieldKit
     /// File opened from outside the app (Files, AirDrop, Mail...) while the session restore is in flight (cold launch):
     /// presented once signed in, refused if the restore ends signed out
     @ObservationIgnored private var waitingImportURL: URL?
+    /// Auth email link opened while the session restore is in flight (cold launch): used once the restore ends
+    @ObservationIgnored private var waitingAuthLink: AuthLink?
+
+    /// True while an auth email link is being verified
+    private(set) var isVerifyingAuthLink = false
+    /// Auth email link that couldn't be used
+    var authLinkAlert: AuthLinkAlert?
 
     private var isSignedIn: Bool {
         if case .signedIn(signingOut: false) = appContainer.authState { return true }
@@ -200,6 +207,7 @@ import ContactFieldKit
     // MARK: - Opened file
     /// `.signedIn` root appeared (restore or sign in completed): presents the file opened during the restore if there is
     func signedInAppeared() {
+        handleWaitingAuthLink()
         guard let url = waitingImportURL else { return }
         waitingImportURL = nil
         appContainer.importPresenter.presentFile(url)
@@ -207,6 +215,7 @@ import ContactFieldKit
 
     /// `.signedOut` root appeared: if a file was opened during the restore, refuse it, there is no session to import it to
     func signedOutAppeared() {
+        handleWaitingAuthLink()
         guard waitingImportURL != nil else { return }
         discardOpenedFile()
         presentImportError(.loggedOut)
@@ -260,13 +269,78 @@ import ContactFieldKit
     }
 
     private func openDeepLink(_ url: URL) {
-        Log.warning("TODO: handle deep link")
-        assertionFailure("handle deep link")
+        // Only used to bring the app forward ("Open Dropin" on the web pages): nothing to route at the moment
+        Log.info("Deep link \(url.absoluteString)")
+        return
+
+        #if false
+        switch url.host() {
+            case "signin":
+                // "Open Dropin" on the email confirmed / password reset web pages: bringing the app forward is enough,
+                // the user carries on from the current screen (Sign in, Verify email…)
+                Log.info("Deep link \(url.absoluteString)")
+            default:
+                Log.warning("Unhandled deep link \(url.absoluteString)")
+        }
+        #endif
     }
 
     private func openUniversalLink(_ url: URL) {
-        Log.warning("TODO: handle universal link")
-        assertionFailure("handle universal link")
+        guard let link = AuthLink(url: url) else {
+            // Path only: the query may hold a token
+            Log.warning("Unhandled universal link \(url.path)")
+            return
+        }
+        handleAuthLink(link)
+    }
+
+    // MARK: - Auth links
+    private func handleAuthLink(_ link: AuthLink) {
+        switch appContainer.authState {
+            case .loading:
+                // Restore in flight: decided by signedInAppeared / signedOutAppeared
+                waitingAuthLink = link
+            case .signedOut:
+                Task { await useAuthLink(link) }
+            case .signedIn:
+                switch link.kind {
+                    case .emailConfirmation:
+                        // Whoever is signed in, there's nothing left to do with it on this device
+                        Log.info("Email confirmation link opened while signed in, ignored")
+                    case .passwordRecovery:
+                        // Verifying it would replace the current session
+                        authLinkAlert = .signedIn
+                }
+        }
+    }
+
+    private func handleWaitingAuthLink() {
+        guard let link = waitingAuthLink else { return }
+        waitingAuthLink = nil
+        handleAuthLink(link)
+    }
+
+    private func useAuthLink(_ link: AuthLink) async {
+        guard !isVerifyingAuthLink else { return }
+        guard let tokenHash = link.tokenHash else {
+            authLinkAlert = .expired(link.kind)
+            return
+        }
+        isVerifyingAuthLink = true
+        defer { isVerifyingAuthLink = false }
+        do {
+            switch link.kind {
+                case .emailConfirmation:
+                    try await appContainer.confirmEmail(tokenHash: tokenHash)
+                case .passwordRecovery:
+                    try await appContainer.beginPasswordRecovery(tokenHash: tokenHash)
+            }
+        } catch AuthServiceError.linkExpired {
+            authLinkAlert = .expired(link.kind)
+        } catch {
+            Log.error("Auth link (\(link.kind)) couldn't be verified: \(error)")
+            authLinkAlert = error.isOffline || error.isTimeout ? .notConnected : .failed
+        }
     }
 
     // MARK: - static private methods

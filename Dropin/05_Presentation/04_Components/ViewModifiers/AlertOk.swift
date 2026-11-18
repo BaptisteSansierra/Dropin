@@ -47,16 +47,12 @@ struct AlertError<E: UserFacingError>: ViewModifier {
     }
     
     func body(content: Content) -> some View {
-        if let error = error {
-            content
-                .alert(error.messageTitle,
-                       isPresented: isPresented,
-                       actions: ok) {
-                    Text(error.messageBody)
-            }
-        } else {
-            content
-        }
+        content
+            .alert(Text(error?.messageTitle ?? ""),
+                   isPresented: isPresented,
+                   presenting: error,
+                   actions: { _ in ok() },
+                   message: { Text($0.messageBody) })
     }
     
     private func ok() -> some View {

@@ -1406,6 +1406,30 @@
         }
       }
     },
+    "auth.field.new_password" : {
+      "comment" : "New password screen, new password field placeholder",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New password"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva contraseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau mot de passe"
+          }
+        }
+      }
+    },
     "auth.forgot_password" : {
       "comment" : "Sign in screen link",
       "extractionState" : "manual",
@@ -1426,6 +1450,294 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mot de passe oublié ?"
+          }
+        }
+      }
+    },
+    "auth.link.expired.confirmation_body" : {
+      "comment" : "Alert body: the email confirmation link was already used or has expired",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmation links work only once and for a limited time. Sign in to get a new one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los enlaces de confirmación solo funcionan una vez y durante un tiempo limitado. Inicia sesión para recibir uno nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les liens de confirmation ne fonctionnent qu'une fois et pendant une durée limitée. Connectez-vous pour en obtenir un nouveau."
+          }
+        }
+      }
+    },
+    "auth.link.expired.recovery_body" : {
+      "comment" : "Alert body: the password reset link was already used or has expired",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset links work only once and for a limited time. Tap Forgot password? on the sign-in screen to get a new one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los enlaces para restablecer la contraseña solo funcionan una vez y durante un tiempo limitado. Toca ¿Has olvidado tu contraseña? en la pantalla de inicio de sesión para recibir uno nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les liens de réinitialisation ne fonctionnent qu'une fois et pendant une durée limitée. Touchez Mot de passe oublié ? sur l'écran de connexion pour en obtenir un nouveau."
+          }
+        }
+      }
+    },
+    "auth.link.expired.title" : {
+      "comment" : "Alert title: an auth email link was already used or has expired",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This link has expired"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este enlace ha caducado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce lien a expiré"
+          }
+        }
+      }
+    },
+    "auth.link.failed.not_connected" : {
+      "comment" : "Alert body: an auth email link couldn't be verified while offline",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your connection and open the link again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comprueba tu conexión y vuelve a abrir el enlace."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifiez votre connexion et ouvrez à nouveau le lien."
+          }
+        }
+      }
+    },
+    "auth.link.failed.title" : {
+      "comment" : "Alert title: an auth email link couldn't be verified",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open the link"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se ha podido abrir el enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir le lien"
+          }
+        }
+      }
+    },
+    "auth.link.signed_in.body" : {
+      "comment" : "Alert body: a password reset link was opened while signed in",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign out first to use this password reset link."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cierra sesión primero para usar este enlace de restablecimiento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déconnectez-vous d'abord pour utiliser ce lien de réinitialisation."
+          }
+        }
+      }
+    },
+    "auth.link.signed_in.title" : {
+      "comment" : "Alert title: a password reset link was opened while signed in",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're signed in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Has iniciado sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous êtes connecté"
+          }
+        }
+      }
+    },
+    "auth.link.verifying" : {
+      "comment" : "Loader caption while an auth email link (confirmation, password reset) is verified",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking the link…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comprobando el enlace…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification du lien…"
+          }
+        }
+      }
+    },
+    "auth.new_password.error.same_password" : {
+      "comment" : "New password screen error: the new password is the current one",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a password different from your current one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elige una contraseña distinta de la actual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez un mot de passe différent de l'actuel."
+          }
+        }
+      }
+    },
+    "auth.new_password.submit" : {
+      "comment" : "New password screen, main button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save password"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar contraseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer le mot de passe"
+          }
+        }
+      }
+    },
+    "auth.new_password.subtitle_%@" : {
+      "comment" : "New password screen subtitle. %@ is the account email address, shown semibold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a new password for %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elige una nueva contraseña para %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez un nouveau mot de passe pour %@."
+          }
+        }
+      }
+    },
+    "auth.new_password.title" : {
+      "comment" : "New password screen title (opened from the password reset email link)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New password"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva contraseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau mot de passe"
           }
         }
       }

@@ -154,6 +154,8 @@ struct SignInView: View {
                 viewModel.createResetPasswordView()
             case .verifyEmail(let email, let password, let context):
                 viewModel.createVerifyEmailView(email: email, password: password, context: context)
+            case .newPassword(let email):
+                viewModel.createNewPasswordView(email: email)
         }
     }
 
