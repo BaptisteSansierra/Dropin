@@ -37,16 +37,16 @@ struct DeleteLibrary {
 
         // Soft delete everything in current space
         do {
-            for tag in try await tagRepository.fetch() {
+            for tag in try await tagRepository.fetch() where tag.isActive {
                 try await upsertTag(tag.deleted(deletedAt: deleteAt), shouldSave: false)
             }
-            for category in try await categoryRepository.fetch() {
+            for category in try await categoryRepository.fetch() where category.isActive {
                 try await upsertCategory(category.deleted(deletedAt: deleteAt), shouldSave: false)
             }
-            for place in try await placeRepository.fetch() {
+            for place in try await placeRepository.fetch() where place.isActive {
                 try await upsertPlace(place.deleted(deletedAt: deleteAt), shouldSave: false)
             }
-            for space in try await spaceRepository.fetch() {
+            for space in try await spaceRepository.fetch() where space.isActive {
                 try await upsertSpace(space.deleted(deletedAt: deleteAt), shouldSave: false)
             }
         } catch {
