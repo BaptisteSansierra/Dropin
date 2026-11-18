@@ -101,7 +101,7 @@ struct CategoryListView: View {
             }
         }
         .sheet(isPresented: $viewModel.presentCreateSheet) {
-            CategoryCreateSheetView(existing: viewModel.categories.map({ $0.name }),
+            CategoryCreateSheetView(existing: activeCategories.map(\.name),
                                     onCreate: createCategory)
             .presentationBackground(.backgroundPrimary)
             .presentationDetents([.height(CategoryCreateSheetView.sheetHeight)])

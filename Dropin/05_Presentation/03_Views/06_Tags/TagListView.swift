@@ -118,7 +118,7 @@ struct TagListView: View {
             }
         }
         .sheet(isPresented: $viewModel.presentCreateSheet) {
-            TagCreateSheetView(existing: viewModel.tags.map({ $0.name }),
+            TagCreateSheetView(existing: activeTags.map(\.name),
                                onCreate: createTag)
             .presentationBackground(.backgroundPrimary)
             .presentationDetents([.height(TagCreateSheetView.sheetHeight)])
