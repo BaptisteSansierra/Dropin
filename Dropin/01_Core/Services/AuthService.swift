@@ -128,7 +128,7 @@ final class AuthService: AuthServiceProtocol {
             throw error
         }
     }
-    
+
     func signIn(email: String, password: String) async throws {
         guard !signingIn else { return }
         signingIn = true
@@ -138,6 +138,7 @@ final class AuthService: AuthServiceProtocol {
         do {
             let s = try await signinWithTimeout(email: email, password: password)
             setSession(UserSession(userId: s.user.id, email: s.user.email))
+            syncLocale()
             Log.info("  > Signin completed")
         } catch let error as AuthServiceError {
             // No-op : Just forward the error we just throw
@@ -317,6 +318,7 @@ final class AuthService: AuthServiceProtocol {
             // Try it anyway
             session = UserSession(userId: cachedSession.user.id, email: cachedSession.user.email)
         }
+        syncLocale()
     }
     
     /// supabase-swift silently falls back to the anon key when it has no session
@@ -342,6 +344,19 @@ final class AuthService: AuthServiceProtocol {
     }
 
     // MARK: - private methods
+    private func syncLocale() {
+        let appLanguage = Bundle.appLanguage
+        guard client.auth.currentUser?.userMetadata["locale"] != .string(appLanguage) else { return }
+        Task {
+            do {
+                _ = try await client.auth.update(user: UserAttributes(data: ["locale": .string(appLanguage)]))
+                Log.info("User locale set to \(appLanguage)")
+            } catch {
+                Log.warning("User locale not updated: \(error)")
+            }
+        }
+    }
+
     /// Verifies an auth email link's token. A used, expired or unknown token throws `linkExpired`
     private func verifyLink(tokenHash: String, type: EmailOTPType) async throws -> AuthResponse {
         do {
@@ -429,7 +444,10 @@ final class AuthService: AuthServiceProtocol {
         let (stream, continuation) = AsyncThrowingStream<Session, Error>.makeStream()
         let work = Task {
             do {
-                let response = try await self.client.auth.signUp(email: email, password: password, redirectTo: DropinApp.urls.emailConfirmedURL)
+                let response = try await self.client.auth.signUp(email: email,
+                                                                 password: password,
+                                                                 data: ["locale": .string(Bundle.appLanguage)],
+                                                                 redirectTo: DropinApp.urls.emailConfirmedURL)
                 // When the Supabase project requires email confirmation, `session` is nil (only `user` is returned)
                 // don't mark the user as authenticated until they've confirmed and actually signed in.
                 guard let supaSession = response.session else {
