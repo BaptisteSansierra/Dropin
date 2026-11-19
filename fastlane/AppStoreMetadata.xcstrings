@@ -32,19 +32,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "collection,list,bookmark,pin,library,notebook,tag,personal,wishlist,restaurant,travel,bar,favorite"
+            "value" : "map,favorite,pin,bookmark,list,wishlist,tag,guide,city,restaurant,bar,cafe,food,travel,trip,saved"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "sitios,favoritos,restaurantes,bares,viajes,chinchetas,lista,etiquetas,notas,privado,marcadores"
+            "state" : "translated",
+            "value" : "mapa,chinchetas,marcadores,lista,etiquetas,notas,guía,ciudad,restaurantes,bares,café,viajes"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "adresses,favoris,restaurants,bars,voyage,épingles,liste,tags,notes,bons plans,privé,perso,signets"
+            "state" : "translated",
+            "value" : "carte,favoris,épingle,signets,liste,tags,notes,bons plans,guide,ville,restos,bars,café,voyage"
           }
         }
       }
@@ -56,19 +56,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dropin: Places Map"
+            "value" : "Dropin: Your best spots"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dropin: Mapa de lugares"
+            "value" : "Dropin: Tus mejores lugares"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dropin : Bonnes adresses"
+            "value" : "Dropin : Vos bonnes adresses"
           }
         }
       }
@@ -108,7 +108,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save the spots you love"
+            "value" : "Save the places you love"
           }
         },
         "es" : {
@@ -120,7 +120,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les lieux que vous aimez"
+            "value" : "Enregistrez vos lieux préférés"
           }
         }
       }

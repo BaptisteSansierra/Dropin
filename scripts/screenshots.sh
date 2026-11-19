@@ -4,12 +4,13 @@
 #   ./scripts/screenshots.sh            run the tests, then process the screenshots
 #   ./scripts/screenshots.sh --reuse    skip the tests, reprocess Screenshots/last.xcresult
 #
-# Runs every configuration of DropinScreenshots.xctestplan (en, fr) on a 6.9" simulator,
+# Runs every configuration of DropinScreenshots.xctestplan (en, fr, es) on a 6.9" simulator,
 # exports the XCTAttachments from the result bundle, then writes:
 #   Screenshots/appstore/<configuration>/NN_<shot>.png APPSTORE_SHOTS, every configuration, framed:
 #                                                     caption (AppStoreCaptions.xcstrings) above the shot
 #   fastlane/screenshots/<locale>/N_<shot>.png        the framed App Store shots, for fastlane deliver
-#   Screenshots/website/<file name>.webp              WEBSITE_SHOTS, en only, resized
+#   Screenshots/website/<configuration>/<file name>.webp  WEBSITE_SHOTS, every configuration, resized:
+#                                                     copy into Dropin_frontend/assets/screens/
 #   Screenshots/last.xcresult                         full report: open Screenshots/last.xcresult
 # Failed tests are listed; screenshots of the passing ones are still exported.
 # Needs: ImageMagick + cwebp (brew install imagemagick webp), SF Pro fonts (developer.apple.com/fonts)
@@ -72,7 +73,6 @@ WEBSITE_SHOTS=(
     "settings.import.mapstr.mapper  settings.import.mapstr.mapper  780 1695"   # 260px
     "places.map.quickcreate         places.map.quickcreate          780 1695"   # 260px
 )
-WEBSITE_LANGUAGE="en"
 WEBP_QUALITY=85
 
 # MARK: - Steps
@@ -200,20 +200,24 @@ processFastlane() {
     done
 }
 
-# WEBSITE_SHOTS of WEBSITE_LANGUAGE → Screenshots/website/<file name>.webp, resized
+# WEBSITE_SHOTS of every configuration → Screenshots/website/<configuration>/<file name>.webp, resized
+# (the site's pages load /assets/screens/<language>/<file name>.webp)
 processWeb() {
-    local entry shot name width height src
-    echo "▸ Website ($WEBSITE_LANGUAGE, webp q$WEBP_QUALITY)"
+    local config lang entry shot name width height src
+    echo "▸ Website (webp q$WEBP_QUALITY)"
     rm -rf "$OUT/website"
-    mkdir -p "$OUT/website"
-    for entry in $WEBSITE_SHOTS; do
-        read -r shot name width height <<< "$entry"
-        src="$RAW/$WEBSITE_LANGUAGE/$shot.png"
-        if [[ -f "$src" ]]; then
-            cwebp -quiet -q $WEBP_QUALITY -resize $width $height "$src" -o "$OUT/website/$name.webp"
-        else
-            echo "  ✗ missing $WEBSITE_LANGUAGE/$shot (for $name)" >&2; MISSING=1
-        fi
+    for config in "$RAW"/*(/N); do
+        lang=${config:t}
+        mkdir -p "$OUT/website/$lang"
+        for entry in $WEBSITE_SHOTS; do
+            read -r shot name width height <<< "$entry"
+            src="$config/$shot.png"
+            if [[ -f "$src" ]]; then
+                cwebp -quiet -q $WEBP_QUALITY -resize $width $height "$src" -o "$OUT/website/$lang/$name.webp"
+            else
+                echo "  ✗ missing $lang/$shot (for $name)" >&2; MISSING=1
+            fi
+        done
     done
 }
 

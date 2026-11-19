@@ -344,15 +344,18 @@ final class AuthService: AuthServiceProtocol {
     }
 
     // MARK: - private methods
+    
+    /// AuthService: called after restoreSession() and after a successful signIn()
+    /// Best effort: only sends a request when a value changed; offline > retried at next launch.
     private func syncLocale() {
-        let appLanguage = Bundle.appLanguage
-        guard client.auth.currentUser?.userMetadata["locale"] != .string(appLanguage) else { return }
+        guard let stored = client.auth.currentUser?.userMetadata else { return }
+        let wanted = UserLanguage.metadata
+        guard wanted.contains(where: { stored[$0.key] != $0.value }) else { return }
         Task {
             do {
-                _ = try await client.auth.update(user: UserAttributes(data: ["locale": .string(appLanguage)]))
-                Log.info("User locale set to \(appLanguage)")
+                _ = try await client.auth.update(user: UserAttributes(data: wanted))
             } catch {
-                Log.warning("User locale not updated: \(error)")
+                Log.info("Language sync skipped: \(error)")
             }
         }
     }
@@ -446,7 +449,7 @@ final class AuthService: AuthServiceProtocol {
             do {
                 let response = try await self.client.auth.signUp(email: email,
                                                                  password: password,
-                                                                 data: ["locale": .string(Bundle.appLanguage)],
+                                                                 data: UserLanguage.metadata,
                                                                  redirectTo: DropinApp.urls.emailConfirmedURL)
                 // When the Supabase project requires email confirmation, `session` is nil (only `user` is returned)
                 // don't mark the user as authenticated until they've confirmed and actually signed in.

@@ -518,6 +518,30 @@
       "notes": null,
       "createdAt": "2026-09-29T13:19:00Z",
       "updatedAt": "2026-09-29T13:19:00Z"
+    },
+    {
+      "id": "6A2D9E41-7C3B-4F85-A1D0-3E9B52C7F814",
+      "name": "Quinta da Serra",
+      "coordinates": {
+        "latitude": 38.7953,
+        "longitude": -9.3912
+      },
+      "address": "Sintra, Portugal",
+      "address2": "",
+      "categoryId": "9B1F3C2A-6E4D-4A7B-8C51-2D7E0F9A4B36",
+      "tagIds": [
+        "C4E2A8D1-3B7F-4E19-9A62-5F0D8B1C7E43",
+        "E7A13F90-2C5B-4D86-B4E8-91F6C03D2A75"
+      ],
+      "images": [],
+      "icon": null,
+      "rating": null,
+      "phone": [],
+      "email": [],
+      "url": [],
+      "notes": null,
+      "createdAt": "2026-09-29T11:41:00Z",
+      "updatedAt": "2026-09-29T11:41:00Z"
     }
   ]
 }

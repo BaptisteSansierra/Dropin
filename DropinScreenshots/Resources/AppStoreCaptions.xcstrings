@@ -73,8 +73,8 @@
         }
       }
     },
-    "settings.import" : {
-      "comment" : "App Store screenshot caption for the 'settings.import' shot (scripts/screenshots.sh); the shot shows the import summary, presented as a Mapstr import",
+    "settings.import.mapstr" : {
+      "comment" : "App Store screenshot caption for the 'settings.import.mapstr' shot (scripts/screenshots.sh); the shot shows the summary of a completed Mapstr import",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
