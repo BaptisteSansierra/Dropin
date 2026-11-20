@@ -156,6 +156,10 @@ final class AuthService: AuthServiceProtocol {
                 assertionFailure()
                 throw error
             }
+        } catch let error where error.isOffline || error.isTimeout {
+            // Expected: no connection
+            Log.warning("  > Signin failed, no connection (\(error))")
+            throw error
         } catch {
             DropinTracker.shared.capture("Unexpected error \(error)", authFlow: .signin)
             Log.warning("  > Signin failed (\(error)), wipe session anyway")

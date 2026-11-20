@@ -89,6 +89,20 @@ enum VerifyEmailContext: Hashable {
         }
     }
 
+    /// Same check when the app comes back to foreground (the user may have confirmed from the mail app / browser).
+    /// Silent: failing is the expected outcome, the user didn't ask for anything
+    func checkConfirmationOnForeground() async {
+        guard !isCheckingConfirmation else { return }
+        isCheckingConfirmation = true
+        defer { isCheckingConfirmation = false }
+        do {
+            try await authService.signIn(email: email, password: password)
+            coordinator.popToRoot()
+        } catch {
+            Log.info("VerifyEmailViewModel: not confirmed on foreground (\(error))")
+        }
+    }
+
     // MARK: - Navigation
     /// `justSignedUp`: the account already exists, so returning to the sign-up form is meaningless; pop all the way back to Sign in.
     /// `unconfirmedLogin`: this was pushed from Sign in, so a plain pop is enough to land back there.

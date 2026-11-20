@@ -8,6 +8,7 @@ import SwiftUI
 struct VerifyEmailView: View {
 
     @State private var viewModel: VerifyEmailViewModel
+    @Environment(\.scenePhase) private var scenePhase
 
     init(viewModel: VerifyEmailViewModel) {
         self.viewModel = viewModel
@@ -63,6 +64,10 @@ struct VerifyEmailView: View {
                 .ignoresSafeArea(.keyboard, edges: .bottom)
         }
         .navigationBarBackButtonHidden(true)
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await viewModel.checkConfirmationOnForeground() }
+        }
     }
 
     // MARK: - context-dependent copy
