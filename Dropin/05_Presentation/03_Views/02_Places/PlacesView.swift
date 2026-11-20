@@ -87,6 +87,11 @@ struct PlacesView: View {
                 // Hide sheet overlays if any
                 viewModel.isPresenting = true
             }
+            .onChange(of: viewModel.showingFilter) { _, newValue in
+                guard newValue else { return }
+                // Hide sheet overlays if any
+                viewModel.isPresenting = true
+            }
             .onChange(of: viewModel.syncStatus.lastSyncedAt) {
                 Task {
                     await reloadPlaces()

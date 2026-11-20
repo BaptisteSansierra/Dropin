@@ -12,14 +12,28 @@ struct SearchTextFieldView: View {
     // MARK: - States & Bindings
     @Binding private var text: String
     @State private var clearButtonOpacity: Double
-    @FocusState private var textFocused: Bool
-    
-    // MARK: - properties
+    @FocusState private var internalFocus: Bool
+
+    // MARK: - private properties
+    private var focus: FocusState<Bool>.Binding { externalFocus ?? $internalFocus }
+    private let externalFocus: FocusState<Bool>.Binding?
     private var fillColor: Color
     private let height: CGFloat = 40
     private var placeholder: String
     private var isTextEmpty: Bool {
         return text.count == 0
+    }
+
+    // MARK: - init
+    init(text: Binding<String>,
+         placeholder: String,
+         isFocused: FocusState<Bool>.Binding? = nil,
+         fillColor: Color = .surface1) {
+        self._text = text
+        self.placeholder = placeholder
+        self.clearButtonOpacity = text.wrappedValue.count == 0 ? 0 : 1
+        self.externalFocus = isFocused
+        self.fillColor = fillColor
     }
 
     // MARK: - body
@@ -44,7 +58,11 @@ struct SearchTextFieldView: View {
             .fill(fillColor)
             .frame(height: height)
             .onTapGesture {
-                textFocused = true
+                if let externalFocus = externalFocus {
+                    externalFocus.wrappedValue = true
+                } else {
+                    internalFocus = true
+                }
             }
     }
 
@@ -63,7 +81,7 @@ struct SearchTextFieldView: View {
                 TextField(String(""), text: $text)
                     .textStyle(.body, color: .textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .focused($textFocused)
+                    .focused(focus)
                     .keyboardType(.default)
                     .autocorrectionDisabled()
                     .autocapitalization(.none)
@@ -78,14 +96,6 @@ struct SearchTextFieldView: View {
                     text = ""
                 }
         }
-    }
-    
-    // MARK: - init
-    init(text: Binding<String>, placeholder: String, fillColor: Color = .surface1) {
-        self._text = text
-        self.placeholder = placeholder
-        self.clearButtonOpacity = text.wrappedValue.count == 0 ? 0 : 1
-        self.fillColor = fillColor
     }
 }
 

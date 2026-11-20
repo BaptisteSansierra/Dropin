@@ -15,6 +15,9 @@ struct PlacesListView: View {
     @Binding private var filter: PlaceFilter?
     @Environment(RootView.ActionBus.self) private var actionBus
     @Environment(AppSettings.self) private var appSettings
+    @FocusState private var searchFocus
+    /// True if parent is presenting something over the view (sidebar / menu / ...) => should hide sheetOverlays
+    @Binding private var isParentPresenting: Bool
 
     // MARK: - Properties
     private var places: [PlaceUIModel]
@@ -28,12 +31,14 @@ struct PlacesListView: View {
          places: [PlaceUIModel],
          allPlacesCount: Int,
          selectedPlaceId: Binding<UUID?>,
-         filter: Binding<PlaceFilter?>) {
+         filter: Binding<PlaceFilter?>,
+         isParentPresenting: Binding<Bool>) {
         self.viewModel = viewModel
         self.places = places
         self.allPlacesCount = allPlacesCount
         self._selectedPlaceId = selectedPlaceId
         self._filter = filter
+        self._isParentPresenting = isParentPresenting
     }
     
     // MARK: - Body
@@ -42,6 +47,13 @@ struct PlacesListView: View {
             placeholderView
         } else {
             contentView
+                .toolbar {
+                    keyboardHeaderView
+                }
+                .onChange(of: isParentPresenting) { oldValue, newValue in
+                    guard newValue else { return }
+                    searchFocus = false
+                }
         }
     }
     
@@ -80,11 +92,26 @@ struct PlacesListView: View {
         .ignoresSafeArea(edges: .bottom)
     }
     
+    private var keyboardHeaderView: some ToolbarContent {
+        ToolbarItem(placement: .keyboard) {
+            HStack {
+                Spacer()
+                TextButton(text: "common.close") {
+                    searchFocus = false
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+        }
+    }
+    
     private func headerView(_ searchedPlacesCount: Int) -> some View {
         VStack(spacing: 0) {
             let placeholder = "place_list.search.placeholder".localized()
             SearchTextFieldView(text: $viewModel.searchText,
                                 placeholder: placeholder,
+                                isFocused: $searchFocus,
                                 fillColor: .backgroundSecondary)
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -226,18 +253,15 @@ struct PlacesListView: View {
             .id("\(place.id)-\(place.changeToken)")  // Force the update after edit
             .onTapGesture {
                 selectedPlaceId = place.id
+                searchFocus = false
             }
     }
     
     private func placeRowContentView(_ place: PlaceUIModel) -> some View {
         PlaceRowView(place: place, locationManager: viewModel.locationManager)
-//            .padding(EdgeInsets(top: 15,
-//                                leading: 10,
-//                                bottom: 15,
-//                                trailing: 0))
             .contentShape(Rectangle()) // seems to fix the contextMenu not appearing on last item
     }
-        
+
     // MARK: private methods
     private func showOnMap(_ placeId: UUID) {
         actionBus.send(.showOnMap(placeId: placeId))
@@ -255,7 +279,8 @@ struct MockPlacesListView: View {
         mock.appContainer.createPlacesListView(places: places,
                                                allPlacesCount: places.count,
                                                selectedPlaceId: $selectedPlaceId,
-                                               filter: $filter)
+                                               filter: $filter,
+                                               isParentPresenting: .constant(false))
     }
     
     init() {

@@ -169,10 +169,17 @@ import MapKit
         } set: { newValue in
             self.currentFilter = newValue
         }
+        let bindingIsPresenting = Binding<Bool>(
+        get: {
+            return self.isPresenting
+        }, set: { value in
+            self.isPresenting = value
+        })
         return appContainer.createPlacesListView(places: sortedPlaces,
                                                  allPlacesCount: activePlaces.count,
                                                  selectedPlaceId: bindingSelectedPlaceId,
-                                                 filter: bindingFilter)
+                                                 filter: bindingFilter,
+                                                 isParentPresenting: bindingIsPresenting)
     }
 
     func createPlaceSheetView(place: PlaceUIModel, detent: Binding<PresentationDetent>) -> PlaceSheetView {

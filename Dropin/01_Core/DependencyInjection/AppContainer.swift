@@ -437,7 +437,8 @@ final class AppContainer {
     func createPlacesListView(places: [PlaceUIModel],
                               allPlacesCount: Int,
                               selectedPlaceId: Binding<UUID?>,
-                              filter: Binding<PlaceFilter?>) -> PlacesListView {
+                              filter: Binding<PlaceFilter?>,
+                              isParentPresenting: Binding<Bool>) -> PlacesListView {
         let vm = PlacesListViewModel(self,
                                      coordinator: placeCoordinator,
                                      locationManager: locationManager,
@@ -446,7 +447,8 @@ final class AppContainer {
                               places: places,
                               allPlacesCount: allPlacesCount,
                               selectedPlaceId: selectedPlaceId,
-                              filter: filter)
+                              filter: filter,
+                              isParentPresenting: isParentPresenting)
     }
     
     func createPlaceCreateQuickView(place: PlaceUIModel,
