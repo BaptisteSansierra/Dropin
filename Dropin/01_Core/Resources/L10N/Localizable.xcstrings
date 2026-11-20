@@ -3359,28 +3359,6 @@
         }
       }
     },
-    "common.create_place" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create place"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Crear lugar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Créer un lieu"
-          }
-        }
-      }
-    },
     "common.delete" : {
       "localizations" : {
         "en" : {

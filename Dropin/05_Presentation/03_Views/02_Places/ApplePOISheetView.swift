@@ -108,7 +108,7 @@ struct ApplePOISheetView: View {
                 ApplePOIViewFactory.missingIdView(address: address)
             }
             Spacer()
-            MainButton(text: "common.create_place", systemImage: "plus") {
+            MainButton(text: "create_place.save", systemImage: "plus") {
                 createPlace(mapItem)
             }
         }
@@ -219,7 +219,7 @@ struct ApplePOISheetView: View {
                 .padding(.top, 10)
                 .padding(.bottom, 10)
 
-            MainButton(text: "common.create_place", systemImage: "plus") {}
+            MainButton(text: "create_place.save", systemImage: "plus") {}
                 .disabled(true)
         }
         .padding(.horizontal)
