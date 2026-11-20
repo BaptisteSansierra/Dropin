@@ -8462,6 +8462,7 @@
       }
     },
     "menu.new_place.coords" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8510,7 +8511,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drop pin on map"
+            "value" : "Drop a pin on the map"
           }
         },
         "es" : {

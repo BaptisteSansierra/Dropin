@@ -291,6 +291,11 @@ struct PlacesMapView: View {
             Text("menu.new_place.drop_pin")
                 .textStyle(.body)
         }
+        
+        #if false
+        // This can be done by using the address picker
+        // -> removing it removes noise from the menu
+        
         // Create place from lat/long
         Button {
             viewModel.pickedAddress = nil
@@ -300,6 +305,9 @@ struct PlacesMapView: View {
             Text("menu.new_place.coords")
                 .textStyle(.body)
         }
+        #endif
+        
+        
         #if false // TODO: DRO-32 > implement place creation from contact / image
         // Create place from contact
         Button {

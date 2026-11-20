@@ -225,23 +225,11 @@ struct IdentifiablePOI: Identifiable {
     }
     
     func coordinatesPickerUpdate(_ newCoords: CLLocationCoordinate2D) {
-        
         mapController.centerOn(newCoords, withSheetOffset: true)
-        
         Task {
             try? await Task.sleep(for: .seconds(0.1))
             updatePlacePickerPositions(coords: newCoords)
         }
-
-        /*
-        mapActionBus.performAction(.centerOnCoords(coords: newCoords,
-                                                   animated: false,
-                                                   sheetHeight: DropinApp.ui.coordinatesPickerSheetHeight))
-        Task {
-            try? await Task.sleep(for: .seconds(0.1))
-            mapActionBus.performAction(.updatePlacePickerPositions)
-        }
-         */
     }
     
     func prepareApplePOI(_ poiAnnotation: MKMapFeatureAnnotation) {
