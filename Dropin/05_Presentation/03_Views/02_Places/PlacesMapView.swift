@@ -166,7 +166,9 @@ struct PlacesMapView: View {
                  title: "places_map_view.create_place_error.title",
                  body: LocalizedStringKey(String(format: NSLocalizedString("places_map_view.overlap_place.body.%@", comment: ""),
                                                  viewModel.overlapingPlace?.name ?? "")))
-        .sheetOverlay(isPresented: $viewModel.pickingAddress) {
+        .sheetOverlay(isPresented: $viewModel.pickingAddress, onDismiss: {
+            viewModel.pickingAddressWithCoords = false
+        }) {
             return AddressPickerView(editCoords: viewModel.pickingAddressWithCoords,
                                      coords: $viewModel.addressPickerCoords,
                                      address: $viewModel.pickedAddress,
@@ -177,7 +179,6 @@ struct PlacesMapView: View {
             .sheetOverlayDetents([.height(DropinApp.ui.addressPickerSheetHeight)])
             .sheetOverlayDragIndicator(.visible)
             .sheetOverlayKeyboardPolicy(.maxOffset(100))
-            .id(viewModel.pickingAddressWithCoords)
         }
     }
     
