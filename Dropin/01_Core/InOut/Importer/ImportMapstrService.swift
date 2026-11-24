@@ -8,8 +8,22 @@
 import Foundation
 import CoreLocation
 
+fileprivate struct GeoJSONMapstrProperties: Decodable {
+    let name: String
+    let address: String?
+    let icon: String?
+    let userComment: String?
+    let tags: [MapstrFileTag]?
+}
+
+fileprivate struct MapstrFileTag: Decodable {
+    let name: String
+    let color: String
+}
+
 actor ImportMapstrService: ImportServiceProtocol {
 
+    // MARK: - Private Properties
     private let saveContext: SaveContext
     private let rollbackContext: RollbackContext
     private let fetchPlaces: FetchPlaces
@@ -27,6 +41,7 @@ actor ImportMapstrService: ImportServiceProtocol {
     private var createdTagsCount: Int = 0
     private var createdCategoriesCount: Int = 0
 
+    // MARK: - Init
     init(saveContext: SaveContext,
          rollbackContext: RollbackContext,
          fetchPlaces: FetchPlaces,
@@ -58,7 +73,7 @@ actor ImportMapstrService: ImportServiceProtocol {
     }
 
     func read(_ data: Data) async throws -> MapstrImportPlan {
-        let collection = try decode(data)
+        let collection = try GeoJSONFeatureCollection<GeoJSONMapstrProperties>.decode(data)        
         guard collection.features.count > 0 else {
             throw ImportError.emptyFile
         }
@@ -70,8 +85,7 @@ actor ImportMapstrService: ImportServiceProtocol {
 
         for (index, feature) in collection.features.enumerated() {
             guard feature.geometry.coordinates.count >= 2 else { continue }
-            let coords = CLLocationCoordinate2D(latitude: feature.geometry.coordinates[1],
-                                                longitude: feature.geometry.coordinates[0])
+            let coords = feature.geometry.coordinate
             let featureTags = feature.properties.tags ?? []
             for mapstrTag in featureTags {
                 tagPlaceCounts[mapstrTag.name, default: 0] += 1
@@ -125,7 +139,9 @@ actor ImportMapstrService: ImportServiceProtocol {
         existingHardPlaces = try await fetchPlaces()
             .filter { $0.isActive }
         existingCategories = try await fetchCategories()
+            .filter { $0.isActive }
         existingTags = try await fetchTags()
+            .filter { $0.isActive }
 
         guard !Task.isCancelled else { await cancel(canceled); return }
 
@@ -144,42 +160,6 @@ actor ImportMapstrService: ImportServiceProtocol {
 
         Log.info(" -> persisted")
         await completion(createdPlacesCount, duplicatePlacesCount, createdCategoriesCount, createdTagsCount)
-    }
-
-    // MARK: - GeoJSON decoding
-
-    private struct FeatureCollection: Decodable {
-        let features: [Feature]
-    }
-
-    private struct Feature: Decodable {
-        let geometry: Geometry
-        let properties: Properties
-    }
-
-    private struct Geometry: Decodable {
-        let coordinates: [Double]
-    }
-
-    private struct Properties: Decodable {
-        let name: String
-        let address: String?
-        let icon: String?
-        let userComment: String?
-        let tags: [MapstrFileTag]?
-    }
-
-    private struct MapstrFileTag: Decodable {
-        let name: String
-        let color: String
-    }
-
-    private func decode(_ data: Data) throws -> FeatureCollection {
-        do {
-            return try JSONDecoder().decode(FeatureCollection.self, from: data)
-        } catch {
-            throw ImportError.corrupted(error.localizedDescription)
-        }
     }
 
     // MARK: - Persistence
@@ -307,7 +287,6 @@ actor ImportMapstrService: ImportServiceProtocol {
     }
 
     // MARK: - Icon mapping
-
     private static func mapIcon(_ mapstrIcon: String?) -> Icon? {
         guard let mapstrIcon = mapstrIcon else { return nil }
         switch mapstrIcon {
@@ -351,7 +330,9 @@ actor ImportMapstrService: ImportServiceProtocol {
             case "car":                         return .sf("car")
             case "stadium":                     return .sf("sportscourt")
             default:
-                Log.warning("mapstr icon '\(mapstrIcon)' not handled")
+                if mapstrIcon != "generic" {
+                    Log.warning("mapstr icon '\(mapstrIcon)' not handled")
+                }
                 return nil
         }
     }

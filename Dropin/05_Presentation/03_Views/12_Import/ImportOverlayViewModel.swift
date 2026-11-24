@@ -148,30 +148,20 @@ import SwiftUI
     private func startImport(url: URL, selectedSource: ImportSource, tagImport: Bool, tagName: String) {
         switch selectedSource {
             case .dropin:
-                self.importDropin(url, tagImport: tagImport, tagName: tagName)
+                Task { await self.runImport(source: .dropin, url: url , tagImport: tagImport, tagName: tagName) }
                 // We can dismiss now
                 self.revealProgression()
             case .mapstr:
                 // Do not dismiss still, we'll need to push the tag-to-category view once phase 1 completes
-                self.importMapstr(url, tagImport: tagImport, tagName: tagName)
+                Task { await self.runImport(source: .mapstr, url: url, tagImport: tagImport, tagName: tagName) }
+            case .google:
+                Task { await self.runImport(source: .google, url: url, tagImport: tagImport, tagName: tagName) }
+                // We can dismiss now
+                self.revealProgression()
             default:
                 assertionFailure("import source undefined")
                 self.dismiss()
         }
-    }
-
-    private func importMapstr(_ url: URL, tagImport: Bool, tagName: String) {
-        importTask = Task { await runImport(source: .mapstr,
-                                            url: url,
-                                            tagImport: tagImport,
-                                            tagName: tagName) }
-    }
-
-    private func importDropin(_ url: URL, tagImport: Bool, tagName: String) {
-        importTask = Task { await runImport(source: .dropin,
-                                            url: url,
-                                            tagImport: tagImport,
-                                            tagName: tagName) }
     }
 
     /// Cancel on MapstrCategoriesView: discard the plan, nothing was written.
@@ -227,8 +217,10 @@ import SwiftUI
                     importStatus?.setCount(mapstrPlan.places.count)
                     pendingImportCoordinator = impCoord
                     mapstrImportPlan = mapstrPlan
-                    
                     coordinator.pushCategoryMapper()
+                case .google(let googlePlan):
+                    importStatus?.setCount(googlePlan.places.count)
+                    await runPhase2(impCoord, plan, mapping: [], source: source, filename: url.lastPathComponent)
             }
         } catch let error as ImportError {
             Log.error("Import failed (source: \(source), url: \(url.lastPathComponent)): \(error)")

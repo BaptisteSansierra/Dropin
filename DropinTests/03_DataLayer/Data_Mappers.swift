@@ -24,6 +24,22 @@ struct Data_Mappers {
     @Test func placeRoundTrip() async throws {
         let original = SampleData.fullPlace()
         let sd = PlaceMapper.toData(original, spaceId: UUID())
+        
+        
+        print("---- Contacts")
+        print("  --Phones ")
+        for p in sd.phone {
+            print("    \(p)")
+        }
+        print("  --URLs ")
+        for p in sd.url {
+            print("    \(p)")
+        }
+        print("  --Emails ")
+        for p in sd.email {
+            print("    \(p)")
+        }
+
         // Relationships (tags/category/images) are intentionally not transferred
         // by toData (the repo wires SwiftData relationships afterward). Skip
         // them in the assert.

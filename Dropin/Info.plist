@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>APP_URL_SCHEME</key>
+	<string>$(APP_URL_SCHEME)</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -28,6 +30,18 @@
 				<string>com.dropin.geojson</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>JSON</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.dropin.json</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -48,8 +62,6 @@
 	<string>$(DEBUG_SIGNIN_PASSWORD)</string>
 	<key>DEBUG_SIGNUP_EMAIL_PREFIX</key>
 	<string>$(DEBUG_SIGNUP_EMAIL_PREFIX)</string>
-	<key>APP_URL_SCHEME</key>
-	<string>$(APP_URL_SCHEME)</string>
 	<key>DEBUG_SIGNUP_EMAIL_SUFFIX</key>
 	<string>$(DEBUG_SIGNUP_EMAIL_SUFFIX)</string>
 	<key>NSAppTransportSecurity</key>
@@ -84,33 +96,6 @@
 				</array>
 				<key>public.mime-type</key>
 				<string>application/vnd.dropin+json</string>
-			</dict>
-		</dict>
-	</array>
-	<key>UTImportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.json</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Geojson from Mapstr or other apps</string>
-			<key>UTTypeIcons</key>
-			<dict/>
-			<key>UTTypeIdentifier</key>
-			<string>com.dropin.geojson</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>geojson</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/geo+json</string>
-					<string>application/vnd.geo+json</string>
-				</array>
 			</dict>
 		</dict>
 	</array>

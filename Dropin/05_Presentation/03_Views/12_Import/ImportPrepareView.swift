@@ -125,7 +125,7 @@ struct ImportPrepareView: View {
                 .stroke(.hairline)
         }
     }
-    
+        
     private var confirmSourceView: some View {
         VStack(spacing: 0) {
             Text("import_prepare.confirm_source.title")
@@ -141,7 +141,7 @@ struct ImportPrepareView: View {
                             .frame(height: 1)
                     }
                     ImportChoiceRowView(source: source,
-                                        title: source.displayName,
+                                        title: rowTitle(source: source),
                                         subtitle: nil,
                                         selected: viewModel.selectedSource == source)
                     .onTapGesture {
@@ -157,6 +157,18 @@ struct ImportPrepareView: View {
                     .stroke(.hairline)
             }
         }
+    }
+    
+    private func rowTitle(source: ImportSource) -> LocalizedStringKey {
+        var rowTitle = source.displayName
+        switch (source, viewModel.ext) {
+            case (.unknown, .geojson):
+                rowTitle = "import_source.other.geojson"
+            case (.google, _):
+                rowTitle = "import_prepare.google_row.title"
+            default: break
+        }
+        return rowTitle
     }
 }
 

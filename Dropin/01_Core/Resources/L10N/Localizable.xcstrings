@@ -3792,6 +3792,28 @@
         }
       }
     },
+    "common.from_google_maps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From Google Maps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "De Google Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Depuis Google Maps"
+          }
+        }
+      }
+    },
     "common.icon" : {
       "localizations" : {
         "en" : {
@@ -6385,6 +6407,28 @@
         }
       }
     },
+    "file_format.json.beautified" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON"
+          }
+        }
+      }
+    },
     "fontawesome.detail.footnote" : {
       "localizations" : {
         "en" : {
@@ -6492,6 +6536,29 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "De quelle app provient-il ?"
+          }
+        }
+      }
+    },
+    "import_prepare.google_row.title" : {
+      "comment" : "Import prepare: Google row title in the source choice list",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps (Starred places)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Google Maps (Sitios destacados)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Google Maps (Lieux favoris)"
           }
         }
       }
@@ -6632,25 +6699,97 @@
         }
       }
     },
-    "import_selector.mapstr.desc" : {
-      "comment" : "Import selector: help about exporting data from Mapstr",
+    "import_selector.google.how_to" : {
+      "comment" : "Import selector: help about exporting data from Google",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "How to export from Mapstr"
+            "value" : "How to export from Google Maps"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Cómo exportar desde Mapstr"
+            "value" : "Cómo exportar desde Google Maps"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Comment exporter depuis Mapstr"
+            "value" : "Comment exporter depuis Google Maps"
+          }
+        }
+      }
+    },
+    "import_selector.google.info" : {
+      "comment" : "Import selector: Google Maps limitation, only Starred places can be imported. Keep the ** markdown around the list name (bold)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only your **Starred places** can be imported. Google doesn’t provide place data for your other lists."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Solo se pueden importar tus **Sitios destacados**. Google no proporciona los datos de los lugares de tus otras listas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seuls vos **Lieux favoris** peuvent être importés. Google ne fournit pas les données des lieux de vos autres listes."
+          }
+        }
+      }
+    },
+    "import_selector.google.subtitle" : {
+      "comment" : "Import selector: subtitle of the Google source row",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GeoJSON export"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exportación GeoJSON"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Export GeoJSON"
+          }
+        }
+      }
+    },
+    "import_selector.google.title" : {
+      "comment" : "Import selector: title of the Google source row",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Google Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Google Maps"
           }
         }
       }
@@ -6674,6 +6813,29 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Exportez d'abord vos lieux depuis Mapstr, puis choisissez le fichier."
+          }
+        }
+      }
+    },
+    "import_selector.mapstr.how_to" : {
+      "comment" : "Import selector: help about exporting data from Mapstr",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to export from Mapstr"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cómo exportar desde Mapstr"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Comment exporter depuis Mapstr"
           }
         }
       }
@@ -6838,6 +7000,29 @@
         }
       }
     },
+    "import_source.google" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps"
+          }
+        }
+      }
+    },
     "import_source.mapstr" : {
       "localizations" : {
         "en" : {
@@ -6878,6 +7063,28 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Autre"
+          }
+        }
+      }
+    },
+    "import_source.other.geojson" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other GeoJSON"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Otro GeoJSON"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Autre GeoJSON"
           }
         }
       }
@@ -6988,6 +7195,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doublons ignorés"
+          }
+        }
+      }
+    },
+    "import.complete.google.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps import complete"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Importación de Google Maps completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Import Google Maps terminé"
           }
         }
       }
@@ -7274,6 +7503,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import Dropin · %@"
+          }
+        }
+      }
+    },
+    "import.title.google_%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps export · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Exportación de Google Maps · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Export Google Maps · %@"
           }
         }
       }
@@ -12541,19 +12792,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google (GeoJSON)"
+            "value" : "Google Maps (GeoJSON)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Google (GeoJSON)"
+            "value" : "Google Maps (GeoJSON)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google (GeoJSON)"
+            "value" : "Google Maps (GeoJSON)"
           }
         }
       }

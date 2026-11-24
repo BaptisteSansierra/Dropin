@@ -84,7 +84,9 @@ actor ImportDropinService: ImportServiceProtocol {
         existingHardPlaces = try await fetchPlaces()
             .filter { $0.isActive }
         existingCategories = try await fetchCategories()
+            .filter { $0.isActive }
         existingTags = try await fetchTags()
+            .filter { $0.isActive }
 
         guard !Task.isCancelled else { await cancel(canceled); return }
 

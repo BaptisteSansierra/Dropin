@@ -168,6 +168,9 @@ struct ImportStatusView: View {
                 case .mapstr:
                     Text("import.complete.mapstr.title")
                         .textStyle(.bodySemibold)
+                case .google:
+                    Text("import.complete.google.title")
+                        .textStyle(.bodySemibold)
                 case .unknown:
                     EmptyView()
             }
@@ -233,6 +236,8 @@ struct ImportStatusView: View {
                 return "import.title.dropin_\(importStatus.filename)"
             case .mapstr:
                 return "import.title.mapstr_\(importStatus.filename)"
+            case .google:
+                return "import.title.google_\(importStatus.filename)"
             case .unknown:
                 assertionFailure("unknown importer")
                 return "unknown"
@@ -275,6 +280,7 @@ struct MOCKImportStatusView: View {
 
     @State private var importStatus: ImportStatus?
     private let timer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
+    private let source: ImportSource = .google
     
     var body: some View {
         ZStack {
@@ -283,7 +289,7 @@ struct MOCKImportStatusView: View {
             VStack(spacing: 40) {
                 Button {
                     importStatus = ImportStatus(filename: "my_places.json",
-                                                source: .mapstr)
+                                                source: source)
                     importStatus?.setCount(100)
                     //importStatus?.updateProgress(15)
                 } label: {
@@ -291,7 +297,7 @@ struct MOCKImportStatusView: View {
                 }
                 Button {
                     importStatus = ImportStatus(filename: "my_places.json",
-                                                source: .mapstr)
+                                                source: source)
                     importStatus?.setCount(100)
                     importStatus?.updateProgress(100)
                     importStatus?.complete()
@@ -300,7 +306,7 @@ struct MOCKImportStatusView: View {
                 }
                 Button {
                     importStatus = ImportStatus(filename: "my_places.json",
-                                                source: .mapstr)
+                                                source: source)
                     importStatus?.setCount(100)
                     importStatus?.setError(ImportError.unsupported("unsupported format"))
                 } label: {

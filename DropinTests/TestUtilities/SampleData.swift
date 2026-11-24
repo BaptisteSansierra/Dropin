@@ -52,6 +52,7 @@ public enum SampleData {
         ]
         let urls = [
             ContactItem(value: "https://example.com", label: ContactLabel(kind: .url, label: .url)).rawValue,
+            ContactItem(value: "http://maps.google.com/?cid=11666316948229316401", label: ContactLabel(kind: .url, label: .custom("google"))).rawValue,
         ]
         return Place(
             id: UUID(),

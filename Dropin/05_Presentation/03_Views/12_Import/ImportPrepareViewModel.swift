@@ -36,7 +36,6 @@ import SwiftUI
         return sourceExt
     }
 
-
     @ObservationIgnored var coordinator: ImportFlowCoordinator
     @ObservationIgnored private var availableTagName: AvailableTagName
 
@@ -84,7 +83,8 @@ import SwiftUI
         switch newValue {
             case .dropin: tagImport = false
             case .mapstr: tagImport = true
-            default: ()
+            case .google: tagImport = true
+            case .unknown: tagImport = true
         }
         Task {
             await fillAvailableTagName()
@@ -98,7 +98,10 @@ import SwiftUI
                 // .dropin must be a dropin file
                 selectedSource = .dropin
             case .geojson:
-                // .geoJSON could be anything, the user will choose 
+                // .geoJSON could be anything, the user will choose
+                selectedSource = .unknown
+            case .json:
+                // .json could be anything, the user will choose
                 selectedSource = .unknown
         }
     }
@@ -133,8 +136,10 @@ import SwiftUI
                     return try await availableTagName(base: String(localized: "common.import").lowercased())
                 case .mapstr:
                     return try await availableTagName(base: selectedSource.description.lowercased())
-                default:
-                    ()
+                case .google:
+                    return try await availableTagName(base: selectedSource.description.lowercased())
+                case .unknown:
+                    return try await availableTagName(base: selectedSource.description.lowercased())
             }
         } catch {
             assertionFailure("an error occuured while getting available tag name: \(error)")

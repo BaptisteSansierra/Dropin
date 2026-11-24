@@ -27,6 +27,9 @@ enum ScreenshotMode {
     static var mapstrImportURL: URL? {
         ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.mapstrImportPath].map { URL(fileURLWithPath: $0) }
     }
+    static var googleImportURL: URL? {
+        ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.googleImportPath].map { URL(fileURLWithPath: $0) }
+    }
 
     static var colorScheme: ColorScheme? {
         switch ProcessInfo.processInfo.environment[ScreenshotLaunchKeys.colorScheme] {

@@ -11,14 +11,14 @@ import SwiftUI
 enum ImportSource: String, Codable, CustomStringConvertible {
     case dropin
     case mapstr
-    //case google
+    case google
     case unknown
-
+    
     var description: String {
         switch self {
             case .dropin: "Dropin"
             case .mapstr: "Mapstr"
-            //case .google: "Google"
+            case .google: "Google"
             case .unknown: "Unknown"
         }
     }
@@ -27,7 +27,18 @@ enum ImportSource: String, Codable, CustomStringConvertible {
         switch self {
             case .dropin: "import_source.dropin"
             case .mapstr: "import_source.mapstr"
+            case .google: "import_source.google"
             case .unknown: "import_source.other"
         }
+    }
+
+    var matchingExtensions: [ImportSupportedExtension] {
+        var extensions: [ImportSupportedExtension] = []
+        for ext in ImportSupportedExtension.allCases {
+            if ext.matchingSource.contains(self) {
+                extensions.append(ext)
+            }
+        }
+        return extensions
     }
 }

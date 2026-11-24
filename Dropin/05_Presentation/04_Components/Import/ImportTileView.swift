@@ -18,6 +18,8 @@ struct ImportTileView: View {
                 dropinTile
             case .mapstr:
                 mapstrTile
+            case .google:
+                googleTile
             case .unknown:
                 unknownTile
         }
@@ -61,6 +63,34 @@ struct ImportTileView: View {
                 .foregroundStyle(.surface1)
         }
     }
+    
+    private var googleTile: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.surface1)
+                .stroke(.hairline)
+            HStack(spacing: 3) {
+                ForEach(Array(Self.googleBars.enumerated()), id: \.offset) { _, color in
+                    Capsule()
+                        .fill(color)
+                        //.frame(width: 4, height: 15)
+                        .frame(height: 15)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.horizontal, 3)
+        }
+        .frame(width: 45, height: 45)
+    }
+
+    private static let googleBars: [Color] = [
+        Color(rgba: "3F78C9"), // blue
+        Color(rgba: "D35A48"), // red
+        Color(rgba: "5FA64A"), // green
+        Color(rgba: "3F78C9"), // blue
+        Color(rgba: "E9B83C"), // yellow
+        Color(rgba: "D35A48"), // red
+    ]
 }
 
 #Preview {
@@ -92,6 +122,17 @@ struct ImportTileView: View {
             }
 
             HStack {
+                ImportTileView(source: .google)
+                Spacer()
+            }
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.surface1)
+                    .stroke(.hairline)
+            }
+
+            HStack {
                 ImportTileView(source: .unknown)
                 Spacer()
             }
@@ -102,5 +143,6 @@ struct ImportTileView: View {
                     .stroke(.hairline)
             }
         }
+        .padding(.horizontal)
     }
 }

@@ -59,7 +59,10 @@ struct ImportSelectorView: View {
                 switch newValue {
                     case .dropin: viewModel.tagImport = false
                     case .mapstr: viewModel.tagImport = true
-                    default: ()
+                    case .google: viewModel.tagImport = true
+                    case .unknown:
+                        assertionFailure()
+                        viewModel.tagImport = true
                 }
                 Task {
                     await viewModel.fillAvailableTagName()
@@ -130,6 +133,21 @@ struct ImportSelectorView: View {
             .onTapGesture {
                 viewModel.selectedSource = .mapstr
             }
+            .padding(.bottom, 10)
+            Rectangle()
+                .fill(.hairline)
+                .frame(height: 1)
+                .padding(.horizontal, -15)
+                .padding(.leading, 60)
+                .padding(.bottom, 10)
+
+            ImportChoiceRowView(source: .google,
+                                title: importSourceTitle(.google),
+                                subtitle: importSourceSubtitle(.google),
+                                selected: viewModel.selectedSource == .google)
+            .onTapGesture {
+                viewModel.selectedSource = .google
+            }
         }
         .padding(.horizontal, 15)
         .padding(.vertical, 8)
@@ -147,6 +165,8 @@ struct ImportSelectorView: View {
                 dropinInfoView
             case .mapstr:
                 mapstrInfoView
+            case .google:
+                googleInfoView
             case .unknown:
                 EmptyView()
         }
@@ -165,7 +185,7 @@ struct ImportSelectorView: View {
                 Image(systemName: "questionmark.circle")
                     .textStyle(.subheadline, color: .dropinPrimary)
                     .padding(.trailing, 10)
-                Text("import_selector.mapstr.desc")
+                Text("import_selector.mapstr.how_to")
                     .textStyle(.subheadline, color: .dropinPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)
@@ -190,6 +210,47 @@ struct ImportSelectorView: View {
                 .textStyle(.cardFooter)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
+        }
+    }
+    
+    private var googleInfoView: some View {
+        VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 0) {
+                Image(systemName: "info.circle")
+                    .textStyle(.subheadline, color: .textPrimary)
+                    .padding(.trailing, 10)
+                Text("import_selector.google.info")
+                    .textStyle(.cardFooter, color: .textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+            }
+            .padding(.top, 15)
+            .padding(.bottom, 10)
+
+            HStack(spacing: 0) {
+                Image(systemName: "questionmark.circle")
+                    .textStyle(.subheadline, color: .dropinPrimary)
+                    .padding(.trailing, 10)
+                Text("import_selector.google.how_to")
+                    .textStyle(.subheadline, color: .dropinPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+                    .padding(.trailing, 10)
+                Image(systemName: "arrow.up.right")
+                    .textStyle(.subheadline, color: .dropinPrimary)
+            }
+            .padding(.horizontal, 15)
+            .padding(.vertical, 15)
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.surface1)
+                    .stroke(.hairline)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                UIApplication.shared.open(DropinApp.urls.importMapstrDesc)
+            }
+            .padding(.bottom, 5)
         }
     }
     
@@ -252,7 +313,10 @@ struct ImportSelectorView: View {
                 return "import_selector.dropin.title"
             case .mapstr:
                 return "import_selector.mapstr.title"
-            default:
+            case .google:
+                return "import_selector.google.title"
+            case .unknown:
+                assertionFailure()
                 return ""
         }
     }
@@ -263,7 +327,10 @@ struct ImportSelectorView: View {
                 return "import_selector.dropin.subtitle"
             case .mapstr:
                 return "import_selector.mapstr.subtitle"
-            default:
+            case .google:
+                return "import_selector.google.subtitle"
+            case .unknown:
+                assertionFailure()
                 return ""
         }
     }

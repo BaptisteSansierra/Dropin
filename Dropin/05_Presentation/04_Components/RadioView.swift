@@ -24,11 +24,15 @@ struct RadioView: View {
                         .foregroundStyle(.surface1)
                 }
             case false:
-                Circle()
-                    .fill(.clear)
-                    //.stroke(.hairline)
-                    .stroke(.textTertiary.opacity(0.5), lineWidth: 1.5)
-                    .frame(width: 22, height: 22)
+                ZStack {
+                    Circle()
+                        .fill(.clear)
+                        .frame(width: 25, height: 25)
+                    Circle()
+                        .fill(.clear)
+                        .stroke(.textTertiary.opacity(0.5), lineWidth: 1.5)
+                        .frame(width: 22, height: 22)
+                }
         }
     }
 }

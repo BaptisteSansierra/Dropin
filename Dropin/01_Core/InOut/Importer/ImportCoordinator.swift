@@ -12,6 +12,7 @@ import Foundation
 enum ImportPlan {
     case dropin(DropinInOut)
     case mapstr(MapstrImportPlan)
+    case google(GoogleImportPlan)
 }
 
 @MainActor
@@ -23,6 +24,7 @@ final class ImportCoordinator {
     private let tagName: String
     private let dropinService: ImportDropinService?
     private let mapstrService: ImportMapstrService?
+    private let googleService: ImportGoogleService?
     private let sync: any SyncServicePausableProtocol
 
     init(source: ImportSource,
@@ -55,6 +57,7 @@ final class ImportCoordinator {
                                                     upsertCategory: upsertCategory,
                                                     upsertTag: upsertTag)
                 mapstrService = nil
+                googleService = nil
             case .mapstr:
                 Log.info("Mapstr import service created")
                 mapstrService = ImportMapstrService(saveContext: saveContext,
@@ -66,7 +69,20 @@ final class ImportCoordinator {
                                                     upsertCategory: upsertCategory,
                                                     upsertTag: upsertTag)
                 dropinService = nil
-            default:
+                googleService = nil
+            case .google:
+                Log.info("Google import service created")
+                googleService = ImportGoogleService(saveContext: saveContext,
+                                                    rollbackContext: rollbackContext,
+                                                    fetchPlaces: fetchPlaces,
+                                                    fetchCategories: fetchCategories,
+                                                    fetchTags: fetchTags,
+                                                    upsertPlace: upsertPlace,
+                                                    upsertCategory: upsertCategory,
+                                                    upsertTag: upsertTag)
+                dropinService = nil
+                mapstrService = nil
+            case .unknown:
                 Log.error("unrecognized file to be imported \(url.pathExtension)")
                 throw ImportError.unsupported(url.pathExtension)
         }
@@ -80,7 +96,9 @@ final class ImportCoordinator {
                 return .dropin(try await dropinService!.read(url))
             case .mapstr:
                 return .mapstr(try await mapstrService!.read(url))
-            default:
+            case .google:
+                return .google(try await googleService!.read(url))
+            case .unknown:
                 throw ImportError.unsupported(url.pathExtension)
         }
     }
@@ -107,6 +125,13 @@ final class ImportCoordinator {
                 case .mapstr(let mapstrPlan):
                     try await mapstrService!.import(mapstrPlan,
                                                     mapping: mapping,
+                                                    tagImport: tagImport,
+                                                    tagName: tagName,
+                                                    progress: progress,
+                                                    canceled: canceled,
+                                                    completion: completion)
+                case .google(let googlePlan):
+                    try await googleService!.import(googlePlan,
                                                     tagImport: tagImport,
                                                     tagName: tagName,
                                                     progress: progress,

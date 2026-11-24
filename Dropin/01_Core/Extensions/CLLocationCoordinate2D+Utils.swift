@@ -35,4 +35,8 @@ extension CLLocationCoordinate2D {
     func isIdentical(to other: CLLocationCoordinate2D, epsilon: Double = 20) -> Bool {
         distance(to: other) < epsilon
     }
+    
+    func isNull() -> Bool {
+        latitude == 0 && longitude == 0
+    }
 }

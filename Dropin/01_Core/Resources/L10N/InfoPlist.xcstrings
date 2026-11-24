@@ -17,9 +17,6 @@
     "Dropin Export" : {
       "shouldTranslate" : false
     },
-    "Geojson from Mapstr or other apps" : {
-
-    },
     "NSCameraUsageDescription" : {
       "comment" : "Privacy - Camera Usage Description",
       "localizations" : {

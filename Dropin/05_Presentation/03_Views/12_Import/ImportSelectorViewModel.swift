@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 @Observable class ImportSelectorViewModel {
-    var selectedSource: ImportSource = .dropin
+    var selectedSource: ImportSource = .google
     var tagImport: Bool = false
     var tagName: String = ""
     var pickFile = false
@@ -66,6 +66,11 @@ import SwiftUI
                 tagImport = true
                 tagName = "dropin"
                 onContinue(url, selectedSource, tagImport, tagName)
+            } else if let url = ScreenshotMode.googleImportURL {
+                selectedSource = .google
+                tagImport = true
+                tagName = "google"
+                onContinue(url, selectedSource, tagImport, tagName)
             } else {
                 fatalError("Picking a file won't work with this target")
             }
@@ -121,8 +126,10 @@ import SwiftUI
                     return try await availableTagName(base: String(localized: "common.import").lowercased())
                 case .mapstr:
                     return try await availableTagName(base: selectedSource.description.lowercased())
-                default:
-                    ()
+                case .google:
+                    return try await availableTagName(base: selectedSource.description.lowercased())
+                case .unknown:
+                    return try await availableTagName(base: String.randomColor())
             }
         } catch {
             assertionFailure("an error occuured while getting available tag name: \(error)")

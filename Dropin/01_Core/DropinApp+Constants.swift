@@ -18,6 +18,7 @@ extension DropinApp {
         static let developer = "Baptiste Sansierra"
         static let exportExtension = "dropin"      // TODO: use AppConfig.scheme instead ? will that break test targets ?
         static let geojsonExtension = "geojson"
+        static let jsonExtension = "json"
         static let exportUTTypeId = "com.dropin.export"
     }
     struct urls {

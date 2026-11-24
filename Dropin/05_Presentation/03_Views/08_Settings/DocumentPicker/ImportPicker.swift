@@ -14,18 +14,7 @@ struct ImportPicker: UIViewControllerRepresentable {
     private let source: ImportSource
     
     private var pickedType: [UTType] {
-        switch source {
-            case .dropin:
-                guard let dropinType = UTType(DropinApp.strings.exportUTTypeId) else {
-                    assertionFailure("unknown dropin file type")
-                    return []
-                }
-                return [dropinType]
-            case .mapstr:
-                return [.geoJSON]
-            default:
-                return []
-        }
+        return source.matchingExtensions.compactMap({ $0.uttType })
     }
     
     init(source: ImportSource, onPick: @escaping (URL) -> Void) {
