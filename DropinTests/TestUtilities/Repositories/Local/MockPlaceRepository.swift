@@ -1,0 +1,96 @@
+//
+//  MockPlaceRepository.swift
+//  DropinTests
+//
+//  Created by baptiste sansierra on 16/10/25.
+//
+
+import Foundation
+@testable import Dropin
+
+@MainActor
+final class MockPlaceRepository: PlaceRepository {
+    private var places: [Place]
+    private(set) var lastUpsertSpaceId: UUID?
+
+    init(initialPlaces: [Place] = []) {
+        self.places = initialPlaces
+    }
+    
+    func exists(_ place: Dropin.Place) async throws -> Bool {
+        if let _ = places.first(where: { $0.id == place.id }) {
+            return true
+        }
+        return false
+    }
+    
+    func fetch(_ id: UUID) async throws -> Dropin.Place {
+        guard let g = places.first(where: { $0.id == id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        return g
+    }
+    
+    func fetch() async throws -> [Dropin.Place] {
+        return try await fetch(nil)
+    }
+
+    func fetch(categoryId: UUID) async throws -> [Place] {
+        return [] // dummy impl
+    }
+    
+    func fetch(tagId: UUID) async throws -> [Place] {
+        return [] // dummy impl
+    }
+
+    func fetch(_ filter: Dropin.PlaceFilter?) async throws -> [Dropin.Place] {
+        guard let filter = filter, filter.isActive else {
+            // no filtering
+            return places
+        }
+        return places.filter { filter.matches($0) }
+    }
+    
+    func create(_ place: Place) async throws {
+        places.append(place)
+    }
+    
+    /*
+    func delete(_ place: Place) async throws {
+        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+            fatalError("shouldn't be reached, protected by UseCase")
+        }
+        Log.info("Remove place at index \(index)")
+        places.remove(at: index)
+        //places.removeAll { $0.id == place.id }
+    }
+     */
+    
+    func update(_ place: Place) async throws {
+        guard let index = places.firstIndex(where: { $0.id == place.id }) else {
+            throw DataError.notFound(msg: "not found")
+        }
+        places[index] = place
+    }
+
+    func upsert(_ place: Place, shouldSave: Bool) async throws {
+        if let index = places.firstIndex(where: { $0.id == place.id }) {
+            places[index] = place
+        } else {
+            places.append(place)
+        }
+    }
+
+    func upsert(_ place: Place, spaceId: UUID, shouldSave: Bool) async throws {
+        lastUpsertSpaceId = spaceId
+        try await upsert(place, shouldSave: shouldSave)
+    }
+
+    func save() async throws {
+        // no-op: mock repository has no deferred persistence to flush
+    }
+
+    func clearTable() async throws {
+        places.removeAll()
+    }
+}

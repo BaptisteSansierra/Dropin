@@ -1,39 +1,77 @@
-# 🗺️ Dropin  
-*A SwiftUI + SwiftData project for managing and exploring places.*
+# Dropin
 
----
+An iOS app for building your own map of the places that matter to you.
 
-## 📖 Overview
-**Dropin** is an iOS app for storing and organizing your favorite places.  
-It’s built entirely with **SwiftUI**, **SwiftData** — no server, no sign-ups, just a fully local database that you control.
+Dropin is in development and not on the App Store yet.
 
-You can:
-- Add places on a map or from a list view
-- Group places into categories
-- Tag them with multiple labels
-- Sort and filter by distance, date, or custom grouping
-- View and edit details 
+<p>
+  <img src="Screenshots/readme/places.map.webp" width="200" alt="Map with places pinned by category">
+  <img src="Screenshots/readme/places.place.details.webp" width="200" alt="Place details with rating, tags and notes">
+  <img src="Screenshots/readme/places.map.quickcreate.webp" width="200" alt="Saving a new place">
+  <img src="Screenshots/readme/places.map.dark.webp" width="200" alt="Map in dark mode">
+</p>
 
----
+## What it does
 
-## 🛠️ Features
-- 📍 **Map & List Views** — See your places visually or in a sortable list
-- 🏷️ **Groups & Tags** — Organize places your way
-- 🎨 **Custom Markers** — Choose from a selection of pin styles
-- 📱 **Offline First** — No network required
-
-
-
-## 🚀 Coming next...
-
-- Map marker clustering
-- CloudKit sync
+- **Save a place in seconds.** Long press the map to drop a pin, give it a name and a category. You can also start from an address, your current location or GPS coordinates.
+- **Categories and tags.** Each place has one category, with its own color and symbol, and as many tags as you want.
+- **Your own details.** Rating, notes, photos, phone, email and website on every place.
+- **Filter the map.** Select categories and tags, and the map only shows the places that match.
+- **Map and list.** Pins are displayed on the map or listed.
+- **Directions.** Open any place in Apple Maps, Google Maps or Waze.
+- **Import from Mapstr.** Places arrive with their tags and icon, this is mapped into Dropin logic.
+- **Export anytime.** Export your whole library to a readable Dropin file and import it back on any device.
+- **Works offline.** Your places are stored on the device.
+- **Light and dark mode.**
 
 
+## Built with
 
-## 🖼️ Screenshots
+- SwiftUI
+- SwiftData for local storage
+- MapKit
+- Supabase for remote sync
 
 
-| Map View | List View | Place Details |
-|----------|-----------|---------------|
-| ![Map](Screenshots/01.PNG) | ![List](Screenshots/02.PNG) | ![Details](Screenshots/03.PNG) |
+## Architecture
+
+Dropin follows Clean Architecture with MVVM in the presentation layer.
+
+### Layers
+
+- **Domain**: entities, use cases and repository protocols. Pure Swift, no framework dependencies.
+- **Data**: repository implementations and SwiftData persistence.
+- **Network**: remote sync and API clients.
+- **UI**: SwiftUI views and their view models.
+- **Core**: The app itself, shared utilities, extensions and design tokens (colors, fonts).
+
+
+### Patterns
+
+- **Coordinators** handle navigation, so views don't know about each other.
+- **Dependency injection** gives each view model only what it needs, such as repositories, services and use cases. 
+
+
+## Coming next
+
+- Shared place links that open on the web, for people who don't have the app
+- TestFlight beta
+
+
+## Screenshots
+
+| Map | Quick create | Place |
+|-----|--------------|-------|
+| <img src="Screenshots/readme/places.map.webp" width="250" alt="Map"> | <img src="Screenshots/readme/places.map.quickcreate.webp" width="250" alt="Quick create"> | <img src="Screenshots/readme/places.place.details.webp" width="250" alt="Place"> |
+
+
+### Filtering
+
+| Filter | Settings | Import |
+|--------|----------|--------|
+| <img src="Screenshots/readme/places.filter.on.webp" width="250" alt="Filter"> | <img src="Screenshots/readme/settings.webp" width="250" alt="Settings"> | <img src="Screenshots/readme/settings.import.webp" width="250" alt="Settings"> |
+
+## Author
+
+Baptiste Sansierra, Barcelona.
+

@@ -1,0 +1,71 @@
+
+==
+==== MVP ====
+==
+
+---- BUGFIX
+
+* Handle multiple import of the same file
+
+* CRASH : create a place by address,choose an address, once the create view is shown, try to edit address
+
+* First launch :
+  - map is centererd on the sea
+  - accept localization + center on user
+  - go to settings
+  - go back to places
+  - map is centererd on the sea AGAIN
+  
+
+* create a place by input coords : if user loc is being updated by system, cannot tip values
+  Detect if update comes from manual drag and only update coords fields in this case
+
+* ContactField : removing the last item, during animation delete button is visible over bottom line
+                                        
+                                        
+---- IMPROVMENTS
+
+* Listes (Places / Groupes / Tags) : Ajouter un placeholder when empty
+
+* Icones a ajouter : Pollo / TakeAway / Moto / Viande /
+
+* Ajouter un price rating ? €€€€€
+
+* Improve Contact creation : do not able any label dependiung on type ?
+
+* Export data to json
+ - versionning
+ - export with default layer
+
+* About
+
+* Center on a place manually : should not only center but also zoom
+
+* Center on user : should not only center but also zoom
+
+* Create Settings
+   => shared with environment
+   => persist via UserDefaults
+   => should contain:
+     - MapSettings
+     - AnnotationViewFactory pin configuration
+     - Clustering option ? (cluster size/sensitivity ?)
+     -
+
+* Make a Rectangle() with a blurry background (for GroupDetailsView / TagDetailsView places list bottom )
+                                        
+* Place details sheet: Add buttons
+    - Edit
+    - Email
+    - Map (show on map only visible from LIST)
+
+* Allow tap on group / tag to see details ?
+                                        
+
+==
+==== FUTURE ====
+==
+
+---- IMPROVMENTS
+
+* Add favorites

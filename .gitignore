@@ -1,13 +1,34 @@
+
+# Supabase credentials / Sentry - never commit
+Config.xcconfig
+
+# Sentry stuff
+.sentryclirc
+
+# My stuff
+ico/
+svg/
+DATA/
 TODO.txt
 TODO
 ARCHI
+CURL
 .DS_Store
+# Screenshots 
+Screenshots/appstore
+Screenshots/last.xcresult
+Screenshots/website
+# Fastlane 
+fastlane/metadata
+fastlane/screenshots
 
+# and default stuff...
 
 
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+xcshareddata/
 
 ## User settings
 xcuserdata/
@@ -67,3 +88,10 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+
+
+# fastlane secrets (loaded automatically by fastlane)
+fastlane/.env*
+# deliver download_metadata writes the review contact + demo password there (deleted by scripts/appstore_metadata.sh)
+fastlane/metadata/review_information/

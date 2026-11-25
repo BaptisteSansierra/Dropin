@@ -56,5 +56,5 @@ func IcoRenderer(variant: DropinLogo.Variant = .logo,
     } catch {
         fatalError("Write error \(error)")
     }
-    print("Image saved at :\(fileURL)")
+    Log.info("Image saved at :\(fileURL)")
 }

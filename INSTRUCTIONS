@@ -1,0 +1,74 @@
+
+
+#######################################
+##  Deployments
+
+##  Create a TF
+fastlane beta
+
+
+##  Upload Appstore Screenshots
+ - If a language has been added :
+   - retrieve the country code (See: Upload Appstore Metadata)
+   - Update script ascreenshots.sh to handle the new language
+ - ./scripts/screenshots.sh 
+ - fastlane store_screenshots
+
+
+##  Upload Appstore Metadata
+ - Add release not for specific version in fastlane/AppStoreMetadata.xcstrings>release_notes.x.x.x
+ - If a language has been added :
+   - retrieve the country code by fetching metadata : fastlane deliver download_metadata
+   - Update script appstore_metadata.sh to handle the new language
+ - translate AppStoreMetadata.xcstrings
+ - fastlane metadata
+
+
+
+
+
+
+#######################################
+##  simulator
+
+
+# Open a password reset deep link 
+xcrun simctl openurl booted "https://dropin.lat/reset-password.html?token_hash=123456&type=recovery"
+
+# Open an email confirmation deep link (any token: shows the "expired" alert)
+xcrun simctl openurl booted "https://dropin.lat/email-confirmed.html?token_hash=123456&type=signup"
+
+# Same pages without .html (Cloudflare serves both, the app accepts both)
+xcrun simctl openurl booted "https://dropin.lat/reset-password?token_hash=123456&type=recovery"
+
+# Supabase error redirect (no token): "expired" alert without any network call
+xcrun simctl openurl booted "https://dropin.lat/reset-password.html?error=access_denied&error_code=otp_expired"
+
+# Open the app's own scheme ("Open Dropin" button on the web pages)
+xcrun simctl openurl booted "dropin://signin"
+
+# Uninstall the app: iOS reloads the apple-app-site-association file on the next install
+xcrun simctl uninstall booted com.batsansierra.Dropin
+
+# App logs from the last 15 minutes (crash reasons, assertions...)
+xcrun simctl spawn booted log show --last 15m --style compact --predicate 'process == "Dropin"'
+
+# Live app logs
+xcrun simctl spawn booted log stream --style compact --predicate 'process == "Dropin"'
+
+
+
+
+#######################################
+##  misc
+
+
+# apple-app-site-association: served by dropin.lat (expect 200 + application/json)
+curl -i https://dropin.lat/.well-known/apple-app-site-association
+
+# Same file, as Apple's servers cache it (what iOS actually reads outside developer mode)
+curl -s https://app-site-association.cdn-apple.com/a/v1/dropin.lat
+
+# Team prefix of the simulator build: must be HT3SFSF7CQ, as in the AASA file
+plutil -p ~/Library/Developer/Xcode/DerivedData/Dropin-*/Build/Intermediates.noindex/Dropin.build/Debug-iphonesimulator/Dropin.build/Dropin.app-Simulated.xcent
+

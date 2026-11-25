@@ -1,0 +1,44 @@
+{
+  "configurations" : [
+    {
+      "id" : "5AD8EB32-7D12-45DC-87C0-CC94567D5292",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CG_NUMERICS_SHOW_BACKTRACE",
+        "value" : "1"
+      }
+    ],
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Dropin.xcodeproj",
+      "identifier" : "4D42C7392E2BFAFF00B50940",
+      "name" : "Dropin"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Dropin.xcodeproj",
+        "identifier" : "4D42C7492E2BFB0100B50940",
+        "name" : "DropinTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "target" : {
+        "containerPath" : "container:Dropin.xcodeproj",
+        "identifier" : "4D42C7532E2BFB0100B50940",
+        "name" : "DropinUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
