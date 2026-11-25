@@ -204,17 +204,13 @@ import MapKit
     func applePhoneContactItem(_ place: PlaceUIModel) -> ContactItem? {
         guard let applePhone = applePhoneNumber else { return nil }
         let label = String(localized: String.LocalizationValue("common.from_apple_maps"))
-        return ContactItem(value: applePhone,
-                           label: ContactLabel(kind: .phone,
-                                               label: .custom(label)))
+        return ContactItem.phone(applePhone, label: .custom(label))
     }
     
     func appleUrlContactItem(_ place: PlaceUIModel) -> ContactItem? {
         guard let appleUrl = appleURL else { return nil }
         let label = String(localized: String.LocalizationValue("common.from_apple_maps"))
-        return ContactItem(value: appleUrl.absoluteString,
-                           label: ContactLabel(kind: .url,
-                                               label: .custom(label)))
+        return ContactItem.url(appleUrl.absoluteString, label: .custom(label))
     }
     
     func fetchAppleDataIfNeeded(for place: PlaceUIModel) async {

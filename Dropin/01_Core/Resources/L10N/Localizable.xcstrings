@@ -3814,6 +3814,28 @@
         }
       }
     },
+    "common.from_google_maps.unnamed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropped Pin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Marcador colocado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Repère placé"
+          }
+        }
+      }
+    },
     "common.icon" : {
       "localizations" : {
         "en" : {
@@ -12792,19 +12814,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps (GeoJSON)"
+            "value" : "Google Maps (JSON)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Google Maps (GeoJSON)"
+            "value" : "Google Maps (JSON)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps (GeoJSON)"
+            "value" : "Google Maps (JSON)"
           }
         }
       }

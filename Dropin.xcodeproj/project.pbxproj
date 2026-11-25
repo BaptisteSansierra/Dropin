@@ -901,7 +901,7 @@
 			repositoryURL = "https://github.com/BaptisteSansierra/ContactFieldKit";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.6;
+				minimumVersion = 2.0.1;
 			};
 		};
 		4DC9DFF52F640DC500C1C60A /* XCRemoteSwiftPackageReference "SheetOverlay" */ = {

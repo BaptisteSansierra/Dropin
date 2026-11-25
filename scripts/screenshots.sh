@@ -2,7 +2,12 @@
 # Generates App Store + website screenshots from the DropinScreenshots UI tests.
 #
 #   ./scripts/screenshots.sh            run the tests, then process the screenshots
+#   ./scripts/screenshots.sh -h|--help  show this help
 #   ./scripts/screenshots.sh --reuse    skip the tests, reprocess Screenshots/last.xcresult
+#   ./scripts/screenshots.sh --test testMap [--test testList] [--config fr]
+#                                       partial run: only these tests (repeatable) / this configuration,
+#                                       only their shots are rewritten, the other files are kept
+#                                       (Screenshots/last.xcresult then holds this partial run only)
 #
 # Runs every configuration of DropinScreenshots.xctestplan (en, fr, es) on a 6.9" simulator,
 # exports the XCTAttachments from the result bundle, then writes:
@@ -17,9 +22,12 @@
 
 set -euo pipefail
 
-ROOT="${0:A:h:h}"
+SCRIPT="${0:A}"
+ROOT="${SCRIPT:h:h}"
 OUT="$ROOT/Screenshots"
 RESULT="$OUT/last.xcresult"
+TESTS_FILE="$ROOT/DropinScreenshots/DropinScreenshots.swift"
+TEST_PLAN="$ROOT/DropinScreenshots.xctestplan"
 
 # MARK: - Settings
 
@@ -71,6 +79,7 @@ WEBSITE_SHOTS=(
     "places.filter.on               places.filter.on                660 1434"   # 220px
     "settings.import.mapstr         settings.import.mapstr          780 1695"   # 260px
     "settings.import.mapstr.mapper  settings.import.mapstr.mapper  780 1695"   # 260px
+    "settings.import.google         settings.import.google          780 1695"   # 260px
     "places.map.quickcreate         places.map.quickcreate          780 1695"   # 260px
 )
 WEBP_QUALITY=85
@@ -110,6 +119,7 @@ print(devices[0]["udid"] if devices else "")' "$DEVICE_NAME")
         -destination "platform=iOS Simulator,id=$udid" \
         -parallel-testing-enabled NO \
         -resultBundlePath "$RESULT" \
+        "${FILTER_ARGS[@]}" \
         -quiet 2>&1 | { grep -v -e "IDELaunchParametersSnapshot" -e "Upload Debug Symbols to Sentry" || true; }   # drop Xcode's debugger-version noise + the Sentry phase note (it exits unless archiving)
     TEST_STATUS=${pipestatus[1]}
     set -e
@@ -163,7 +173,7 @@ EOF
 processAppstore() {
     local config lang shot text index
     echo "▸ App Store (framed)"
-    rm -rf "$OUT/appstore"
+    (( PARTIAL )) || rm -rf "$OUT/appstore"
     for config in "$RAW"/*(/N); do
         lang=${config:t}
         mkdir -p "$OUT/appstore/$lang"
@@ -171,12 +181,14 @@ processAppstore() {
         for shot in $APPSTORE_SHOTS; do
             index=$(( index + 1 ))
             if [[ ! -f "$config/$shot.png" ]]; then
-                echo "  ✗ missing $lang/$shot" >&2; MISSING=1; continue
+                (( PARTIAL )) || { echo "  ✗ missing $lang/$shot" >&2; MISSING=1 }
+                continue
             fi
             if ! text=$(caption "$shot" "$lang"); then
                 echo "  ✗ no caption for $shot in ${CAPTIONS:t}" >&2; MISSING=1; continue
             fi
             frameShot "$config/$shot.png" "$text" "$OUT/appstore/$lang/$(printf %02d $index)_$shot.png"
+            WRITTEN+=("$OUT/appstore/$lang/$(printf %02d $index)_$shot.png")
         done
     done
 }
@@ -192,10 +204,13 @@ processFastlane() {
         if [[ -z "$locale" ]]; then
             echo "  ✗ no locale for configuration '$lang' in FASTLANE_LOCALES" >&2; MISSING=1; continue
         fi
-        rm -rf "$FASTLANE_SCREENSHOTS/$locale"   # only the locales generated here, other folders are kept
+        (( PARTIAL )) || rm -rf "$FASTLANE_SCREENSHOTS/$locale"   # only the locales generated here, other folders are kept
         mkdir -p "$FASTLANE_SCREENSHOTS/$locale"
         for file in "$config"/*.png(N); do
+            # Partial: only the shots of this run (the others were framed by a previous run)
+            (( PARTIAL )) && [[ ! -f "$RAW/$lang/${${${file:t}#[0-9][0-9]_}%.png}.png" ]] && continue
             cp "$file" "$FASTLANE_SCREENSHOTS/$locale/${${file:t}#0}"   # 01_places.map.png → 1_places.map.png
+            WRITTEN+=("$FASTLANE_SCREENSHOTS/$locale/${${file:t}#0}")
         done
     done
 }
@@ -205,7 +220,7 @@ processFastlane() {
 processWeb() {
     local config lang entry shot name width height src
     echo "▸ Website (webp q$WEBP_QUALITY)"
-    rm -rf "$OUT/website"
+    (( PARTIAL )) || rm -rf "$OUT/website"
     for config in "$RAW"/*(/N); do
         lang=${config:t}
         mkdir -p "$OUT/website/$lang"
@@ -214,11 +229,27 @@ processWeb() {
             src="$config/$shot.png"
             if [[ -f "$src" ]]; then
                 cwebp -quiet -q $WEBP_QUALITY -resize $width $height "$src" -o "$OUT/website/$lang/$name.webp"
-            else
+                WRITTEN+=("$OUT/website/$lang/$name.webp")
+            elif (( ! PARTIAL )); then
                 echo "  ✗ missing $lang/$shot (for $name)" >&2; MISSING=1
             fi
         done
     done
+}
+
+# Exported shots in neither APPSTORE_SHOTS nor WEBSITE_SHOTS: they produce no file
+warnUnusedShots() {
+    local file shot entry
+    local -a used unused
+    used=($APPSTORE_SHOTS ${WEBSITE_SHOTS%% *})
+    for file in "$RAW"/*/*.png(N); do
+        shot=${file:t:r}
+        (( ${used[(Ie)$shot]} )) || unused+=("$shot")
+    done
+    unused=(${(u)unused})
+    (( ${#unused} )) || return 0
+    echo "▸ Not in APPSTORE_SHOTS nor WEBSITE_SHOTS (no file written):"
+    for shot in $unused; do echo "  - $shot"; done
 }
 
 # MARK: - App Store helpers
@@ -276,9 +307,46 @@ frameShot() {
 
 # MARK: - Main
 
+# The header comment of this script
+usage() {
+    sed -n '2,/^[^#]/p' "$SCRIPT" | sed -e '$d' -e 's/^# \{0,1\}//'
+    echo "Tests (--test):"
+    sed -n 's/^ *func \(test[A-Za-z0-9_]*\)(.*/  \1/p' "$TESTS_FILE"
+    echo "Configurations (--config):"
+    python3 -I -c 'import json, sys; print("\n".join("  " + c["name"] for c in json.load(open(sys.argv[1]))["configurations"]))' "$TEST_PLAN"
+}
+
 main() {
-    local reuse=0
-    [[ "${1:-}" == "--reuse" ]] && reuse=1
+    local reuse=0 test config=""
+    local -a tests=()
+    while (( $# )); do
+        case "$1" in
+            -h|--help) usage; exit 0 ;;
+            --reuse) reuse=1 ;;
+            --test) [[ -n "${2:-}" ]] || { echo "--test needs a test method name" >&2; exit 1; }
+                    tests+=("$2"); shift ;;
+            --config) [[ -n "${2:-}" ]] || { echo "--config needs a configuration name" >&2; exit 1; }
+                      config="$2"; shift ;;
+            *) echo "Unknown argument: $1" >&2; exit 1 ;;
+        esac
+        shift
+    done
+
+    # Partial run: --test / --config
+    FILTER_ARGS=()
+    PARTIAL=0
+    if (( ${#tests} )) || [[ -n "$config" ]]; then
+        (( reuse )) && { echo "--reuse can't be combined with --test / --config" >&2; exit 1; }
+        PARTIAL=1
+    fi
+    for test in $tests; do
+        grep -q "func $test(" "$TESTS_FILE" || { echo "No test '$test' in ${TESTS_FILE#$ROOT/}" >&2; exit 1; }
+        FILTER_ARGS+=("-only-testing:DropinScreenshots/DropinScreenshots/$test")
+    done
+    if [[ -n "$config" ]]; then
+        grep -q "\"name\" : \"$config\"" "$TEST_PLAN" || { echo "No configuration '$config' in ${TEST_PLAN#$ROOT/}" >&2; exit 1; }
+        FILTER_ARGS+=("-only-test-configuration" "$config")
+    fi
 
     command -v cwebp >/dev/null || { echo "cwebp not found: brew install webp" >&2; exit 1; }
     command -v magick >/dev/null || { echo "magick not found: brew install imagemagick" >&2; exit 1; }
@@ -289,6 +357,7 @@ main() {
     trap 'rm -rf "$WORK"' EXIT
     TEST_STATUS=0
     MISSING=0
+    WRITTEN=()
 
     if (( reuse )); then
         [[ -d "$RESULT" ]] || { echo "No ${RESULT#$ROOT/} to reuse" >&2; exit 1; }
@@ -300,9 +369,16 @@ main() {
     processAppstore
     processFastlane
     processWeb
+    warnUnusedShots
 
     echo "▸ Done → $OUT"
-    find "$OUT/appstore" "$OUT/website" "$FASTLANE_SCREENSHOTS" -type f -name "*.*" | sort | sed "s|^$ROOT/||"
+    if (( PARTIAL )); then
+        # Only the files of this run
+        (( ${#WRITTEN} )) || echo "  nothing written"
+        print -l -- $WRITTEN | sort | sed "s|^$ROOT/||"
+    else
+        find "$OUT/appstore" "$OUT/website" "$FASTLANE_SCREENSHOTS" -type f -name "*.*" | sort | sed "s|^$ROOT/||"
+    fi
     (( TEST_STATUS == 0 && MISSING == 0 )) || exit 1
 }
 

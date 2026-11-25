@@ -1312,15 +1312,12 @@ struct MockPlaceEditContentView: View {
             self.place.images[0].thumbnail = s1.thumbnail
             self.place.images[1].thumbnail = s2.thumbnail
 
-            self.place.phone = [ContactItem(value: "0765489867",
-                                            label: ContactLabel(kind: .phone,
-                                                                label: .custom("johnny"))),
-                                ContactItem(value: "0965485867",
-                                            label: ContactLabel(kind: .phone,
-                                                                label: .custom("cash")))]
-            self.place.url = [ContactItem(value: "www.collection.com",
-                                          label: ContactLabel(kind: .url,
-                                                              label: .url))]
+            self.place.phone = [ContactItem.phone("0765489867",
+                                                  label: .custom("johnny")),
+                                ContactItem.phone("0965485867",
+                                                  label: .custom("cash"))]
+            self.place.url = [ContactItem.url("www.collection.com",
+                                              label: .url)]
             
             self.place.notes = """
                 Great terrace

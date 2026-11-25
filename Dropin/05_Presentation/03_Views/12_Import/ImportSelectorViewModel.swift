@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 @Observable class ImportSelectorViewModel {
-    var selectedSource: ImportSource = .google
+    var selectedSource: ImportSource = .dropin
     var tagImport: Bool = false
     var tagName: String = ""
     var pickFile = false

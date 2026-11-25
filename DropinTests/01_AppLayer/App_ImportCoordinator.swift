@@ -33,18 +33,6 @@ struct App_ImportCoordinator {
                               sync: StubSyncService())
     }
 
-    // MARK: - ImportSupportedExtension
-
-    @Test func matchingSources() {
-        #expect(ImportSupportedExtension.dropin.matchingSource == [.dropin])
-        #expect(ImportSupportedExtension.geojson.matchingSource == [.mapstr, .unknown])
-    }
-
-    @Test func extensionsDescription() {
-        #expect(ImportSupportedExtension.dropin.description == "dropin")
-        #expect(ImportSupportedExtension.geojson.description == "geojson")
-    }
-
     // MARK: - ImportCoordinator file check
 
     @Test func acceptsMatchingExtensions() throws {

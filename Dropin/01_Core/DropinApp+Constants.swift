@@ -28,8 +28,10 @@ extension DropinApp {
         // Opened in the app as Universal Links when it's installed (AuthLink, applinks:dropin.lat)
         static let resetPasswordURL = URL(string: "https://dropin.lat/reset-password.html")!
         static let emailConfirmedURL = URL(string: "https://dropin.lat/email-confirmed.html")!
-        // Mapstr export/import instructions 
+        // Mapstr export/import instructions
         static let importMapstrDesc = URL(string: "https://dropin.lat/import-mapstr")!
+        // Google export/import instructions
+        static let importGooleDesc = URL(string: "https://dropin.lat/import-googleMaps")!
         // base shared url
         static let shareBaseURL = URL(string: "https://dropin.lat/p.html")!
     }

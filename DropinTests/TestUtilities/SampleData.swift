@@ -44,15 +44,15 @@ public enum SampleData {
     
     static func fullPlace(tags: [Dropin.Tag] = [], category: Dropin.Category? = nil) -> Place {
         let phones = [
-            ContactItem(value: "0612345678", label: ContactLabel(kind: .phone, label: .mobile)).rawValue,
-            ContactItem(value: "0123456789", label: ContactLabel(kind: .phone, label: .home)).rawValue,
+            ContactItem.phone("0612345678", label: .mobile).rawValue,
+            ContactItem.phone("0123456789", label: .home).rawValue,
         ]
         let emails = [
-            ContactItem(value: "test@example.com", label: ContactLabel(kind: .email, label: .work)).rawValue,
+            ContactItem.email("test@example.com", label: .work).rawValue,
         ]
         let urls = [
-            ContactItem(value: "https://example.com", label: ContactLabel(kind: .url, label: .url)).rawValue,
-            ContactItem(value: "http://maps.google.com/?cid=11666316948229316401", label: ContactLabel(kind: .url, label: .custom("google"))).rawValue,
+            ContactItem.url("https://example.com", label: .url).rawValue,
+            ContactItem.url("http://maps.google.com/?cid=11666316948229316401", label: .custom("google")).rawValue,
         ]
         return Place(
             id: UUID(),

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 extension String {
 
@@ -49,5 +50,20 @@ extension String {
     
     func localized() -> String {
         String(localized: LocalizedStringResource(stringLiteral: self))
+    }
+    
+    /// Extracts a coordinate from a Google Maps style URL string (`?q=lat,lon`).
+    var coordinateFromGoogleMapsURL: CLLocationCoordinate2D? {
+        guard let components = URLComponents(string: self),
+              let q = components.queryItems?.first(where: { $0.name == "q" })?.value else {
+            return nil
+        }
+        let parts = q.split(separator: ",").map { Double($0.trimmingCharacters(in: .whitespaces)) }
+        guard parts.count == 2,
+              let lat = parts[0], let lon = parts[1],
+              (-90...90).contains(lat), (-180...180).contains(lon) else {
+            return nil
+        }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
 }

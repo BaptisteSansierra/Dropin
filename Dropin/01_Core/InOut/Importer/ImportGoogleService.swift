@@ -128,22 +128,38 @@ actor ImportGoogleService: ImportServiceProtocol {
         
         for (_, feature) in collection.features.enumerated() {
             guard feature.geometry.coordinates.count >= 2 else { continue }
-            let coords = feature.geometry.coordinate
+            var coords = feature.geometry.coordinate
+            var googlePlace: GooglePlace?
             if coords.isNull() {
-                // TODO: try to resolve from URL ?
-                // "http://maps.google.com/?q=42.81687794930286,-1.6456934809684753",
-                continue
+                // Some google urls contain coordinates: "http://maps.google.com/?q=42.81687794930286,-1.6456934809684753",
+                guard let coordsFromUrl = feature.properties.googleUrl.coordinateFromGoogleMapsURL else {
+                    // Skip it, we have nothing about this place, only an opaque google url
+                    continue
+                }
+                Log.debug("Exctracted coords from \(feature.properties.googleUrl)")
+                coords = coordsFromUrl
+                // We extracted coord from the url, create a place from it, no data, just a pin, give it a name
+                let droppedPin = String(localized: LocalizedStringResource("common.from_google_maps.unnamed"))
+                googlePlace = GooglePlace(id: UUID(),
+                                          name: droppedPin,
+                                          coordinates: coords,
+                                          address: nil,
+                                          url: feature.properties.googleUrl,
+                                          review: nil,
+                                          rating: nil)
             }
-            guard let location = feature.properties.location else {
-                continue
+            if let location = feature.properties.location {
+                googlePlace = GooglePlace(id: UUID(),
+                                          name: location.name,
+                                          coordinates: coords,
+                                          address: location.address,
+                                          url: feature.properties.googleUrl,
+                                          review: feature.properties.review,
+                                          rating: feature.properties.rating)
             }
-            places.append(GooglePlace(id: UUID(),
-                                      name: location.name,
-                                      coordinates: coords,
-                                      address: location.address,
-                                      url: feature.properties.googleUrl,
-                                      review: feature.properties.review,
-                                      rating: feature.properties.rating))
+            if let googlePlace = googlePlace {
+                places.append(googlePlace)
+            }
         }
         return GoogleImportPlan(places: places)
     }
@@ -219,12 +235,10 @@ actor ImportGoogleService: ImportServiceProtocol {
         var tags: [Tag] = []
         if let importTagName {
             let tag = try await resolveTag(Tag(name: importTagName, color: String.randomColor(),
-                                               importedAt: importDate, importSrc: .dropin))
+                                               importedAt: importDate, importSrc: .google))
             if !tags.contains(tag) { tags.append(tag) }
         }
-        let url = ContactItem(value: gPlace.url,
-                              label: ContactLabel(kind: .url,
-                                                  label: .custom(String(localized: "common.from_google_maps"))))
+        let url = ContactItem.url(gPlace.url, label: .custom(String(localized: "common.from_google_maps")))
         let place = Place(id: UUID(),
                           name: gPlace.name,
                           coordinates: gPlace.coordinates,

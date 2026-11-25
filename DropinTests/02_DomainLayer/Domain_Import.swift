@@ -14,7 +14,7 @@ import Foundation
 struct Domain_Import {
     
     @MainActor
-    @Test func testImportStructs() async throws {
+    @Test func matchingSourceExtensions() async throws {
         
         #expect(Set(ImportSource.dropin.matchingExtensions) == Set([.dropin]))
         #expect(Set(ImportSource.mapstr.matchingExtensions) == Set([.geojson]))
@@ -23,5 +23,10 @@ struct Domain_Import {
         #expect(Set(ImportSupportedExtension.dropin.matchingSource) == Set([.dropin]))
         #expect(Set(ImportSupportedExtension.geojson.matchingSource) == Set([.mapstr, .google, .unknown]))
         #expect(Set(ImportSupportedExtension.json.matchingSource) == Set([.google, .unknown]))
+    }
+    
+    @Test func extensionsDescription() {
+        #expect(ImportSupportedExtension.dropin.description == "dropin")
+        #expect(ImportSupportedExtension.geojson.description == "geojson")
     }
 }

@@ -112,10 +112,10 @@ extension PlaceRecord {  // Mock extension
                          address: "Carrer de Sant Lluís, 35, Gràcia, 08012 Barcelona",
                          tags: [],
                          category: nil,
-                         phone: [ContactItem(value: "931054947", label: ContactLabel(kind: .phone, label: .mobile)).rawValue,
-                                 ContactItem(value: "633029920", label: ContactLabel(kind: .phone, label: .home)).rawValue],
-                         email: [ContactItem(value: "tres.a.la@cuina.es", label: ContactLabel(kind: .email, label: .work)).rawValue],
-                         url: [ContactItem(value: "http://lestresalacuina.com", label: ContactLabel(kind: .url, label: .url)).rawValue],
+                             phone: [ContactItem.phone("931054947", label: .mobile).rawValue,
+                                     ContactItem.phone("633029920", label: .home).rawValue],
+                             email: [ContactItem.email("tres.a.la@cuina.es", label: .work).rawValue],
+                             url: [ContactItem.url("http://lestresalacuina.com", label: .url).rawValue],
                          notes: "Don't forget your tupper")
         
         let l3 = PlaceRecord(identifier: UUID(),

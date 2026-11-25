@@ -27,7 +27,7 @@
 			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.dropin.geojson</string>
+				<string>public.geojson</string>
 			</array>
 		</dict>
 		<dict>
@@ -39,7 +39,7 @@
 			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.dropin.json</string>
+				<string>public.json</string>
 			</array>
 		</dict>
 	</array>

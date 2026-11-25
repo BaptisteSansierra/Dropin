@@ -15,7 +15,7 @@ private enum Region {
     static let bellavista = "38.67686943509181,-9.206906491199476,0.02649615024206753,0.020133175667885084"
 }
 
-private enum ImportSource { case dropin, mapstr }
+private enum ImportSource { case dropin, mapstr, google }
 
 /// Attachment names, exported as file names by scripts/screenshots.sh (prefix = App Store order)
 private enum Shot: String {
@@ -29,6 +29,7 @@ private enum Shot: String {
     case importMapstr = "settings.import.mapstr"
     case importMapstrMapper = "settings.import.mapstr.mapper"
     case importDropin = "settings.import.dropin"
+    case importGoole = "settings.import.google"
     case mapQuickCreate = "places.map.quickcreate"
 }
 
@@ -152,6 +153,18 @@ final class DropinScreenshots: XCTestCase {
     }
 
     @MainActor
+    func testSettingsImportGoogleMaps() throws {
+        let file = try XCTUnwrap(Bundle(for: Self.self).path(forResource: "googleMaps_SavedPlaces", ofType:"json"))
+        let app = try launch(appearance: .light, importSource: (.google, file))
+        waitForMap(app)
+        try goImport(app)
+        // Snapshot ImportResultView
+        XCTAssertTrue(element(app, AccessibilityID.ImportStatus.complete).waitForExistence(timeout: 30))
+        sleep(1)
+        snapshot(app, .importGoole)
+    }
+    
+    @MainActor
     func testMapPlaceDetails() throws {
         let app = try launch(appearance: .light, region: Region.belem)
         waitForMap(app)
@@ -246,6 +259,8 @@ final class DropinScreenshots: XCTestCase {
                     app.launchEnvironment[ScreenshotLaunchKeys.dropinImportPath] = importSource.1
                 case .mapstr:
                     app.launchEnvironment[ScreenshotLaunchKeys.mapstrImportPath] = importSource.1
+                case .google:
+                    app.launchEnvironment[ScreenshotLaunchKeys.googleImportPath] = importSource.1
             }
         }
         app.launch()

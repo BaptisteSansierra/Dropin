@@ -12,7 +12,7 @@ struct GooglePlace: Sendable {
     let id: UUID
     let name: String
     let coordinates: CLLocationCoordinate2D
-    let address: String
+    let address: String?
     let url: String
     let review: String?
     let rating: Int?
