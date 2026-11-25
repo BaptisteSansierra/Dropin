@@ -16,7 +16,7 @@
 #   fastlane/screenshots/<locale>/N_<shot>.png        the framed App Store shots, for fastlane deliver
 #   Screenshots/website/<configuration>/<file name>.webp  WEBSITE_SHOTS, every configuration, resized:
 #                                                     copy into Dropin_frontend/assets/screens/
-#   Screenshots/readme/<file name>.webp               README_SHOTS, en website versions, for README.md
+#   Screenshots/readme/<shot>.webp                    README_SHOTS, README_LANGUAGE, all resized to README_SIZE
 #   Screenshots/last.xcresult                         full report: open Screenshots/last.xcresult
 # Failed tests are listed; screenshots of the passing ones are still exported.
 # Needs: ImageMagick + cwebp (brew install imagemagick webp), SF Pro fonts (developer.apple.com/fonts)
@@ -87,7 +87,7 @@ WEBSITE_SHOTS=(
 )
 WEBP_QUALITY=85
 
-# README.md images: WEBSITE_SHOTS file names, copied from the README_LANGUAGE website versions
+# README.md images: shot names, all resized to README_SIZE so they're displayed at the same size
 README_SHOTS=(
     places.list
     places.map
@@ -100,6 +100,7 @@ README_SHOTS=(
     settings.import.mapstr
 )
 README_LANGUAGE=en
+README_SIZE=(660 1434)
 
 # MARK: - Steps
 
@@ -258,7 +259,7 @@ processWeb() {
 warnUnusedShots() {
     local file shot entry
     local -a used unused
-    used=($APPSTORE_SHOTS ${WEBSITE_SHOTS%% *})
+    used=($APPSTORE_SHOTS ${WEBSITE_SHOTS%% *} $README_SHOTS)
     for file in "$RAW"/*/*.png(N); do
         shot=${file:t:r}
         (( ${used[(Ie)$shot]} )) || unused+=("$shot")
@@ -269,22 +270,20 @@ warnUnusedShots() {
     for shot in $unused; do echo "  - $shot"; done
 }
 
-# README_SHOTS → Screenshots/readme/<file name>.webp, from Screenshots/website/README_LANGUAGE
+# README_SHOTS of README_LANGUAGE → Screenshots/readme/<shot>.webp, resized to README_SIZE
 processReadme() {
-    local name src
-    echo "▸ README"
+    local shot src
+    echo "▸ README (webp q$WEBP_QUALITY, ${README_SIZE[1]}x${README_SIZE[2]})"
     (( PARTIAL )) || rm -rf "$OUT/readme"
     mkdir -p "$OUT/readme"
-    for name in $README_SHOTS; do
-        src="$OUT/website/$README_LANGUAGE/$name.webp"
-        if (( PARTIAL )); then
-            # Partial: only the website files of this run
-            (( ${WRITTEN[(Ie)$src]} )) || continue
-        elif [[ ! -f "$src" ]]; then
-            echo "  ✗ missing $README_LANGUAGE/$name" >&2; MISSING=1; continue
+    for shot in $README_SHOTS; do
+        src="$RAW/$README_LANGUAGE/$shot.png"
+        if [[ -f "$src" ]]; then
+            cwebp -quiet -q $WEBP_QUALITY -resize $README_SIZE[1] $README_SIZE[2] "$src" -o "$OUT/readme/$shot.webp"
+            WRITTEN+=("$OUT/readme/$shot.webp")
+        elif (( ! PARTIAL )); then
+            echo "  ✗ missing $README_LANGUAGE/$shot" >&2; MISSING=1
         fi
-        cp "$src" "$OUT/readme/$name.webp"
-        WRITTEN+=("$OUT/readme/$name.webp")
     done
 }
 
