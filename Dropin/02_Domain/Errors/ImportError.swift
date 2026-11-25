@@ -13,7 +13,7 @@ enum ImportError: Error, Equatable, Sendable {
                             String)     // The file format is not the expected one (ex: mapstr import expects 'geojson' extension). Takes source/expected extension/given extension
     case unsupported(String)            // Source is not handled. This shouldn't happen
     case versionTooNew(Int)             // This version is not handled (apply to dropin files)
-    case corrupted(String)              // JSON decoder failed
+    case decoding(String)               // JSON decoder failed
     case emptyFile                      // The file contains no places
     case canceled                       // User canceled the import (This one is never thrown but set in ImportStatus)
     case unexpectedError(Error)         // Error comes from elsewhere
@@ -26,7 +26,7 @@ enum ImportError: Error, Equatable, Sendable {
                 String(localized: "import.error.unsupported_\(source)")
             case .versionTooNew(let version):
                 String(localized: "import.error.version_too_new_\(version)")
-            case .corrupted(let reason):
+            case .decoding(let reason):
                 String(localized: "import.error.corrupted_\(reason)")
             case .emptyFile:
                 String(localized: "import.error.empty_file")
@@ -45,7 +45,7 @@ enum ImportError: Error, Equatable, Sendable {
                 return true
             case (.versionTooNew, .versionTooNew):
                 return true
-            case (.corrupted, .corrupted):
+            case (.decoding, .decoding):
                 return true
             case (.emptyFile, .emptyFile):
                 return true

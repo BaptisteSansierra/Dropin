@@ -53,6 +53,7 @@ extension String {
     }
     
     /// Extracts a coordinate from a Google Maps style URL string (`?q=lat,lon`).
+    /// Ex: http://maps.google.com/?q=42.81687794930286,-1.6456934809684753
     var coordinateFromGoogleMapsURL: CLLocationCoordinate2D? {
         guard let components = URLComponents(string: self),
               let q = components.queryItems?.first(where: { $0.name == "q" })?.value else {

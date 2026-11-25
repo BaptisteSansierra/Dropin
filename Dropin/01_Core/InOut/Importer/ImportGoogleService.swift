@@ -11,10 +11,16 @@ import ContactFieldKit
 
 private struct GeoJSONGGProperties: Decodable {
     let date: String
+    /// `rating` is only defined in Reviews.json
     let rating: Int?
     let googleUrl: String
+    /// `location` is optional, some places have only a URL
     let location: GeoJSONGGLocation?
-    let comment: String? // The only one value seen til now: "No location information is available for this saved place" in "Saved Places.json"
+    /// `comment` is only defined in "Saved Places.json" and for a Place with coordinates (0, 0).
+    /// "No location information is available for this saved place"
+    /// No other value seen
+    let comment: String?
+    /// `review` is only defined in Reviews.json
     let review: String?
     
     enum CodingKeys: String, CodingKey {
@@ -109,16 +115,12 @@ actor ImportGoogleService: ImportServiceProtocol {
     }
     
     func read(_ data: Data) async throws -> GoogleImportPlan {
-        
         var collection: GeoJSONFeatureCollection<GeoJSONGGProperties>
         do {
             collection = try GeoJSONFeatureCollection<GeoJSONGGProperties>.decode(data)
         } catch {
-            Log.debug("COULD NOT READ GOOGUILI FILE")
             throw error
         }
-        
-        
         guard collection.features.count > 0 else {
             throw ImportError.emptyFile
         }

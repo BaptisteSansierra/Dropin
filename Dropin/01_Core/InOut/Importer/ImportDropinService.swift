@@ -57,14 +57,7 @@ actor ImportDropinService: ImportServiceProtocol {
     }
 
     func read(_ data: Data) async throws -> DropinInOut {
-        let export: DropinInOut
-        do {
-            export = try decode(data)
-        } catch let error as ImportError {
-            throw error
-        } catch {
-            throw ImportError.corrupted(error.localizedDescription)
-        }
+        let export: DropinInOut = try decode(data)
         Log.info("Found \(export.places.count) places, \(export.tags.count) tags, \(export.categories.count) categories")
         // Tags and categories are only created for imported places: no place, nothing to import
         guard export.places.count > 0 else {
@@ -111,14 +104,32 @@ actor ImportDropinService: ImportServiceProtocol {
     private func decode(_ data: Data) throws -> DropinInOut {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-
-        let export = try decoder.decode(DropinInOut.self, from: data)
-
-        switch export.version {
-            case 1:
-                return export
-            default:
-                throw ImportError.versionTooNew(export.version)
+        do {
+            let export = try decoder.decode(DropinInOut.self, from: data)
+            switch export.version {
+                case 1:
+                    return export
+                default:
+                    throw ImportError.versionTooNew(export.version)
+            }
+        } catch {
+            var msg = error.localizedDescription
+            if let decodingError = error as? DecodingError {
+                switch decodingError {
+                    case .keyNotFound(let key, let context):
+                        msg = "Missing key '\(key.stringValue)' at \(context.codingPath.map(\.stringValue).joined(separator: ".")) — \(context.debugDescription)"
+                    case .typeMismatch(let type, let context):
+                        msg = "Type mismatch for \(type) at \(context.codingPath.map(\.stringValue).joined(separator: "."))"
+                    case .valueNotFound(let type, let context):
+                        msg = "Null value for \(type) at \(context.codingPath.map(\.stringValue).joined(separator: "."))"
+                    case .dataCorrupted(let context):
+                        msg = "Corrupted data at \(context.codingPath.map(\.stringValue).joined(separator: ".")): \(context.debugDescription)"
+                    @unknown default:
+                        msg = "\(decodingError)"
+                }
+            }
+            Log.warning("Decoding error: \(msg)")
+            throw ImportError.decoding(msg)
         }
     }
 
