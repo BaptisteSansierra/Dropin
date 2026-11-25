@@ -149,6 +149,8 @@ final class DropinScreenshots: XCTestCase {
         let app = try launch(appearance: .light)
         waitForMap(app)
         try goSettings(app)
+        XCTAssertTrue(element(app, AccessibilityID.Settings.importButton).waitForExistence(timeout: 30))
+        sleep(1)
         // Snapshot Settings
         snapshot(app, .settings)
         // Snapshot Import

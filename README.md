@@ -68,7 +68,7 @@ Dropin follows Clean Architecture with MVVM in the presentation layer.
 ### Filtering
 
 | Filter | Settings | Import |
-|-----------|------------|-----------|-----------------|
+|--------|----------|--------|
 | ![Filter](Screenshots/readme/places.filter.on.webp) | ![Settings](Screenshots/readme/settings.webp) | ![Settings](Screenshots/readme/settings.import.webp) |
 
 ## Author
