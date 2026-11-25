@@ -89,6 +89,7 @@ WEBP_QUALITY=85
 
 # README.md images: WEBSITE_SHOTS file names, copied from the README_LANGUAGE website versions
 README_SHOTS=(
+    places.list
     places.map
     places.map.dark
     places.map.quickcreate
@@ -96,6 +97,7 @@ README_SHOTS=(
     places.filter.on
     settings
     settings.import
+    settings.import.mapstr
 )
 README_LANGUAGE=en
 
