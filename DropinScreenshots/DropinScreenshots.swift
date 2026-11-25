@@ -21,16 +21,20 @@ private enum ImportSource { case dropin, mapstr, google }
 private enum Shot: String {
     case map = "places.map"
     case mapDark = "places.map.dark"
+    case list = "places.list"
+    case mapPlaceDetails = "places.place.details"
+    case mapQuickCreate = "places.map.quickcreate"
+    // Filters
     case mapFiltered = "places.map.filtered"
     case filterOff = "places.filter.off"
     case filterOn = "places.filter.on"
-    case list = "places.list"
-    case mapPlaceDetails = "places.place.details"
+    // Settings & imports
+    case settings = "settings"
+    case importPick = "settings.import"
     case importMapstr = "settings.import.mapstr"
     case importMapstrMapper = "settings.import.mapstr.mapper"
     case importDropin = "settings.import.dropin"
     case importGoole = "settings.import.google"
-    case mapQuickCreate = "places.map.quickcreate"
 }
 
 /// Seed data names (lisbon_screenshot_seed.dropin), not localized
@@ -138,6 +142,19 @@ final class DropinScreenshots: XCTestCase {
         XCTAssertTrue(element(app, AccessibilityID.ImportStatus.complete).waitForExistence(timeout: 30))
         sleep(1)
         snapshot(app, .importMapstr)
+    }
+
+    @MainActor
+    func testSettings() throws {
+        let app = try launch(appearance: .light)
+        waitForMap(app)
+        try goSettings(app)
+        // Snapshot Settings
+        snapshot(app, .settings)
+        // Snapshot Import
+        element(app, AccessibilityID.Settings.importButton).tap()
+        sleep(1)
+        snapshot(app, .importPick)
     }
     
     @MainActor

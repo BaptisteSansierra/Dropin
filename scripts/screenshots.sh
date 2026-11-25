@@ -16,6 +16,7 @@
 #   fastlane/screenshots/<locale>/N_<shot>.png        the framed App Store shots, for fastlane deliver
 #   Screenshots/website/<configuration>/<file name>.webp  WEBSITE_SHOTS, every configuration, resized:
 #                                                     copy into Dropin_frontend/assets/screens/
+#   Screenshots/readme/<file name>.webp               README_SHOTS, en website versions, for README.md
 #   Screenshots/last.xcresult                         full report: open Screenshots/last.xcresult
 # Failed tests are listed; screenshots of the passing ones are still exported.
 # Needs: ImageMagick + cwebp (brew install imagemagick webp), SF Pro fonts (developer.apple.com/fonts)
@@ -77,12 +78,26 @@ WEBSITE_SHOTS=(
     "places.map.filtered            places.map.filtered             660 1434"   # 220px
     "places.filter.off              places.filter.off               660 1434"   # 220px
     "places.filter.on               places.filter.on                660 1434"   # 220px
+    "settings                       settings                        780 1695"   # 260px
+    "settings.import                settings.import                 780 1695"   # 260px
     "settings.import.mapstr         settings.import.mapstr          780 1695"   # 260px
-    "settings.import.mapstr.mapper  settings.import.mapstr.mapper  780 1695"   # 260px
+    "settings.import.mapstr.mapper  settings.import.mapstr.mapper   780 1695"   # 260px
     "settings.import.google         settings.import.google          780 1695"   # 260px
     "places.map.quickcreate         places.map.quickcreate          780 1695"   # 260px
 )
 WEBP_QUALITY=85
+
+# README.md images: WEBSITE_SHOTS file names, copied from the README_LANGUAGE website versions
+README_SHOTS=(
+    places.map
+    places.map.dark
+    places.map.quickcreate
+    places.place.details
+    places.filter.on
+    settings
+    settings.import
+)
+README_LANGUAGE=en
 
 # MARK: - Steps
 
@@ -252,6 +267,25 @@ warnUnusedShots() {
     for shot in $unused; do echo "  - $shot"; done
 }
 
+# README_SHOTS → Screenshots/readme/<file name>.webp, from Screenshots/website/README_LANGUAGE
+processReadme() {
+    local name src
+    echo "▸ README"
+    (( PARTIAL )) || rm -rf "$OUT/readme"
+    mkdir -p "$OUT/readme"
+    for name in $README_SHOTS; do
+        src="$OUT/website/$README_LANGUAGE/$name.webp"
+        if (( PARTIAL )); then
+            # Partial: only the website files of this run
+            (( ${WRITTEN[(Ie)$src]} )) || continue
+        elif [[ ! -f "$src" ]]; then
+            echo "  ✗ missing $README_LANGUAGE/$name" >&2; MISSING=1; continue
+        fi
+        cp "$src" "$OUT/readme/$name.webp"
+        WRITTEN+=("$OUT/readme/$name.webp")
+    done
+}
+
 # MARK: - App Store helpers
 
 # caption <shot> <language>: from AppStoreCaptions.xcstrings, en as fallback;
@@ -369,6 +403,7 @@ main() {
     processAppstore
     processFastlane
     processWeb
+    processReadme
     warnUnusedShots
 
     echo "▸ Done → $OUT"
@@ -377,7 +412,7 @@ main() {
         (( ${#WRITTEN} )) || echo "  nothing written"
         print -l -- $WRITTEN | sort | sed "s|^$ROOT/||"
     else
-        find "$OUT/appstore" "$OUT/website" "$FASTLANE_SCREENSHOTS" -type f -name "*.*" | sort | sed "s|^$ROOT/||"
+        find "$OUT/appstore" "$OUT/website" "$OUT/readme" "$FASTLANE_SCREENSHOTS" -type f -name "*.*" | sort | sed "s|^$ROOT/||"
     fi
     (( TEST_STATUS == 0 && MISSING == 0 )) || exit 1
 }

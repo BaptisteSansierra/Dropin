@@ -5,10 +5,10 @@ An iOS app for building your own map of the places that matter to you.
 Dropin is in development and not on the App Store yet.
 
 <p>
-  <img src="Screenshots/map_light.png" width="200" alt="Map with places pinned by category">
-  <img src="Screenshots/place.png" width="200" alt="Place details with rating, tags and notes">
-  <img src="Screenshots/quick-create.png" width="200" alt="Saving a new place">
-  <img src="Screenshots/map_dark.png" width="200" alt="Map in dark mode">
+  <img src="Screenshots/readme/places.map.webp" width="200" alt="Map with places pinned by category">
+  <img src="Screenshots/readme/places.place.details.webp" width="200" alt="Place details with rating, tags and notes">
+  <img src="Screenshots/readme/places.map.quickcreate.webp" width="200" alt="Saving a new place">
+  <img src="Screenshots/readme/places.map.dark.webp" width="200" alt="Map in dark mode">
 </p>
 
 ## What it does
@@ -62,14 +62,14 @@ Dropin follows Clean Architecture with MVVM in the presentation layer.
 
 | Map | Quick create | Place |
 |-----|--------------|-------|
-| ![Map](Screenshots/map_light.png) | ![Quick create](Screenshots/quick-create.png) | ![Place](Screenshots/place.png) |
+| ![Map](Screenshots/readme/places.map.webp) | ![Quick create](Screenshots/readme/places.map.quickcreate.webp) | ![Place](Screenshots/readme/places.place.details.webp) |
 
 
 ### Filtering
 
-| No filter | All places | Filter on | Matching places |
+| Filter | Settings | Import |
 |-----------|------------|-----------|-----------------|
-| ![Filter off](Screenshots/filter_off.png) | ![All places](Screenshots/filter_off_places.png) | ![Filter on](Screenshots/filter_on.png) | ![Filtered places](Screenshots/filter_on_places.png) |
+| ![Filter](Screenshots/readme/places.filter.on.webp) | ![Settings](Screenshots/readme/settings.webp) | ![Settings](Screenshots/readme/settings.import.webp) |
 
 ## Author
 

@@ -15,7 +15,9 @@ ARCHI
 CURL
 .DS_Store
 # Screenshots 
-Screenshots
+Screenshots/appstore
+Screenshots/last.xcresult
+Screenshots/website
 # Fastlane 
 fastlane/metadata
 fastlane/screenshots
