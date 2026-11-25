@@ -68,11 +68,11 @@ Dropin follows Clean Architecture with MVVM in the presentation layer.
 
 | List | Filter | Settings |
 |------|--------|----------|
-| <img src="Screenshots/readme/places.list.webp" width="250" alt="List"> | <img src="Screenshots/readme/places.filter.on.webp" width="250" alt="Filter"> | <img src="Screenshots/readme/settings.webp" width="250" alt="Settings"> |
+| <img src="Screenshots/readme/places.list.webp" width="200" alt="List"> | <img src="Screenshots/readme/places.filter.on.webp" width="200" alt="Filter"> | <img src="Screenshots/readme/settings.webp" width="200" alt="Settings"> |
 
 | Import | Mapstr import |
 |--------|---------------|
-| <img src="Screenshots/readme/settings.import.webp" width="250" alt="Import"> | <img src="Screenshots/readme/settings.import.mapstr.webp" width="250" alt="Mapstr import"> |
+| <img src="Screenshots/readme/settings.import.webp" width="200" alt="Import"> | <img src="Screenshots/readme/settings.import.mapstr.webp" width="200" alt="Mapstr import"> |
 
 ## Author
 
