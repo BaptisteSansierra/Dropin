@@ -62,14 +62,14 @@ Dropin follows Clean Architecture with MVVM in the presentation layer.
 
 | Map | Quick create | Place |
 |-----|--------------|-------|
-| ![Map](Screenshots/readme/places.map.webp) | ![Quick create](Screenshots/readme/places.map.quickcreate.webp) | ![Place](Screenshots/readme/places.place.details.webp) |
+| <img src="Screenshots/readme/places.map.webp" width="250" alt="Map"> | <img src="Screenshots/readme/places.map.quickcreate.webp" width="250" alt="Quick create"> | <img src="Screenshots/readme/places.place.details.webp" width="250" alt="Place"> |
 
 
 ### Filtering
 
 | Filter | Settings | Import |
 |--------|----------|--------|
-| ![Filter](Screenshots/readme/places.filter.on.webp) | ![Settings](Screenshots/readme/settings.webp) | ![Settings](Screenshots/readme/settings.import.webp) |
+| <img src="Screenshots/readme/places.filter.on.webp" width="250" alt="Filter"> | <img src="Screenshots/readme/settings.webp" width="250" alt="Settings"> | <img src="Screenshots/readme/settings.import.webp" width="250" alt="Settings"> |
 
 ## Author
 
