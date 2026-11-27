@@ -137,6 +137,42 @@ struct App_SyncService {
         #expect(fetched.name == remotePlace.name)
     }
 
+    @Test func pullKeepsUnpushedProfileAndPushesIt() async throws {
+        // Sign-in: the display name is set locally before the sync starts, the server has none yet
+        let id = UUID()
+        let local = Profile(id: id, email: "john.doe@example.com", displayName: "John Doe",
+                            plan: .earlyStage, createdAt: .now, updatedAt: .now)
+        let remote = Profile(id: id, email: "john.doe@example.com", displayName: nil,
+                             plan: .earlyStage, createdAt: .now, updatedAt: .now)
+        let localRepo = MockProfileRepository(initial: local)
+        let remoteRepo = MockRemoteProfileRepository(profileToReturn: remote)
+        let sut = makeSUT(localProfileRepo: localRepo, remoteProfileRepo: remoteRepo)
+        await sut.stop()
+        sut.markProfileDirty()
+        sut.start()
+
+        await sut.syncAll()
+
+        #expect(try await localRepo.fetch()?.displayName == "John Doe")
+        #expect(remoteRepo.updatedDisplayNames.map(\.displayName) == ["John Doe"])
+    }
+
+    @Test func pullAppliesRemoteProfileWithoutLocalChange() async throws {
+        let id = UUID()
+        let local = Profile(id: id, email: "john.doe@example.com", displayName: "John",
+                            plan: .earlyStage, createdAt: .now, updatedAt: .now)
+        let remote = Profile(id: id, email: "john.doe@example.com", displayName: "Johnny",
+                             plan: .earlyStage, createdAt: .now, updatedAt: .now)
+        let localRepo = MockProfileRepository(initial: local)
+        let remoteRepo = MockRemoteProfileRepository(profileToReturn: remote)
+        let sut = makeSUT(localProfileRepo: localRepo, remoteProfileRepo: remoteRepo)
+
+        await sut.syncAll()
+
+        #expect(try await localRepo.fetch()?.displayName == "Johnny")
+        #expect(remoteRepo.updatedDisplayNames.isEmpty)
+    }
+
     @Test func syncAllFirstPullIgnoreTombstone() async throws {
         let tombstone = Place(id: UUID(),
                               name: "To Delete",

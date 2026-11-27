@@ -492,7 +492,9 @@ final class SyncService: SyncServiceProtocol, SyncServicePausableProtocol, Reach
             // Each row is upserted independently: one bad/unresolvable row (e.g. a
             // place referencing a tag id that failed to link) shouldn't block every
             // other row in the batch — log it and move on to the next one.
-            if let profile { try await localProfileRepo.upsert(profile) }
+            // Never over a local change not pushed yet (e.g. the display name set at sign-in, before the
+            // sync starts): the push below sends it, the next pull brings it back
+            if let profile, !dirtyProfile { try await localProfileRepo.upsert(profile) }
             for space in spaces {
                 do {
                     try await localSpaceRepo.upsert(space, shouldSave: true)
