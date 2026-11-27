@@ -491,7 +491,7 @@ struct App_ImportDropin {
 
         let importDropinService = importService()
 
-        await #expect(throws: ImportError.corrupted("")) {
+        await #expect(throws: ImportError.decoding("")) {
             _ = try await importDropinService.read(data)
         }
     }

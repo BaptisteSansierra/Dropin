@@ -178,7 +178,7 @@ struct App_ImportGoogle {
     ///  check error when file is corrupted, at phase 1 (read)
     ///
     @Test func readCorrupted() async throws {
-        await #expect(throws: ImportError.corrupted("no_matter")) {
+        await #expect(throws: ImportError.decoding("no_matter")) {
             _ = try await importService().read(Data("cOrRuptEd".utf8))
         }
     }
@@ -191,7 +191,7 @@ struct App_ImportGoogle {
             { "date": "2026-11-23T09:30:43Z",
               "location": { "name": "pizzeria pipote", "address": "Bra, Italy" } }
             """)
-        await #expect(throws: ImportError.corrupted("no_matter")) {
+        await #expect(throws: ImportError.decoding("no_matter")) {
             _ = try await importService().read(data)
         }
     }

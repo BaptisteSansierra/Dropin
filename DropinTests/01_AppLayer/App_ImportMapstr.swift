@@ -187,7 +187,7 @@ struct App_ImportMapstr {
     ///  check error when file is corrupted, at phase 1 (read)
     ///
     @Test func importMapstrServiceCorrupted() async throws {
-        await #expect(throws: ImportError.corrupted("no_matter")) {
+        await #expect(throws: ImportError.decoding("no_matter")) {
             let importMapstrService = importService()
             _ = try await importMapstrService.read(Data("cOrRuptEd".utf8))
         }

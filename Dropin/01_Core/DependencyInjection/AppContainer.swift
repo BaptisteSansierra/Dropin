@@ -145,8 +145,8 @@ final class AppContainer {
          locationManager: LocationManager,
          addressLookupService: AddressLookupService,
          reachabilityService: any ReachabilityServiceProtocol,
-         profileService: StubProfileService,
-         authService: StubAuthService) {
+         profileService: any ProfileServiceProtocol,
+         authService: any AuthServiceProtocol) {
         self.appContext = appContext
         // Coordinators
         profileCoordinator = ProfileCoordinator()
@@ -203,7 +203,10 @@ final class AppContainer {
         await profileService.load()
         if let pendingDisplayName, !pendingDisplayName.isEmpty {
             self.pendingDisplayName = nil
-            try? await profileService.setDisplayName(pendingDisplayName)
+            // Never overwrite a name: Sign in with Apple can sign in an existing account
+            if profileService.profile?.displayName?.isEmpty ?? true {
+                try? await profileService.setDisplayName(pendingDisplayName)
+            }
         }
     }
 
@@ -310,9 +313,12 @@ final class AppContainer {
     /// Deletes the remote account first; local cleanup (mirroring `signOut`)
     /// only happens once that has actually succeeded, so a failure leaves the
     /// user's local data untouched.
-    func deleteAccount() async throws {
+    /// The account has a Sign in with Apple identity: `deleteAccount` needs an Apple authorization code
+    var deleteAccountNeedsApple: Bool { authService.hasAppleIdentity }
+
+    func deleteAccount(appleAuthorizationCode: String?) async throws {
         Log.debug("Delete account requested")
-        try await authService.deleteAccount()
+        try await authService.deleteAccount(appleAuthorizationCode: appleAuthorizationCode)
 
         authStatus.isSigningOut = true
         profileService.clear()
@@ -373,7 +379,8 @@ final class AppContainer {
                                         fetchPlaces: FetchPlaces(repository: placeRepository),
                                         fetchCategories: FetchCategories(repository: categoryRepository),
                                         fetchTags: FetchTags(repository: tagRepository),
-                                        imageRepository: imageRepository)
+                                        imageRepository: imageRepository,
+                                        appleReauthorization: AppleReauthorization())
         return DeleteAccountView(viewModel: vm)
     }
 

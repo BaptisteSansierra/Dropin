@@ -1263,6 +1263,28 @@
         }
       }
     },
+    "auth.error.apple_signin_failed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with Apple failed. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No se pudo iniciar sesión con Apple. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "La connexion avec Apple a échoué. Veuillez réessayer."
+          }
+        }
+      }
+    },
     "auth.error.invalid_credentials" : {
       "comment" : "Sign in error: wrong email or password",
       "localizations" : {
@@ -4349,6 +4371,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir les réglages"
+          }
+        }
+      }
+    },
+    "common.or" : {
+      "comment" : "Signin by email *or* with Apple",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "or"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "o"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ou"
           }
         }
       }

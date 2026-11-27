@@ -106,13 +106,14 @@ actor ImportDropinService: ImportServiceProtocol {
         decoder.dateDecodingStrategy = .iso8601
         do {
             let export = try decoder.decode(DropinInOut.self, from: data)
-            switch export.version {
-                case 1:
-                    return export
-                default:
-                    throw ImportError.versionTooNew(export.version)
+            if export.version > DropinInOut.CURRENT_VERSION {
+                throw ImportError.versionTooNew(export.version)
             }
+            return export
         } catch {
+            if let importError = error as? ImportError {
+                throw importError
+            }
             var msg = error.localizedDescription
             if let decodingError = error as? DecodingError {
                 switch decodingError {

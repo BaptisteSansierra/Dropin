@@ -11,7 +11,6 @@ struct UserSession: Sendable, Equatable {
 }
 
 enum AuthServiceError: Error, Equatable {
-    case signInFailed
     case signInTimedOut
     case signUpTimedOut
     case signOutTimedOut
@@ -30,6 +29,8 @@ enum AuthServiceError: Error, Equatable {
 protocol AuthServiceProtocol: AnyObject, Sendable {
     var session: UserSession? { get }
     var isAuthenticated: Bool { get }
+    /// The signed-in user has a Sign in with Apple identity: deleting the account needs an Apple authorization code
+    var hasAppleIdentity: Bool { get }
     /// Called once when the session is gone for good (revoked, expired refresh token, deleted user…)
     /// without the user signing out. The owner is expected to run the full sign-out cleanup.
     var onSessionLost: (() -> Void)? { get set }
@@ -41,7 +42,8 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
 
     func signUp(email: String, password: String) async throws
     func signIn(email: String, password: String) async throws
-    func signInWithApple() async throws   // FIXME: DRO-56 > implement when Apple Sign-In is added
+    /// Sign in with Apple: `idToken` from the Apple credential, `nonce` the raw nonce whose SHA256 was sent to Apple
+    func signInWithApple(idToken: String, nonce: String) async throws
     func resetPassword(email: String) async throws
     func resendVerificationEmail(email: String) async throws
     /// Email confirmation link: confirms the email and signs the user in. Throws `linkExpired` for a used/expired link
@@ -54,7 +56,8 @@ protocol AuthServiceProtocol: AnyObject, Sendable {
     /// Drops the recovery session, the password is unchanged
     func cancelPasswordRecovery() async
     func signOut() async throws
-    func deleteAccount() async throws
+    /// `appleAuthorizationCode`: fresh code from the Apple sheet, required when `hasAppleIdentity` (token revocation)
+    func deleteAccount(appleAuthorizationCode: String?) async throws
     func restoreSession() async
 }
 
@@ -68,6 +71,9 @@ final class AuthService: AuthServiceProtocol {
         }
     }
     var isAuthenticated: Bool { session != nil }
+    var hasAppleIdentity: Bool {
+        client.auth.currentUser?.identities?.contains { $0.provider == "apple" } ?? false
+    }
     var onSessionLost: (() -> Void)?
     
     private let client: SupabaseClient
@@ -168,8 +174,35 @@ final class AuthService: AuthServiceProtocol {
         }
     }
     
-    func signInWithApple() async throws {
-        throw AuthServiceError.signInFailed // FIXME: DRO-56 > Supabase Apple Sign-In
+    func signInWithApple(idToken: String, nonce: String) async throws {
+        guard !signingIn else { return }
+        signingIn = true
+        defer { signingIn = false }
+
+        Log.info("Signin in with Apple...")
+        do {
+            let s = try await appleSigninWithTimeout(idToken: idToken, nonce: nonce)
+            setSession(UserSession(userId: s.user.id, email: s.user.email))
+            syncLocale()
+            Log.info("  > Apple signin completed")
+        } catch let error as AuthServiceError {
+            // No-op : Just forward the error we just throw
+            throw error
+        } catch let error as Supabase.AuthError {
+            DropinTracker.shared.capture("Unexpected Supabase error(\(error.errorCode)) \(error)", authFlow: .signin)
+            Log.warning("  > Unexpected supabase error \(error)")
+            assertionFailure()
+            throw error
+        } catch let error where error.isOffline || error.isTimeout {
+            // Expected: no connection
+            Log.warning("  > Apple signin failed, no connection (\(error))")
+            throw error
+        } catch {
+            DropinTracker.shared.capture("Unexpected error \(error)", authFlow: .signin)
+            Log.warning("  > Apple signin failed (\(error))")
+            assertionFailure()
+            throw error
+        }
     }
     
     func resetPassword(email: String) async throws {
@@ -253,8 +286,14 @@ final class AuthService: AuthServiceProtocol {
     /// Deletes the current user's account. Server-side, this removes their storage objects and deletes the auth user;
     /// app tables cascade from there (see Dropin_backend's delete-account edge function).
     /// Does not touch local session/data, the caller clears those on success.
-    func deleteAccount() async throws {
-        try await client.functions.invoke("delete-account")
+    func deleteAccount(appleAuthorizationCode: String?) async throws {
+        // Sign in with Apple users: the function revokes the Apple token with this code (App Store guideline 5.1.1(v))
+        if let appleAuthorizationCode {
+            try await client.functions.invoke("delete-account",
+                                              options: FunctionInvokeOptions(body: ["apple_authorization_code": appleAuthorizationCode]))
+        } else {
+            try await client.functions.invoke("delete-account")
+        }
         Log.info("Account deleted")
     }
     
@@ -499,6 +538,28 @@ final class AuthService: AuthServiceProtocol {
         throw CancellationError()
     }
     
+    private func appleSigninWithTimeout(idToken: String, nonce: String) async throws -> Session {
+        let (stream, continuation) = AsyncThrowingStream<Session, Error>.makeStream()
+        let work = Task {
+            do {
+                let supaSession = try await self.client.auth.signInWithIdToken(
+                    credentials: OpenIDConnectCredentials(provider: .apple, idToken: idToken, nonce: nonce))
+                Log.info("  > Signed in with Apple as \(supaSession.user.email ?? "N/A")")
+                continuation.yield(supaSession)
+                continuation.finish()
+            }
+            catch { continuation.finish(throwing: error) }
+        }
+        let timeout = Task {
+            try await Task.sleep(for: .seconds(signInTimeoutInterval))
+            Log.info("  > Apple signin timeout triggered")
+            continuation.finish(throwing: AuthServiceError.signInTimedOut)
+        }
+        defer { work.cancel(); timeout.cancel() }
+        for try await value in stream { return value }
+        throw CancellationError()
+    }
+
     private func signoutWithTimeout() async throws {
         let (stream, continuation) = AsyncThrowingStream<Void, Error>.makeStream()
         let work = Task {

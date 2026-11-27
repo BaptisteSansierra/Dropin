@@ -16,6 +16,7 @@ final class StubAuthService: AuthServiceProtocol {
     
     var session: UserSession? = nil
     var isAuthenticated: Bool { session != nil }
+    var hasAppleIdentity: Bool = false
     var onSessionLost: (() -> Void)?
     private let restoredSession: UserSession?
 
@@ -31,7 +32,7 @@ final class StubAuthService: AuthServiceProtocol {
 
     func signUp(email: String, password: String) async throws {}
     func signIn(email: String, password: String) async throws {}
-    func signInWithApple() async throws {}
+    func signInWithApple(idToken: String, nonce: String) async throws {}
     func resetPassword(email: String) async throws {}
     func resendVerificationEmail(email: String) async throws {}
     func confirmEmail(tokenHash: String) async throws {}
@@ -39,7 +40,7 @@ final class StubAuthService: AuthServiceProtocol {
     func completePasswordRecovery(newPassword: String) async throws {}
     func cancelPasswordRecovery() async {}
     func signOut() async throws { session = nil }
-    func deleteAccount() async throws { session = nil }
+    func deleteAccount(appleAuthorizationCode: String?) async throws { session = nil }
     func restoreSession() async { session = restoredSession }
 }
 

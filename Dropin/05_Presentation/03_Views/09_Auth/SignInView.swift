@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 struct SignInView: View {
 
@@ -17,7 +18,8 @@ struct SignInView: View {
 
     @State private var viewModel: SignInViewModel
     @FocusState private var focusedField: Field?
-
+    @Environment(\.colorScheme) private var colorScheme
+    
     init(viewModel: SignInViewModel) {
         self.viewModel = viewModel
     }
@@ -64,6 +66,28 @@ struct SignInView: View {
                         .padding(.top, 22)
 
                         if let error = viewModel.lastError {
+                            Text(error)
+                                .textStyle(.formFieldError)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 12)
+                        }
+                        
+                        HStack(alignment: .center, spacing: 0) {
+                            Rectangle()
+                                .fill(.hairline)
+                                .frame(height: 1)
+                            Text("common.or")
+                                .textStyle(.footnote, color: .textSecondary)
+                                .padding(.horizontal)
+                            Rectangle()
+                                .fill(.hairline)
+                                .frame(height: 1)
+                        }
+                        .padding(.top, 15)
+                        
+                        appleSignInButton
+                            .padding(.top, 15)
+                        if let error = viewModel.lastAppleError {
                             Text(error)
                                 .textStyle(.formFieldError)
                                 .multilineTextAlignment(.center)
@@ -134,6 +158,19 @@ struct SignInView: View {
         }
     }
 
+    private var appleSignInButton: some View {
+        SignInWithAppleButton(.signIn) { request in
+            viewModel.prepareAppleRequest(request)
+        } onCompletion: { result in
+            Task { await viewModel.signInWithApple(result) }
+        }
+        .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+        .frame(height: DropinApp.ui.button.height)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .disabled(viewModel.isSubmitting)
+        .id(colorScheme)
+    }
+    
     private var footer: some View {
         HStack(spacing: 4) {
             Text("auth.new_to_dropin")

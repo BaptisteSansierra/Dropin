@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import AuthenticationServices
 
 @MainActor
 @Observable class DeleteAccountViewModel {
@@ -30,19 +31,22 @@ import Foundation
     @ObservationIgnored private let fetchCategories: FetchCategories
     @ObservationIgnored private let fetchTags: FetchTags
     @ObservationIgnored private let imageRepository: any PlaceImageRepository
+    @ObservationIgnored private let appleReauthorization: any AppleReauthorizationProtocol
 
     init(appContainer: AppContainer,
          coordinator: ProfileCoordinator,
          fetchPlaces: FetchPlaces,
          fetchCategories: FetchCategories,
          fetchTags: FetchTags,
-         imageRepository: any PlaceImageRepository) {
+         imageRepository: any PlaceImageRepository,
+         appleReauthorization: any AppleReauthorizationProtocol) {
         self.appContainer = appContainer
         self.coordinator = coordinator
         self.fetchPlaces = fetchPlaces
         self.fetchCategories = fetchCategories
         self.fetchTags = fetchTags
         self.imageRepository = imageRepository
+        self.appleReauthorization = appleReauthorization
     }
 
     /// The exact, localized phrase the user must type to confirm
@@ -102,9 +106,16 @@ import Foundation
         isDeleting = true
         defer { isDeleting = false }
         do {
-            try await appContainer.deleteAccount()
+            // Sign in with Apple users confirm with Apple: the code lets the backend revoke their Apple token
+            var appleAuthorizationCode: String?
+            if appContainer.deleteAccountNeedsApple {
+                appleAuthorizationCode = try await appleReauthorization.authorizationCode()
+            }
+            try await appContainer.deleteAccount(appleAuthorizationCode: appleAuthorizationCode)
             // Success flips authStatus — the app routes back to Sign in on its
             // own, nothing else to do here.
+        } catch let error as ASAuthorizationError where error.code == .canceled {
+            Log.info("DeleteAccountViewModel: Apple confirmation canceled")
         } catch {
             Log.error("DeleteAccountViewModel: deleteAccount failed: \(error)")
             deleteError = String(localized: "delete_account.error.generic")

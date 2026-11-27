@@ -9,7 +9,7 @@ import Foundation
 
 struct DropinInOut: Codable, Sendable {
 
-    private let CURRENT_VERSION: Int = 1
+    static let CURRENT_VERSION: Int = 1
 
     private(set) var version: Int
     private(set) var exportedAt: Date
@@ -32,7 +32,7 @@ struct DropinInOut: Codable, Sendable {
          places: [Place],
          categories: [Category],
          tags: [Tag]) {
-        self.version = CURRENT_VERSION
+        self.version = Self.CURRENT_VERSION
         self.exportedAt = exportedAt
         self.places = places.map { DropinPlaceDTO($0) }
         self.categories = categories.map { DropinCategoryDTO($0) }

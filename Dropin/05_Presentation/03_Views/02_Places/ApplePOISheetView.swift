@@ -250,14 +250,12 @@ struct ApplePOISheetView: View {
             var phones: [ContactItem] = []
             if let phoneNumber = mapItem.phoneNumber {
                 let label = String(localized: LocalizedStringResource(stringLiteral: "common.from_apple_maps"))
-                phones.append(ContactItem(value: phoneNumber,
-                                          label: ContactLabel(kind: .phone, label: .custom(label))))
+                phones.append(ContactItem.phone(phoneNumber, label: .custom(label)))
             }
             var urls: [ContactItem] = []
             if let url = mapItem.url {
                 let label = String(localized: LocalizedStringResource(stringLiteral: "common.from_apple_maps"))
-                urls.append(ContactItem(value: url.absoluteString,
-                                        label: ContactLabel(kind: .url, label: .custom(label))))
+                urls.append(ContactItem.url(url.absoluteString, label: .custom(label)))
             }
             draftPlace = PlaceUIModel(name: mapItem.name,
                                       coordinates: mapItem.resolvedCoordinates(),
