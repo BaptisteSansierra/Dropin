@@ -35,6 +35,12 @@ struct AuthLink: Equatable {
         tokenHash = components.queryItems?.first { $0.name == "token_hash" }?.value?.nonEmpty
     }
 
+    /// `url` opens `page`: same host and path, with or without ".html"
+    static func isPage(_ page: URL, _ url: URL) -> Bool {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return false }
+        return isPage(page, components)
+    }
+
     /// Same host and path, with or without ".html" (Cloudflare Pages serves its pages without the extension)
     private static func isPage(_ page: URL, _ components: URLComponents) -> Bool {
         guard components.host == page.host else { return false }

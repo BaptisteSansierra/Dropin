@@ -43,6 +43,15 @@ struct App_AuthLink {
         #expect(link("https://dropin.lat/email-confirmed.html?token_hash=")?.tokenHash == nil)
     }
 
+    @Test func openAppPage() {
+        // "Open Dropin" in the welcome email: not an auth link, matched with or without ".html"
+        #expect(link("https://dropin.lat/app?lang=fr") == nil)
+        #expect(AuthLink.isPage(DropinApp.urls.openAppURL, URL(string: "https://dropin.lat/app?lang=fr")!))
+        #expect(AuthLink.isPage(DropinApp.urls.openAppURL, URL(string: "https://dropin.lat/app.html")!))
+        #expect(!AuthLink.isPage(DropinApp.urls.openAppURL, URL(string: "https://dropin.lat/apps")!))
+        #expect(!AuthLink.isPage(DropinApp.urls.openAppURL, URL(string: "https://example.com/app")!))
+    }
+
     @Test func otherURLsAreIgnored() {
         #expect(link("https://dropin.lat/p.html?id=abc") == nil)
         #expect(link("https://dropin.lat/") == nil)

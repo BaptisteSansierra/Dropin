@@ -286,6 +286,11 @@ import ContactFieldKit
     }
 
     private func openUniversalLink(_ url: URL) {
+        // "Open Dropin" in the welcome email: bringing the app forward is all it does
+        if AuthLink.isPage(DropinApp.urls.openAppURL, url) {
+            Log.info("Universal link \(url.path)")
+            return
+        }
         guard let link = AuthLink(url: url) else {
             // Path only: the query may hold a token
             Log.warning("Unhandled universal link \(url.path)")

@@ -248,7 +248,7 @@ struct ImportSelectorView: View {
             }
             .contentShape(Rectangle())
             .onTapGesture {
-                UIApplication.shared.open(DropinApp.urls.importGooleDesc)
+                UIApplication.shared.open(DropinApp.urls.importGoogleDesc)
             }
             .padding(.bottom, 5)
         }
